@@ -18,7 +18,7 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="mk-mode BLOG">
 <meta property="og:title" content="ホームページでスライドショー！">
-<meta property="og:url" content="https://komasaru.github.io/pages/komasaru/2009/02/20/20013012/">
+<meta property="og:url" content="https://komasaru.github.io/2009/02/20/20013012/">
 
 
   <meta property="og:description" content="今日は ホームページ の方をかまってみました。今までは自分の ホームページ で公開している画像はそのまま貼り付けているだけでしたが、ＷｏｒｄＰｒｅｓｓに導入したプラグイン「 LightBox2 」と同じように、サムネイルをクリックすると画像が大きくなるようにしたくなり、ググりながら調べて導入しました。スライドショーもできるやつでした。（ＪａｖａＳｃｒｉｐｔでうごくやつです）その名は「 Lightbox JS v2.0 」です。導入記録１．アーカイブファイルのダウンロードこちら（ http://www.huddletogether.com/projects/lightbox2/ ）の「 Download 」からＺＩＰファイルをダウンロードする。※当記事執筆時点では「 lightbox2.04.zip 」が最新でした。２．アーカイブファイルの展開先ほどダウンロードしたＺＩＰファイルを展開する。以下のようなファイルが格納されているはずです。│  index.html│├─css│      lightbox.css│├─images│      bullet.gif│      close.gif│      closelabel.gif│      donate-button.gif│      download-icon.gif│      image-1.jpg│      loading.gif│      nextlabel.gif│      prevlabel.gif│      thumb-1.jpg│└─js        builder.js        effects.js        lightbox.js        prototype.js        scriptaculous.js３．ファイルのコピー展開したファイルをＷｅｂサーバへアップロードする。※当方の場合、ドキュメントルート直下に「 css 」、「 images 」、「 js 」をフォルダを作り、さらに「 images 」、「 js 」は他の画像ファイルや JavaScript と区別するために「 lightbox 」用のフォルダを作ってそこへファイルをコピーしました。展開してできた index.html、thumb-1.jpg は不要。├─css│      lightbox.css├─images│  └─lightbox│          bullet.gif│          close.gif│          closelabel.gif│          donate-button.gif│          download-icon.gif│          image-1.jpg│          loading.gif│          nextlabel.gif│          prevlabel.gif│          thumb-1.jpg│└─js    └─lightbox            builder.js            effects.js            lightbox.js            prototype.js            scriptaculous.js４．画像ファイルの準備元画像の他に元画像のサムネイル用画像を準備してＷｅｂサーバに配置しておきます。※当方ではドキュメントルート配下に「 images 」フォルダを作成しそちらに配置。５．画像ファイルの準備（その２）lightbox2.04.zip を展開してできたＣＳＳファイルそのままでは、ブラウザ上ではエラーはでないものの、Ｗ３Ｃ − ＣＳＳ のチェックでエラーとなってしまうので、以下の「７」のように修正したが、そこで使用する画像「 blank.gif 」が lightbox2.04.zip には存在しません。lightbox2.03.zip を別途ダウンロード・展開して「 blank.gif 」をＷｅｂサーバにアップロードしました。※「 lightbox2.04.zip 」はまだバグがあるみたい！？６．ＪａｖａＳｃｒｉｐｔの修正※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。当方のように別途フォルダを作成した場合のみ修正が必要です。lightbox.jsを以下のように修正（以下は当方の場合）fileLoadingImage:        &#39;images/loading.gif&#39;,fileBottomNavCloseImage: &#39;images/closelabel.gif&#39;,　　↓fileLoadingImage:        &#39;images/lightbox/loading.gif&#39;,fileBottomNavCloseImage: &#39;images/lightbox/closelabel.gif&#39;,７．ＣＳＳの修正※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。当方のように別途フォルダを作成した場合のみ修正が必要です。lightbox.cssを以下のように修正（以下は当方の場合）#prevLink:hover, #prevLink:visited:hover { background: url(../images/prevlabel.gif) left 15% no-repeat; }#nextLink:hover, #nextLink:visited:hover { background: url(../images/nextlabel.gif) right 15% no-repeat; }　　↓#prevLink:hover, #prevLink:visited:hover { background: url(../images/lightbox/prevlabel.gif) left 15% no-repeat; }#nextLink:hover, #nextLink:visited:hover { background: url(../images/lightbox/nextlabel.gif) right 15% no-repeat; }#prevLink, #nextLink{ width: 49%; height: 100%; background-image: url(data:image/gif;base64,AAAA); /* Trick IE into showing hover */ display: block; }　　↓#prevLink, #nextLink{ width: 49%; height: 100%; background: transparent url(../images/lightbox/blank.gif) no-repeat; /* Trick IE into showing hover */ display: block; }ついでに、見にくいので整形しました（改行入れた）。８．ＨＴＭＬソース修正・以下のコードを &lt;head&gt;タグ 内に追加する。&lt;link rel=&quot;stylesheet&quot; href=&quot;css/lightbox.css&quot; type=&quot;text/css&quot; media=&quot;screen&quot; /&gt;・以下のコードを画像を表示するＨＴＭＬファイルの &lt;body&gt;タグ 内の最後（の直前）に追加する。&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/prototype.js&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/scriptaculous.js?load=effects,builder&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/lightbox.js&quot;&gt;&lt;/script&gt;※いろんなサイトでJavaScriptの読み込み部分を &lt;head&gt;タグ 内に記述するように説明があるが、それでは ＩＥ６ ではエラーとなってしまいます。・画像を表示するＨＴＭＬソースを作成・修正します。以下は例：&lt;body&gt;・・・　途中省略　・・・    ![TERRANO_01](images/terrano_01.jpg &quot;TERRANO_01&quot;)    ![TERRANO_02](images/terrano_02.jpg &quot;TERRANO_02&quot;)    ![TERRANO_03](images/terrano_03.jpg &quot;TERRANO_03&quot;)・・・　途中省略　・・・&lt;/body&gt;※ タグにサムネイル画像、に実画像を設定します。「 rel=”lightbox[terrano]” 」の terrano の部分が同じものでグルーピングされます。「 rel=”lightbox[terrano]” 」を「 rel=”lightbox” 」とすれば、　スライドショーではなく、普通に１枚ずつの表示になります。※ちなみに当方では以下のブラウザで動作確認しています。  FireFox3.0.6  Opera9.63  InternetExplorer6.0設定は以上です。これで、画像がカッコよく表示されるようになりました。ついでに画像も増やしました。よかったら見てみてください。→ → →　こちらまた、いつかブログ上の画像もホームページでスライドショーできるようにしようかと思ってます。それでは、おやすみなさい。">
@@ -32,7 +32,7 @@
   <meta name="twitter:site" content="@rsm_mzk">
   <meta name="twitter:title" content="ホームページでスライドショー！">
   <meta name="twitter:description" content="今日は ホームページ の方をかまってみました。今までは自分の ホームページ で公開している画像はそのまま貼り付けているだけでしたが、ＷｏｒｄＰｒｅｓｓに導入したプラグイン「 LightBox2 」と同じように、サムネイルをクリックすると画像が大きくなるようにしたくなり、ググりながら調べて導入しました。スライドショーもできるやつでした。（ＪａｖａＳｃｒｉｐｔでうごくやつです）その名は「 Lightbox JS v2.0 」です。導入記録１．アーカイブファイルのダウンロードこちら（ http://www.huddletogether.com/projects/lightbox2/ ）の「 Download 」からＺＩＰファイルをダウンロードする。※当記事執筆時点では「 lightbox2.04.zip 」が最新でした。２．アーカイブファイルの展開先ほどダウンロードしたＺＩＰファイルを展開する。以下のようなファイルが格納されているはずです。│  index.html│├─css│      lightbox.css│├─images│      bullet.gif│      close.gif│      closelabel.gif│      donate-button.gif│      download-icon.gif│      image-1.jpg│      loading.gif│      nextlabel.gif│      prevlabel.gif│      thumb-1.jpg│└─js        builder.js        effects.js        lightbox.js        prototype.js        scriptaculous.js３．ファイルのコピー展開したファイルをＷｅｂサーバへアップロードする。※当方の場合、ドキュメントルート直下に「 css 」、「 images 」、「 js 」をフォルダを作り、さらに「 images 」、「 js 」は他の画像ファイルや JavaScript と区別するために「 lightbox 」用のフォルダを作ってそこへファイルをコピーしました。展開してできた index.html、thumb-1.jpg は不要。├─css│      lightbox.css├─images│  └─lightbox│          bullet.gif│          close.gif│          closelabel.gif│          donate-button.gif│          download-icon.gif│          image-1.jpg│          loading.gif│          nextlabel.gif│          prevlabel.gif│          thumb-1.jpg│└─js    └─lightbox            builder.js            effects.js            lightbox.js            prototype.js            scriptaculous.js４．画像ファイルの準備元画像の他に元画像のサムネイル用画像を準備してＷｅｂサーバに配置しておきます。※当方ではドキュメントルート配下に「 images 」フォルダを作成しそちらに配置。５．画像ファイルの準備（その２）lightbox2.04.zip を展開してできたＣＳＳファイルそのままでは、ブラウザ上ではエラーはでないものの、Ｗ３Ｃ − ＣＳＳ のチェックでエラーとなってしまうので、以下の「７」のように修正したが、そこで使用する画像「 blank.gif 」が lightbox2.04.zip には存在しません。lightbox2.03.zip を別途ダウンロード・展開して「 blank.gif 」をＷｅｂサーバにアップロードしました。※「 lightbox2.04.zip 」はまだバグがあるみたい！？６．ＪａｖａＳｃｒｉｐｔの修正※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。当方のように別途フォルダを作成した場合のみ修正が必要です。lightbox.jsを以下のように修正（以下は当方の場合）fileLoadingImage:        &#39;images/loading.gif&#39;,fileBottomNavCloseImage: &#39;images/closelabel.gif&#39;,　　↓fileLoadingImage:        &#39;images/lightbox/loading.gif&#39;,fileBottomNavCloseImage: &#39;images/lightbox/closelabel.gif&#39;,７．ＣＳＳの修正※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。当方のように別途フォルダを作成した場合のみ修正が必要です。lightbox.cssを以下のように修正（以下は当方の場合）#prevLink:hover, #prevLink:visited:hover { background: url(../images/prevlabel.gif) left 15% no-repeat; }#nextLink:hover, #nextLink:visited:hover { background: url(../images/nextlabel.gif) right 15% no-repeat; }　　↓#prevLink:hover, #prevLink:visited:hover { background: url(../images/lightbox/prevlabel.gif) left 15% no-repeat; }#nextLink:hover, #nextLink:visited:hover { background: url(../images/lightbox/nextlabel.gif) right 15% no-repeat; }#prevLink, #nextLink{ width: 49%; height: 100%; background-image: url(data:image/gif;base64,AAAA); /* Trick IE into showing hover */ display: block; }　　↓#prevLink, #nextLink{ width: 49%; height: 100%; background: transparent url(../images/lightbox/blank.gif) no-repeat; /* Trick IE into showing hover */ display: block; }ついでに、見にくいので整形しました（改行入れた）。８．ＨＴＭＬソース修正・以下のコードを &lt;head&gt;タグ 内に追加する。&lt;link rel=&quot;stylesheet&quot; href=&quot;css/lightbox.css&quot; type=&quot;text/css&quot; media=&quot;screen&quot; /&gt;・以下のコードを画像を表示するＨＴＭＬファイルの &lt;body&gt;タグ 内の最後（の直前）に追加する。&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/prototype.js&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/scriptaculous.js?load=effects,builder&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/lightbox.js&quot;&gt;&lt;/script&gt;※いろんなサイトでJavaScriptの読み込み部分を &lt;head&gt;タグ 内に記述するように説明があるが、それでは ＩＥ６ ではエラーとなってしまいます。・画像を表示するＨＴＭＬソースを作成・修正します。以下は例：&lt;body&gt;・・・　途中省略　・・・    ![TERRANO_01](images/terrano_01.jpg &quot;TERRANO_01&quot;)    ![TERRANO_02](images/terrano_02.jpg &quot;TERRANO_02&quot;)    ![TERRANO_03](images/terrano_03.jpg &quot;TERRANO_03&quot;)・・・　途中省略　・・・&lt;/body&gt;※ タグにサムネイル画像、に実画像を設定します。「 rel=”lightbox[terrano]” 」の terrano の部分が同じものでグルーピングされます。「 rel=”lightbox[terrano]” 」を「 rel=”lightbox” 」とすれば、　スライドショーではなく、普通に１枚ずつの表示になります。※ちなみに当方では以下のブラウザで動作確認しています。  FireFox3.0.6  Opera9.63  InternetExplorer6.0設定は以上です。これで、画像がカッコよく表示されるようになりました。ついでに画像も増やしました。よかったら見てみてください。→ → →　こちらまた、いつかブログ上の画像もホームページでスライドショーできるようにしようかと思ってます。それでは、おやすみなさい。">
-  <meta name="twitter:url" content="https://komasaru.github.io/pages/komasaru/2009/02/20/20013012/">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/02/20/20013012/">
 
   
     <meta name="twitter:card" content="summary">
@@ -56,7 +56,7 @@
   
 
 
-<link rel="canonical" href="https://komasaru.github.io/pages/komasaru/2009/02/20/20013012/">
+<link rel="canonical" href="https://komasaru.github.io/2009/02/20/20013012/">
 
 
 
@@ -66,7 +66,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
     }
   </script>
@@ -78,7 +78,7 @@
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "mk-mode.com",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "sameAs": null
     }
   </script>
@@ -104,7 +104,7 @@
 </script>
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="/pages/komasaru/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/main.css">
 
 <!--[if IE ]>
   <style>
@@ -141,7 +141,7 @@
 <link rel="dns-prefetch" href="//twitter.com" />
 <link rel="dns-prefetch" href="//www.facebook.com" />
 
-<link rel="icon" href="/pages/komasaru/assets/images/favicon.ico">
+<link rel="icon" href="/assets/images/favicon.ico">
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-18154748-1']);
@@ -180,19 +180,19 @@
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         
-        <a class="site-title" href="/pages/komasaru/">mk-mode BLOG</a>
+        <a class="site-title" href="/">mk-mode BLOG</a>
         <ul class="visible-links"><li class="masthead__menu-item">
-              <a href="/pages/komasaru/year-archive/" >Archives</a>
+              <a href="/year-archive/" >Archives</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/categories/" >Categories</a>
+              <a href="/categories/" >Categories</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/tags/" >Tags</a>
+              <a href="/tags/" >Tags</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/privacy.html" >Privacy Policy</a>
+              <a href="/privacy.html" >Privacy Policy</a>
             </li></ul>
         
         <button class="search__toggle" type="button">
@@ -231,7 +231,7 @@
       
 
       
-        <img src="/pages/komasaru/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
       
     </div>
   
@@ -593,7 +593,7 @@ lightbox.cssを以下のように修正（以下は当方の場合）</p>
     
       
       
-      <a href="/pages/komasaru/tags/wordpress" class="page__taxonomy-item" rel="tag">WordPress</a>
+      <a href="/tags/wordpress" class="page__taxonomy-item" rel="tag">WordPress</a>
     
     </span>
   </p>
@@ -614,11 +614,11 @@ lightbox.cssを以下のように修正（以下は当方の場合）</p>
     
       
       
-      <a href="/pages/komasaru/categories/web%E3%82%B5%E3%82%A4%E3%83%88" class="page__taxonomy-item" rel="tag">Webサイト</a><span class="sep">, </span>
+      <a href="/categories/web%E3%82%B5%E3%82%A4%E3%83%88" class="page__taxonomy-item" rel="tag">Webサイト</a><span class="sep">, </span>
     
       
       
-      <a href="/pages/komasaru/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
     
     </span>
   </p>
@@ -635,15 +635,15 @@ lightbox.cssを以下のように修正（以下は当方の場合）</p>
       <section class="page__share">
   
 
-  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E3%83%9B%E3%83%BC%E3%83%A0%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%A7%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%89%E3%82%B7%E3%83%A7%E3%83%BC%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F02%2F20%2F20013012%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E3%83%9B%E3%83%BC%E3%83%A0%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%A7%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%89%E3%82%B7%E3%83%A7%E3%83%BC%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F02%2F20%2F20013012%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F02%2F20%2F20013012%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F02%2F20%2F20013012%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
   
 
   <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F02%2F20%2F20013012%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F02%2F20%2F20013012%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -657,11 +657,11 @@ lightbox.cssを以下のように修正（以下は当方の場合）</p>
       
   <nav class="pagination">
     
-      <a href="/pages/komasaru/2009/02/20/20004557/" class="pagination--pager" title="LOTO6 No.433
+      <a href="/2009/02/20/20004557/" class="pagination--pager" title="LOTO6 No.433
 ">Previous</a>
     
     
-      <a href="/pages/komasaru/2009/02/21/21001007/" class="pagination--pager" title="ＰＨＰでBASIC認証！
+      <a href="/2009/02/21/21001007/" class="pagination--pager" title="ＰＨＰでBASIC認証！
 ">Next</a>
     
   </nav>
@@ -696,7 +696,7 @@ lightbox.cssを以下のように修正（以下は当方の場合）</p>
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-04-21)</small>
     </h3>
@@ -717,7 +717,7 @@ lightbox.cssを以下のように修正（以下は当方の場合）</p>
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
+        <a href="/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
 </a>
         &nbsp;<small>(2021-04-14)</small>
     </h3>
@@ -738,7 +738,7 @@ lightbox.cssを以下のように修正（以下は当方の場合）</p>
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
+        <a href="/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
 </a>
         &nbsp;<small>(2021-04-01)</small>
     </h3>
@@ -759,7 +759,7 @@ lightbox.cssを以下のように修正（以下は当方の場合）</p>
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-03-17)</small>
     </h3>
@@ -799,7 +799,7 @@ lightbox.cssを以下のように修正（以下は当方の場合）</p>
     <div class="page__footer">
       <footer>
         <!-- start custom footer snippets -->
-<div id="qr"><img src="/pages/komasaru/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
 <div id="google-ad-5"></div>
 <div class="page__footer-etc">
   <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
@@ -808,7 +808,7 @@ lightbox.cssを以下のように修正（以下は当方の場合）</p>
   &emsp;合計 <tt id="pv-total">Loading...</tt><br />
   &emsp;今日 <tt id="pv-today">Loading...</tt><br />
   &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
-  <small>※<a href="/pages/komasaru/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
 </div>
 <p id="page-top">
   <a href="#">
@@ -851,9 +851,9 @@ lightbox.cssを以下のように修正（以下は当方の場合）</p>
     </div>
 
     
-  <script defer src="/pages/komasaru/assets/js/main.min.js"></script>
+  <script defer src="/assets/js/main.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
-  <script defer src="/pages/komasaru/assets/js/my_custom.js"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
 
 
 <script>
@@ -904,7 +904,7 @@ lightbox.cssを以下のように修正（以下は当方の場合）</p>
     
   <script>
     var disqus_config = function () {
-      this.page.url = "https://komasaru.github.io/pages/komasaru/2009/02/20/20013012/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.url = "https://komasaru.github.io/2009/02/20/20013012/";  // Replace PAGE_URL with your page's canonical URL variable
       this.page.identifier = "/2009/02/20/20013012"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() { // DON'T EDIT BELOW THIS LINE

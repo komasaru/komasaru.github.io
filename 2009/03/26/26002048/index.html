@@ -18,7 +18,7 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="mk-mode BLOG">
 <meta property="og:title" content="玄箱ＨＧをＦｅｄｏｒａ１０にｱｯﾌﾟｸﾞﾚｰﾄﾞ！">
-<meta property="og:url" content="https://komasaru.github.io/pages/komasaru/2009/03/26/26002048/">
+<meta property="og:url" content="https://komasaru.github.io/2009/03/26/26002048/">
 
 
   <meta property="og:description" content="今回は、前回 Ｆｅｄｏｒａ９ を入れたうちの KURO-BOX/HG を同様な方法で Ｆｅｄｏｒａ１０ にアップグレードしてみました。うちの玄箱ＨＧにとって初めて Ｆｅｄｏｒａ１０ になるんで、ちょっと心配ですが・・・いつもながら、これはあくまでも自分用の記録です。若干環境等異なる場合もあるかもしれません。ご了承下さい。作業記録【前提条件】・Ｆｅｄｏｒａ化する玄箱は「 KURO-BOX/HG 」。・「 KURO-BOX/HG 」には３２０ＧＢのハードディスクを組み込んでいる。・「 KURO-BOX/HG 」のＩＰアドレスは [ 192.168.11.2 ]・「 KURO-BOX/HG 」に「 できる！玄箱 Fedora化！！ 」のインストールキット「 F4K Install Kit 」でＦｅｄｏｒａ７導入済み＆「 yum 」が最新版に入れ替え済み。・「 KURO-BOX/HG 」のＦｅｄｏｒａ８をＦｅｄｏｒａ９にアップグレード済み。・インストール作業を実行させるマシンはＷｉｎｄｏｗｓＸＰ（ＰｅｎｔｉｕｍＭ）１．玄箱への接続ローカルマシンから KURO-BOX/HG へリモート接続し、rootユーザになる。（当方は、「 Poderosa 」というのを使用しています）２．パッケージダウンロード「 http://download.fedora.redhat.com/pub/fedora/linux/releases/10/Fedora/ppc/os/Packages/ 」にある「 fedora-release-10-1.noarch.rpm 」と「 fedora-release-notes-10.0.0-1.noarch.rpm 」をダンロードする。[root@KURO-BOX ~]# rpm -Uvh http://download.fedora.redhat.com/pub/fedora/linux/releases/10/Fedora/ppc/os/Packages/fedora-release-10-1.noarch.rpm http://download.fedora.redhat.com/pub/fedora/linux/releases/10/Fedora/ppc/os/Packages/fedora-release-notes-10.0.0-1.noarch.rpmhttp://download.fedora.redhat.com/pub/fedora/linux/releases/10/Fedora/ppc/os/Packages/fedora-release-10-1.noarch.rpm を取得中http://download.fedora.redhat.com/pub/fedora/linux/releases/10/Fedora/ppc/os/Packages/fedora-release-notes-10.0.0-1.noarch.rpm を取得中警告: /var/tmp/rpm-xfer.4T9NuG: ヘッダ V3 DSA signature: NOKEY, key ID 4ebfc273準備中...                ########################################### [100%]   1:fedora-release-notes   ########################################### [ 50%]   2:fedora-release         ########################################### [100%][root@KURO-BOX ~]#３．キャッシュの整理以下のように入力してキャッシュをきれいにしておく[root@KURO-BOX ~]# yum clean allLoaded plugins: fastestmirrorCleaning up EverythingCleaning up list of fastest mirrors[root@KURO-BOX ~]#４．「 yum 」と「 rpm 」をアップデートＦｅｄｏｒａのアップグレードの前にまず「 yum 」と「 rpm 」をアップデートしておく。[root@KURO-BOX ~]# yum -y update rpm\* yum\*・・・　途中省略　・・・Replaced:  compat-db.ppc 0:4.5.20-5.fc9Complete![root@KURO-BOX ~]#５．rpm のデータベースが壊れていることがあるので、再構築[root@KURO-BOX ~]# rpm --rebuilddb[root@KURO-BOX ~]#６．アップグレード以下のように入力してアップグレードする。[root@KURO-BOX ~]# yum -y upgrade・・・　途中省略　・・・Error: Missing Dependency: libgnutls.so.13(GNUTLS_1_3) is needed by package ntfsprogs-1.13.1-8.fc8.ppc (installed)Error: Missing Dependency: libgnutls.so.13 is needed by package ntfsprogs-1.13.1-8.fc8.ppc (installed)[root@KURO-BOX ~]#案の定、依存性エラー発生！７．パッケージ削除なので、パッケージを削除。[root@KURO-BOX ~]# yum -y remove ntfsprogs・・・　途中省略　・・・Removed:  ntfsprogs.ppc 0:1.13.1-8.fc8Complete![root@KURO-BOX ~]#８．再度アップグレード以下のように入力してアップグレードする。[root@KURO-BOX ~]# yum -y upgrade・・・　途中省略　・・・Replaced:  bluez-utils.ppc 0:3.36-3.fc9 gail.ppc 0:1.22.3-1.fc9 gphoto2.ppc 0:2.4.0-10.fc9  ps3pf-utils.ppc 0:2.1-2.fc9 Complete![root@KURO-BOX ~]#９．リブート玄箱をリブートする。１０．Ｆｅｄｏｒａ１０ になって公式から消えた rpm を調査[root@KURO-BOX ~]# package-cleanup --orphansSetting up yumLoaded plugins: fastestmirrorLoading mirror speeds from cached hostfile * fedora: ftp.iij.ad.jp * updates: ftp.iij.ad.jpgnupg2-2.0.10-1.fc9.ppckernel-2.6.25-14.fc9.ppckernel-2.6.27.19-78.2.30.fc9.ppc[root@KURO-BOX ~]#古いカーネルとか見つかりましたが、別にあってもいい（？）と思うので、とりあえずそのままにした。１１．rpm の依存関係をチェック[root@KURO-BOX ~]# package-cleanup --problemsSetting up yumLoaded plugins: fastestmirrorLoading mirror speeds from cached hostfileReading local RPM databaseProcessing all local requiresNo problems found[root@KURO-BOX ~]#問題なしでした。１２．パッケージの重複チェック[root@KURO-BOX ~]# package-cleanup --dupesSetting up yumLoaded plugins: fastestmirrorLoading mirror speeds from cached hostfile[root@KURO-BOX ~]#重複なしでした。もし、重複パッケージがあったら、package-cleanup –cleandupes１３．rpm データベースの再構築[root@KURO-BOX ~]# rm -f /var/lib/rpm/__* ; rpm --rebuilddb[root@KURO-BOX ~]#１４．アップデートここで一応アップデートしておく。[root@KURO-BOX ~]# yum -y updateLoaded plugins: fastestmirrorLoading mirror speeds from cached hostfile * fedora: ftp.iij.ad.jp * updates: ftp.iij.ad.jpSetting up Update ProcessNo Packages marked for Update[root@KURO-BOX ~]#何にも無かった。。。１５．リブート念のため、玄箱をリブートする。１６．バージョン確認再度リモート接続しrootユーザになり、以下のように入力してみる。[root@KURO-BOX ~]# cat /etc/fedora-releaseFedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる[root@KURO-BOX ~]#いいんじゃな～いっ！多分！次回は、最終目的のファイルサーバ（samba）導入を試してみます。ほなね。">
@@ -32,7 +32,7 @@
   <meta name="twitter:site" content="@rsm_mzk">
   <meta name="twitter:title" content="玄箱ＨＧをＦｅｄｏｒａ１０にｱｯﾌﾟｸﾞﾚｰﾄﾞ！">
   <meta name="twitter:description" content="今回は、前回 Ｆｅｄｏｒａ９ を入れたうちの KURO-BOX/HG を同様な方法で Ｆｅｄｏｒａ１０ にアップグレードしてみました。うちの玄箱ＨＧにとって初めて Ｆｅｄｏｒａ１０ になるんで、ちょっと心配ですが・・・いつもながら、これはあくまでも自分用の記録です。若干環境等異なる場合もあるかもしれません。ご了承下さい。作業記録【前提条件】・Ｆｅｄｏｒａ化する玄箱は「 KURO-BOX/HG 」。・「 KURO-BOX/HG 」には３２０ＧＢのハードディスクを組み込んでいる。・「 KURO-BOX/HG 」のＩＰアドレスは [ 192.168.11.2 ]・「 KURO-BOX/HG 」に「 できる！玄箱 Fedora化！！ 」のインストールキット「 F4K Install Kit 」でＦｅｄｏｒａ７導入済み＆「 yum 」が最新版に入れ替え済み。・「 KURO-BOX/HG 」のＦｅｄｏｒａ８をＦｅｄｏｒａ９にアップグレード済み。・インストール作業を実行させるマシンはＷｉｎｄｏｗｓＸＰ（ＰｅｎｔｉｕｍＭ）１．玄箱への接続ローカルマシンから KURO-BOX/HG へリモート接続し、rootユーザになる。（当方は、「 Poderosa 」というのを使用しています）２．パッケージダウンロード「 http://download.fedora.redhat.com/pub/fedora/linux/releases/10/Fedora/ppc/os/Packages/ 」にある「 fedora-release-10-1.noarch.rpm 」と「 fedora-release-notes-10.0.0-1.noarch.rpm 」をダンロードする。[root@KURO-BOX ~]# rpm -Uvh http://download.fedora.redhat.com/pub/fedora/linux/releases/10/Fedora/ppc/os/Packages/fedora-release-10-1.noarch.rpm http://download.fedora.redhat.com/pub/fedora/linux/releases/10/Fedora/ppc/os/Packages/fedora-release-notes-10.0.0-1.noarch.rpmhttp://download.fedora.redhat.com/pub/fedora/linux/releases/10/Fedora/ppc/os/Packages/fedora-release-10-1.noarch.rpm を取得中http://download.fedora.redhat.com/pub/fedora/linux/releases/10/Fedora/ppc/os/Packages/fedora-release-notes-10.0.0-1.noarch.rpm を取得中警告: /var/tmp/rpm-xfer.4T9NuG: ヘッダ V3 DSA signature: NOKEY, key ID 4ebfc273準備中...                ########################################### [100%]   1:fedora-release-notes   ########################################### [ 50%]   2:fedora-release         ########################################### [100%][root@KURO-BOX ~]#３．キャッシュの整理以下のように入力してキャッシュをきれいにしておく[root@KURO-BOX ~]# yum clean allLoaded plugins: fastestmirrorCleaning up EverythingCleaning up list of fastest mirrors[root@KURO-BOX ~]#４．「 yum 」と「 rpm 」をアップデートＦｅｄｏｒａのアップグレードの前にまず「 yum 」と「 rpm 」をアップデートしておく。[root@KURO-BOX ~]# yum -y update rpm\* yum\*・・・　途中省略　・・・Replaced:  compat-db.ppc 0:4.5.20-5.fc9Complete![root@KURO-BOX ~]#５．rpm のデータベースが壊れていることがあるので、再構築[root@KURO-BOX ~]# rpm --rebuilddb[root@KURO-BOX ~]#６．アップグレード以下のように入力してアップグレードする。[root@KURO-BOX ~]# yum -y upgrade・・・　途中省略　・・・Error: Missing Dependency: libgnutls.so.13(GNUTLS_1_3) is needed by package ntfsprogs-1.13.1-8.fc8.ppc (installed)Error: Missing Dependency: libgnutls.so.13 is needed by package ntfsprogs-1.13.1-8.fc8.ppc (installed)[root@KURO-BOX ~]#案の定、依存性エラー発生！７．パッケージ削除なので、パッケージを削除。[root@KURO-BOX ~]# yum -y remove ntfsprogs・・・　途中省略　・・・Removed:  ntfsprogs.ppc 0:1.13.1-8.fc8Complete![root@KURO-BOX ~]#８．再度アップグレード以下のように入力してアップグレードする。[root@KURO-BOX ~]# yum -y upgrade・・・　途中省略　・・・Replaced:  bluez-utils.ppc 0:3.36-3.fc9 gail.ppc 0:1.22.3-1.fc9 gphoto2.ppc 0:2.4.0-10.fc9  ps3pf-utils.ppc 0:2.1-2.fc9 Complete![root@KURO-BOX ~]#９．リブート玄箱をリブートする。１０．Ｆｅｄｏｒａ１０ になって公式から消えた rpm を調査[root@KURO-BOX ~]# package-cleanup --orphansSetting up yumLoaded plugins: fastestmirrorLoading mirror speeds from cached hostfile * fedora: ftp.iij.ad.jp * updates: ftp.iij.ad.jpgnupg2-2.0.10-1.fc9.ppckernel-2.6.25-14.fc9.ppckernel-2.6.27.19-78.2.30.fc9.ppc[root@KURO-BOX ~]#古いカーネルとか見つかりましたが、別にあってもいい（？）と思うので、とりあえずそのままにした。１１．rpm の依存関係をチェック[root@KURO-BOX ~]# package-cleanup --problemsSetting up yumLoaded plugins: fastestmirrorLoading mirror speeds from cached hostfileReading local RPM databaseProcessing all local requiresNo problems found[root@KURO-BOX ~]#問題なしでした。１２．パッケージの重複チェック[root@KURO-BOX ~]# package-cleanup --dupesSetting up yumLoaded plugins: fastestmirrorLoading mirror speeds from cached hostfile[root@KURO-BOX ~]#重複なしでした。もし、重複パッケージがあったら、package-cleanup –cleandupes１３．rpm データベースの再構築[root@KURO-BOX ~]# rm -f /var/lib/rpm/__* ; rpm --rebuilddb[root@KURO-BOX ~]#１４．アップデートここで一応アップデートしておく。[root@KURO-BOX ~]# yum -y updateLoaded plugins: fastestmirrorLoading mirror speeds from cached hostfile * fedora: ftp.iij.ad.jp * updates: ftp.iij.ad.jpSetting up Update ProcessNo Packages marked for Update[root@KURO-BOX ~]#何にも無かった。。。１５．リブート念のため、玄箱をリブートする。１６．バージョン確認再度リモート接続しrootユーザになり、以下のように入力してみる。[root@KURO-BOX ~]# cat /etc/fedora-releaseFedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる[root@KURO-BOX ~]#いいんじゃな～いっ！多分！次回は、最終目的のファイルサーバ（samba）導入を試してみます。ほなね。">
-  <meta name="twitter:url" content="https://komasaru.github.io/pages/komasaru/2009/03/26/26002048/">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/03/26/26002048/">
 
   
     <meta name="twitter:card" content="summary">
@@ -56,7 +56,7 @@
   
 
 
-<link rel="canonical" href="https://komasaru.github.io/pages/komasaru/2009/03/26/26002048/">
+<link rel="canonical" href="https://komasaru.github.io/2009/03/26/26002048/">
 
 
 
@@ -66,7 +66,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
     }
   </script>
@@ -78,7 +78,7 @@
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "mk-mode.com",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "sameAs": null
     }
   </script>
@@ -104,7 +104,7 @@
 </script>
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="/pages/komasaru/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/main.css">
 
 <!--[if IE ]>
   <style>
@@ -141,7 +141,7 @@
 <link rel="dns-prefetch" href="//twitter.com" />
 <link rel="dns-prefetch" href="//www.facebook.com" />
 
-<link rel="icon" href="/pages/komasaru/assets/images/favicon.ico">
+<link rel="icon" href="/assets/images/favicon.ico">
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-18154748-1']);
@@ -180,19 +180,19 @@
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         
-        <a class="site-title" href="/pages/komasaru/">mk-mode BLOG</a>
+        <a class="site-title" href="/">mk-mode BLOG</a>
         <ul class="visible-links"><li class="masthead__menu-item">
-              <a href="/pages/komasaru/year-archive/" >Archives</a>
+              <a href="/year-archive/" >Archives</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/categories/" >Categories</a>
+              <a href="/categories/" >Categories</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/tags/" >Tags</a>
+              <a href="/tags/" >Tags</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/privacy.html" >Privacy Policy</a>
+              <a href="/privacy.html" >Privacy Policy</a>
             </li></ul>
         
         <button class="search__toggle" type="button">
@@ -231,7 +231,7 @@
       
 
       
-        <img src="/pages/komasaru/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
       
     </div>
   
@@ -604,7 +604,7 @@ Fedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる
     
       
       
-      <a href="/pages/komasaru/tags/fedora" class="page__taxonomy-item" rel="tag">Fedora</a>
+      <a href="/tags/fedora" class="page__taxonomy-item" rel="tag">Fedora</a>
     
     </span>
   </p>
@@ -625,11 +625,11 @@ Fedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる
     
       
       
-      <a href="/pages/komasaru/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
     
       
       
-      <a href="/pages/komasaru/categories/%E7%8E%84%E7%AE%B1" class="page__taxonomy-item" rel="tag">玄箱</a>
+      <a href="/categories/%E7%8E%84%E7%AE%B1" class="page__taxonomy-item" rel="tag">玄箱</a>
     
     </span>
   </p>
@@ -646,15 +646,15 @@ Fedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる
       <section class="page__share">
   
 
-  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E7%8E%84%E7%AE%B1%EF%BC%A8%EF%BC%A7%E3%82%92%EF%BC%A6%EF%BD%85%EF%BD%84%EF%BD%8F%EF%BD%92%EF%BD%81%EF%BC%91%EF%BC%90%E3%81%AB%EF%BD%B1%EF%BD%AF%EF%BE%8C%EF%BE%9F%EF%BD%B8%EF%BE%9E%EF%BE%9A%EF%BD%B0%EF%BE%84%EF%BE%9E%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F03%2F26%2F26002048%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E7%8E%84%E7%AE%B1%EF%BC%A8%EF%BC%A7%E3%82%92%EF%BC%A6%EF%BD%85%EF%BD%84%EF%BD%8F%EF%BD%92%EF%BD%81%EF%BC%91%EF%BC%90%E3%81%AB%EF%BD%B1%EF%BD%AF%EF%BE%8C%EF%BE%9F%EF%BD%B8%EF%BE%9E%EF%BE%9A%EF%BD%B0%EF%BE%84%EF%BE%9E%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F03%2F26%2F26002048%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F03%2F26%2F26002048%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F03%2F26%2F26002048%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
   
 
   <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F03%2F26%2F26002048%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F03%2F26%2F26002048%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -668,11 +668,11 @@ Fedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる
       
   <nav class="pagination">
     
-      <a href="/pages/komasaru/2009/03/25/25002019/" class="pagination--pager" title="玄箱ＨＧをＦｅｄｏｒａ９にｱｯﾌﾟｸﾞﾚｰﾄﾞ･成功！
+      <a href="/2009/03/25/25002019/" class="pagination--pager" title="玄箱ＨＧをＦｅｄｏｒａ９にｱｯﾌﾟｸﾞﾚｰﾄﾞ･成功！
 ">Previous</a>
     
     
-      <a href="/pages/komasaru/2009/03/27/27001021/" class="pagination--pager" title="LOTO6 No.438
+      <a href="/2009/03/27/27001021/" class="pagination--pager" title="LOTO6 No.438
 ">Next</a>
     
   </nav>
@@ -707,7 +707,7 @@ Fedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-04-21)</small>
     </h3>
@@ -728,7 +728,7 @@ Fedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
+        <a href="/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
 </a>
         &nbsp;<small>(2021-04-14)</small>
     </h3>
@@ -749,7 +749,7 @@ Fedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
+        <a href="/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
 </a>
         &nbsp;<small>(2021-04-01)</small>
     </h3>
@@ -770,7 +770,7 @@ Fedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-03-17)</small>
     </h3>
@@ -810,7 +810,7 @@ Fedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる
     <div class="page__footer">
       <footer>
         <!-- start custom footer snippets -->
-<div id="qr"><img src="/pages/komasaru/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
 <div id="google-ad-5"></div>
 <div class="page__footer-etc">
   <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
@@ -819,7 +819,7 @@ Fedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる
   &emsp;合計 <tt id="pv-total">Loading...</tt><br />
   &emsp;今日 <tt id="pv-today">Loading...</tt><br />
   &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
-  <small>※<a href="/pages/komasaru/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
 </div>
 <p id="page-top">
   <a href="#">
@@ -862,9 +862,9 @@ Fedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる
     </div>
 
     
-  <script defer src="/pages/komasaru/assets/js/main.min.js"></script>
+  <script defer src="/assets/js/main.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
-  <script defer src="/pages/komasaru/assets/js/my_custom.js"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
 
 
 <script>
@@ -915,7 +915,7 @@ Fedora release 10 (Cambridge)　←　Ｆｅｄｏｒａ１０になってる
     
   <script>
     var disqus_config = function () {
-      this.page.url = "https://komasaru.github.io/pages/komasaru/2009/03/26/26002048/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.url = "https://komasaru.github.io/2009/03/26/26002048/";  // Replace PAGE_URL with your page's canonical URL variable
       this.page.identifier = "/2009/03/26/26002048"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() { // DON'T EDIT BELOW THIS LINE

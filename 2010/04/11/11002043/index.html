@@ -18,7 +18,7 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="mk-mode BLOG">
 <meta property="og:title" content="玄箱ＨＧ - U-Boot 化！">
-<meta property="og:url" content="https://komasaru.github.io/pages/komasaru/2010/04/11/11002043/">
+<meta property="og:url" content="https://komasaru.github.io/2010/04/11/11002043/">
 
 
   <meta property="og:description" content="今日は、とうとううちの玄箱HG(Debian 4.0(etch))を「U-Boot」化しました。（玄箱HG - Debian 5.0(lenny) 化の前準備として）通常、「Ｕ−Ｂｏｏｔ」化するにはシリアルコンソールが必要のようですが、玄箱にそのような細工をするのは怖いし面倒なので、シリアルコンソールを使用しない方法、また「U-Boot」の起動確認は「netcat」を使用する方法をとりました。作業記録※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※失敗すると、玄 箱が単なるゴミになります。個人の記録です。この記事を参考に作業される方は自己責任でお願いします。当方も、十分に下調べした上での作業です。当記事を参考にされてもよいですが、実際に作業される場合は、自分で十分に調査して手順を整理してから行ってください。※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※■前提条件  玄箱HGにはDebian 4.0(etch) がインストール済み。  玄箱HGにはシリアルコンソールを取り付けていない（シリアルコンソールは使用しない）。  クライアント側は WindowsXP マシンで、U-Boot の起動確認は「netcat」を使用。１．必要なファイルを準備GenBako Kernel Collectionから、uImage のカーネルイメージ（2.6.20）、U-Boot Loader、U-Boot Loaderのmd5をダウンロードする。# cd /tmp  &lt;span style=&quot;color: #ff0000;&quot;&gt;← ダウンロードするファイルを置くディレクトリへ移動。（どこでもＯＫ）&lt;/span&gt;# wget http://www.genbako.com/uImage/kernelimage-2.6.20-kuroHG-uImage.tgz# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.bin# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.md5※ちなみに、u-boot-hg.serial.flash.bin, u-boot-hg.serial.flash.md5 は標準でシリアルを使って出力するためのもののようです。（今回はシリアル出力しないので[serial]のないバージョン）２．「mtdblock1」の確認「/dev」に「mtdblock1」があるのを確認。なければ以下のコマンドでデバイスを作っておく。（当方は、「/dev」に「mtdblock1」があったので、この項は不実施）# cd /dev# ./MAKEDEV mtd３．システムマップの退避念のため、「/boot」のシステムマップを退避。# cd /boot# cp -p System.map System.map.orig４．「uImage」を展開「uImage」のアーカイブを展開。（「/boot」に）# tar zxvf /tmp/kernelimage-2.6.20-kuroHG-uImage.tgz５．「U-Boot Loader」のチェックサム確認「U-Boot Loader」が壊れているとフラッシュに書き込んでも取り返しのつかないことになるので、md5ファイルで「U-Boot Loader」のチェックサムを確認する。# cd /tmp# md5sum -c u-boot-hg.flash.md5u-boot-hg.flash.bin: OK 　&lt;span style=&quot;color: #ff0000;&quot;&gt;←　このように表示されればＯＫ&lt;/span&gt;６．「U-Boot Loader」の書き込みここで、フラッシュに「U-Boot Loader」を書き込む。※ここで失敗すると玄箱がお亡くなりになります。# dd if=u-boot-hg.flash.bin of=/dev/mtdblock1 bs=1k170+1 records in170+1 records out174668 bytes (175 kB) copied, 3.09891 seconds, 56.4 kB/s※上記のコマンドの代わりに以下のコマンドでもＯＫ。“cat u-boot-hg.flash.bin &gt; /dev/mtdblock1”７．書き込み確認フラッシュに書き込んだ「U-Boot Loader」がもとのファイルが同一か（ちゃんと書き込まれたか）を確認する。# cmp u-boot-hg.flash.bin /dev/mtdblock1cmp: EOF on u-boot-hg.flash.bin　&lt;span style=&quot;color: #ff0000;&quot;&gt;←　これでＯＫ（最後までエラーが無かったということ&lt;/span&gt;８．「netcat」インストール（玄箱ＨＧ側）当方の玄箱HGにはシリアルコンソールをつけていないので、シリアルコンソールの代わりに「netcat」を使います。# apt-get install netcat９．「netcat」インストール（WindowsXP側）「http://www.genbako.com/u-boot_loader/」に 「nc111nt.zip」が置かれているので、ダウンロード・展開し、WindowsマシンのIPアドレスを「192.168.11.149」に設定する。※U-Boot起動時、IPアドレスが以下のように固定されているようです。  玄箱側のIPアドレス１９２．１６８．１１．１５０  クライアント側１９２．１６８．１１．１４９１０．「netcat」監視開始Windows マシンのコマンドプロンプトで「netcat」のフォルダへ移動後、以下のコマンドを実行すると監視が開始されます。＞ nc -v -v -n -u -s 192.168.11.149 -p 6666 192.168.11.150 6666(UNKNOWN) [192.168.11.150] 6666 (?) open１１．玄箱リブートここで、玄箱を再起動する。# reboot１２．確認玄箱起動時に、Windows 側の「netcat」（コマンドプロンプト）で以下のような出力がされれば、大成功！U-Boot 1.1.4 LiSt 2.1.0 (Sep 21 2006 - 00:14:53) LinkStation HG / KuroBox HGstdin :   ncstdout:   ncstderr:   ncIDE:   Bus 0: OKDevice 0: Model: WDC WD3200JB-22KFA0 Firm: 08.05J08 Ser#: WD-WCAMR1323445Type: Hard DiskSupports 48-bit addressingCapacity: 305245.3 MB = 298.0 GB (625142448 x 512)Boot in 01 seconds (&#39;s&#39; to stop)...Loading 0:1:boot/vmlinux.UBoot1319184 bytes read## Booting image at 00800000 ...Image Name:   Linux-2.6.20-kuroboxHGImage Type:   PowerPC Linux Kernel Image (gzip compressed)Data Size:    1319120 Bytes =  1.3 MBLoad Address: 00000000Entry Point:  00000000Verifying Checksum ... OKUncompressing Kernel Image ... OK「U-Boot」化の作業は以上です。もしも、このようにならなければ、「U-Boot」化失敗です。玄箱はゴミになってしまったことになります。※でも、ハードハックできれば再起可能のようですが。。。（よくわかりませんが、超超玄人でないとできないと思います）あと、「U-Boot」化したら、玄箱は今までどおりの方法でのEMモードでの起動はできません。以下のようにするようです。      EM モードでの起動したい場合    Boot 待ちの時に s でストップ  run writeng      run emboot        EMモードの状態から通常モードで起動したい場合    Boot 待ちの時に s でストップ  run writeok  boot※fl3(mtdblock2) に echo -n “NGNG” しただけで再起動すると HDD にある 「/boot/vmlinux.UBoot」 で起動してしまうのでカーネルパニックになるようです。玄箱HGが「U-Boot」化できたので、次回はいよいよ「Debian 5.0(lenny)」化ですかね～。では、また。">
@@ -32,7 +32,7 @@
   <meta name="twitter:site" content="@rsm_mzk">
   <meta name="twitter:title" content="玄箱ＨＧ - U-Boot 化！">
   <meta name="twitter:description" content="今日は、とうとううちの玄箱HG(Debian 4.0(etch))を「U-Boot」化しました。（玄箱HG - Debian 5.0(lenny) 化の前準備として）通常、「Ｕ−Ｂｏｏｔ」化するにはシリアルコンソールが必要のようですが、玄箱にそのような細工をするのは怖いし面倒なので、シリアルコンソールを使用しない方法、また「U-Boot」の起動確認は「netcat」を使用する方法をとりました。作業記録※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※失敗すると、玄 箱が単なるゴミになります。個人の記録です。この記事を参考に作業される方は自己責任でお願いします。当方も、十分に下調べした上での作業です。当記事を参考にされてもよいですが、実際に作業される場合は、自分で十分に調査して手順を整理してから行ってください。※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※■前提条件  玄箱HGにはDebian 4.0(etch) がインストール済み。  玄箱HGにはシリアルコンソールを取り付けていない（シリアルコンソールは使用しない）。  クライアント側は WindowsXP マシンで、U-Boot の起動確認は「netcat」を使用。１．必要なファイルを準備GenBako Kernel Collectionから、uImage のカーネルイメージ（2.6.20）、U-Boot Loader、U-Boot Loaderのmd5をダウンロードする。# cd /tmp  &lt;span style=&quot;color: #ff0000;&quot;&gt;← ダウンロードするファイルを置くディレクトリへ移動。（どこでもＯＫ）&lt;/span&gt;# wget http://www.genbako.com/uImage/kernelimage-2.6.20-kuroHG-uImage.tgz# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.bin# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.md5※ちなみに、u-boot-hg.serial.flash.bin, u-boot-hg.serial.flash.md5 は標準でシリアルを使って出力するためのもののようです。（今回はシリアル出力しないので[serial]のないバージョン）２．「mtdblock1」の確認「/dev」に「mtdblock1」があるのを確認。なければ以下のコマンドでデバイスを作っておく。（当方は、「/dev」に「mtdblock1」があったので、この項は不実施）# cd /dev# ./MAKEDEV mtd３．システムマップの退避念のため、「/boot」のシステムマップを退避。# cd /boot# cp -p System.map System.map.orig４．「uImage」を展開「uImage」のアーカイブを展開。（「/boot」に）# tar zxvf /tmp/kernelimage-2.6.20-kuroHG-uImage.tgz５．「U-Boot Loader」のチェックサム確認「U-Boot Loader」が壊れているとフラッシュに書き込んでも取り返しのつかないことになるので、md5ファイルで「U-Boot Loader」のチェックサムを確認する。# cd /tmp# md5sum -c u-boot-hg.flash.md5u-boot-hg.flash.bin: OK 　&lt;span style=&quot;color: #ff0000;&quot;&gt;←　このように表示されればＯＫ&lt;/span&gt;６．「U-Boot Loader」の書き込みここで、フラッシュに「U-Boot Loader」を書き込む。※ここで失敗すると玄箱がお亡くなりになります。# dd if=u-boot-hg.flash.bin of=/dev/mtdblock1 bs=1k170+1 records in170+1 records out174668 bytes (175 kB) copied, 3.09891 seconds, 56.4 kB/s※上記のコマンドの代わりに以下のコマンドでもＯＫ。“cat u-boot-hg.flash.bin &gt; /dev/mtdblock1”７．書き込み確認フラッシュに書き込んだ「U-Boot Loader」がもとのファイルが同一か（ちゃんと書き込まれたか）を確認する。# cmp u-boot-hg.flash.bin /dev/mtdblock1cmp: EOF on u-boot-hg.flash.bin　&lt;span style=&quot;color: #ff0000;&quot;&gt;←　これでＯＫ（最後までエラーが無かったということ&lt;/span&gt;８．「netcat」インストール（玄箱ＨＧ側）当方の玄箱HGにはシリアルコンソールをつけていないので、シリアルコンソールの代わりに「netcat」を使います。# apt-get install netcat９．「netcat」インストール（WindowsXP側）「http://www.genbako.com/u-boot_loader/」に 「nc111nt.zip」が置かれているので、ダウンロード・展開し、WindowsマシンのIPアドレスを「192.168.11.149」に設定する。※U-Boot起動時、IPアドレスが以下のように固定されているようです。  玄箱側のIPアドレス１９２．１６８．１１．１５０  クライアント側１９２．１６８．１１．１４９１０．「netcat」監視開始Windows マシンのコマンドプロンプトで「netcat」のフォルダへ移動後、以下のコマンドを実行すると監視が開始されます。＞ nc -v -v -n -u -s 192.168.11.149 -p 6666 192.168.11.150 6666(UNKNOWN) [192.168.11.150] 6666 (?) open１１．玄箱リブートここで、玄箱を再起動する。# reboot１２．確認玄箱起動時に、Windows 側の「netcat」（コマンドプロンプト）で以下のような出力がされれば、大成功！U-Boot 1.1.4 LiSt 2.1.0 (Sep 21 2006 - 00:14:53) LinkStation HG / KuroBox HGstdin :   ncstdout:   ncstderr:   ncIDE:   Bus 0: OKDevice 0: Model: WDC WD3200JB-22KFA0 Firm: 08.05J08 Ser#: WD-WCAMR1323445Type: Hard DiskSupports 48-bit addressingCapacity: 305245.3 MB = 298.0 GB (625142448 x 512)Boot in 01 seconds (&#39;s&#39; to stop)...Loading 0:1:boot/vmlinux.UBoot1319184 bytes read## Booting image at 00800000 ...Image Name:   Linux-2.6.20-kuroboxHGImage Type:   PowerPC Linux Kernel Image (gzip compressed)Data Size:    1319120 Bytes =  1.3 MBLoad Address: 00000000Entry Point:  00000000Verifying Checksum ... OKUncompressing Kernel Image ... OK「U-Boot」化の作業は以上です。もしも、このようにならなければ、「U-Boot」化失敗です。玄箱はゴミになってしまったことになります。※でも、ハードハックできれば再起可能のようですが。。。（よくわかりませんが、超超玄人でないとできないと思います）あと、「U-Boot」化したら、玄箱は今までどおりの方法でのEMモードでの起動はできません。以下のようにするようです。      EM モードでの起動したい場合    Boot 待ちの時に s でストップ  run writeng      run emboot        EMモードの状態から通常モードで起動したい場合    Boot 待ちの時に s でストップ  run writeok  boot※fl3(mtdblock2) に echo -n “NGNG” しただけで再起動すると HDD にある 「/boot/vmlinux.UBoot」 で起動してしまうのでカーネルパニックになるようです。玄箱HGが「U-Boot」化できたので、次回はいよいよ「Debian 5.0(lenny)」化ですかね～。では、また。">
-  <meta name="twitter:url" content="https://komasaru.github.io/pages/komasaru/2010/04/11/11002043/">
+  <meta name="twitter:url" content="https://komasaru.github.io/2010/04/11/11002043/">
 
   
     <meta name="twitter:card" content="summary">
@@ -56,7 +56,7 @@
   
 
 
-<link rel="canonical" href="https://komasaru.github.io/pages/komasaru/2010/04/11/11002043/">
+<link rel="canonical" href="https://komasaru.github.io/2010/04/11/11002043/">
 
 
 
@@ -66,7 +66,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
     }
   </script>
@@ -78,7 +78,7 @@
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "mk-mode.com",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "sameAs": null
     }
   </script>
@@ -104,7 +104,7 @@
 </script>
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="/pages/komasaru/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/main.css">
 
 <!--[if IE ]>
   <style>
@@ -141,7 +141,7 @@
 <link rel="dns-prefetch" href="//twitter.com" />
 <link rel="dns-prefetch" href="//www.facebook.com" />
 
-<link rel="icon" href="/pages/komasaru/assets/images/favicon.ico">
+<link rel="icon" href="/assets/images/favicon.ico">
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-18154748-1']);
@@ -180,19 +180,19 @@
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         
-        <a class="site-title" href="/pages/komasaru/">mk-mode BLOG</a>
+        <a class="site-title" href="/">mk-mode BLOG</a>
         <ul class="visible-links"><li class="masthead__menu-item">
-              <a href="/pages/komasaru/year-archive/" >Archives</a>
+              <a href="/year-archive/" >Archives</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/categories/" >Categories</a>
+              <a href="/categories/" >Categories</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/tags/" >Tags</a>
+              <a href="/tags/" >Tags</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/privacy.html" >Privacy Policy</a>
+              <a href="/privacy.html" >Privacy Policy</a>
             </li></ul>
         
         <button class="search__toggle" type="button">
@@ -231,7 +231,7 @@
       
 
       
-        <img src="/pages/komasaru/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
       
     </div>
   
@@ -587,11 +587,11 @@ Uncompressing Kernel Image ... OK
     
       
       
-      <a href="/pages/komasaru/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
     
       
       
-      <a href="/pages/komasaru/categories/%E7%8E%84%E7%AE%B1" class="page__taxonomy-item" rel="tag">玄箱</a>
+      <a href="/categories/%E7%8E%84%E7%AE%B1" class="page__taxonomy-item" rel="tag">玄箱</a>
     
     </span>
   </p>
@@ -608,15 +608,15 @@ Uncompressing Kernel Image ... OK
       <section class="page__share">
   
 
-  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E7%8E%84%E7%AE%B1%EF%BC%A8%EF%BC%A7+-+U-Boot+%E5%8C%96%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2010%2F04%2F11%2F11002043%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E7%8E%84%E7%AE%B1%EF%BC%A8%EF%BC%A7+-+U-Boot+%E5%8C%96%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2010%2F04%2F11%2F11002043%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2010%2F04%2F11%2F11002043%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2010%2F04%2F11%2F11002043%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
   
 
   <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2010%2F04%2F11%2F11002043%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2010%2F04%2F11%2F11002043%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -630,11 +630,11 @@ Uncompressing Kernel Image ... OK
       
   <nav class="pagination">
     
-      <a href="/pages/komasaru/2010/04/10/10002046/" class="pagination--pager" title="玄箱ＨＧ － フラッシュのバックアップ！
+      <a href="/2010/04/10/10002046/" class="pagination--pager" title="玄箱ＨＧ － フラッシュのバックアップ！
 ">Previous</a>
     
     
-      <a href="/pages/komasaru/2010/04/12/12002049/" class="pagination--pager" title="玄箱ＨＧ - ＤｅｂｉａｎをＬｅｎｎｙ化！
+      <a href="/2010/04/12/12002049/" class="pagination--pager" title="玄箱ＨＧ - ＤｅｂｉａｎをＬｅｎｎｙ化！
 ">Next</a>
     
   </nav>
@@ -669,7 +669,7 @@ Uncompressing Kernel Image ... OK
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-04-21)</small>
     </h3>
@@ -690,7 +690,7 @@ Uncompressing Kernel Image ... OK
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
+        <a href="/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
 </a>
         &nbsp;<small>(2021-04-14)</small>
     </h3>
@@ -711,7 +711,7 @@ Uncompressing Kernel Image ... OK
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
+        <a href="/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
 </a>
         &nbsp;<small>(2021-04-01)</small>
     </h3>
@@ -732,7 +732,7 @@ Uncompressing Kernel Image ... OK
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-03-17)</small>
     </h3>
@@ -772,7 +772,7 @@ Uncompressing Kernel Image ... OK
     <div class="page__footer">
       <footer>
         <!-- start custom footer snippets -->
-<div id="qr"><img src="/pages/komasaru/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
 <div id="google-ad-5"></div>
 <div class="page__footer-etc">
   <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
@@ -781,7 +781,7 @@ Uncompressing Kernel Image ... OK
   &emsp;合計 <tt id="pv-total">Loading...</tt><br />
   &emsp;今日 <tt id="pv-today">Loading...</tt><br />
   &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
-  <small>※<a href="/pages/komasaru/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
 </div>
 <p id="page-top">
   <a href="#">
@@ -824,9 +824,9 @@ Uncompressing Kernel Image ... OK
     </div>
 
     
-  <script defer src="/pages/komasaru/assets/js/main.min.js"></script>
+  <script defer src="/assets/js/main.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
-  <script defer src="/pages/komasaru/assets/js/my_custom.js"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
 
 
 <script>
@@ -877,7 +877,7 @@ Uncompressing Kernel Image ... OK
     
   <script>
     var disqus_config = function () {
-      this.page.url = "https://komasaru.github.io/pages/komasaru/2010/04/11/11002043/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.url = "https://komasaru.github.io/2010/04/11/11002043/";  // Replace PAGE_URL with your page's canonical URL variable
       this.page.identifier = "/2010/04/11/11002043"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() { // DON'T EDIT BELOW THIS LINE

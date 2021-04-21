@@ -18,7 +18,7 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="mk-mode BLOG">
 <meta property="og:title" content="D945GCLF + Fedora10 サーバ構築メモ">
-<meta property="og:url" content="https://komasaru.github.io/pages/komasaru/2009/01/05/05165522/">
+<meta property="og:url" content="https://komasaru.github.io/2009/01/05/05165522/">
 
 
   <meta property="og:description" content="『Fedoraで自宅サーバー構築』を参考にして構築したときのメモです。以前、Fedora9で構築しようとしましたが、カーネルがD945GCLFのLanカードドライバに非対応のようでインストール自体が失敗したため、Fedora８で構築し運用していました。しかし、新しい物好きの僕なので、Fedora10でのサーバ構築に挑んでみたのでした。幸い自分が必要としているサービスは何とか構築できたので、以下に記録として残しておくことにしました。ただし、基本は『Fedoraで自宅サーバー構築』ですので、あしからず。。。構築記録（ ■：構築済み、□：未構築、△：不要と判断したもの ）Fedoraインストール■ Fedora 10 インストール→ Fedora 9 のインストールと同様の方法で Fedora 10 をインストール。内部クライアント(Windows)からLinuxサーバーをリモート操作する■ WindowsからSSHサーバーへリモート接続(Poderosaパスワード方式ログイン編)Fedora初期設定■ Fedora 9初期設定→ ネットワーク設定は kajuhome.com を参照。仮想マシン構築△ 仮想マシン構築△ ドメインＵディスクサイズ拡張Perlモジュールを簡単にインストールできるようにする■ Perlモジュールパッケージ管理システム導入(cpan2rpm)→ cpan2rpm はインストール完了。しかしperlモジュールのインストールはエラー。・以下のディレクトリがないとのエラーのようなので、mkdir で作成したら成功。/root/rpmbuild/SRPMS/SRPMS/root/rpmbuild/SRPMS/BUILD/root/rpmbuild/SRPMS/SOURCES/root/rpmbuild/SRPMS/SPECS/root/rpmbuild/SRPMS/RPMSサーバー公開前のセキュリティ強化■ ファイル改竄検知システム導入(Tripwire)■ rootkit検知ツール導入(chkrootkit)■ アンチウィルスソフト導入(Clam AntiVirus)■ ファイアウォール構築(iptables)システム時刻を自動的に合わせる■ NTPサーバー構築外部クライアント(Windows)からLinuxサーバーをリモート操作する△ SSHサーバー構築(OpenSSH)→ 次項の”OpenSSH+CHroot”をインストールするため。■ SSHサーバー構築(OpenSSH+Chroot)→ エラー。(configure: error: PAM headers not found)以下を実行。yum -y install pam-devel→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-4.5p1-1.i386.rpm→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-server-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-server-4.5p1-1.i386.rpm→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-clients-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-clients-4.5p1-1.i386.rpm→　成功！よって、rm -f /usr/src/redhat/RPMS/i386/*ではエラーとなるので、以下を実行！rm -f rpmbuild/SRPMS/RPMS/i386/*→　成功！■ WindowsからSSHサーバーへリモート接続(Poderosa鍵方式ログイン編)Linuxサーバーをルーターにする△ PCルーター構築(PPPoE+iptables)LAN内クライアントマシンへIPアドレスを自動で割当てる△ DHCPサーバー構築(dhcp)外部からドメイン名でサーバーにアクセスできるようにする△ ドメイン名取得(ieServer.Net編)※無料△ ドメイン名取得(独自ドメイン編)※有料△ ドメイン名取得(jpドメイン編)※有料内部からドメイン名でサーバーにアクセスできるようにする■ DNSサーバー構築(BIND)インターネットとフレッツ・スクウェアへ同時に接続できるようにする△ PPPoEマルチセッション設定(PPPoE)Linuxサーバーに接続したプリンタをLAN内で共有する△ プリントサーバー構築(CUPS)Webサーバーを公開する■ Webサーバー構築(Apache)■ Webサーバー間通信内容暗号化(Apache+mod_SSL)△ ユーザディレクトリ作成(/~ユーザ名/)△ Webページパスワード制限(htpasswd)△ バーチャルホスト設定■ Webサーバー間通信内容圧縮(mod_deflate)Windowsで作成したWebページをWebサーバーへアップロードする(SCP使用)■ WindowsからSSHサーバーへファイル転送(WinSCP)Windowsで作成したWebページをWebサーバーへアップロードする(FTP使用)■ FTPサーバー構築(vsftpd)△ WindowsからFTPサーバーへファイル転送(FileZilla)Webページへのアクセス統計をWebブラウザからみれるようにする■ Apacheアクセスログ解析(AWStats)cpan2rpm --no-sign --make-no-test --install Geo::IPfreeではエラーとなるので、cpan2rpm --no-sign --make-no-test --install Test::Simpleの後に、以下を実行！cpan2rpm --no-sign --make-no-test --install Geo::IPfree→　成功！△ バーチャルホスト用アクセスログ解析(AWStats)■ リファラスパム対策自宅サーバーのWebサイト内をGoogleのように検索できるようにする■ サイト内検索システム構築(Namazu)独自のメールアドレスをつくる(Postfix編)■ メールサーバー構築(Postfix+Dovecot)■ メールサーバー間通信内容暗号化(OpenSSL+Postfix+Dovecot)→ 実際にはPOP(110),SMTP(25)で稼動。■ taRgreyによるスパム対策(taRgrey)cd rpmbuild/SOURCES/ではエラーとなるので、以下を実行！cd /root/rpmbuild/SRPMS/SOURCES/→　成功！rpmbuild -bb --clean rpmbuild/SPECS/postfix.specではエラーとなるので、以下を実行！rpmbuild -bb --clean /root/rpmbuild/SRPMS/SPECS/postfix.spec→　成功！(但し、依存性問題発生したので、必要なpackageインストール)rpm -Uvh --force rpmbuild/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh --force /root/rpmbuild/SRPMS/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpm→　成功！etc…■ メールサーバーでウィルス&amp;スパムチェック(Postfix+Clam AntiVirus+SpamAssassin)△ バーチャルドメイン設定(Postfix&amp;Dovecot+qmail&amp;vpopmail)△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(Postfix+qmailadmin)△ メール自動返信機能導入(Vacation)△ メーリングリストサーバー構築(Postfix+Mailman)■ Postfixログ解析ツール導入(pflogsumm)独自のメールアドレスをつくる(qmail編)△ メールサーバー構築(qmail+Dovecot)△ メールサーバー間通信内容暗号化(ucspi-tcp-ssl)△ メールサーバーでウィルス&amp;スパムチェック(Qmail-Scanner+Clam AntiVirus+SpamAssassin+maildrop)△ バーチャルドメイン設定(vpopmail)△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(qmailadmin)△ qmailログ解析ツール導入(qmailanalog)メールサーバー共通■ OP25B(Outbound Port 25 Blocking)対策■ 複数ドメイン宛メールの集約(Fetchmail+hotwayd)■ メール格納形式変更HotmailやYahoo!メールのようにWebブラウザ上でメールできるようにする■ Webmailシステム構築(SquirrelMail)→ ログイン時、”このページにアクセスするにはアカウントが必要です。”のエラーになる。(/var/lib/php/session のオーナーをapache:apacheにしても）→ 再度 “/var/www/webmail/config/conf.pl” を設定しなおしたらOK。(?)△ バーチャルホスト設定(Virtual Host Domain Name Management)HotmailやYahoo!メールのように携帯電話でメールできるようにする■ 携帯用Webmailシステム構築(WebMailClient2 for Keitai)LinuxサーバーをWindowsのファイルサーバーにする■ Windowsファイルサーバー構築(Samba)LinuxサーバーをiTunesのミュージックサーバーにする△ DAAPサーバー構築(Firefly)Linuxサーバーを内部／外部共用のWindowsのファイルサーバーにする△ Webフォルダサーバー構築(WebDAV)一般ユーザにWebブラウザ上での各種設定機能を提供する△ Usermin導入(Usermin)△ UserminでVacation設定(Usermin::Vacation)LinuxのパスワードとSambaのパスワードを同期する△ Windowsネットワーク用統合認証サーバー構築(OpenLDAP+Samba)データベースシステムを作る(MySQL編)■ データベースサーバー構築(MySQL)■ MySQLデータベース自動バックアップ運用(mysqlhotcopy)→ DBのバックアップ、リストアは未確認。■ MySQL用GUI設定ツール導入(phpMyAdmin)SNS(ソーシャルネットワーキングサイト)を作る△ SNS構築(OpenPNE)Weblog(ブログ)サイトを作る■ ブログサイト構築(WordPress)CMSでWebサイトを構築する(XOOPS編)△ コミュニティサイト構築(XOOPS)CMSでWebサイトを構築する(joomla!編)△ CMSによるWebサイト構築(joomla!)バージョン管理システムを構築する△ バージョン管理システム構築(Subversion)サーバーの状態をブラウザから監視する(Nagios編)■ 統合監視システム構築(Nagios)→ インストールしたものの、不要と感じたため、サービスは停止。△ リモートホストサービス監視(Nagios+nrpe)サーバーの状態をブラウザから監視する(RRDtool編)■ サーバー監視システム構築(RRDtool+Cacti)■ Apacheアクセス統計監視グラフ追加(apachestats)△ BINDアクセス統計監視グラフ追加(bind9-snmp)サーバーの状態をブラウザから監視する(MRTG編)△ ネットワークトラフィック監視システム導入(NET-SNMP+MRTG)Webブラウジングを高速化する△ プロキシサーバー構築(Squid)△ プロキシサーバーでウィルスチェック(Squid+SquidClamAV+ClamAV)LinuxをHDDビデオレコーダーにする△ TV録画機能導入(GV-MVP/RX2+ivtv-1.0) kernel-2.6.22系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.21系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.20系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.19系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.8) kernel-2.6.18系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.7) kernel-2.6.17系△ TV録画予約システム構築(vrs)△ 録画データの活用サーバー公開後のセキュリティ強化■ 不正アクセス検知システム導入(Snort+SnortSnarf+Oinkmaster)rpm -Uvh /usr/src/redhat/RPMS/i386/snort-2.8.0.1-1.i386.rpmではエラーになる（Fedora10の場合）ので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/snort-2.8.3.1-1.i386.rpm→　成功！■ iptablesログ解析(IPTables log analyzer)■ ログ監視ツール導入(SWATCH)ユーザのホームディレクトリ容量を制限する△ ホームディレクトリ容量制限(quota)サーバーのファイルを自動的にバックアップする■ 自動バックアップ運用(tar+GnuPG+rsync/ftp)△ リアルタイムミラーリングツール導入(lsyncd+rsyncd)外部から安全にLANへ接続できるようにする△ VPNサーバー構築(OpenVPN)△ Windows上にVNCサーバー導入(UltraVNC)その他■ ハードディスクの温度設定hddtempのインストール。yum install hddtemphddtemp の実行。hddtemp /dev/sda">
@@ -32,7 +32,7 @@
   <meta name="twitter:site" content="@rsm_mzk">
   <meta name="twitter:title" content="D945GCLF + Fedora10 サーバ構築メモ">
   <meta name="twitter:description" content="『Fedoraで自宅サーバー構築』を参考にして構築したときのメモです。以前、Fedora9で構築しようとしましたが、カーネルがD945GCLFのLanカードドライバに非対応のようでインストール自体が失敗したため、Fedora８で構築し運用していました。しかし、新しい物好きの僕なので、Fedora10でのサーバ構築に挑んでみたのでした。幸い自分が必要としているサービスは何とか構築できたので、以下に記録として残しておくことにしました。ただし、基本は『Fedoraで自宅サーバー構築』ですので、あしからず。。。構築記録（ ■：構築済み、□：未構築、△：不要と判断したもの ）Fedoraインストール■ Fedora 10 インストール→ Fedora 9 のインストールと同様の方法で Fedora 10 をインストール。内部クライアント(Windows)からLinuxサーバーをリモート操作する■ WindowsからSSHサーバーへリモート接続(Poderosaパスワード方式ログイン編)Fedora初期設定■ Fedora 9初期設定→ ネットワーク設定は kajuhome.com を参照。仮想マシン構築△ 仮想マシン構築△ ドメインＵディスクサイズ拡張Perlモジュールを簡単にインストールできるようにする■ Perlモジュールパッケージ管理システム導入(cpan2rpm)→ cpan2rpm はインストール完了。しかしperlモジュールのインストールはエラー。・以下のディレクトリがないとのエラーのようなので、mkdir で作成したら成功。/root/rpmbuild/SRPMS/SRPMS/root/rpmbuild/SRPMS/BUILD/root/rpmbuild/SRPMS/SOURCES/root/rpmbuild/SRPMS/SPECS/root/rpmbuild/SRPMS/RPMSサーバー公開前のセキュリティ強化■ ファイル改竄検知システム導入(Tripwire)■ rootkit検知ツール導入(chkrootkit)■ アンチウィルスソフト導入(Clam AntiVirus)■ ファイアウォール構築(iptables)システム時刻を自動的に合わせる■ NTPサーバー構築外部クライアント(Windows)からLinuxサーバーをリモート操作する△ SSHサーバー構築(OpenSSH)→ 次項の”OpenSSH+CHroot”をインストールするため。■ SSHサーバー構築(OpenSSH+Chroot)→ エラー。(configure: error: PAM headers not found)以下を実行。yum -y install pam-devel→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-4.5p1-1.i386.rpm→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-server-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-server-4.5p1-1.i386.rpm→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-clients-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-clients-4.5p1-1.i386.rpm→　成功！よって、rm -f /usr/src/redhat/RPMS/i386/*ではエラーとなるので、以下を実行！rm -f rpmbuild/SRPMS/RPMS/i386/*→　成功！■ WindowsからSSHサーバーへリモート接続(Poderosa鍵方式ログイン編)Linuxサーバーをルーターにする△ PCルーター構築(PPPoE+iptables)LAN内クライアントマシンへIPアドレスを自動で割当てる△ DHCPサーバー構築(dhcp)外部からドメイン名でサーバーにアクセスできるようにする△ ドメイン名取得(ieServer.Net編)※無料△ ドメイン名取得(独自ドメイン編)※有料△ ドメイン名取得(jpドメイン編)※有料内部からドメイン名でサーバーにアクセスできるようにする■ DNSサーバー構築(BIND)インターネットとフレッツ・スクウェアへ同時に接続できるようにする△ PPPoEマルチセッション設定(PPPoE)Linuxサーバーに接続したプリンタをLAN内で共有する△ プリントサーバー構築(CUPS)Webサーバーを公開する■ Webサーバー構築(Apache)■ Webサーバー間通信内容暗号化(Apache+mod_SSL)△ ユーザディレクトリ作成(/~ユーザ名/)△ Webページパスワード制限(htpasswd)△ バーチャルホスト設定■ Webサーバー間通信内容圧縮(mod_deflate)Windowsで作成したWebページをWebサーバーへアップロードする(SCP使用)■ WindowsからSSHサーバーへファイル転送(WinSCP)Windowsで作成したWebページをWebサーバーへアップロードする(FTP使用)■ FTPサーバー構築(vsftpd)△ WindowsからFTPサーバーへファイル転送(FileZilla)Webページへのアクセス統計をWebブラウザからみれるようにする■ Apacheアクセスログ解析(AWStats)cpan2rpm --no-sign --make-no-test --install Geo::IPfreeではエラーとなるので、cpan2rpm --no-sign --make-no-test --install Test::Simpleの後に、以下を実行！cpan2rpm --no-sign --make-no-test --install Geo::IPfree→　成功！△ バーチャルホスト用アクセスログ解析(AWStats)■ リファラスパム対策自宅サーバーのWebサイト内をGoogleのように検索できるようにする■ サイト内検索システム構築(Namazu)独自のメールアドレスをつくる(Postfix編)■ メールサーバー構築(Postfix+Dovecot)■ メールサーバー間通信内容暗号化(OpenSSL+Postfix+Dovecot)→ 実際にはPOP(110),SMTP(25)で稼動。■ taRgreyによるスパム対策(taRgrey)cd rpmbuild/SOURCES/ではエラーとなるので、以下を実行！cd /root/rpmbuild/SRPMS/SOURCES/→　成功！rpmbuild -bb --clean rpmbuild/SPECS/postfix.specではエラーとなるので、以下を実行！rpmbuild -bb --clean /root/rpmbuild/SRPMS/SPECS/postfix.spec→　成功！(但し、依存性問題発生したので、必要なpackageインストール)rpm -Uvh --force rpmbuild/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh --force /root/rpmbuild/SRPMS/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpm→　成功！etc…■ メールサーバーでウィルス&amp;スパムチェック(Postfix+Clam AntiVirus+SpamAssassin)△ バーチャルドメイン設定(Postfix&amp;Dovecot+qmail&amp;vpopmail)△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(Postfix+qmailadmin)△ メール自動返信機能導入(Vacation)△ メーリングリストサーバー構築(Postfix+Mailman)■ Postfixログ解析ツール導入(pflogsumm)独自のメールアドレスをつくる(qmail編)△ メールサーバー構築(qmail+Dovecot)△ メールサーバー間通信内容暗号化(ucspi-tcp-ssl)△ メールサーバーでウィルス&amp;スパムチェック(Qmail-Scanner+Clam AntiVirus+SpamAssassin+maildrop)△ バーチャルドメイン設定(vpopmail)△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(qmailadmin)△ qmailログ解析ツール導入(qmailanalog)メールサーバー共通■ OP25B(Outbound Port 25 Blocking)対策■ 複数ドメイン宛メールの集約(Fetchmail+hotwayd)■ メール格納形式変更HotmailやYahoo!メールのようにWebブラウザ上でメールできるようにする■ Webmailシステム構築(SquirrelMail)→ ログイン時、”このページにアクセスするにはアカウントが必要です。”のエラーになる。(/var/lib/php/session のオーナーをapache:apacheにしても）→ 再度 “/var/www/webmail/config/conf.pl” を設定しなおしたらOK。(?)△ バーチャルホスト設定(Virtual Host Domain Name Management)HotmailやYahoo!メールのように携帯電話でメールできるようにする■ 携帯用Webmailシステム構築(WebMailClient2 for Keitai)LinuxサーバーをWindowsのファイルサーバーにする■ Windowsファイルサーバー構築(Samba)LinuxサーバーをiTunesのミュージックサーバーにする△ DAAPサーバー構築(Firefly)Linuxサーバーを内部／外部共用のWindowsのファイルサーバーにする△ Webフォルダサーバー構築(WebDAV)一般ユーザにWebブラウザ上での各種設定機能を提供する△ Usermin導入(Usermin)△ UserminでVacation設定(Usermin::Vacation)LinuxのパスワードとSambaのパスワードを同期する△ Windowsネットワーク用統合認証サーバー構築(OpenLDAP+Samba)データベースシステムを作る(MySQL編)■ データベースサーバー構築(MySQL)■ MySQLデータベース自動バックアップ運用(mysqlhotcopy)→ DBのバックアップ、リストアは未確認。■ MySQL用GUI設定ツール導入(phpMyAdmin)SNS(ソーシャルネットワーキングサイト)を作る△ SNS構築(OpenPNE)Weblog(ブログ)サイトを作る■ ブログサイト構築(WordPress)CMSでWebサイトを構築する(XOOPS編)△ コミュニティサイト構築(XOOPS)CMSでWebサイトを構築する(joomla!編)△ CMSによるWebサイト構築(joomla!)バージョン管理システムを構築する△ バージョン管理システム構築(Subversion)サーバーの状態をブラウザから監視する(Nagios編)■ 統合監視システム構築(Nagios)→ インストールしたものの、不要と感じたため、サービスは停止。△ リモートホストサービス監視(Nagios+nrpe)サーバーの状態をブラウザから監視する(RRDtool編)■ サーバー監視システム構築(RRDtool+Cacti)■ Apacheアクセス統計監視グラフ追加(apachestats)△ BINDアクセス統計監視グラフ追加(bind9-snmp)サーバーの状態をブラウザから監視する(MRTG編)△ ネットワークトラフィック監視システム導入(NET-SNMP+MRTG)Webブラウジングを高速化する△ プロキシサーバー構築(Squid)△ プロキシサーバーでウィルスチェック(Squid+SquidClamAV+ClamAV)LinuxをHDDビデオレコーダーにする△ TV録画機能導入(GV-MVP/RX2+ivtv-1.0) kernel-2.6.22系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.21系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.20系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.19系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.8) kernel-2.6.18系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.7) kernel-2.6.17系△ TV録画予約システム構築(vrs)△ 録画データの活用サーバー公開後のセキュリティ強化■ 不正アクセス検知システム導入(Snort+SnortSnarf+Oinkmaster)rpm -Uvh /usr/src/redhat/RPMS/i386/snort-2.8.0.1-1.i386.rpmではエラーになる（Fedora10の場合）ので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/snort-2.8.3.1-1.i386.rpm→　成功！■ iptablesログ解析(IPTables log analyzer)■ ログ監視ツール導入(SWATCH)ユーザのホームディレクトリ容量を制限する△ ホームディレクトリ容量制限(quota)サーバーのファイルを自動的にバックアップする■ 自動バックアップ運用(tar+GnuPG+rsync/ftp)△ リアルタイムミラーリングツール導入(lsyncd+rsyncd)外部から安全にLANへ接続できるようにする△ VPNサーバー構築(OpenVPN)△ Windows上にVNCサーバー導入(UltraVNC)その他■ ハードディスクの温度設定hddtempのインストール。yum install hddtemphddtemp の実行。hddtemp /dev/sda">
-  <meta name="twitter:url" content="https://komasaru.github.io/pages/komasaru/2009/01/05/05165522/">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/01/05/05165522/">
 
   
     <meta name="twitter:card" content="summary">
@@ -56,7 +56,7 @@
   
 
 
-<link rel="canonical" href="https://komasaru.github.io/pages/komasaru/2009/01/05/05165522/">
+<link rel="canonical" href="https://komasaru.github.io/2009/01/05/05165522/">
 
 
 
@@ -66,7 +66,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
     }
   </script>
@@ -78,7 +78,7 @@
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "mk-mode.com",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "sameAs": null
     }
   </script>
@@ -104,7 +104,7 @@
 </script>
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="/pages/komasaru/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/main.css">
 
 <!--[if IE ]>
   <style>
@@ -141,7 +141,7 @@
 <link rel="dns-prefetch" href="//twitter.com" />
 <link rel="dns-prefetch" href="//www.facebook.com" />
 
-<link rel="icon" href="/pages/komasaru/assets/images/favicon.ico">
+<link rel="icon" href="/assets/images/favicon.ico">
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-18154748-1']);
@@ -180,19 +180,19 @@
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         
-        <a class="site-title" href="/pages/komasaru/">mk-mode BLOG</a>
+        <a class="site-title" href="/">mk-mode BLOG</a>
         <ul class="visible-links"><li class="masthead__menu-item">
-              <a href="/pages/komasaru/year-archive/" >Archives</a>
+              <a href="/year-archive/" >Archives</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/categories/" >Categories</a>
+              <a href="/categories/" >Categories</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/tags/" >Tags</a>
+              <a href="/tags/" >Tags</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/privacy.html" >Privacy Policy</a>
+              <a href="/privacy.html" >Privacy Policy</a>
             </li></ul>
         
         <button class="search__toggle" type="button">
@@ -231,7 +231,7 @@
       
 
       
-        <img src="/pages/komasaru/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
       
     </div>
   
@@ -799,7 +799,7 @@ etc…
     
       
       
-      <a href="/pages/komasaru/tags/fedora" class="page__taxonomy-item" rel="tag">Fedora</a>
+      <a href="/tags/fedora" class="page__taxonomy-item" rel="tag">Fedora</a>
     
     </span>
   </p>
@@ -820,7 +820,7 @@ etc…
     
       
       
-      <a href="/pages/komasaru/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
     
     </span>
   </p>
@@ -837,15 +837,15 @@ etc…
       <section class="page__share">
   
 
-  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=D945GCLF+%2B+Fedora10+%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89%E3%83%A1%E3%83%A2%20https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F01%2F05%2F05165522%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=D945GCLF+%2B+Fedora10+%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89%E3%83%A1%E3%83%A2%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F01%2F05%2F05165522%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F01%2F05%2F05165522%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F01%2F05%2F05165522%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
   
 
   <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F01%2F05%2F05165522%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F01%2F05%2F05165522%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -862,7 +862,7 @@ etc…
       <a href="#" class="pagination--pager disabled">Previous</a>
     
     
-      <a href="/pages/komasaru/2009/01/05/05190900/" class="pagination--pager" title="WordPress 2.7 にアップグレード ＆ テーマ変更！
+      <a href="/2009/01/05/05190900/" class="pagination--pager" title="WordPress 2.7 にアップグレード ＆ テーマ変更！
 ">Next</a>
     
   </nav>
@@ -897,7 +897,7 @@ etc…
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-04-21)</small>
     </h3>
@@ -918,7 +918,7 @@ etc…
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
+        <a href="/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
 </a>
         &nbsp;<small>(2021-04-14)</small>
     </h3>
@@ -939,7 +939,7 @@ etc…
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
+        <a href="/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
 </a>
         &nbsp;<small>(2021-04-01)</small>
     </h3>
@@ -960,7 +960,7 @@ etc…
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-03-17)</small>
     </h3>
@@ -1000,7 +1000,7 @@ etc…
     <div class="page__footer">
       <footer>
         <!-- start custom footer snippets -->
-<div id="qr"><img src="/pages/komasaru/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
 <div id="google-ad-5"></div>
 <div class="page__footer-etc">
   <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
@@ -1009,7 +1009,7 @@ etc…
   &emsp;合計 <tt id="pv-total">Loading...</tt><br />
   &emsp;今日 <tt id="pv-today">Loading...</tt><br />
   &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
-  <small>※<a href="/pages/komasaru/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
 </div>
 <p id="page-top">
   <a href="#">
@@ -1052,9 +1052,9 @@ etc…
     </div>
 
     
-  <script defer src="/pages/komasaru/assets/js/main.min.js"></script>
+  <script defer src="/assets/js/main.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
-  <script defer src="/pages/komasaru/assets/js/my_custom.js"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
 
 
 <script>
@@ -1105,7 +1105,7 @@ etc…
     
   <script>
     var disqus_config = function () {
-      this.page.url = "https://komasaru.github.io/pages/komasaru/2009/01/05/05165522/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.url = "https://komasaru.github.io/2009/01/05/05165522/";  // Replace PAGE_URL with your page's canonical URL variable
       this.page.identifier = "/2009/01/05/05165522"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() { // DON'T EDIT BELOW THIS LINE

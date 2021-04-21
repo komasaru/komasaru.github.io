@@ -18,7 +18,7 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="mk-mode BLOG">
 <meta property="og:title" content="玄箱ＨＧ・Ｆｅｄｏｒａ１０にミラーリングツール！">
-<meta property="og:url" content="https://komasaru.github.io/pages/komasaru/2009/04/06/06002020/">
+<meta property="og:url" content="https://komasaru.github.io/2009/04/06/06002020/">
 
 
   <meta property="og:description" content="前回は実サーバの完全バックアップ（クローン化）のために ＶＭｗａｒｅＰｌａｙｅｒ に Ｆｅｄｏｒａ１０ をインストールして、ミラーリングするようにしました。でも、今のところ ＶＭｗａｒｅ は常時稼働させているわけでもありません。やっぱり、常時稼働の別マシンへのミラーリングを試みてみようと考えました。うちの稼動中のサーバとは別に、ほぼ録画＆バックアップ専用の玄箱ＨＧ（Ｆｅｄｏｒａ１０導入済み＆２４時間稼動中）があるんで、そいつをミラー先としてやってみることにしました。導入手順※またまた Fedoraで自宅サーバー構築 の リアルタイムミラーリングツール導入(lsyncd+rsyncd) を参考にさせてもらってます。【前提条件】・実サーバはＦｅｄｏｒａ１０でＷｅｂサーバ、メールサーバ、ＦＴＰサーバ等が稼動中。・バックアップ側もＦｅｄｏｒａ１０で、ＮＴＰサーバ、Ｓａｍｂａサーバが稼動中。・実サーバのＩＰアドレスは 192.168.11.3 、バックアップ側（玄箱ＨＧ）のＩＰアドレスは 192.168.11.2 。・実サーバ、バックアップ側（玄箱）どちらも「 Poderosa 」によるリモート接続による操作。（実サーバはＳＳＨ２接続・鍵認証、バックアップ側（玄箱ＨＧ）はＳＳＨ２接続・パスワード認証）１．ミラー先（玄箱ＨＧ）の起動ミラー先となる 玄箱ＨＧ・Ｆｅｄｏｒａ１０ が起動していることを確認。２．ミラー先にrsyncサーバー設定「 Poderosa 」により 玄箱ＨＧ・Ｆｅｄｏｒａ１０ にリモート接続し、rootユーザになっておく。そして以下のように設定。[root@KURO-BOX ~]# mkdir /tmp/mirror　←　ミラー先ディレクトリの作成[root@KURO-BOX ~]# chown nobody:nobody /tmp/mirror　←　ミラー先ディレクトリ所有者をnobodyに変更[root@KURO-BOX ~]# vi /etc/rsyncd.conf　←　rsyncサーバ設定ファイルの作成[mirror]　←　任意のモジュール名(ミラー元から接続時の名前)    path = /tmp/mirror　←　ミラー先ディレクトリ    hosts allow = 192.168.11.0/24　←　接続許可ホスト    read only = false　←　更新許可３．ミラー先のrsyncサーバー起動[root@KURO-BOX ~]# yum -y install xinetd　←　xinetdインストール[root@KURO-BOX ~]# /etc/rc.d/init.d/xinetd start　←　xinetd起動xinetd を起動中:                                           [  OK  ][root@KURO-BOX ~]# chkconfig rsync on　←　rsyncサーバ自動起動設定４．ミラー元（実サーバ）へlsyncdインストール「 Poderosa 」により 実サーバ・Ｆｅｄｏｒａ１０ にリモート接続し、rootユーザになっておく。そして、以下のようにして lsyncd をインストール。実際には以下の作業は前回終了しているので、今回は省略。[root@noah ~]# yum -y install libxml2-devel　←　lsyncdインストールに必要なパッケージをインストール[root@noah ~]# wget http://lsyncd.googlecode.com/files/lsyncd-1.26.tar.gz　←　lsyncdダウンロード[root@noah ~]# tar zxvf lsyncd-1.26.tar.gz　←　lsyncd展開[root@noah ~]# cd lsyncd-1.26　←　lsyncd展開先ディレクトリへ移動[root@noah lsyncd-1.26]# ./configure &amp;&amp; make &amp;&amp; make install　←　lsyncdインストール[root@noah lsyncd-1.26]# cd　←　lsyncd展開先ディレクトリを抜ける[root@noah ~]# rm -rf lsyncd-1.26　←　lsyncd展開先ディレクトリを削除[root@noah ~]# rm -rf lsyncd-1.26.tar.gz　←　ダウンロードしたファイルを削除５．ミラー元のlsyncd設定[root@noah ~]# vi /etc/lsyncd.conf　←　lsyncd設定ファイルの作成/ 192.168.11.2 mirror　←　「 ミラー元ディレクトリ  ミラー先(rsyncサーバ)IPアドレス  ミラー先モジュール名 」の順に指定[root@noah ~]# vi /etc/logrotate.d/lsyncd　←　lsyncdログローテーション設定ファイルの作成/var/log/lsyncd {    missingok    notifempty    sharedscripts    postrotate        /etc/rc.d/init.d/lsyncd restart 2&gt;&amp;1 &gt; /dev/null || true    endscript}６．ミラー元のlsyncd起動実際には既に起動しているので、再起動した。[root@noah ~]# vi /etc/rc.d/init.d/lsyncd　←　lsyncd起動スクリプト作成#!/bin/bash## lsyncd## chkconfig: - 99 20# description: lsyncd auto start scriptstart() {    IFS=    for i in `cat /etc/lsyncd.conf`    do        src=`echo $i|awk &#39;{print $1}&#39;`        dest=`echo $i|awk &#39;{print $3}&#39;`        remort=`echo $i|awk &#39;{print $2}&#39;`        /usr/local/bin/lsyncd $src $remort::$dest/    done}stop() {    /bin/kill -9 `/sbin/pidof lsyncd`    until [ -z $(/sbin/pidof lsyncd) ]; do :; done}case &quot;$1&quot; in    start)        start        ;;    stop)        stop        ;;    restart)        stop        start        ;;    status)        pid=`pidof lsyncd`        if [ $? -eq 0 ]; then            echo &quot;lsyncd (pid $pid) is running...&quot;        else            echo &quot;lsyncd is not running&quot;        fi        ;;    *)        echo &quot;Usage: lsyncd {start|stop|restart|status}&quot;        exit 1esacexit $?[root@noah ~]# chmod +x /etc/rc.d/init.d/lsyncd　←　lsyncd起動スクリプトへ実行権限付加[root@noah ~]# /etc/rc.d/init.d/lsyncd start　←　lsyncd起動[root@noah ~]# chkconfig --add lsyncd　←　lsyncd起動スクリプトをchkconfigへ登録[root@noah ~]# chkconfig lsyncd on　←　lsyncd自動起動設定７．動作確認上記の「 lsyncd起動 」で処理が開始されているはずなので、しばらくしてからミラー先（ＶＭｗａｒｅ側Ｆｅｄｏｒａ）の指定したディレクトリにコピーされているか確認する。■ミラー元[root@noah ~]# ls -ll /合計 122drwxr-xr-x   8 root root  4096 2009-04-05 05:07 backupdrwxr-xr-x   2 root root  4096 2009-03-29 05:11 bindrwxr-xr-x   5 root root  1024 2009-04-04 07:15 bootdrwxr-xr-x  16 root root  4480 2009-04-05 11:04 devdrwxr-xr-x 103 root root 12288 2009-04-05 10:55 etcdrwxr-xr-x   5 root root  4096 2009-01-06 09:46 homedrwxr-xr-x  16 root root 12288 2009-04-02 05:08 libdrwx------   2 root root 16384 2008-12-09 08:55 lost+founddrwxr-xr-x   2 root root  4096 2008-09-06 19:13 mediadrwxr-xr-x   2 root root  4096 2008-09-06 19:13 mnt-rw-r--r--   1 root root   538 2009-03-02 11:20 mrtg-l.png-rw-r--r--   1 root root   414 2009-03-02 11:20 mrtg-m.png-rw-r--r--   1 root root  1759 2009-03-02 11:20 mrtg-r.pngdrwxr-xr-x   2 root root  4096 2008-09-06 19:13 optdr-xr-xr-x 151 root root     0 2009-03-23 07:01 proc-rw-r--r--   1 root root   181 2008-12-09 23:03 razor-agent.logdrwxr-x---   9 root root  4096 2009-03-30 19:38 rootdrwxr-xr-x   2 root root 12288 2009-04-02 05:08 sbindrwxr-xr-x   2 root root  4096 2008-12-09 08:57 selinuxdrwxr-xr-x   2 root root  4096 2008-09-06 19:13 srvdrwxr-xr-x  12 root root     0 2009-03-23 07:01 sysdrwxrwxrwt  10 root root  4096 2009-04-05 11:03 tmpdrwxr-xr-x  13 root root  4096 2008-12-09 09:02 usrdrwxr-xr-x  23 root root  4096 2008-12-10 17:52 var[root@noah ~]#■ミラー先[root@KURO-BOX ~]# ls -ll /tmp/mirror合計 108drwxr-xr-x   8 nobody nobody 4096 2009-04-05 05:07 backupdrwxr-xr-x   2 nobody nobody 4096 2009-03-29 05:11 bindrwxr-xr-x   5 nobody nobody 4096 2009-04-04 07:15 bootdrwxr-xr-x  16 nobody nobody 4096 2009-04-05 10:56 devdrwxr-xr-x 103 nobody nobody 8192 2009-04-05 10:55 etcdrwxr-xr-x   5 nobody nobody 4096 2009-01-06 09:46 homedrwxr-xr-x  16 nobody nobody 8192 2009-04-02 05:08 libdrwx------   2 nobody nobody 4096 2008-12-09 08:55 lost+founddrwxr-xr-x   2 nobody nobody 4096 2008-09-06 19:13 mediadrwxr-xr-x   2 nobody nobody 4096 2008-09-06 19:13 mnt-rw-r--r--   1 nobody nobody  538 2009-03-02 11:20 mrtg-l.png-rw-r--r--   1 nobody nobody  414 2009-03-02 11:20 mrtg-m.png-rw-r--r--   1 nobody nobody 1759 2009-03-02 11:20 mrtg-r.pngdrwxr-xr-x   2 nobody nobody 4096 2008-09-06 19:13 optdr-xr-xr-x 163 nobody nobody 4096 2009-03-23 07:01 proc-rw-r--r--   1 nobody nobody  181 2008-12-09 23:03 razor-agent.logdrwxr-x---   9 nobody nobody 4096 2009-03-30 19:38 rootdrwxr-xr-x   2 nobody nobody 8192 2009-04-02 05:08 sbindrwxr-xr-x   2 nobody nobody 4096 2008-12-09 08:57 selinuxdrwxr-xr-x   2 nobody nobody 4096 2008-09-06 19:13 srvdrwxr-xr-x  12 nobody nobody 4096 2009-03-23 07:01 sysdrwxrwxr-x  10 nobody nobody 4096 2009-04-05 10:50 tmpdrwxr-xr-x  13 nobody nobody 4096 2008-12-09 09:02 usrdrwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var[root@KURO-BOX ~]#ファイル類も大体（？）コピーされている模様。設定は以上です。仮にミラー先が起動していない場合は、ミラー先が起動した後の最初のファイル更新時にミラーリングがされるみたいです。それはスゲー！今回は実際にミラー先を元にクローンを復元するところまではしません。ただ、気になるのは実サーバはｉ３８６カーネルミラー先（玄箱ＨＧ）はｐｐｃカーネルという違いがあること。ま、だめなら、ＶＭ側でやることにします。とりあえず、ここまでできていれば、何とかなるでしょう！？それじゃ。">
@@ -32,7 +32,7 @@
   <meta name="twitter:site" content="@rsm_mzk">
   <meta name="twitter:title" content="玄箱ＨＧ・Ｆｅｄｏｒａ１０にミラーリングツール！">
   <meta name="twitter:description" content="前回は実サーバの完全バックアップ（クローン化）のために ＶＭｗａｒｅＰｌａｙｅｒ に Ｆｅｄｏｒａ１０ をインストールして、ミラーリングするようにしました。でも、今のところ ＶＭｗａｒｅ は常時稼働させているわけでもありません。やっぱり、常時稼働の別マシンへのミラーリングを試みてみようと考えました。うちの稼動中のサーバとは別に、ほぼ録画＆バックアップ専用の玄箱ＨＧ（Ｆｅｄｏｒａ１０導入済み＆２４時間稼動中）があるんで、そいつをミラー先としてやってみることにしました。導入手順※またまた Fedoraで自宅サーバー構築 の リアルタイムミラーリングツール導入(lsyncd+rsyncd) を参考にさせてもらってます。【前提条件】・実サーバはＦｅｄｏｒａ１０でＷｅｂサーバ、メールサーバ、ＦＴＰサーバ等が稼動中。・バックアップ側もＦｅｄｏｒａ１０で、ＮＴＰサーバ、Ｓａｍｂａサーバが稼動中。・実サーバのＩＰアドレスは 192.168.11.3 、バックアップ側（玄箱ＨＧ）のＩＰアドレスは 192.168.11.2 。・実サーバ、バックアップ側（玄箱）どちらも「 Poderosa 」によるリモート接続による操作。（実サーバはＳＳＨ２接続・鍵認証、バックアップ側（玄箱ＨＧ）はＳＳＨ２接続・パスワード認証）１．ミラー先（玄箱ＨＧ）の起動ミラー先となる 玄箱ＨＧ・Ｆｅｄｏｒａ１０ が起動していることを確認。２．ミラー先にrsyncサーバー設定「 Poderosa 」により 玄箱ＨＧ・Ｆｅｄｏｒａ１０ にリモート接続し、rootユーザになっておく。そして以下のように設定。[root@KURO-BOX ~]# mkdir /tmp/mirror　←　ミラー先ディレクトリの作成[root@KURO-BOX ~]# chown nobody:nobody /tmp/mirror　←　ミラー先ディレクトリ所有者をnobodyに変更[root@KURO-BOX ~]# vi /etc/rsyncd.conf　←　rsyncサーバ設定ファイルの作成[mirror]　←　任意のモジュール名(ミラー元から接続時の名前)    path = /tmp/mirror　←　ミラー先ディレクトリ    hosts allow = 192.168.11.0/24　←　接続許可ホスト    read only = false　←　更新許可３．ミラー先のrsyncサーバー起動[root@KURO-BOX ~]# yum -y install xinetd　←　xinetdインストール[root@KURO-BOX ~]# /etc/rc.d/init.d/xinetd start　←　xinetd起動xinetd を起動中:                                           [  OK  ][root@KURO-BOX ~]# chkconfig rsync on　←　rsyncサーバ自動起動設定４．ミラー元（実サーバ）へlsyncdインストール「 Poderosa 」により 実サーバ・Ｆｅｄｏｒａ１０ にリモート接続し、rootユーザになっておく。そして、以下のようにして lsyncd をインストール。実際には以下の作業は前回終了しているので、今回は省略。[root@noah ~]# yum -y install libxml2-devel　←　lsyncdインストールに必要なパッケージをインストール[root@noah ~]# wget http://lsyncd.googlecode.com/files/lsyncd-1.26.tar.gz　←　lsyncdダウンロード[root@noah ~]# tar zxvf lsyncd-1.26.tar.gz　←　lsyncd展開[root@noah ~]# cd lsyncd-1.26　←　lsyncd展開先ディレクトリへ移動[root@noah lsyncd-1.26]# ./configure &amp;&amp; make &amp;&amp; make install　←　lsyncdインストール[root@noah lsyncd-1.26]# cd　←　lsyncd展開先ディレクトリを抜ける[root@noah ~]# rm -rf lsyncd-1.26　←　lsyncd展開先ディレクトリを削除[root@noah ~]# rm -rf lsyncd-1.26.tar.gz　←　ダウンロードしたファイルを削除５．ミラー元のlsyncd設定[root@noah ~]# vi /etc/lsyncd.conf　←　lsyncd設定ファイルの作成/ 192.168.11.2 mirror　←　「 ミラー元ディレクトリ  ミラー先(rsyncサーバ)IPアドレス  ミラー先モジュール名 」の順に指定[root@noah ~]# vi /etc/logrotate.d/lsyncd　←　lsyncdログローテーション設定ファイルの作成/var/log/lsyncd {    missingok    notifempty    sharedscripts    postrotate        /etc/rc.d/init.d/lsyncd restart 2&gt;&amp;1 &gt; /dev/null || true    endscript}６．ミラー元のlsyncd起動実際には既に起動しているので、再起動した。[root@noah ~]# vi /etc/rc.d/init.d/lsyncd　←　lsyncd起動スクリプト作成#!/bin/bash## lsyncd## chkconfig: - 99 20# description: lsyncd auto start scriptstart() {    IFS=    for i in `cat /etc/lsyncd.conf`    do        src=`echo $i|awk &#39;{print $1}&#39;`        dest=`echo $i|awk &#39;{print $3}&#39;`        remort=`echo $i|awk &#39;{print $2}&#39;`        /usr/local/bin/lsyncd $src $remort::$dest/    done}stop() {    /bin/kill -9 `/sbin/pidof lsyncd`    until [ -z $(/sbin/pidof lsyncd) ]; do :; done}case &quot;$1&quot; in    start)        start        ;;    stop)        stop        ;;    restart)        stop        start        ;;    status)        pid=`pidof lsyncd`        if [ $? -eq 0 ]; then            echo &quot;lsyncd (pid $pid) is running...&quot;        else            echo &quot;lsyncd is not running&quot;        fi        ;;    *)        echo &quot;Usage: lsyncd {start|stop|restart|status}&quot;        exit 1esacexit $?[root@noah ~]# chmod +x /etc/rc.d/init.d/lsyncd　←　lsyncd起動スクリプトへ実行権限付加[root@noah ~]# /etc/rc.d/init.d/lsyncd start　←　lsyncd起動[root@noah ~]# chkconfig --add lsyncd　←　lsyncd起動スクリプトをchkconfigへ登録[root@noah ~]# chkconfig lsyncd on　←　lsyncd自動起動設定７．動作確認上記の「 lsyncd起動 」で処理が開始されているはずなので、しばらくしてからミラー先（ＶＭｗａｒｅ側Ｆｅｄｏｒａ）の指定したディレクトリにコピーされているか確認する。■ミラー元[root@noah ~]# ls -ll /合計 122drwxr-xr-x   8 root root  4096 2009-04-05 05:07 backupdrwxr-xr-x   2 root root  4096 2009-03-29 05:11 bindrwxr-xr-x   5 root root  1024 2009-04-04 07:15 bootdrwxr-xr-x  16 root root  4480 2009-04-05 11:04 devdrwxr-xr-x 103 root root 12288 2009-04-05 10:55 etcdrwxr-xr-x   5 root root  4096 2009-01-06 09:46 homedrwxr-xr-x  16 root root 12288 2009-04-02 05:08 libdrwx------   2 root root 16384 2008-12-09 08:55 lost+founddrwxr-xr-x   2 root root  4096 2008-09-06 19:13 mediadrwxr-xr-x   2 root root  4096 2008-09-06 19:13 mnt-rw-r--r--   1 root root   538 2009-03-02 11:20 mrtg-l.png-rw-r--r--   1 root root   414 2009-03-02 11:20 mrtg-m.png-rw-r--r--   1 root root  1759 2009-03-02 11:20 mrtg-r.pngdrwxr-xr-x   2 root root  4096 2008-09-06 19:13 optdr-xr-xr-x 151 root root     0 2009-03-23 07:01 proc-rw-r--r--   1 root root   181 2008-12-09 23:03 razor-agent.logdrwxr-x---   9 root root  4096 2009-03-30 19:38 rootdrwxr-xr-x   2 root root 12288 2009-04-02 05:08 sbindrwxr-xr-x   2 root root  4096 2008-12-09 08:57 selinuxdrwxr-xr-x   2 root root  4096 2008-09-06 19:13 srvdrwxr-xr-x  12 root root     0 2009-03-23 07:01 sysdrwxrwxrwt  10 root root  4096 2009-04-05 11:03 tmpdrwxr-xr-x  13 root root  4096 2008-12-09 09:02 usrdrwxr-xr-x  23 root root  4096 2008-12-10 17:52 var[root@noah ~]#■ミラー先[root@KURO-BOX ~]# ls -ll /tmp/mirror合計 108drwxr-xr-x   8 nobody nobody 4096 2009-04-05 05:07 backupdrwxr-xr-x   2 nobody nobody 4096 2009-03-29 05:11 bindrwxr-xr-x   5 nobody nobody 4096 2009-04-04 07:15 bootdrwxr-xr-x  16 nobody nobody 4096 2009-04-05 10:56 devdrwxr-xr-x 103 nobody nobody 8192 2009-04-05 10:55 etcdrwxr-xr-x   5 nobody nobody 4096 2009-01-06 09:46 homedrwxr-xr-x  16 nobody nobody 8192 2009-04-02 05:08 libdrwx------   2 nobody nobody 4096 2008-12-09 08:55 lost+founddrwxr-xr-x   2 nobody nobody 4096 2008-09-06 19:13 mediadrwxr-xr-x   2 nobody nobody 4096 2008-09-06 19:13 mnt-rw-r--r--   1 nobody nobody  538 2009-03-02 11:20 mrtg-l.png-rw-r--r--   1 nobody nobody  414 2009-03-02 11:20 mrtg-m.png-rw-r--r--   1 nobody nobody 1759 2009-03-02 11:20 mrtg-r.pngdrwxr-xr-x   2 nobody nobody 4096 2008-09-06 19:13 optdr-xr-xr-x 163 nobody nobody 4096 2009-03-23 07:01 proc-rw-r--r--   1 nobody nobody  181 2008-12-09 23:03 razor-agent.logdrwxr-x---   9 nobody nobody 4096 2009-03-30 19:38 rootdrwxr-xr-x   2 nobody nobody 8192 2009-04-02 05:08 sbindrwxr-xr-x   2 nobody nobody 4096 2008-12-09 08:57 selinuxdrwxr-xr-x   2 nobody nobody 4096 2008-09-06 19:13 srvdrwxr-xr-x  12 nobody nobody 4096 2009-03-23 07:01 sysdrwxrwxr-x  10 nobody nobody 4096 2009-04-05 10:50 tmpdrwxr-xr-x  13 nobody nobody 4096 2008-12-09 09:02 usrdrwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var[root@KURO-BOX ~]#ファイル類も大体（？）コピーされている模様。設定は以上です。仮にミラー先が起動していない場合は、ミラー先が起動した後の最初のファイル更新時にミラーリングがされるみたいです。それはスゲー！今回は実際にミラー先を元にクローンを復元するところまではしません。ただ、気になるのは実サーバはｉ３８６カーネルミラー先（玄箱ＨＧ）はｐｐｃカーネルという違いがあること。ま、だめなら、ＶＭ側でやることにします。とりあえず、ここまでできていれば、何とかなるでしょう！？それじゃ。">
-  <meta name="twitter:url" content="https://komasaru.github.io/pages/komasaru/2009/04/06/06002020/">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/04/06/06002020/">
 
   
     <meta name="twitter:card" content="summary">
@@ -56,7 +56,7 @@
   
 
 
-<link rel="canonical" href="https://komasaru.github.io/pages/komasaru/2009/04/06/06002020/">
+<link rel="canonical" href="https://komasaru.github.io/2009/04/06/06002020/">
 
 
 
@@ -66,7 +66,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
     }
   </script>
@@ -78,7 +78,7 @@
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "mk-mode.com",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "sameAs": null
     }
   </script>
@@ -104,7 +104,7 @@
 </script>
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="/pages/komasaru/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/main.css">
 
 <!--[if IE ]>
   <style>
@@ -141,7 +141,7 @@
 <link rel="dns-prefetch" href="//twitter.com" />
 <link rel="dns-prefetch" href="//www.facebook.com" />
 
-<link rel="icon" href="/pages/komasaru/assets/images/favicon.ico">
+<link rel="icon" href="/assets/images/favicon.ico">
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-18154748-1']);
@@ -180,19 +180,19 @@
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         
-        <a class="site-title" href="/pages/komasaru/">mk-mode BLOG</a>
+        <a class="site-title" href="/">mk-mode BLOG</a>
         <ul class="visible-links"><li class="masthead__menu-item">
-              <a href="/pages/komasaru/year-archive/" >Archives</a>
+              <a href="/year-archive/" >Archives</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/categories/" >Categories</a>
+              <a href="/categories/" >Categories</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/tags/" >Tags</a>
+              <a href="/tags/" >Tags</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/privacy.html" >Privacy Policy</a>
+              <a href="/privacy.html" >Privacy Policy</a>
             </li></ul>
         
         <button class="search__toggle" type="button">
@@ -231,7 +231,7 @@
       
 
       
-        <img src="/pages/komasaru/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
       
     </div>
   
@@ -635,7 +635,7 @@ drwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var
     
       
       
-      <a href="/pages/komasaru/tags/fedora" class="page__taxonomy-item" rel="tag">Fedora</a>
+      <a href="/tags/fedora" class="page__taxonomy-item" rel="tag">Fedora</a>
     
     </span>
   </p>
@@ -656,11 +656,11 @@ drwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var
     
       
       
-      <a href="/pages/komasaru/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
     
       
       
-      <a href="/pages/komasaru/categories/%E7%8E%84%E7%AE%B1" class="page__taxonomy-item" rel="tag">玄箱</a>
+      <a href="/categories/%E7%8E%84%E7%AE%B1" class="page__taxonomy-item" rel="tag">玄箱</a>
     
     </span>
   </p>
@@ -677,15 +677,15 @@ drwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var
       <section class="page__share">
   
 
-  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E7%8E%84%E7%AE%B1%EF%BC%A8%EF%BC%A7%E3%83%BB%EF%BC%A6%EF%BD%85%EF%BD%84%EF%BD%8F%EF%BD%92%EF%BD%81%EF%BC%91%EF%BC%90%E3%81%AB%E3%83%9F%E3%83%A9%E3%83%BC%E3%83%AA%E3%83%B3%E3%82%B0%E3%83%84%E3%83%BC%E3%83%AB%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F04%2F06%2F06002020%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E7%8E%84%E7%AE%B1%EF%BC%A8%EF%BC%A7%E3%83%BB%EF%BC%A6%EF%BD%85%EF%BD%84%EF%BD%8F%EF%BD%92%EF%BD%81%EF%BC%91%EF%BC%90%E3%81%AB%E3%83%9F%E3%83%A9%E3%83%BC%E3%83%AA%E3%83%B3%E3%82%B0%E3%83%84%E3%83%BC%E3%83%AB%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F04%2F06%2F06002020%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F04%2F06%2F06002020%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F04%2F06%2F06002020%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
   
 
   <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F04%2F06%2F06002020%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F04%2F06%2F06002020%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -699,11 +699,11 @@ drwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var
       
   <nav class="pagination">
     
-      <a href="/pages/komasaru/2009/04/05/05025423/" class="pagination--pager" title="まるごとＲｕｂｙ購入！
+      <a href="/2009/04/05/05025423/" class="pagination--pager" title="まるごとＲｕｂｙ購入！
 ">Previous</a>
     
     
-      <a href="/pages/komasaru/2009/04/07/07015841/" class="pagination--pager" title="Windows – ﾚｼﾞｽﾄﾘでﾊﾞﾙｰﾝ表示制御！
+      <a href="/2009/04/07/07015841/" class="pagination--pager" title="Windows – ﾚｼﾞｽﾄﾘでﾊﾞﾙｰﾝ表示制御！
 ">Next</a>
     
   </nav>
@@ -738,7 +738,7 @@ drwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-04-21)</small>
     </h3>
@@ -759,7 +759,7 @@ drwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
+        <a href="/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
 </a>
         &nbsp;<small>(2021-04-14)</small>
     </h3>
@@ -780,7 +780,7 @@ drwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
+        <a href="/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
 </a>
         &nbsp;<small>(2021-04-01)</small>
     </h3>
@@ -801,7 +801,7 @@ drwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-03-17)</small>
     </h3>
@@ -841,7 +841,7 @@ drwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var
     <div class="page__footer">
       <footer>
         <!-- start custom footer snippets -->
-<div id="qr"><img src="/pages/komasaru/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
 <div id="google-ad-5"></div>
 <div class="page__footer-etc">
   <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
@@ -850,7 +850,7 @@ drwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var
   &emsp;合計 <tt id="pv-total">Loading...</tt><br />
   &emsp;今日 <tt id="pv-today">Loading...</tt><br />
   &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
-  <small>※<a href="/pages/komasaru/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
 </div>
 <p id="page-top">
   <a href="#">
@@ -893,9 +893,9 @@ drwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var
     </div>
 
     
-  <script defer src="/pages/komasaru/assets/js/main.min.js"></script>
+  <script defer src="/assets/js/main.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
-  <script defer src="/pages/komasaru/assets/js/my_custom.js"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
 
 
 <script>
@@ -946,7 +946,7 @@ drwxr-xr-x  23 nobody nobody 4096 2008-12-10 17:52 var
     
   <script>
     var disqus_config = function () {
-      this.page.url = "https://komasaru.github.io/pages/komasaru/2009/04/06/06002020/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.url = "https://komasaru.github.io/2009/04/06/06002020/";  // Replace PAGE_URL with your page's canonical URL variable
       this.page.identifier = "/2009/04/06/06002020"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() { // DON'T EDIT BELOW THIS LINE

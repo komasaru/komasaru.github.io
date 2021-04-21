@@ -18,7 +18,7 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="mk-mode BLOG">
 <meta property="og:title" content="ｻｰﾊﾞﾐﾗｰﾘﾝｸﾞﾃﾞｰﾀを世代管理圧縮保存！">
-<meta property="og:url" content="https://komasaru.github.io/pages/komasaru/2009/04/29/29002002/">
+<meta property="og:url" content="https://komasaru.github.io/2009/04/29/29002002/">
 
 
   <meta property="og:description" content="うちの稼動中のサーバの大事なデータを玄箱ＨＧ（Ｆｅｄｏｒａ１０）へミラーリングコピーしているんですが、そいつらを世代管理して圧縮保存するようにしてみました。※なぜなら、サーバがトラブった時、「あの日に戻れたら！」なんてことがあるからです。導入手順※いつものように Fedoraで自宅サーバー構築 の 自動バックアップ運用(tar+GnuPG+rsync/ftp) を参考にさせてもらいました。【前提条件】・実サーバはＦｅｄｏｒａ１０でＷｅｂサーバ、メールサーバ、ＦＴＰサーバ等が稼動中。・バックアップ側もＦｅｄｏｒａ１０で、ＮＴＰサーバ、Ｓａｍｂａサーバが稼動中。・実サーバのＩＰアドレスは 192.168.11.3 、バックアップ側（玄箱ＨＧ）のＩＰアドレスは 192.168.11.2 。・実サーバ、バックアップ側（玄箱）どちらも「 Poderosa 」によるリモート接続による操作。（実サーバはＳＳＨ２接続・鍵認証、バックアップ側（玄箱ＨＧ）はＳＳＨ２接続・パスワード認証）・実サーバの大事なデータを玄箱側の「 /tmp/mirror 」フォルダ配下へミラーリングコピーするように設定済み。※今回は全て、バックアップ（玄箱ＨＧ）での作業です。１．玄箱ＨＧにリモート接続「 Poderosa 」により 玄箱ＨＧ・Ｆｅｄｏｒａ１０ にリモート接続し、rootユーザになっておく。２．圧縮スクリプトを作成以下のように世代管理して圧縮保存するスクリプトを作成する。[root@KURO-BOX ~]# vi backup.sh#!/bin/bash## ローカル内でバックアップ#LANG=C## 設定開始## 圧縮対象リスト名# ※圧縮対象をフルパスで記述したリストBACKUPLIST=/root/backuplist[ ! -s $BACKUPLIST ] &amp;&amp; echo &quot;$BACKUPLIST is not found&quot; &amp;&amp; error_exit# 圧縮対象外リスト名# ※圧縮対象外をフルパスで記述したリストBACKUPNOLIST=/root/backupnolist# 圧縮先ディレクトリ名BACKUPDIR=/backupmkdir -p $BACKUPDIR# 圧縮ファイル保存世代数# ※当日分を含めた過去分圧縮ファイルを保存する世代数# ※過去分圧縮ファイルを保存しない場合は1を指定するBACKUPGEN=8# 暗号化・復号化パスフレーズ# ※指定がないときは暗号化しないPASS=&#39;&#39;# 圧縮ログファイル名BACKUPLOG=/var/log/backup.log## 設定終了## 異常終了処理関数定義error_exit () {    rm -f $TMPBACKUPNOLIST    exit 1}# 圧縮ファイルを圧縮対象外リストに追加# ※圧縮先ファイルを圧縮しないようにするTMPBACKUPNOLIST=`mktemp`[ -s $BACKUPNOLIST ] &amp;&amp; cat $BACKUPNOLIST &gt; $TMPBACKUPNOLISTecho &quot;$BACKUPDIR/*backup.tar.bz2&quot; &gt;&gt; $TMPBACKUPNOLIST# 前回圧縮をリネームcd $BACKUPDIROLDBACKUPFILE=`ls backup.tar.bz2* 2&gt;/dev/null`if [ -f $OLDBACKUPFILE ]; then    TIMESTAMP=`ls --full-time $OLDBACKUPFILE|awk &#39;{print $6}&#39;|tr -d -`    mv $BACKUPDIR/$OLDBACKUPFILE $BACKUPDIR/${TIMESTAMP}$OLDBACKUPFILE &gt; /dev/null 2&gt;&amp;1fi# 圧縮ログファイル作成rm -f $BACKUPLOGtouch $BACKUPLOGchmod 400 $BACKUPLOG# 圧縮実行echo &quot;`date` backup start&quot; &gt;&gt; $BACKUPLOGtar cjvfP $BACKUPDIR/backup.tar.bz2 -T $BACKUPLIST -X $TMPBACKUPNOLIST &gt;&gt; $BACKUPLOG 2&gt;&amp;1echo &quot;`date` backup end&quot; &gt;&gt; $BACKUPLOG# 圧縮暗号化(暗号化・復号化パスフレーズ指定時のみ)if [ ! -z $PASS ]; then    echo &quot;`date` encrypt start&quot; &gt;&gt; $BACKUPLOG    mkdir -p $HOME/.gnupg    echo $PASS|gpg --passphrase-fd 0 --batch -c $BACKUPDIR/backup.tar.bz2 &gt; /dev/null 2&gt;&amp;1	code=$?	if [ $code -ne 0 ]; then	    cat $BACKUPLOG | mail -s &quot;BACKUP NG CODE IS $code&quot; root	    rm -f $BACKUPDIR/backup.tar.bz2*	    error_exit	fi    rm -f $BACKUPDIR/backup.tar.bz2    echo &quot;`date` encrypt end&quot; &gt;&gt; $BACKUPLOGfi# 圧縮ファイル保存世代を超えた古い圧縮ファイルを削除if [ $(ls $BACKUPDIR/*backup.tar.bz2*|wc -l) -gt $BACKUPGEN ]; then    OLDBACKUPCNT=`expr $(ls $BACKUPDIR/*backup.tar.bz2*|wc -l) - $BACKUPGEN`    for file in `ls -t $BACKUPDIR/*backup.tar.bz2*|tail -n $OLDBACKUPCNT`    do        rm -f $file    donefi# 圧縮対象外リスト削除rm -f $TMPBACKUPNOLIST[root@KURO-BOX ~]#３．実行権限付与以下のようにしてスクリプトに実行権限を付与する。[root@KURO-BOX ~]# chmod 700 backup.sh[root@KURO-BOX ~]#４．圧縮対象リストの作成今回圧縮保存の対象となるフォルダをしていする。[root@KURO-BOX ~]# echo &quot;/tmp/mirror&quot; &gt;&gt; backuplist[root@KURO-BOX ~]#※今回は圧縮保存対象外リストは作成しない。（「 /tmp/mirror 」配下は全て圧縮したいので）５．スクリプトの試行以下のようにしてスクリプトを試しに実行してみる。[root@KURO-BOX ~]# ./backup.sh[root@KURO-BOX ~]#６．圧縮ファイル作成確認正常に圧縮ファイルが作成されているか確認する。[root@KURO-BOX ~]# ls -lh /backup[root@KURO-BOX ~]#７．圧縮内容確認圧縮ファイルの内容を確認してみる。[root@KURO-BOX ~]# tar tjvf /backup/backup.tar.bz2・・・　省略　・・・圧縮ファイルの内容が表示される・・・　省略　・・・[root@KURO-BOX ~]#８．定期自動実行設定毎日同じ時間に定期的に自動で実行されるよう設定する。[root@KURO-BOX ~]# echo &quot;0 3 * * * root /root/backup.sh&quot; &gt; /etc/cron.d/backup[root@KURO-BOX ~]#※しかし、上記の５で試行してみたんですが、１時間経っても終わりませんでした。玄箱ＨＧの非力なＣＰＵとメモリのせいだと思います。結局、玄箱ＨＧでの圧縮保存はヤメにしました。今日はここまで。じゃ。">
@@ -32,7 +32,7 @@
   <meta name="twitter:site" content="@rsm_mzk">
   <meta name="twitter:title" content="ｻｰﾊﾞﾐﾗｰﾘﾝｸﾞﾃﾞｰﾀを世代管理圧縮保存！">
   <meta name="twitter:description" content="うちの稼動中のサーバの大事なデータを玄箱ＨＧ（Ｆｅｄｏｒａ１０）へミラーリングコピーしているんですが、そいつらを世代管理して圧縮保存するようにしてみました。※なぜなら、サーバがトラブった時、「あの日に戻れたら！」なんてことがあるからです。導入手順※いつものように Fedoraで自宅サーバー構築 の 自動バックアップ運用(tar+GnuPG+rsync/ftp) を参考にさせてもらいました。【前提条件】・実サーバはＦｅｄｏｒａ１０でＷｅｂサーバ、メールサーバ、ＦＴＰサーバ等が稼動中。・バックアップ側もＦｅｄｏｒａ１０で、ＮＴＰサーバ、Ｓａｍｂａサーバが稼動中。・実サーバのＩＰアドレスは 192.168.11.3 、バックアップ側（玄箱ＨＧ）のＩＰアドレスは 192.168.11.2 。・実サーバ、バックアップ側（玄箱）どちらも「 Poderosa 」によるリモート接続による操作。（実サーバはＳＳＨ２接続・鍵認証、バックアップ側（玄箱ＨＧ）はＳＳＨ２接続・パスワード認証）・実サーバの大事なデータを玄箱側の「 /tmp/mirror 」フォルダ配下へミラーリングコピーするように設定済み。※今回は全て、バックアップ（玄箱ＨＧ）での作業です。１．玄箱ＨＧにリモート接続「 Poderosa 」により 玄箱ＨＧ・Ｆｅｄｏｒａ１０ にリモート接続し、rootユーザになっておく。２．圧縮スクリプトを作成以下のように世代管理して圧縮保存するスクリプトを作成する。[root@KURO-BOX ~]# vi backup.sh#!/bin/bash## ローカル内でバックアップ#LANG=C## 設定開始## 圧縮対象リスト名# ※圧縮対象をフルパスで記述したリストBACKUPLIST=/root/backuplist[ ! -s $BACKUPLIST ] &amp;&amp; echo &quot;$BACKUPLIST is not found&quot; &amp;&amp; error_exit# 圧縮対象外リスト名# ※圧縮対象外をフルパスで記述したリストBACKUPNOLIST=/root/backupnolist# 圧縮先ディレクトリ名BACKUPDIR=/backupmkdir -p $BACKUPDIR# 圧縮ファイル保存世代数# ※当日分を含めた過去分圧縮ファイルを保存する世代数# ※過去分圧縮ファイルを保存しない場合は1を指定するBACKUPGEN=8# 暗号化・復号化パスフレーズ# ※指定がないときは暗号化しないPASS=&#39;&#39;# 圧縮ログファイル名BACKUPLOG=/var/log/backup.log## 設定終了## 異常終了処理関数定義error_exit () {    rm -f $TMPBACKUPNOLIST    exit 1}# 圧縮ファイルを圧縮対象外リストに追加# ※圧縮先ファイルを圧縮しないようにするTMPBACKUPNOLIST=`mktemp`[ -s $BACKUPNOLIST ] &amp;&amp; cat $BACKUPNOLIST &gt; $TMPBACKUPNOLISTecho &quot;$BACKUPDIR/*backup.tar.bz2&quot; &gt;&gt; $TMPBACKUPNOLIST# 前回圧縮をリネームcd $BACKUPDIROLDBACKUPFILE=`ls backup.tar.bz2* 2&gt;/dev/null`if [ -f $OLDBACKUPFILE ]; then    TIMESTAMP=`ls --full-time $OLDBACKUPFILE|awk &#39;{print $6}&#39;|tr -d -`    mv $BACKUPDIR/$OLDBACKUPFILE $BACKUPDIR/${TIMESTAMP}$OLDBACKUPFILE &gt; /dev/null 2&gt;&amp;1fi# 圧縮ログファイル作成rm -f $BACKUPLOGtouch $BACKUPLOGchmod 400 $BACKUPLOG# 圧縮実行echo &quot;`date` backup start&quot; &gt;&gt; $BACKUPLOGtar cjvfP $BACKUPDIR/backup.tar.bz2 -T $BACKUPLIST -X $TMPBACKUPNOLIST &gt;&gt; $BACKUPLOG 2&gt;&amp;1echo &quot;`date` backup end&quot; &gt;&gt; $BACKUPLOG# 圧縮暗号化(暗号化・復号化パスフレーズ指定時のみ)if [ ! -z $PASS ]; then    echo &quot;`date` encrypt start&quot; &gt;&gt; $BACKUPLOG    mkdir -p $HOME/.gnupg    echo $PASS|gpg --passphrase-fd 0 --batch -c $BACKUPDIR/backup.tar.bz2 &gt; /dev/null 2&gt;&amp;1	code=$?	if [ $code -ne 0 ]; then	    cat $BACKUPLOG | mail -s &quot;BACKUP NG CODE IS $code&quot; root	    rm -f $BACKUPDIR/backup.tar.bz2*	    error_exit	fi    rm -f $BACKUPDIR/backup.tar.bz2    echo &quot;`date` encrypt end&quot; &gt;&gt; $BACKUPLOGfi# 圧縮ファイル保存世代を超えた古い圧縮ファイルを削除if [ $(ls $BACKUPDIR/*backup.tar.bz2*|wc -l) -gt $BACKUPGEN ]; then    OLDBACKUPCNT=`expr $(ls $BACKUPDIR/*backup.tar.bz2*|wc -l) - $BACKUPGEN`    for file in `ls -t $BACKUPDIR/*backup.tar.bz2*|tail -n $OLDBACKUPCNT`    do        rm -f $file    donefi# 圧縮対象外リスト削除rm -f $TMPBACKUPNOLIST[root@KURO-BOX ~]#３．実行権限付与以下のようにしてスクリプトに実行権限を付与する。[root@KURO-BOX ~]# chmod 700 backup.sh[root@KURO-BOX ~]#４．圧縮対象リストの作成今回圧縮保存の対象となるフォルダをしていする。[root@KURO-BOX ~]# echo &quot;/tmp/mirror&quot; &gt;&gt; backuplist[root@KURO-BOX ~]#※今回は圧縮保存対象外リストは作成しない。（「 /tmp/mirror 」配下は全て圧縮したいので）５．スクリプトの試行以下のようにしてスクリプトを試しに実行してみる。[root@KURO-BOX ~]# ./backup.sh[root@KURO-BOX ~]#６．圧縮ファイル作成確認正常に圧縮ファイルが作成されているか確認する。[root@KURO-BOX ~]# ls -lh /backup[root@KURO-BOX ~]#７．圧縮内容確認圧縮ファイルの内容を確認してみる。[root@KURO-BOX ~]# tar tjvf /backup/backup.tar.bz2・・・　省略　・・・圧縮ファイルの内容が表示される・・・　省略　・・・[root@KURO-BOX ~]#８．定期自動実行設定毎日同じ時間に定期的に自動で実行されるよう設定する。[root@KURO-BOX ~]# echo &quot;0 3 * * * root /root/backup.sh&quot; &gt; /etc/cron.d/backup[root@KURO-BOX ~]#※しかし、上記の５で試行してみたんですが、１時間経っても終わりませんでした。玄箱ＨＧの非力なＣＰＵとメモリのせいだと思います。結局、玄箱ＨＧでの圧縮保存はヤメにしました。今日はここまで。じゃ。">
-  <meta name="twitter:url" content="https://komasaru.github.io/pages/komasaru/2009/04/29/29002002/">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/04/29/29002002/">
 
   
     <meta name="twitter:card" content="summary">
@@ -56,7 +56,7 @@
   
 
 
-<link rel="canonical" href="https://komasaru.github.io/pages/komasaru/2009/04/29/29002002/">
+<link rel="canonical" href="https://komasaru.github.io/2009/04/29/29002002/">
 
 
 
@@ -66,7 +66,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
     }
   </script>
@@ -78,7 +78,7 @@
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "mk-mode.com",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "sameAs": null
     }
   </script>
@@ -104,7 +104,7 @@
 </script>
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="/pages/komasaru/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/main.css">
 
 <!--[if IE ]>
   <style>
@@ -141,7 +141,7 @@
 <link rel="dns-prefetch" href="//twitter.com" />
 <link rel="dns-prefetch" href="//www.facebook.com" />
 
-<link rel="icon" href="/pages/komasaru/assets/images/favicon.ico">
+<link rel="icon" href="/assets/images/favicon.ico">
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-18154748-1']);
@@ -180,19 +180,19 @@
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         
-        <a class="site-title" href="/pages/komasaru/">mk-mode BLOG</a>
+        <a class="site-title" href="/">mk-mode BLOG</a>
         <ul class="visible-links"><li class="masthead__menu-item">
-              <a href="/pages/komasaru/year-archive/" >Archives</a>
+              <a href="/year-archive/" >Archives</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/categories/" >Categories</a>
+              <a href="/categories/" >Categories</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/tags/" >Tags</a>
+              <a href="/tags/" >Tags</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/privacy.html" >Privacy Policy</a>
+              <a href="/privacy.html" >Privacy Policy</a>
             </li></ul>
         
         <button class="search__toggle" type="button">
@@ -231,7 +231,7 @@
       
 
       
-        <img src="/pages/komasaru/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
       
     </div>
   
@@ -590,7 +590,7 @@ rm -f $TMPBACKUPNOLIST
     
       
       
-      <a href="/pages/komasaru/tags/windows" class="page__taxonomy-item" rel="tag">Windows</a>
+      <a href="/tags/windows" class="page__taxonomy-item" rel="tag">Windows</a>
     
     </span>
   </p>
@@ -611,7 +611,7 @@ rm -f $TMPBACKUPNOLIST
     
       
       
-      <a href="/pages/komasaru/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
     
     </span>
   </p>
@@ -628,15 +628,15 @@ rm -f $TMPBACKUPNOLIST
       <section class="page__share">
   
 
-  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%EF%BD%BB%EF%BD%B0%EF%BE%8A%EF%BE%9E%EF%BE%90%EF%BE%97%EF%BD%B0%EF%BE%98%EF%BE%9D%EF%BD%B8%EF%BE%9E%EF%BE%83%EF%BE%9E%EF%BD%B0%EF%BE%80%E3%82%92%E4%B8%96%E4%BB%A3%E7%AE%A1%E7%90%86%E5%9C%A7%E7%B8%AE%E4%BF%9D%E5%AD%98%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F04%2F29%2F29002002%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%EF%BD%BB%EF%BD%B0%EF%BE%8A%EF%BE%9E%EF%BE%90%EF%BE%97%EF%BD%B0%EF%BE%98%EF%BE%9D%EF%BD%B8%EF%BE%9E%EF%BE%83%EF%BE%9E%EF%BD%B0%EF%BE%80%E3%82%92%E4%B8%96%E4%BB%A3%E7%AE%A1%E7%90%86%E5%9C%A7%E7%B8%AE%E4%BF%9D%E5%AD%98%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F04%2F29%2F29002002%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F04%2F29%2F29002002%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F04%2F29%2F29002002%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
   
 
   <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F04%2F29%2F29002002%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F04%2F29%2F29002002%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -650,11 +650,11 @@ rm -f $TMPBACKUPNOLIST
       
   <nav class="pagination">
     
-      <a href="/pages/komasaru/2009/04/28/28002002/" class="pagination--pager" title="ﾀｯｸｲﾝﾃﾞｯｸｽの印字実践！
+      <a href="/2009/04/28/28002002/" class="pagination--pager" title="ﾀｯｸｲﾝﾃﾞｯｸｽの印字実践！
 ">Previous</a>
     
     
-      <a href="/pages/komasaru/2009/04/30/30002026/" class="pagination--pager" title="職場から自宅ｻｰﾊﾞへ！
+      <a href="/2009/04/30/30002026/" class="pagination--pager" title="職場から自宅ｻｰﾊﾞへ！
 ">Next</a>
     
   </nav>
@@ -689,7 +689,7 @@ rm -f $TMPBACKUPNOLIST
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-04-21)</small>
     </h3>
@@ -710,7 +710,7 @@ rm -f $TMPBACKUPNOLIST
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
+        <a href="/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
 </a>
         &nbsp;<small>(2021-04-14)</small>
     </h3>
@@ -731,7 +731,7 @@ rm -f $TMPBACKUPNOLIST
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
+        <a href="/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
 </a>
         &nbsp;<small>(2021-04-01)</small>
     </h3>
@@ -752,7 +752,7 @@ rm -f $TMPBACKUPNOLIST
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-03-17)</small>
     </h3>
@@ -792,7 +792,7 @@ rm -f $TMPBACKUPNOLIST
     <div class="page__footer">
       <footer>
         <!-- start custom footer snippets -->
-<div id="qr"><img src="/pages/komasaru/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
 <div id="google-ad-5"></div>
 <div class="page__footer-etc">
   <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
@@ -801,7 +801,7 @@ rm -f $TMPBACKUPNOLIST
   &emsp;合計 <tt id="pv-total">Loading...</tt><br />
   &emsp;今日 <tt id="pv-today">Loading...</tt><br />
   &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
-  <small>※<a href="/pages/komasaru/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
 </div>
 <p id="page-top">
   <a href="#">
@@ -844,9 +844,9 @@ rm -f $TMPBACKUPNOLIST
     </div>
 
     
-  <script defer src="/pages/komasaru/assets/js/main.min.js"></script>
+  <script defer src="/assets/js/main.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
-  <script defer src="/pages/komasaru/assets/js/my_custom.js"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
 
 
 <script>
@@ -897,7 +897,7 @@ rm -f $TMPBACKUPNOLIST
     
   <script>
     var disqus_config = function () {
-      this.page.url = "https://komasaru.github.io/pages/komasaru/2009/04/29/29002002/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.url = "https://komasaru.github.io/2009/04/29/29002002/";  // Replace PAGE_URL with your page's canonical URL variable
       this.page.identifier = "/2009/04/29/29002002"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() { // DON'T EDIT BELOW THIS LINE

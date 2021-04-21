@@ -18,7 +18,7 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="mk-mode BLOG">
 <meta property="og:title" content="Windows – ﾚｼﾞｽﾄﾘをﾊﾞｯﾁでﾊﾞｯｸｱｯﾌﾟ！">
-<meta property="og:url" content="https://komasaru.github.io/pages/komasaru/2009/03/16/16002029/">
+<meta property="og:url" content="https://komasaru.github.io/2009/03/16/16002029/">
 
 
   <meta property="og:description" content="今日は、Ｗｉｎｄｏｗｓで「 レジストリ情報 」をバッチでバックアップすることについてです。Ｗｉｎｄｏｗｓ使っている方で、レジストリをバックアップされている方もおられると思います。大抵は、レジストリエディタ「 regedit 」を開いてＧＵＩでエクスポートとかされている思います。滅多にしないことなんで、別にそれでも十分なんですけど。。。僕はバッチ処理させています。いちいち、レジストリエディタを開かずに、バッチファイルを実行させるだけでできるようにしています。【概要】レジストリの５種類のルートキーごとにエクスポートし、それらをＬＺｈ圧縮して、ファイル名に日付・時刻を付加して保存。バッチファイル例[ 任意のファイル名.bat ]@TITLE ■ BackUp Registory... @REM **** 環境変数設定@SET BAK_DATA=D:\20_BAK\Reg\ExpData\@SET BAK_LZH=D:\20_BAK\Reg\@SET BAKDATE=%DATE:~0,4%%DATE:~5,2%%DATE:~8,2%@SET BAKTIME=%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%@IF &quot;%TIME:~0,1%&quot;==&quot; &quot; SET BAKTIME=0%TIME:~1,1%%TIME:~3,2%%TIME:~6,2%@SET LOGFILE=D:\03_Bat\Log\BAK_REG.log@REM **** エクスポートデータを一旦削除@ECHO DELETE EXP_DATA ...@DEL /Q %BAK_DATA%*.*　　　　←　上書きできないので、一旦ファイルを削除@ECHO.@REM **** レジストリのエクスポート@ECHO EXPORT REG HKCR ...@REG EXPORT HKCR %BAK_DATA%EXP_HKCR.reg　←　HKEY_CLASSES_ROOT　をエクスポート@ECHO.@ECHO EXPORT REG HKCU ...@REG EXPORT HKCU %BAK_DATA%EXP_HKCU.reg　←　HKEY_CURRENT_USER　をエクスポート@ECHO.@ECHO EXPORT REG HKLM ...@REG EXPORT HKLM %BAK_DATA%EXP_HKLM.reg　←　HKEY_LOCAL_MACHINE　をエクスポート@ECHO.@ECHO EXPORT REG HKU ...@REG EXPORT HKU  %BAK_DATA%EXP_HKU.reg 　←　HKEY_USERS　をエクスポート@ECHO.@ECHO EXPORT REG HKCC ...@REG EXPORT HKCC %BAK_DATA%EXP_HKCC.reg　←　HKEY_CURRENT_CONFIG　をエクスポート@IF NOT ERRORLEVEL==0 GOTO :BAK_ERR@REM **** 圧縮保存@C:@CD &quot;C:\Program Files\ArchiverDll\UNLHA32&quot;C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*@IF NOT ERRORLEVEL==0 GOTO :BAK_ERR:BAK_END@SET BAKDATE=%DATE:~0,4%%DATE:~5,2%%DATE:~8,2%@SET BAKTIME=%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%@IF &quot;%TIME:~0,1%&quot;==&quot; &quot; SET BAKTIME=0%TIME:~1,1%%TIME:~3,2%%TIME:~6,2%@ECHO ■■■■ BACKUP E N D [ %BAKDATE% %BAKTIME% ] ■■■■(正常終了) &gt;&gt; %LOGFILE%@ECHO. &gt;&gt; %LOGFILE%@EXIT /B:BAK_ERR@SET BAKDATE=%DATE:~0,4%%DATE:~5,2%%DATE:~8,2%@SET BAKTIME=%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%@IF &quot;%TIME:~0,1%&quot;==&quot; &quot; SET BAKTIME=0%TIME:~1,1%%TIME:~3,2%%TIME:~6,2%@ECHO ■■■■ BACKUP E N D [ %BAKDATE% %BAKTIME% ] ■■■■(異常終了) &gt;&gt; %LOGFILE%@ECHO [ ERRORLEVEL = %ERRORLEVEL% ] &gt;&gt; %LOGFILE%@ECHO. &gt;&gt; %LOGFILE%@EXIT /B今回は、ルートキーごとにエクスポートしていますが、サブキーも指定するができます。ただ、最近あんまりこのバッチは動かしていなかったんで、一部エラーが出るところがあって、ちょっとショック！！ルートキー「 HKLM ( HKEY_LOCAL_MACHINE ) 」の中で、何かがアクセス拒否される。なぜだろう？調べてみます。わかったら、ご報告します！じゃ、また">
@@ -32,7 +32,7 @@
   <meta name="twitter:site" content="@rsm_mzk">
   <meta name="twitter:title" content="Windows – ﾚｼﾞｽﾄﾘをﾊﾞｯﾁでﾊﾞｯｸｱｯﾌﾟ！">
   <meta name="twitter:description" content="今日は、Ｗｉｎｄｏｗｓで「 レジストリ情報 」をバッチでバックアップすることについてです。Ｗｉｎｄｏｗｓ使っている方で、レジストリをバックアップされている方もおられると思います。大抵は、レジストリエディタ「 regedit 」を開いてＧＵＩでエクスポートとかされている思います。滅多にしないことなんで、別にそれでも十分なんですけど。。。僕はバッチ処理させています。いちいち、レジストリエディタを開かずに、バッチファイルを実行させるだけでできるようにしています。【概要】レジストリの５種類のルートキーごとにエクスポートし、それらをＬＺｈ圧縮して、ファイル名に日付・時刻を付加して保存。バッチファイル例[ 任意のファイル名.bat ]@TITLE ■ BackUp Registory... @REM **** 環境変数設定@SET BAK_DATA=D:\20_BAK\Reg\ExpData\@SET BAK_LZH=D:\20_BAK\Reg\@SET BAKDATE=%DATE:~0,4%%DATE:~5,2%%DATE:~8,2%@SET BAKTIME=%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%@IF &quot;%TIME:~0,1%&quot;==&quot; &quot; SET BAKTIME=0%TIME:~1,1%%TIME:~3,2%%TIME:~6,2%@SET LOGFILE=D:\03_Bat\Log\BAK_REG.log@REM **** エクスポートデータを一旦削除@ECHO DELETE EXP_DATA ...@DEL /Q %BAK_DATA%*.*　　　　←　上書きできないので、一旦ファイルを削除@ECHO.@REM **** レジストリのエクスポート@ECHO EXPORT REG HKCR ...@REG EXPORT HKCR %BAK_DATA%EXP_HKCR.reg　←　HKEY_CLASSES_ROOT　をエクスポート@ECHO.@ECHO EXPORT REG HKCU ...@REG EXPORT HKCU %BAK_DATA%EXP_HKCU.reg　←　HKEY_CURRENT_USER　をエクスポート@ECHO.@ECHO EXPORT REG HKLM ...@REG EXPORT HKLM %BAK_DATA%EXP_HKLM.reg　←　HKEY_LOCAL_MACHINE　をエクスポート@ECHO.@ECHO EXPORT REG HKU ...@REG EXPORT HKU  %BAK_DATA%EXP_HKU.reg 　←　HKEY_USERS　をエクスポート@ECHO.@ECHO EXPORT REG HKCC ...@REG EXPORT HKCC %BAK_DATA%EXP_HKCC.reg　←　HKEY_CURRENT_CONFIG　をエクスポート@IF NOT ERRORLEVEL==0 GOTO :BAK_ERR@REM **** 圧縮保存@C:@CD &quot;C:\Program Files\ArchiverDll\UNLHA32&quot;C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*@IF NOT ERRORLEVEL==0 GOTO :BAK_ERR:BAK_END@SET BAKDATE=%DATE:~0,4%%DATE:~5,2%%DATE:~8,2%@SET BAKTIME=%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%@IF &quot;%TIME:~0,1%&quot;==&quot; &quot; SET BAKTIME=0%TIME:~1,1%%TIME:~3,2%%TIME:~6,2%@ECHO ■■■■ BACKUP E N D [ %BAKDATE% %BAKTIME% ] ■■■■(正常終了) &gt;&gt; %LOGFILE%@ECHO. &gt;&gt; %LOGFILE%@EXIT /B:BAK_ERR@SET BAKDATE=%DATE:~0,4%%DATE:~5,2%%DATE:~8,2%@SET BAKTIME=%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%@IF &quot;%TIME:~0,1%&quot;==&quot; &quot; SET BAKTIME=0%TIME:~1,1%%TIME:~3,2%%TIME:~6,2%@ECHO ■■■■ BACKUP E N D [ %BAKDATE% %BAKTIME% ] ■■■■(異常終了) &gt;&gt; %LOGFILE%@ECHO [ ERRORLEVEL = %ERRORLEVEL% ] &gt;&gt; %LOGFILE%@ECHO. &gt;&gt; %LOGFILE%@EXIT /B今回は、ルートキーごとにエクスポートしていますが、サブキーも指定するができます。ただ、最近あんまりこのバッチは動かしていなかったんで、一部エラーが出るところがあって、ちょっとショック！！ルートキー「 HKLM ( HKEY_LOCAL_MACHINE ) 」の中で、何かがアクセス拒否される。なぜだろう？調べてみます。わかったら、ご報告します！じゃ、また">
-  <meta name="twitter:url" content="https://komasaru.github.io/pages/komasaru/2009/03/16/16002029/">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/03/16/16002029/">
 
   
     <meta name="twitter:card" content="summary">
@@ -56,7 +56,7 @@
   
 
 
-<link rel="canonical" href="https://komasaru.github.io/pages/komasaru/2009/03/16/16002029/">
+<link rel="canonical" href="https://komasaru.github.io/2009/03/16/16002029/">
 
 
 
@@ -66,7 +66,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
     }
   </script>
@@ -78,7 +78,7 @@
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "mk-mode.com",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "sameAs": null
     }
   </script>
@@ -104,7 +104,7 @@
 </script>
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="/pages/komasaru/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/main.css">
 
 <!--[if IE ]>
   <style>
@@ -141,7 +141,7 @@
 <link rel="dns-prefetch" href="//twitter.com" />
 <link rel="dns-prefetch" href="//www.facebook.com" />
 
-<link rel="icon" href="/pages/komasaru/assets/images/favicon.ico">
+<link rel="icon" href="/assets/images/favicon.ico">
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-18154748-1']);
@@ -180,19 +180,19 @@
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         
-        <a class="site-title" href="/pages/komasaru/">mk-mode BLOG</a>
+        <a class="site-title" href="/">mk-mode BLOG</a>
         <ul class="visible-links"><li class="masthead__menu-item">
-              <a href="/pages/komasaru/year-archive/" >Archives</a>
+              <a href="/year-archive/" >Archives</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/categories/" >Categories</a>
+              <a href="/categories/" >Categories</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/tags/" >Tags</a>
+              <a href="/tags/" >Tags</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/privacy.html" >Privacy Policy</a>
+              <a href="/privacy.html" >Privacy Policy</a>
             </li></ul>
         
         <button class="search__toggle" type="button">
@@ -231,7 +231,7 @@
       
 
       
-        <img src="/pages/komasaru/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
       
     </div>
   
@@ -459,7 +459,7 @@ C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*
 
 <p>ルートキー「 HKLM ( HKEY_LOCAL_MACHINE ) 」の中で、何かがアクセス拒否される。</p>
 
-<p><img src="/pages/komasaru/images/2009/03/reg_exp_error_hklm.jpg" alt="reg_exp_error_hklm" title="reg_exp_error_hklm" /></p>
+<p><img src="/images/2009/03/reg_exp_error_hklm.jpg" alt="reg_exp_error_hklm" title="reg_exp_error_hklm" /></p>
 
 <p>なぜだろう？
 調べてみます。</p>
@@ -488,11 +488,11 @@ C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*
     
       
       
-      <a href="/pages/komasaru/tags/windows" class="page__taxonomy-item" rel="tag">Windows</a><span class="sep">, </span>
+      <a href="/tags/windows" class="page__taxonomy-item" rel="tag">Windows</a><span class="sep">, </span>
     
       
       
-      <a href="/pages/komasaru/tags/%E3%83%AC%E3%82%B8%E3%82%B9%E3%83%88%E3%83%AA" class="page__taxonomy-item" rel="tag">レジストリ</a>
+      <a href="/tags/%E3%83%AC%E3%82%B8%E3%82%B9%E3%83%88%E3%83%AA" class="page__taxonomy-item" rel="tag">レジストリ</a>
     
     </span>
   </p>
@@ -513,7 +513,7 @@ C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*
     
       
       
-      <a href="/pages/komasaru/categories/pc-tips" class="page__taxonomy-item" rel="tag">PC_Tips</a>
+      <a href="/categories/pc-tips" class="page__taxonomy-item" rel="tag">PC_Tips</a>
     
     </span>
   </p>
@@ -530,15 +530,15 @@ C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*
       <section class="page__share">
   
 
-  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Windows+%E2%80%93+%EF%BE%9A%EF%BD%BC%EF%BE%9E%EF%BD%BD%EF%BE%84%EF%BE%98%E3%82%92%EF%BE%8A%EF%BE%9E%EF%BD%AF%EF%BE%81%E3%81%A7%EF%BE%8A%EF%BE%9E%EF%BD%AF%EF%BD%B8%EF%BD%B1%EF%BD%AF%EF%BE%8C%EF%BE%9F%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F03%2F16%2F16002029%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Windows+%E2%80%93+%EF%BE%9A%EF%BD%BC%EF%BE%9E%EF%BD%BD%EF%BE%84%EF%BE%98%E3%82%92%EF%BE%8A%EF%BE%9E%EF%BD%AF%EF%BE%81%E3%81%A7%EF%BE%8A%EF%BE%9E%EF%BD%AF%EF%BD%B8%EF%BD%B1%EF%BD%AF%EF%BE%8C%EF%BE%9F%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F03%2F16%2F16002029%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F03%2F16%2F16002029%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F03%2F16%2F16002029%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
   
 
   <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F03%2F16%2F16002029%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F03%2F16%2F16002029%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -552,11 +552,11 @@ C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*
       
   <nav class="pagination">
     
-      <a href="/pages/komasaru/2009/03/15/15002059/" class="pagination--pager" title="簿記資料！
+      <a href="/2009/03/15/15002059/" class="pagination--pager" title="簿記資料！
 ">Previous</a>
     
     
-      <a href="/pages/komasaru/2009/03/17/17002000/" class="pagination--pager" title="Windows – レジストリでＰＣの時刻補正！
+      <a href="/2009/03/17/17002000/" class="pagination--pager" title="Windows – レジストリでＰＣの時刻補正！
 ">Next</a>
     
   </nav>
@@ -591,7 +591,7 @@ C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-04-21)</small>
     </h3>
@@ -612,7 +612,7 @@ C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
+        <a href="/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
 </a>
         &nbsp;<small>(2021-04-14)</small>
     </h3>
@@ -633,7 +633,7 @@ C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
+        <a href="/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
 </a>
         &nbsp;<small>(2021-04-01)</small>
     </h3>
@@ -654,7 +654,7 @@ C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-03-17)</small>
     </h3>
@@ -694,7 +694,7 @@ C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*
     <div class="page__footer">
       <footer>
         <!-- start custom footer snippets -->
-<div id="qr"><img src="/pages/komasaru/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
 <div id="google-ad-5"></div>
 <div class="page__footer-etc">
   <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
@@ -703,7 +703,7 @@ C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*
   &emsp;合計 <tt id="pv-total">Loading...</tt><br />
   &emsp;今日 <tt id="pv-today">Loading...</tt><br />
   &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
-  <small>※<a href="/pages/komasaru/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
 </div>
 <p id="page-top">
   <a href="#">
@@ -746,9 +746,9 @@ C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*
     </div>
 
     
-  <script defer src="/pages/komasaru/assets/js/main.min.js"></script>
+  <script defer src="/assets/js/main.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
-  <script defer src="/pages/komasaru/assets/js/my_custom.js"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
 
 
 <script>
@@ -799,7 +799,7 @@ C:\PROGRA~1\UNDLL\UNLHA32 a -rd %BAK_LZH%REG_%BAKDATE%_%BAKTIME% %BAK_DATA% *.*
     
   <script>
     var disqus_config = function () {
-      this.page.url = "https://komasaru.github.io/pages/komasaru/2009/03/16/16002029/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.url = "https://komasaru.github.io/2009/03/16/16002029/";  // Replace PAGE_URL with your page's canonical URL variable
       this.page.identifier = "/2009/03/16/16002029"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() { // DON'T EDIT BELOW THIS LINE

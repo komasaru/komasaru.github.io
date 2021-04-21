@@ -18,7 +18,7 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="mk-mode BLOG">
 <meta property="og:title" content="Fedora10サーバにＷｅｂカメラを構築！">
-<meta property="og:url" content="https://komasaru.github.io/pages/komasaru/2009/01/15/15200044/">
+<meta property="og:url" content="https://komasaru.github.io/2009/01/15/15200044/">
 
 
   <meta property="og:description" content="こんばんわ。こちらは今日も雪でした。まだ降るようです。さて、ＦｅｄｏｒａサーバにＷｅｂカメラをつなげて、ライブ画像（自分のデスクトップ）を配信できるようになったので報告します。ちなみに以前は、メインマシン（ＷｉｎｄｏｗｓＸＰ）にＷｅｂカメラをつなげて、フリーソフト(LiveCapture2)でキャプチャした画像をＦｅｄｏｒａサーバにＦＴＰでアップロードして使用していました。しかし、これではメインマシンが起動中でないとライブの画像が配信できませんでした。（最初から、ＦｅｄｏｒａサーバにＷｅｂカメラを導入すればよかったのですが、非常に難しかったので。トホホ・・・）今回はどうしても、ＦｅｄｏｒａサーバにＷｅｂカメラを導入してやろうと思い立ったので、今回もものすごく四苦八苦して何とか導入できました。導入方法（Fedora１０インストール、Webサーバ導入済みが前提）（但し、環境によっては若干異なることもあると思いますし、自分自身も今までに何回もＷｅｂカメラ導入しようとしてアレコレしていたので、これが完璧の導入方法といえないと思います。あしからず・・・）いろんなサイトを参考しました。参考にしたサイトは最後にご紹介します。１．Ｘ環境導入X11のウィンドウでモニタするアプリなので，X11に依存する。X11 がインストールされていない環境下では，webcam も make できない。ということは、うちのFedoraはＸ環境入れてないので、以下を実行。[root@noah ~]# yum -y install xorg-x11-drivers２．libjpeg-devel, kernel-devel, ncurse-devel のインストールその他make中に（ファイル不足で）エラーが出るので libjpeg-devel, kernel-devel, ncurse-devel をインストール。[root@noah ~]# yum -y install libjpeg-devel[root@noah ~]# yum -y install kernel-devel[root@noah ~]# yum -y install ncurse-devel３．config.h ファイルの作成カーネルのバージョンによっては linux/config.h ファイルが無いので、コンパイルに失敗します。以下のコマンドでとりあえず空ファイルを作ればなんとかなります。[root@noah ~]# touch /usr/src/kernels/(カーネルバージョン)/include/linux/config.h４．xawtv の導入キャプチャソフトであるxawtvをダウンロード＆解凍する。[root@noah ~]# wget http://dl.bytesex.org/releases/xawtv/xawtv-3.95.tar.gz[root@noah ~]# tar zxvf xawtv-3.95.tar.gz[root@noah ~]# cd xawtv-3.95５．fbtools.c, matrox.c の修正Ｆｅｄｏｒａ１０では、fbtools.c, matrox.c でコンパイルエラーとなるので、以下のように修正[root@noah xawtv-3.95]# vi console/fbtools.c--------------------------------------&gt;24行辺り// #include#define PAGE_SHIFT      12#define PAGE_SIZE       (1UL &lt;&lt; PAGE_SHIFT)#define PAGE_MASK       (~(PAGE_SIZE-1))&lt;--------------------------------------[root@noah xawtv-3.95]# vi console/matrox.c--------------------------------------&gt;11行辺り// #include  /* PAGE_SIZE */#define PAGE_SHIFT      12#define PAGE_SIZE       (1UL &lt;&lt; PAGE_SHIFT)&lt;--------------------------------------※参考にしたサイトでは、Fedora10では console/fbtv.c の190行辺りのstatic char *snapbase; を、char  *snapbase; に修正ともあるが、実際にはそのような箇所は無かったので無視した。（xawtv-3.94 にはあった）６．xawtv のパッチ適用以上のままでは、後にwebcam起動時に--------------------------------------&gt;・・・write config [ftp]:local transfer ~/Desktop/uploading.jpeg =&gt; ~/Desktop/webcam.jpegioctl: VIDIOC_DQBUF(index=0;type=VIDEO_CAPTURE;bytesused=0;flags=0x0[];field=ANY;;timecode.type=0;timecode.flags=0;timecode.frames=0;timecode.seconds=0;timecode.minutes=0;timecode.hours=0;timecode.userbits=&quot;&quot;;sequence=0;memory=unknown):Invalid argumentcapturing image failed&lt;--------------------------------------のようなエラーが出る（バグのようです）ので、パッチを当てる。こちらからソースをコピーして、xawtv-3.95-patch.diff の名前で保存(xawtv-3.95フォルダに)。以下を実行[root@noah xawtv-3.95]# patch -p1 -N &lt; xawtv-3.95-patch.diff--------------------------------------&gt;patching file libng/plugins/drv0-v4l2.c&lt;-------------------------------------７．コンパイル＆インストール[root@noah xawtv-3.95]# ./configure[root@noah xawtv-3.95]# make[root@noah xawtv-3.95]# make install８．webcam設定ファイルの作成当方は、/usr/local/etc/に作成。（以下はうちの環境の場合。ＷｅｂカメラとＷｅｂサーバは同一ホストなのＦＴＰ送信はしません。）[root@noah ~]# vi /usr/local/etc/webcamrc--------------------------------------&gt;[grab]device = /dev/video0text = &quot;webcam %Y-%m-%d %H:%M:%S&quot;#infofile = filenamefg_red = 255fg_green = 255fg_blue = 255width = 320height = 240delay = 60wait = 0#input = composite1#norm = palrotate = 0top = 0left = 0bottom = -1right = -1quality = 75trigger = 0once = 0archive = /var/www/html/pic/webcam/%y%m%d%H%M.jpg[ftp]#host = xxx#user = xxxxxx#pass = xxxxxxxxdir  = /var/www/html/pic/webcamfile = webcam.jpgtmp  = uploading.jpgpassive = 1debug = 0auto = 0local = 1ssh = 0&lt;--------------------------------------９．webcam 実行画像の保存先を作成しておいて、webcamコマンド実行。[root@noah ~]# /usr/local/bin/webcam /usr/local/etc/webcamrc &gt; /dev/null 2&gt; /dev/null &amp;１０．ブート後自動起動の設定/etc/rc.d/rc.local に上記９．のコマンドを追加。１１．ＷｅｂページにＨＴＭＬドキュメントを作成（以下は当方サンプル）&lt;HTML&gt;&lt;HEAD&gt;&lt;META http-equiv=&quot;Content-Language&quot; content=&quot;ja&quot;&gt;&lt;META http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=Shift_JIS&quot;&gt;&lt;META http-equiv=&quot;Content-Style-Type&quot; content=&quot;text/css&quot;&gt;&lt;META http-equiv=&quot;refresh&quot; content=&quot;30&quot;&gt;&lt;TITLE&gt;My Room&lt;/TITLE&gt;&lt;/HEAD&gt;&lt;BODY bgcolor=&quot;#000000&quot;&gt;&lt;STRONG&gt;&lt;EM&gt;&lt;FONT COLOR=&quot;#00FFFF&quot;&gt;My Room (いま)&lt;/FONT&gt;&lt;/EM&gt;&lt;/STRONG&gt;&lt;P&gt;&lt;IMG src=&quot;pic/webcam/webcam.jpg&quot; border=&quot;0&quot; name=&quot;WEBCAM&quot;width=&quot;320&quot; height=&quot;240&quot;&gt;&lt;BR&gt;&lt;FONT SIZE = &quot;2&quot; COLOR=&quot;white&quot;&gt;↑３０秒間隔で画像表示が更新されます。&lt;/FONT&gt;&lt;BR&gt;&lt;FONT SIZE = &quot;1&quot; COLOR=&quot;white&quot;&gt;※Ｗｅｂカメラ停止中の時は更新されませんので・・・&lt;/FONT&gt;&lt;/P&gt;&lt;/BODY&gt;&lt;/HTML&gt;&lt;--------------------------------------１２．動作確認以上で、ＷｅｂページにＷｅｂカメラの画像が表示されると思います。（うまくいけば）（参考までに、当方のＷｅｂカメラ画像は こちら )当方のホームページは現在とてもショボイので、あまり見ないでください。）[ 自分で使ってみての感想 ]  画質がＷｉｎｄｏｗｓでキャプチャしてアップロードしていたときより、暗い・悪い。（これはいろんなサイトで言われています。改善はしていきたいですが・・・）  サーバにＷｅｂカメラがつながっているので、常に画像が更新されて良い。（今は自分の机の上を写しているだけだが、いずれは監視カメラ的に使いたい）[ 参考にさせてもらったサイト・ページ]  about WAKITAs’ server（ http://wakita.no-ip.com/server/index.html ）  しんちゃんの今日: Webカメラ Part3（ http://blog.kajukaju.net/2007/06/server_000495.php ）  かってに Linux2 (Freely Linux2)（ http://www.macmil.co.jp/macmil/linux002.htm ）  カーネル2.6.18でのconfig.h - vx-xv Geeklog（ http://www.vx-xv.com/geeklog/article.php?story=20061104140306644 ）  Linuxによるライブカメラの構築方法の説明（ http://bakuretsu.atso-net.jp/bakuretsu/webcam/system-linux.html ）  Nabble - video4linux-list - xawtv ‘webcam’ &amp; uvcvideo webcam: ioctl error (classic view)（ http://n2.nabble.com/xawtv-%27webcam%27—uvcvideo-webcam:-ioctl-error-td1450204.html ）">
@@ -32,7 +32,7 @@
   <meta name="twitter:site" content="@rsm_mzk">
   <meta name="twitter:title" content="Fedora10サーバにＷｅｂカメラを構築！">
   <meta name="twitter:description" content="こんばんわ。こちらは今日も雪でした。まだ降るようです。さて、ＦｅｄｏｒａサーバにＷｅｂカメラをつなげて、ライブ画像（自分のデスクトップ）を配信できるようになったので報告します。ちなみに以前は、メインマシン（ＷｉｎｄｏｗｓＸＰ）にＷｅｂカメラをつなげて、フリーソフト(LiveCapture2)でキャプチャした画像をＦｅｄｏｒａサーバにＦＴＰでアップロードして使用していました。しかし、これではメインマシンが起動中でないとライブの画像が配信できませんでした。（最初から、ＦｅｄｏｒａサーバにＷｅｂカメラを導入すればよかったのですが、非常に難しかったので。トホホ・・・）今回はどうしても、ＦｅｄｏｒａサーバにＷｅｂカメラを導入してやろうと思い立ったので、今回もものすごく四苦八苦して何とか導入できました。導入方法（Fedora１０インストール、Webサーバ導入済みが前提）（但し、環境によっては若干異なることもあると思いますし、自分自身も今までに何回もＷｅｂカメラ導入しようとしてアレコレしていたので、これが完璧の導入方法といえないと思います。あしからず・・・）いろんなサイトを参考しました。参考にしたサイトは最後にご紹介します。１．Ｘ環境導入X11のウィンドウでモニタするアプリなので，X11に依存する。X11 がインストールされていない環境下では，webcam も make できない。ということは、うちのFedoraはＸ環境入れてないので、以下を実行。[root@noah ~]# yum -y install xorg-x11-drivers２．libjpeg-devel, kernel-devel, ncurse-devel のインストールその他make中に（ファイル不足で）エラーが出るので libjpeg-devel, kernel-devel, ncurse-devel をインストール。[root@noah ~]# yum -y install libjpeg-devel[root@noah ~]# yum -y install kernel-devel[root@noah ~]# yum -y install ncurse-devel３．config.h ファイルの作成カーネルのバージョンによっては linux/config.h ファイルが無いので、コンパイルに失敗します。以下のコマンドでとりあえず空ファイルを作ればなんとかなります。[root@noah ~]# touch /usr/src/kernels/(カーネルバージョン)/include/linux/config.h４．xawtv の導入キャプチャソフトであるxawtvをダウンロード＆解凍する。[root@noah ~]# wget http://dl.bytesex.org/releases/xawtv/xawtv-3.95.tar.gz[root@noah ~]# tar zxvf xawtv-3.95.tar.gz[root@noah ~]# cd xawtv-3.95５．fbtools.c, matrox.c の修正Ｆｅｄｏｒａ１０では、fbtools.c, matrox.c でコンパイルエラーとなるので、以下のように修正[root@noah xawtv-3.95]# vi console/fbtools.c--------------------------------------&gt;24行辺り// #include#define PAGE_SHIFT      12#define PAGE_SIZE       (1UL &lt;&lt; PAGE_SHIFT)#define PAGE_MASK       (~(PAGE_SIZE-1))&lt;--------------------------------------[root@noah xawtv-3.95]# vi console/matrox.c--------------------------------------&gt;11行辺り// #include  /* PAGE_SIZE */#define PAGE_SHIFT      12#define PAGE_SIZE       (1UL &lt;&lt; PAGE_SHIFT)&lt;--------------------------------------※参考にしたサイトでは、Fedora10では console/fbtv.c の190行辺りのstatic char *snapbase; を、char  *snapbase; に修正ともあるが、実際にはそのような箇所は無かったので無視した。（xawtv-3.94 にはあった）６．xawtv のパッチ適用以上のままでは、後にwebcam起動時に--------------------------------------&gt;・・・write config [ftp]:local transfer ~/Desktop/uploading.jpeg =&gt; ~/Desktop/webcam.jpegioctl: VIDIOC_DQBUF(index=0;type=VIDEO_CAPTURE;bytesused=0;flags=0x0[];field=ANY;;timecode.type=0;timecode.flags=0;timecode.frames=0;timecode.seconds=0;timecode.minutes=0;timecode.hours=0;timecode.userbits=&quot;&quot;;sequence=0;memory=unknown):Invalid argumentcapturing image failed&lt;--------------------------------------のようなエラーが出る（バグのようです）ので、パッチを当てる。こちらからソースをコピーして、xawtv-3.95-patch.diff の名前で保存(xawtv-3.95フォルダに)。以下を実行[root@noah xawtv-3.95]# patch -p1 -N &lt; xawtv-3.95-patch.diff--------------------------------------&gt;patching file libng/plugins/drv0-v4l2.c&lt;-------------------------------------７．コンパイル＆インストール[root@noah xawtv-3.95]# ./configure[root@noah xawtv-3.95]# make[root@noah xawtv-3.95]# make install８．webcam設定ファイルの作成当方は、/usr/local/etc/に作成。（以下はうちの環境の場合。ＷｅｂカメラとＷｅｂサーバは同一ホストなのＦＴＰ送信はしません。）[root@noah ~]# vi /usr/local/etc/webcamrc--------------------------------------&gt;[grab]device = /dev/video0text = &quot;webcam %Y-%m-%d %H:%M:%S&quot;#infofile = filenamefg_red = 255fg_green = 255fg_blue = 255width = 320height = 240delay = 60wait = 0#input = composite1#norm = palrotate = 0top = 0left = 0bottom = -1right = -1quality = 75trigger = 0once = 0archive = /var/www/html/pic/webcam/%y%m%d%H%M.jpg[ftp]#host = xxx#user = xxxxxx#pass = xxxxxxxxdir  = /var/www/html/pic/webcamfile = webcam.jpgtmp  = uploading.jpgpassive = 1debug = 0auto = 0local = 1ssh = 0&lt;--------------------------------------９．webcam 実行画像の保存先を作成しておいて、webcamコマンド実行。[root@noah ~]# /usr/local/bin/webcam /usr/local/etc/webcamrc &gt; /dev/null 2&gt; /dev/null &amp;１０．ブート後自動起動の設定/etc/rc.d/rc.local に上記９．のコマンドを追加。１１．ＷｅｂページにＨＴＭＬドキュメントを作成（以下は当方サンプル）&lt;HTML&gt;&lt;HEAD&gt;&lt;META http-equiv=&quot;Content-Language&quot; content=&quot;ja&quot;&gt;&lt;META http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=Shift_JIS&quot;&gt;&lt;META http-equiv=&quot;Content-Style-Type&quot; content=&quot;text/css&quot;&gt;&lt;META http-equiv=&quot;refresh&quot; content=&quot;30&quot;&gt;&lt;TITLE&gt;My Room&lt;/TITLE&gt;&lt;/HEAD&gt;&lt;BODY bgcolor=&quot;#000000&quot;&gt;&lt;STRONG&gt;&lt;EM&gt;&lt;FONT COLOR=&quot;#00FFFF&quot;&gt;My Room (いま)&lt;/FONT&gt;&lt;/EM&gt;&lt;/STRONG&gt;&lt;P&gt;&lt;IMG src=&quot;pic/webcam/webcam.jpg&quot; border=&quot;0&quot; name=&quot;WEBCAM&quot;width=&quot;320&quot; height=&quot;240&quot;&gt;&lt;BR&gt;&lt;FONT SIZE = &quot;2&quot; COLOR=&quot;white&quot;&gt;↑３０秒間隔で画像表示が更新されます。&lt;/FONT&gt;&lt;BR&gt;&lt;FONT SIZE = &quot;1&quot; COLOR=&quot;white&quot;&gt;※Ｗｅｂカメラ停止中の時は更新されませんので・・・&lt;/FONT&gt;&lt;/P&gt;&lt;/BODY&gt;&lt;/HTML&gt;&lt;--------------------------------------１２．動作確認以上で、ＷｅｂページにＷｅｂカメラの画像が表示されると思います。（うまくいけば）（参考までに、当方のＷｅｂカメラ画像は こちら )当方のホームページは現在とてもショボイので、あまり見ないでください。）[ 自分で使ってみての感想 ]  画質がＷｉｎｄｏｗｓでキャプチャしてアップロードしていたときより、暗い・悪い。（これはいろんなサイトで言われています。改善はしていきたいですが・・・）  サーバにＷｅｂカメラがつながっているので、常に画像が更新されて良い。（今は自分の机の上を写しているだけだが、いずれは監視カメラ的に使いたい）[ 参考にさせてもらったサイト・ページ]  about WAKITAs’ server（ http://wakita.no-ip.com/server/index.html ）  しんちゃんの今日: Webカメラ Part3（ http://blog.kajukaju.net/2007/06/server_000495.php ）  かってに Linux2 (Freely Linux2)（ http://www.macmil.co.jp/macmil/linux002.htm ）  カーネル2.6.18でのconfig.h - vx-xv Geeklog（ http://www.vx-xv.com/geeklog/article.php?story=20061104140306644 ）  Linuxによるライブカメラの構築方法の説明（ http://bakuretsu.atso-net.jp/bakuretsu/webcam/system-linux.html ）  Nabble - video4linux-list - xawtv ‘webcam’ &amp; uvcvideo webcam: ioctl error (classic view)（ http://n2.nabble.com/xawtv-%27webcam%27—uvcvideo-webcam:-ioctl-error-td1450204.html ）">
-  <meta name="twitter:url" content="https://komasaru.github.io/pages/komasaru/2009/01/15/15200044/">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/01/15/15200044/">
 
   
     <meta name="twitter:card" content="summary">
@@ -56,7 +56,7 @@
   
 
 
-<link rel="canonical" href="https://komasaru.github.io/pages/komasaru/2009/01/15/15200044/">
+<link rel="canonical" href="https://komasaru.github.io/2009/01/15/15200044/">
 
 
 
@@ -66,7 +66,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
     }
   </script>
@@ -78,7 +78,7 @@
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "mk-mode.com",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "sameAs": null
     }
   </script>
@@ -104,7 +104,7 @@
 </script>
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="/pages/komasaru/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/main.css">
 
 <!--[if IE ]>
   <style>
@@ -141,7 +141,7 @@
 <link rel="dns-prefetch" href="//twitter.com" />
 <link rel="dns-prefetch" href="//www.facebook.com" />
 
-<link rel="icon" href="/pages/komasaru/assets/images/favicon.ico">
+<link rel="icon" href="/assets/images/favicon.ico">
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-18154748-1']);
@@ -180,19 +180,19 @@
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         
-        <a class="site-title" href="/pages/komasaru/">mk-mode BLOG</a>
+        <a class="site-title" href="/">mk-mode BLOG</a>
         <ul class="visible-links"><li class="masthead__menu-item">
-              <a href="/pages/komasaru/year-archive/" >Archives</a>
+              <a href="/year-archive/" >Archives</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/categories/" >Categories</a>
+              <a href="/categories/" >Categories</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/tags/" >Tags</a>
+              <a href="/tags/" >Tags</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/privacy.html" >Privacy Policy</a>
+              <a href="/privacy.html" >Privacy Policy</a>
             </li></ul>
         
         <button class="search__toggle" type="button">
@@ -231,7 +231,7 @@
       
 
       
-        <img src="/pages/komasaru/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
       
     </div>
   
@@ -630,7 +630,7 @@ ssh = 0
     
       
       
-      <a href="/pages/komasaru/tags/web%E3%82%AB%E3%83%A1%E3%83%A9" class="page__taxonomy-item" rel="tag">Webカメラ</a>
+      <a href="/tags/web%E3%82%AB%E3%83%A1%E3%83%A9" class="page__taxonomy-item" rel="tag">Webカメラ</a>
     
     </span>
   </p>
@@ -651,15 +651,15 @@ ssh = 0
     
       
       
-      <a href="/pages/komasaru/categories/web%E3%82%B5%E3%82%A4%E3%83%88" class="page__taxonomy-item" rel="tag">Webサイト</a><span class="sep">, </span>
+      <a href="/categories/web%E3%82%B5%E3%82%A4%E3%83%88" class="page__taxonomy-item" rel="tag">Webサイト</a><span class="sep">, </span>
     
       
       
-      <a href="/pages/komasaru/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
     
       
       
-      <a href="/pages/komasaru/categories/%E8%87%AA%E4%BD%9Cpc" class="page__taxonomy-item" rel="tag">自作PC</a>
+      <a href="/categories/%E8%87%AA%E4%BD%9Cpc" class="page__taxonomy-item" rel="tag">自作PC</a>
     
     </span>
   </p>
@@ -676,15 +676,15 @@ ssh = 0
       <section class="page__share">
   
 
-  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Fedora10%E3%82%B5%E3%83%BC%E3%83%90%E3%81%AB%EF%BC%B7%EF%BD%85%EF%BD%82%E3%82%AB%E3%83%A1%E3%83%A9%E3%82%92%E6%A7%8B%E7%AF%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F01%2F15%2F15200044%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Fedora10%E3%82%B5%E3%83%BC%E3%83%90%E3%81%AB%EF%BC%B7%EF%BD%85%EF%BD%82%E3%82%AB%E3%83%A1%E3%83%A9%E3%82%92%E6%A7%8B%E7%AF%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F01%2F15%2F15200044%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F01%2F15%2F15200044%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F01%2F15%2F15200044%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
   
 
   <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F01%2F15%2F15200044%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F01%2F15%2F15200044%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -698,11 +698,11 @@ ssh = 0
       
   <nav class="pagination">
     
-      <a href="/pages/komasaru/2009/01/14/14194510/" class="pagination--pager" title="天気予報をつけてみました。
+      <a href="/2009/01/14/14194510/" class="pagination--pager" title="天気予報をつけてみました。
 ">Previous</a>
     
     
-      <a href="/pages/komasaru/2009/01/16/16063000/" class="pagination--pager" title="デジタル時計を追加！
+      <a href="/2009/01/16/16063000/" class="pagination--pager" title="デジタル時計を追加！
 ">Next</a>
     
   </nav>
@@ -737,7 +737,7 @@ ssh = 0
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-04-21)</small>
     </h3>
@@ -758,7 +758,7 @@ ssh = 0
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
+        <a href="/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
 </a>
         &nbsp;<small>(2021-04-14)</small>
     </h3>
@@ -779,7 +779,7 @@ ssh = 0
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
+        <a href="/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
 </a>
         &nbsp;<small>(2021-04-01)</small>
     </h3>
@@ -800,7 +800,7 @@ ssh = 0
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-03-17)</small>
     </h3>
@@ -840,7 +840,7 @@ ssh = 0
     <div class="page__footer">
       <footer>
         <!-- start custom footer snippets -->
-<div id="qr"><img src="/pages/komasaru/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
 <div id="google-ad-5"></div>
 <div class="page__footer-etc">
   <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
@@ -849,7 +849,7 @@ ssh = 0
   &emsp;合計 <tt id="pv-total">Loading...</tt><br />
   &emsp;今日 <tt id="pv-today">Loading...</tt><br />
   &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
-  <small>※<a href="/pages/komasaru/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
 </div>
 <p id="page-top">
   <a href="#">
@@ -892,9 +892,9 @@ ssh = 0
     </div>
 
     
-  <script defer src="/pages/komasaru/assets/js/main.min.js"></script>
+  <script defer src="/assets/js/main.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
-  <script defer src="/pages/komasaru/assets/js/my_custom.js"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
 
 
 <script>
@@ -945,7 +945,7 @@ ssh = 0
     
   <script>
     var disqus_config = function () {
-      this.page.url = "https://komasaru.github.io/pages/komasaru/2009/01/15/15200044/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.url = "https://komasaru.github.io/2009/01/15/15200044/";  // Replace PAGE_URL with your page's canonical URL variable
       this.page.identifier = "/2009/01/15/15200044"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() { // DON'T EDIT BELOW THIS LINE

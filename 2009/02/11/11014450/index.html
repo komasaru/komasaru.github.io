@@ -18,7 +18,7 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="mk-mode BLOG">
 <meta property="og:title" content="WindowsXPでＰＨＰ５！">
-<meta property="og:url" content="https://komasaru.github.io/pages/komasaru/2009/02/11/11014450/">
+<meta property="og:url" content="https://komasaru.github.io/2009/02/11/11014450/">
 
 
   <meta property="og:description" content="まず、うちのサーバはＦｅｄｏｒａ１０であれこれ構築してます。そして今は、実際にホームページを作成するときはメインのＷｉｎＸＰマシンで  を使ってコーディングしてから、ＦｅｄｏｒａサーバへＦＴＰアップロードしています。が、最近  でＰＨＰも使えることを知ったため、ＷｉｎＸＰマシンにＰＨＰを導入しました。忘れないように、メモっときます。作業記録（ 本当はＷｅｂサーバとして Ａｐａｃｈｅ をいれたかったが、 ではＷｅｂサーバとして ＡＮ ＨＴＴＰＤ が対応のでしたので、今回は ＡＮ ＨＴＴＰＤ を導入）１．ＰＨＰのダウンロードこちらの PHP: Download から、「 Windows Binaries 」 の 「 PHP 5.2.8 zip package 」 をクリックして開いたページから 「 php-5.2.8-Win32.zip 」（「5.2.8」は執筆時点の最新）をダウンロード。※「 PHP 5.2.8 installer 」というのではない！（いろんなサイトの記述によると多分 ＳｅｒｖｅｒＡＰＩ というのが含まれていないものなので）２．解凍先ほどダウンロードした php-5.2.8-Win32.zip を解凍。３．フォルダを移動解凍して出来たフォルダの名前を 「 php 」 に変更して、 「 C:\ 」 に移動。（移動先はどこでもＯＫ）４．「 php5ts.dll 」 をコピーC:\php\php5ts.dll を C:\Windows\system32 フォルダにコピー。５．「 php.ini-dist 」 をコピーC:\php\php.ini-dist を C:\Windows フォルダにコピーして、ファイル名を 「 php.ini 」 に変更。６．ＡＮ ＨＴＴＰＤ のダウンロードこちらの ＡＮ ＨＴＴＰＤ Ｈｏｍｅ Ｐａｇｅ から、「 httpd142p.zip 」 をダウンロード。７．解凍先ほどダウンロードした 「 httpd142p.zip 」 を解凍する。８．フォルダを移動解凍して出来たフォルダを 「 C:\Program Files 」 フォルダに移動。（移動先はどこでもＯＫ）９．ＡＮ ＨＴＴＰＤ の設定「 httpd.exe 」 を実行後、タスクトレイアイコン右クリックして 「 オプション 一般（Ｇ） 」 を開く。「 一般 」タグのドキュメントルートを設定。（index.php等のあるフォルダ）同じ「 一般 」タグ内の実行プログラムのところで追加ボタンを押して、拡張子を「 .php,.php3,.phtml 」（拡張子の前のドット必須）、実行プログラムを「 C:\php\php-cgi.exe 」にし、「 実行する 」、「 一般パスでも実行する 」、「 PATH_TRANSLATEDを使う 」にチェックを入れる。１０．ＰＨＰ．ｉｎｉ の設定以下のように設定。（コメント化を解除したり、値を変更する）cgi.force_redirect = 0extension_dir = C:\php\ext (PHP4では C:\php\extensions であった)extension=php_mbstring.dll（アンコメント）output_handler = mb_output_handlermagic_quotes_gpc = Off[mbstring]mbstring.language = Japanesembstring.internal_encoding = EUC-JPmbstring.http_input = autombstring.http_output = pass　（SJIS では文字化けすることがある）mbstring.encoding_translation = On　（Off を On に. 文字化けするようなら Offに）mbstring.detect_order = autombstring.substitute_character = none;mbstring.func_overload = 0１１．ＰＨＰの動作確認ドキュメントルートに以下のようなファイルをつくる（ここではファイル名を phpinfo.php とした）&lt;?php phpinfo(); ?&gt;ブラウザから 「 http://127.0.0.1/phpinfo.php 」 にアクセスし、ＰＨＰ情報の画面がでればＯＫ！のはず・・・しかし、うちのマシンではＰＨＰの動作確認でブラウザでは phpinfo の画面が出るものの、色の付いたきれいな画面（よくあるphpinfoの画面）が表示されず、文字だけの画面が表示されてしまう。。。こんなのSystem =&gt; Windows NT PULSAR 5.1 build 2600Build Date =&gt; Dec  8 2008 19:30:48Configure Command =&gt; cscript /nologo configure.js  &quot;--enable-snapshot-build&quot; &quot;--enable-debug-pack&quot; &quot;--with-snapshot-template=d:\php-sdk\snap_5_2\vc6\x86\template&quot; &quot;--with-php-build=d:\php-sdk\snap_5_2\vc6\x86\php_build&quot; &quot;--with-pdo-oci=D:\php-sdk\oracle\instantclient10\sdk,shared&quot; &quot;--with-oci8=D:\php-sdk\oracle\instantclient10\sdk,shared&quot;Server API =&gt; Command Line InterfaceVirtual Directory Support =&gt; enabledConfiguration File (php.ini) Path =&gt; C:\WINDOWSLoaded Configuration File =&gt; C:\WINDOWS\php.iniScan this dir for additional .ini files =&gt; (none)additional .ini files parsed =&gt; (none)PHP API =&gt; 20041225PHP Extension =&gt; 20060613Zend Extension =&gt; 220060519Debug Build =&gt; noThread Safety =&gt; enabledZend Memory Manager =&gt; enabledIPv6 Support =&gt; enabledRegistered PHP Streams =&gt; php, file, data, http, ftp, compress.zlibRegistered Stream Socket Transports =&gt; tcp, udpRegistered Stream Filters =&gt; convert.iconv.*, string.rot13, string.toupper, string.tolower, string.strip_tags, convert.*, consumed, zlib.*This program makes use of the Zend Scripting Language Engine:Zend Engine v2.2.0, Copyright (c) 1998-2008 Zend Technologies _______________________________________________________________________ConfigurationPHP CoreDirective =&gt; Local Value =&gt; Master Valueallow_call_time_pass_reference =&gt; On =&gt; Onallow_url_fopen =&gt; On =&gt; On・・・・・・内容的にはＰＨＰはちゃんと動いている感じ。。。同じＰＨＰをＦｅｄｏｒａサーバにアップしてみるとちゃんとこんな画面がでるのだが・・・しかし、自分のホームページのindex.php はほぼきれいに表示される。※若干Ｆｅｄｏｒａサーバで動かしている画面と行間とか、微妙にずれるが・・・なぜだか？ま、  のほうでもヘルプをみながら ＰＨＰ の設定をしたら、使えるようになったんでとりあえずは ヨシ としようか。。細かいことはこれから使っていくうちに判明するものと信じて・・・でも、ＷｅｂサーバにＡｐａｃｈｅ入れて、ＥｃｌｉｐｓｅでＰＨＰ使うってのもやってみたいなあ～。Ｅｃｌｉｐｓｅは昔仕事でＪａｖａ系のシステム開発の時に使ってたことがあるんで。。。※今回主に参考にしたサイトはこちらです。（感謝、感謝！）「 AN HTTPDでＰＨＰ５を動かす 」では、また。">
@@ -32,7 +32,7 @@
   <meta name="twitter:site" content="@rsm_mzk">
   <meta name="twitter:title" content="WindowsXPでＰＨＰ５！">
   <meta name="twitter:description" content="まず、うちのサーバはＦｅｄｏｒａ１０であれこれ構築してます。そして今は、実際にホームページを作成するときはメインのＷｉｎＸＰマシンで  を使ってコーディングしてから、ＦｅｄｏｒａサーバへＦＴＰアップロードしています。が、最近  でＰＨＰも使えることを知ったため、ＷｉｎＸＰマシンにＰＨＰを導入しました。忘れないように、メモっときます。作業記録（ 本当はＷｅｂサーバとして Ａｐａｃｈｅ をいれたかったが、 ではＷｅｂサーバとして ＡＮ ＨＴＴＰＤ が対応のでしたので、今回は ＡＮ ＨＴＴＰＤ を導入）１．ＰＨＰのダウンロードこちらの PHP: Download から、「 Windows Binaries 」 の 「 PHP 5.2.8 zip package 」 をクリックして開いたページから 「 php-5.2.8-Win32.zip 」（「5.2.8」は執筆時点の最新）をダウンロード。※「 PHP 5.2.8 installer 」というのではない！（いろんなサイトの記述によると多分 ＳｅｒｖｅｒＡＰＩ というのが含まれていないものなので）２．解凍先ほどダウンロードした php-5.2.8-Win32.zip を解凍。３．フォルダを移動解凍して出来たフォルダの名前を 「 php 」 に変更して、 「 C:\ 」 に移動。（移動先はどこでもＯＫ）４．「 php5ts.dll 」 をコピーC:\php\php5ts.dll を C:\Windows\system32 フォルダにコピー。５．「 php.ini-dist 」 をコピーC:\php\php.ini-dist を C:\Windows フォルダにコピーして、ファイル名を 「 php.ini 」 に変更。６．ＡＮ ＨＴＴＰＤ のダウンロードこちらの ＡＮ ＨＴＴＰＤ Ｈｏｍｅ Ｐａｇｅ から、「 httpd142p.zip 」 をダウンロード。７．解凍先ほどダウンロードした 「 httpd142p.zip 」 を解凍する。８．フォルダを移動解凍して出来たフォルダを 「 C:\Program Files 」 フォルダに移動。（移動先はどこでもＯＫ）９．ＡＮ ＨＴＴＰＤ の設定「 httpd.exe 」 を実行後、タスクトレイアイコン右クリックして 「 オプション 一般（Ｇ） 」 を開く。「 一般 」タグのドキュメントルートを設定。（index.php等のあるフォルダ）同じ「 一般 」タグ内の実行プログラムのところで追加ボタンを押して、拡張子を「 .php,.php3,.phtml 」（拡張子の前のドット必須）、実行プログラムを「 C:\php\php-cgi.exe 」にし、「 実行する 」、「 一般パスでも実行する 」、「 PATH_TRANSLATEDを使う 」にチェックを入れる。１０．ＰＨＰ．ｉｎｉ の設定以下のように設定。（コメント化を解除したり、値を変更する）cgi.force_redirect = 0extension_dir = C:\php\ext (PHP4では C:\php\extensions であった)extension=php_mbstring.dll（アンコメント）output_handler = mb_output_handlermagic_quotes_gpc = Off[mbstring]mbstring.language = Japanesembstring.internal_encoding = EUC-JPmbstring.http_input = autombstring.http_output = pass　（SJIS では文字化けすることがある）mbstring.encoding_translation = On　（Off を On に. 文字化けするようなら Offに）mbstring.detect_order = autombstring.substitute_character = none;mbstring.func_overload = 0１１．ＰＨＰの動作確認ドキュメントルートに以下のようなファイルをつくる（ここではファイル名を phpinfo.php とした）&lt;?php phpinfo(); ?&gt;ブラウザから 「 http://127.0.0.1/phpinfo.php 」 にアクセスし、ＰＨＰ情報の画面がでればＯＫ！のはず・・・しかし、うちのマシンではＰＨＰの動作確認でブラウザでは phpinfo の画面が出るものの、色の付いたきれいな画面（よくあるphpinfoの画面）が表示されず、文字だけの画面が表示されてしまう。。。こんなのSystem =&gt; Windows NT PULSAR 5.1 build 2600Build Date =&gt; Dec  8 2008 19:30:48Configure Command =&gt; cscript /nologo configure.js  &quot;--enable-snapshot-build&quot; &quot;--enable-debug-pack&quot; &quot;--with-snapshot-template=d:\php-sdk\snap_5_2\vc6\x86\template&quot; &quot;--with-php-build=d:\php-sdk\snap_5_2\vc6\x86\php_build&quot; &quot;--with-pdo-oci=D:\php-sdk\oracle\instantclient10\sdk,shared&quot; &quot;--with-oci8=D:\php-sdk\oracle\instantclient10\sdk,shared&quot;Server API =&gt; Command Line InterfaceVirtual Directory Support =&gt; enabledConfiguration File (php.ini) Path =&gt; C:\WINDOWSLoaded Configuration File =&gt; C:\WINDOWS\php.iniScan this dir for additional .ini files =&gt; (none)additional .ini files parsed =&gt; (none)PHP API =&gt; 20041225PHP Extension =&gt; 20060613Zend Extension =&gt; 220060519Debug Build =&gt; noThread Safety =&gt; enabledZend Memory Manager =&gt; enabledIPv6 Support =&gt; enabledRegistered PHP Streams =&gt; php, file, data, http, ftp, compress.zlibRegistered Stream Socket Transports =&gt; tcp, udpRegistered Stream Filters =&gt; convert.iconv.*, string.rot13, string.toupper, string.tolower, string.strip_tags, convert.*, consumed, zlib.*This program makes use of the Zend Scripting Language Engine:Zend Engine v2.2.0, Copyright (c) 1998-2008 Zend Technologies _______________________________________________________________________ConfigurationPHP CoreDirective =&gt; Local Value =&gt; Master Valueallow_call_time_pass_reference =&gt; On =&gt; Onallow_url_fopen =&gt; On =&gt; On・・・・・・内容的にはＰＨＰはちゃんと動いている感じ。。。同じＰＨＰをＦｅｄｏｒａサーバにアップしてみるとちゃんとこんな画面がでるのだが・・・しかし、自分のホームページのindex.php はほぼきれいに表示される。※若干Ｆｅｄｏｒａサーバで動かしている画面と行間とか、微妙にずれるが・・・なぜだか？ま、  のほうでもヘルプをみながら ＰＨＰ の設定をしたら、使えるようになったんでとりあえずは ヨシ としようか。。細かいことはこれから使っていくうちに判明するものと信じて・・・でも、ＷｅｂサーバにＡｐａｃｈｅ入れて、ＥｃｌｉｐｓｅでＰＨＰ使うってのもやってみたいなあ～。Ｅｃｌｉｐｓｅは昔仕事でＪａｖａ系のシステム開発の時に使ってたことがあるんで。。。※今回主に参考にしたサイトはこちらです。（感謝、感謝！）「 AN HTTPDでＰＨＰ５を動かす 」では、また。">
-  <meta name="twitter:url" content="https://komasaru.github.io/pages/komasaru/2009/02/11/11014450/">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/02/11/11014450/">
 
   
     <meta name="twitter:card" content="summary">
@@ -56,7 +56,7 @@
   
 
 
-<link rel="canonical" href="https://komasaru.github.io/pages/komasaru/2009/02/11/11014450/">
+<link rel="canonical" href="https://komasaru.github.io/2009/02/11/11014450/">
 
 
 
@@ -66,7 +66,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
     }
   </script>
@@ -78,7 +78,7 @@
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "mk-mode.com",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "sameAs": null
     }
   </script>
@@ -104,7 +104,7 @@
 </script>
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="/pages/komasaru/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/main.css">
 
 <!--[if IE ]>
   <style>
@@ -141,7 +141,7 @@
 <link rel="dns-prefetch" href="//twitter.com" />
 <link rel="dns-prefetch" href="//www.facebook.com" />
 
-<link rel="icon" href="/pages/komasaru/assets/images/favicon.ico">
+<link rel="icon" href="/assets/images/favicon.ico">
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-18154748-1']);
@@ -180,19 +180,19 @@
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         
-        <a class="site-title" href="/pages/komasaru/">mk-mode BLOG</a>
+        <a class="site-title" href="/">mk-mode BLOG</a>
         <ul class="visible-links"><li class="masthead__menu-item">
-              <a href="/pages/komasaru/year-archive/" >Archives</a>
+              <a href="/year-archive/" >Archives</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/categories/" >Categories</a>
+              <a href="/categories/" >Categories</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/tags/" >Tags</a>
+              <a href="/tags/" >Tags</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/privacy.html" >Privacy Policy</a>
+              <a href="/privacy.html" >Privacy Policy</a>
             </li></ul>
         
         <button class="search__toggle" type="button">
@@ -231,7 +231,7 @@
       
 
       
-        <img src="/pages/komasaru/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
       
     </div>
   
@@ -526,7 +526,7 @@ allow_url_fopen =&gt; On =&gt; On
 <p>内容的にはＰＨＰはちゃんと動いている感じ。。。
 同じＰＨＰをＦｅｄｏｒａサーバにアップしてみるとちゃんとこんな画面がでるのだが・・・</p>
 
-<p><img src="/pages/komasaru/images/2009/02/php.jpg" alt="php" title="php" /></p>
+<p><img src="/images/2009/02/php.jpg" alt="php" title="php" /></p>
 
 <p>しかし、自分のホームページのindex.php はほぼきれいに表示される。
 ※若干Ｆｅｄｏｒａサーバで動かしている画面と行間とか、微妙にずれるが・・・</p>
@@ -567,11 +567,11 @@ allow_url_fopen =&gt; On =&gt; On
     
       
       
-      <a href="/pages/komasaru/tags/php" class="page__taxonomy-item" rel="tag">PHP</a><span class="sep">, </span>
+      <a href="/tags/php" class="page__taxonomy-item" rel="tag">PHP</a><span class="sep">, </span>
     
       
       
-      <a href="/pages/komasaru/tags/windows" class="page__taxonomy-item" rel="tag">Windows</a>
+      <a href="/tags/windows" class="page__taxonomy-item" rel="tag">Windows</a>
     
     </span>
   </p>
@@ -592,11 +592,11 @@ allow_url_fopen =&gt; On =&gt; On
     
       
       
-      <a href="/pages/komasaru/categories/web%E3%82%B5%E3%82%A4%E3%83%88" class="page__taxonomy-item" rel="tag">Webサイト</a><span class="sep">, </span>
+      <a href="/categories/web%E3%82%B5%E3%82%A4%E3%83%88" class="page__taxonomy-item" rel="tag">Webサイト</a><span class="sep">, </span>
     
       
       
-      <a href="/pages/komasaru/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
     
     </span>
   </p>
@@ -613,15 +613,15 @@ allow_url_fopen =&gt; On =&gt; On
       <section class="page__share">
   
 
-  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=WindowsXP%E3%81%A7%EF%BC%B0%EF%BC%A8%EF%BC%B0%EF%BC%95%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F02%2F11%2F11014450%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=WindowsXP%E3%81%A7%EF%BC%B0%EF%BC%A8%EF%BC%B0%EF%BC%95%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F02%2F11%2F11014450%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F02%2F11%2F11014450%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F02%2F11%2F11014450%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
   
 
   <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F02%2F11%2F11014450%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F02%2F11%2F11014450%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -635,11 +635,11 @@ allow_url_fopen =&gt; On =&gt; On
       
   <nav class="pagination">
     
-      <a href="/pages/komasaru/2009/02/10/10001036/" class="pagination--pager" title="HTMLエディタ！
+      <a href="/2009/02/10/10001036/" class="pagination--pager" title="HTMLエディタ！
 ">Previous</a>
     
     
-      <a href="/pages/komasaru/2009/02/12/12001517/" class="pagination--pager" title="WindowsXPでＰＨＰ５！（＋Ａｐａｃｈｅ２）
+      <a href="/2009/02/12/12001517/" class="pagination--pager" title="WindowsXPでＰＨＰ５！（＋Ａｐａｃｈｅ２）
 ">Next</a>
     
   </nav>
@@ -674,7 +674,7 @@ allow_url_fopen =&gt; On =&gt; On
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-04-21)</small>
     </h3>
@@ -695,7 +695,7 @@ allow_url_fopen =&gt; On =&gt; On
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
+        <a href="/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
 </a>
         &nbsp;<small>(2021-04-14)</small>
     </h3>
@@ -716,7 +716,7 @@ allow_url_fopen =&gt; On =&gt; On
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
+        <a href="/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
 </a>
         &nbsp;<small>(2021-04-01)</small>
     </h3>
@@ -737,7 +737,7 @@ allow_url_fopen =&gt; On =&gt; On
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-03-17)</small>
     </h3>
@@ -777,7 +777,7 @@ allow_url_fopen =&gt; On =&gt; On
     <div class="page__footer">
       <footer>
         <!-- start custom footer snippets -->
-<div id="qr"><img src="/pages/komasaru/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
 <div id="google-ad-5"></div>
 <div class="page__footer-etc">
   <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
@@ -786,7 +786,7 @@ allow_url_fopen =&gt; On =&gt; On
   &emsp;合計 <tt id="pv-total">Loading...</tt><br />
   &emsp;今日 <tt id="pv-today">Loading...</tt><br />
   &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
-  <small>※<a href="/pages/komasaru/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
 </div>
 <p id="page-top">
   <a href="#">
@@ -829,9 +829,9 @@ allow_url_fopen =&gt; On =&gt; On
     </div>
 
     
-  <script defer src="/pages/komasaru/assets/js/main.min.js"></script>
+  <script defer src="/assets/js/main.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
-  <script defer src="/pages/komasaru/assets/js/my_custom.js"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
 
 
 <script>
@@ -882,7 +882,7 @@ allow_url_fopen =&gt; On =&gt; On
     
   <script>
     var disqus_config = function () {
-      this.page.url = "https://komasaru.github.io/pages/komasaru/2009/02/11/11014450/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.url = "https://komasaru.github.io/2009/02/11/11014450/";  // Replace PAGE_URL with your page's canonical URL variable
       this.page.identifier = "/2009/02/11/11014450"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() { // DON'T EDIT BELOW THIS LINE

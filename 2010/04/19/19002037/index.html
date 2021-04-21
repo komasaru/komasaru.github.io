@@ -18,7 +18,7 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="mk-mode BLOG">
 <meta property="og:title" content="ＰＸＥブートでＭｅｍｔｅｓｔ８６＋！">
-<meta property="og:url" content="https://komasaru.github.io/pages/komasaru/2010/04/19/19002037/">
+<meta property="og:url" content="https://komasaru.github.io/2010/04/19/19002037/">
 
 
   <meta property="og:description" content="先日、ネットワークブートでＯＳのインストールができるようにと、「ＰＸＥサーバ」を構築しましたが、今日は、ＰＸＥブートでメモリテスト「Ｍｅｍｔｅｓｔ８６＋」を実行できるようにしました。忘れるといけないので、記録しておきます。作業記録【前提条件】  こちらの記事「ＣｅｎｔＯＳ − ＰＸＥサーバ構築」でメニュー形式でのＰＸＥブートが可能になっていること。１．アーカイブファイル準備こちら[http://www.memtest.org/]から「Memtest86+」の「Pre-Compiled Bootable Binary (ver.4.00)」（memtest86+-4.00.zip）をダウンロードして展開する。２．ファイルコピー「/tftpboot/pxe」ディレクトリに「memtest86」ディレクトリを作成する。そして、先ほど展開してできたファイル「memtest86+4.00.bin」を「memtest86+」にリネームして「/tftpboot/pxe/memtest86」にコピーする。３．メニュー修正「/tftpboot/pxe/pxelinux.cfg/default」に「memtest86+」用の記述を追加する。#vi /tftpboot/pxe/pxelinux.cfg/defaultDEFAULT syslinux/menu.c32MENU TITLE ****  PXE Boot Menu  ****LABEL 1        MENU LABEL ^1. Boot from Local HDD        localboot 1LABEL 2                                 ← 追加        MENU LABEL ^2. Memtest86+ 4.00  ← 追加        KERNEL memtest86/memtest86+     ← 追加LABEL 3        MENU LABEL ^3. Install CentOS 5.4        KERNEL centos_5-4/vmlinuz        APPEND load initrd=centos_5-4/initrd.img devfs=nomountLABEL 4        MENU LABEL ^4. Install Fedora 12        KERNEL fedora_12/vmlinuz        APPEND load initrd=fedora_12/initrd.img devfs=nomount４．ＤＨＣＰサーバ再起動設定変更を反映させるため、ＤＨＣＰサーバを再起動する。# service dhcpd restart５．確認メモリテストを行うマシンでネットワークブートする。メニューが表示されたら、「Ｍｅｍｔｅｓｔ８６＋ ４．００」を選択・実行する。作業は以上です。ＰＸＥブートは必ずＩＳＯファイルをマウントしないとダメかと思っていましたが、イメージファイルを直接実行させることもできるんですね。色々できるんで、ＣＤやＤＶＤが増えず助かります。ではまた。">
@@ -32,7 +32,7 @@
   <meta name="twitter:site" content="@rsm_mzk">
   <meta name="twitter:title" content="ＰＸＥブートでＭｅｍｔｅｓｔ８６＋！">
   <meta name="twitter:description" content="先日、ネットワークブートでＯＳのインストールができるようにと、「ＰＸＥサーバ」を構築しましたが、今日は、ＰＸＥブートでメモリテスト「Ｍｅｍｔｅｓｔ８６＋」を実行できるようにしました。忘れるといけないので、記録しておきます。作業記録【前提条件】  こちらの記事「ＣｅｎｔＯＳ − ＰＸＥサーバ構築」でメニュー形式でのＰＸＥブートが可能になっていること。１．アーカイブファイル準備こちら[http://www.memtest.org/]から「Memtest86+」の「Pre-Compiled Bootable Binary (ver.4.00)」（memtest86+-4.00.zip）をダウンロードして展開する。２．ファイルコピー「/tftpboot/pxe」ディレクトリに「memtest86」ディレクトリを作成する。そして、先ほど展開してできたファイル「memtest86+4.00.bin」を「memtest86+」にリネームして「/tftpboot/pxe/memtest86」にコピーする。３．メニュー修正「/tftpboot/pxe/pxelinux.cfg/default」に「memtest86+」用の記述を追加する。#vi /tftpboot/pxe/pxelinux.cfg/defaultDEFAULT syslinux/menu.c32MENU TITLE ****  PXE Boot Menu  ****LABEL 1        MENU LABEL ^1. Boot from Local HDD        localboot 1LABEL 2                                 ← 追加        MENU LABEL ^2. Memtest86+ 4.00  ← 追加        KERNEL memtest86/memtest86+     ← 追加LABEL 3        MENU LABEL ^3. Install CentOS 5.4        KERNEL centos_5-4/vmlinuz        APPEND load initrd=centos_5-4/initrd.img devfs=nomountLABEL 4        MENU LABEL ^4. Install Fedora 12        KERNEL fedora_12/vmlinuz        APPEND load initrd=fedora_12/initrd.img devfs=nomount４．ＤＨＣＰサーバ再起動設定変更を反映させるため、ＤＨＣＰサーバを再起動する。# service dhcpd restart５．確認メモリテストを行うマシンでネットワークブートする。メニューが表示されたら、「Ｍｅｍｔｅｓｔ８６＋ ４．００」を選択・実行する。作業は以上です。ＰＸＥブートは必ずＩＳＯファイルをマウントしないとダメかと思っていましたが、イメージファイルを直接実行させることもできるんですね。色々できるんで、ＣＤやＤＶＤが増えず助かります。ではまた。">
-  <meta name="twitter:url" content="https://komasaru.github.io/pages/komasaru/2010/04/19/19002037/">
+  <meta name="twitter:url" content="https://komasaru.github.io/2010/04/19/19002037/">
 
   
     <meta name="twitter:card" content="summary">
@@ -56,7 +56,7 @@
   
 
 
-<link rel="canonical" href="https://komasaru.github.io/pages/komasaru/2010/04/19/19002037/">
+<link rel="canonical" href="https://komasaru.github.io/2010/04/19/19002037/">
 
 
 
@@ -66,7 +66,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
     }
   </script>
@@ -78,7 +78,7 @@
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "mk-mode.com",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "sameAs": null
     }
   </script>
@@ -104,7 +104,7 @@
 </script>
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="/pages/komasaru/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/main.css">
 
 <!--[if IE ]>
   <style>
@@ -141,7 +141,7 @@
 <link rel="dns-prefetch" href="//twitter.com" />
 <link rel="dns-prefetch" href="//www.facebook.com" />
 
-<link rel="icon" href="/pages/komasaru/assets/images/favicon.ico">
+<link rel="icon" href="/assets/images/favicon.ico">
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-18154748-1']);
@@ -180,19 +180,19 @@
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         
-        <a class="site-title" href="/pages/komasaru/">mk-mode BLOG</a>
+        <a class="site-title" href="/">mk-mode BLOG</a>
         <ul class="visible-links"><li class="masthead__menu-item">
-              <a href="/pages/komasaru/year-archive/" >Archives</a>
+              <a href="/year-archive/" >Archives</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/categories/" >Categories</a>
+              <a href="/categories/" >Categories</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/tags/" >Tags</a>
+              <a href="/tags/" >Tags</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/privacy.html" >Privacy Policy</a>
+              <a href="/privacy.html" >Privacy Policy</a>
             </li></ul>
         
         <button class="search__toggle" type="button">
@@ -231,7 +231,7 @@
       
 
       
-        <img src="/pages/komasaru/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
       
     </div>
   
@@ -443,9 +443,9 @@ LABEL 4
 <p>メモリテストを行うマシンでネットワークブートする。
 メニューが表示されたら、「Ｍｅｍｔｅｓｔ８６＋ ４．００」を選択・実行する。</p>
 
-<p><img src="/pages/komasaru/images/2010/04/PXE_MEMTEST_1.jpg" alt="PXE_MEMTEST_1" title="PXE_MEMTEST_1" /></p>
+<p><img src="/images/2010/04/PXE_MEMTEST_1.jpg" alt="PXE_MEMTEST_1" title="PXE_MEMTEST_1" /></p>
 
-<p><img src="/pages/komasaru/images/2010/04/PXE_MEMTEST_2.jpg" alt="PXE_MEMTEST_2" title="PXE_MEMTEST_2" /></p>
+<p><img src="/images/2010/04/PXE_MEMTEST_2.jpg" alt="PXE_MEMTEST_2" title="PXE_MEMTEST_2" /></p>
 
 <hr />
 
@@ -476,7 +476,7 @@ LABEL 4
     
       
       
-      <a href="/pages/komasaru/tags/pxe" class="page__taxonomy-item" rel="tag">PXE</a>
+      <a href="/tags/pxe" class="page__taxonomy-item" rel="tag">PXE</a>
     
     </span>
   </p>
@@ -497,11 +497,11 @@ LABEL 4
     
       
       
-      <a href="/pages/komasaru/categories/pc-tips" class="page__taxonomy-item" rel="tag">PC_Tips</a><span class="sep">, </span>
+      <a href="/categories/pc-tips" class="page__taxonomy-item" rel="tag">PC_Tips</a><span class="sep">, </span>
     
       
       
-      <a href="/pages/komasaru/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
     
     </span>
   </p>
@@ -518,15 +518,15 @@ LABEL 4
       <section class="page__share">
   
 
-  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%EF%BC%B0%EF%BC%B8%EF%BC%A5%E3%83%96%E3%83%BC%E3%83%88%E3%81%A7%EF%BC%AD%EF%BD%85%EF%BD%8D%EF%BD%94%EF%BD%85%EF%BD%93%EF%BD%94%EF%BC%98%EF%BC%96%EF%BC%8B%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2010%2F04%2F19%2F19002037%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%EF%BC%B0%EF%BC%B8%EF%BC%A5%E3%83%96%E3%83%BC%E3%83%88%E3%81%A7%EF%BC%AD%EF%BD%85%EF%BD%8D%EF%BD%94%EF%BD%85%EF%BD%93%EF%BD%94%EF%BC%98%EF%BC%96%EF%BC%8B%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2010%2F04%2F19%2F19002037%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2010%2F04%2F19%2F19002037%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2010%2F04%2F19%2F19002037%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
   
 
   <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2010%2F04%2F19%2F19002037%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2010%2F04%2F19%2F19002037%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -540,11 +540,11 @@ LABEL 4
       
   <nav class="pagination">
     
-      <a href="/pages/komasaru/2010/04/18/18002043/" class="pagination--pager" title="CentOS - PXEサーバ構築
+      <a href="/2010/04/18/18002043/" class="pagination--pager" title="CentOS - PXEサーバ構築
 ">Previous</a>
     
     
-      <a href="/pages/komasaru/2010/04/23/23002032/" class="pagination--pager" title="Ｕｂｕｎｔｕ９．１０ － ＵＳＢメモリからインストール！
+      <a href="/2010/04/23/23002032/" class="pagination--pager" title="Ｕｂｕｎｔｕ９．１０ － ＵＳＢメモリからインストール！
 ">Next</a>
     
   </nav>
@@ -579,7 +579,7 @@ LABEL 4
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-04-21)</small>
     </h3>
@@ -600,7 +600,7 @@ LABEL 4
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
+        <a href="/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
 </a>
         &nbsp;<small>(2021-04-14)</small>
     </h3>
@@ -621,7 +621,7 @@ LABEL 4
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
+        <a href="/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
 </a>
         &nbsp;<small>(2021-04-01)</small>
     </h3>
@@ -642,7 +642,7 @@ LABEL 4
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-03-17)</small>
     </h3>
@@ -682,7 +682,7 @@ LABEL 4
     <div class="page__footer">
       <footer>
         <!-- start custom footer snippets -->
-<div id="qr"><img src="/pages/komasaru/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
 <div id="google-ad-5"></div>
 <div class="page__footer-etc">
   <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
@@ -691,7 +691,7 @@ LABEL 4
   &emsp;合計 <tt id="pv-total">Loading...</tt><br />
   &emsp;今日 <tt id="pv-today">Loading...</tt><br />
   &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
-  <small>※<a href="/pages/komasaru/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
 </div>
 <p id="page-top">
   <a href="#">
@@ -734,9 +734,9 @@ LABEL 4
     </div>
 
     
-  <script defer src="/pages/komasaru/assets/js/main.min.js"></script>
+  <script defer src="/assets/js/main.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
-  <script defer src="/pages/komasaru/assets/js/my_custom.js"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
 
 
 <script>
@@ -787,7 +787,7 @@ LABEL 4
     
   <script>
     var disqus_config = function () {
-      this.page.url = "https://komasaru.github.io/pages/komasaru/2010/04/19/19002037/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.url = "https://komasaru.github.io/2010/04/19/19002037/";  // Replace PAGE_URL with your page's canonical URL variable
       this.page.identifier = "/2010/04/19/19002037"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() { // DON'T EDIT BELOW THIS LINE

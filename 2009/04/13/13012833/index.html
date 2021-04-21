@@ -18,7 +18,7 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="mk-mode BLOG">
 <meta property="og:title" content="Ｆｅｄｏｒａ１０にﾐﾗｰﾘﾝｸﾞﾂｰﾙ・その２！">
-<meta property="og:url" content="https://komasaru.github.io/pages/komasaru/2009/04/13/13012833/">
+<meta property="og:url" content="https://komasaru.github.io/2009/04/13/13012833/">
 
 
   <meta property="og:description" content="チョット前にうちのＦｅｄｏｒａ１０サーバを玄箱ＨＧ（Ｆｅｄｏｒａ１０）に丸ごとミラーリングバックアップするようにしたんですが、ミラー元に変更があっても即ミラーリングされない（多分、設定がおかしいんだけど）んで、ちょっとやり方を変えてみることにしました。常時丸ごとミラーリングとなると、サーバに負荷がかかるんで、ミラーリングツールを１日１回定期的に実行させるようにしてみようと思います。導入手順【前提条件】・実サーバ（ミラー元）はＦｅｄｏｒａ１０でＷｅｂサーバ、メールサーバ、ＦＴＰサーバ等が稼動中。・バックアップ側（ミラー先）は玄箱ＨＧのＦｅｄｏｒａ１０。・実サーバ（ミラー元）のＩＰアドレスは 192.168.11.3 、バックアップ側（ミラー先）のＩＰアドレスは 192.168.11.2 。・実サーバ、バックアップ側どちらも「 Poderosa 」によるリモート接続による操作。（実サーバはＳＳＨ２接続・鍵認証、バックアップ側はＳＳＨ２接続・パスワード認証）実サーバ操作の場合は　・・・　[root@noah ~]#バックアップ側操作の場合は　・・・　[root@KURO-BOX ~]#で、判断してください。１．公開鍵作成今回は実サーバからバックアップ側への接続に鍵認証で行いたいので、実サーバ側で公開鍵を作成します。[root@noah ~]# ssh-keygen -t rsaGenerating public/private rsa key pair.Enter file in which to save the key (/root/.ssh/id_rsa):Created directory &#39;/root/.ssh&#39;.Enter passphrase (empty for no passphrase):Enter same passphrase again:Your identification has been saved in /root/.ssh/id_rsa.Your public key has been saved in /root/.ssh/id_rsa.pub.The key fingerprint is:4b:fc:22:62:cc:c8:24:6c:e2:39:14:6f:23:03:6c:28 root@noah.mk-mode.comThe key&#39;s randomart image is:+--[ RSA 2048]----+・・・　途中省略　・・・+-----------------+[root@noah ~]#２．rootログイン許可バックアップ側で root のログインを許可する設定をする。[root@KURO-BOX ~]# vi /etc/ssh/sshd_config・・・　途中省略　・・・#PermitRootLogin yes　　↓PermitRootLogin yes　　　←　コメント化解除・・・　途中省略　・・・３．ＳＳＨ再起動バックアップ側のＳＳＨを再起動する。[root@KURO-BOX ~]# service sshd restartStopping sshd:                                             [  OK  ]Starting sshd:                                             [  OK  ][root@KURO-BOX ~]#４．公開鍵の転送実サーバ側で作成した公開鍵をバックアップ側へ送る。[root@noah ~]# scp /root/.ssh/id_rsa.pub 192.168.11.2:/root/The authenticity of host &#39;192.168.11.2 (192.168.11.2)&#39; can&#39;t be established.RSA key fingerprint is b0:45:45:aa:48:ec:9e:06:f3:75:dd:c4:f2:73:b2:fd.Are you sure you want to continue connecting (yes/no)? yes　←　yes応答Warning: Permanently added &#39;192.168.11.2&#39; (RSA) to the list of known hosts.　←　何か警告が出てるけど、とりあえず無視root@192.168.11.2&#39;s password: 　←　バックアップ側のrootパスワードid_rsa.pub                                      100%  403     0.4KB/s   00:00[root@noah ~]#５．バックアップ側で公開鍵の登録先程実サーバから転送した公開鍵をバックアップ側で登録する。[root@KURO-BOX ~]# mkdir .ssh[root@KURO-BOX ~]# cat id_rsa.pub &gt;&gt; /root/.ssh/authorized_keys2[root@KURO-BOX ~]# chmod 600 .ssh/authorized_keys2[root@KURO-BOX ~]#６．ＳＳＨ接続確認メインマシンからバックアップ側へパスワード無しでＳＳＨ接続できるか確認する。[root@noah ~]# ssh 192.168.11.2Last login: Wed Mar 18 11:03:41 2009 from 192.168.11.12[root@KURO-BOX ~]# 　←　できた！７．バックアップ先ディレクトリ作成バックアップ側にバックアップ用のディレクトリを作成する。[root@KURO-BOX ~]# mkdir /tmp/mirror　←　ミラー先ディレクトリ作成[root@KURO-BOX ~]# chown nobody:nobody /tmp/mirror/　←　ミラー先ディレクトリ所有者をnobodyに変更８．バックアップ実サーバ側から rsync でバックアップしてみる。[root@KURO-BOX ~]# exit　←　一旦実サーバに戻るlogoutConnection to 192.168.11.2 closed.[root@noah ~]# rsync -avz -e ssh --delete / 192.168.11.2:/tmp/mirror９．rsync実行スクリプトの作成毎回、rsync を手動で実行するのは面倒なので、自動実行用のスクリプトを作成する。※今回は、/etc, /home, /root, /usr, /var ディレクトリをバックアップすることにします。[root@noah ~]# vi backup.sh#!/bin/sh# 変数の設定BACKUP=192.168.11.2RSYNC=&#39;rsync -avz -e ssh --delete&#39;# pingで対象ホストが稼動してるか確認/bin/ping -c 1 $BACKUP# 稼動してれば、rsyncを実行、稼動してなければ、メールでエラーを通知if [ $? -eq 0 ] ; then  $RSYNC /etc  $BACKUP:/tmp/mirror/  $RSYNC /home $BACKUP:/tmp/mirror/  $RSYNC /root $BACKUP:/tmp/mirror/  $RSYNC /usr  $BACKUP:/tmp/mirror/  $RSYNC /var  $BACKUP:/tmp/mirror/else  echo &quot;rsync NG&quot; | mail -s &quot;rsync&quot; rootfi１０．定期自動実行設定バックアップを毎日同じ時間に定期的に実行するための設定をする。[root@noah ~]# echo &quot;0 5 * * * root /root/backup.sh&quot; &gt; /etc/cron.d/backup設定は以上です。定期起動させる前に、試しに backup.sh を動かしてみてもいいです。初回なので、結構時間がかかると思います。※当方は以前、別の方法でバックアップをしていましたが、それはヤメにしました。当分は、これでやってみることにします。それじゃ、また。">
@@ -32,7 +32,7 @@
   <meta name="twitter:site" content="@rsm_mzk">
   <meta name="twitter:title" content="Ｆｅｄｏｒａ１０にﾐﾗｰﾘﾝｸﾞﾂｰﾙ・その２！">
   <meta name="twitter:description" content="チョット前にうちのＦｅｄｏｒａ１０サーバを玄箱ＨＧ（Ｆｅｄｏｒａ１０）に丸ごとミラーリングバックアップするようにしたんですが、ミラー元に変更があっても即ミラーリングされない（多分、設定がおかしいんだけど）んで、ちょっとやり方を変えてみることにしました。常時丸ごとミラーリングとなると、サーバに負荷がかかるんで、ミラーリングツールを１日１回定期的に実行させるようにしてみようと思います。導入手順【前提条件】・実サーバ（ミラー元）はＦｅｄｏｒａ１０でＷｅｂサーバ、メールサーバ、ＦＴＰサーバ等が稼動中。・バックアップ側（ミラー先）は玄箱ＨＧのＦｅｄｏｒａ１０。・実サーバ（ミラー元）のＩＰアドレスは 192.168.11.3 、バックアップ側（ミラー先）のＩＰアドレスは 192.168.11.2 。・実サーバ、バックアップ側どちらも「 Poderosa 」によるリモート接続による操作。（実サーバはＳＳＨ２接続・鍵認証、バックアップ側はＳＳＨ２接続・パスワード認証）実サーバ操作の場合は　・・・　[root@noah ~]#バックアップ側操作の場合は　・・・　[root@KURO-BOX ~]#で、判断してください。１．公開鍵作成今回は実サーバからバックアップ側への接続に鍵認証で行いたいので、実サーバ側で公開鍵を作成します。[root@noah ~]# ssh-keygen -t rsaGenerating public/private rsa key pair.Enter file in which to save the key (/root/.ssh/id_rsa):Created directory &#39;/root/.ssh&#39;.Enter passphrase (empty for no passphrase):Enter same passphrase again:Your identification has been saved in /root/.ssh/id_rsa.Your public key has been saved in /root/.ssh/id_rsa.pub.The key fingerprint is:4b:fc:22:62:cc:c8:24:6c:e2:39:14:6f:23:03:6c:28 root@noah.mk-mode.comThe key&#39;s randomart image is:+--[ RSA 2048]----+・・・　途中省略　・・・+-----------------+[root@noah ~]#２．rootログイン許可バックアップ側で root のログインを許可する設定をする。[root@KURO-BOX ~]# vi /etc/ssh/sshd_config・・・　途中省略　・・・#PermitRootLogin yes　　↓PermitRootLogin yes　　　←　コメント化解除・・・　途中省略　・・・３．ＳＳＨ再起動バックアップ側のＳＳＨを再起動する。[root@KURO-BOX ~]# service sshd restartStopping sshd:                                             [  OK  ]Starting sshd:                                             [  OK  ][root@KURO-BOX ~]#４．公開鍵の転送実サーバ側で作成した公開鍵をバックアップ側へ送る。[root@noah ~]# scp /root/.ssh/id_rsa.pub 192.168.11.2:/root/The authenticity of host &#39;192.168.11.2 (192.168.11.2)&#39; can&#39;t be established.RSA key fingerprint is b0:45:45:aa:48:ec:9e:06:f3:75:dd:c4:f2:73:b2:fd.Are you sure you want to continue connecting (yes/no)? yes　←　yes応答Warning: Permanently added &#39;192.168.11.2&#39; (RSA) to the list of known hosts.　←　何か警告が出てるけど、とりあえず無視root@192.168.11.2&#39;s password: 　←　バックアップ側のrootパスワードid_rsa.pub                                      100%  403     0.4KB/s   00:00[root@noah ~]#５．バックアップ側で公開鍵の登録先程実サーバから転送した公開鍵をバックアップ側で登録する。[root@KURO-BOX ~]# mkdir .ssh[root@KURO-BOX ~]# cat id_rsa.pub &gt;&gt; /root/.ssh/authorized_keys2[root@KURO-BOX ~]# chmod 600 .ssh/authorized_keys2[root@KURO-BOX ~]#６．ＳＳＨ接続確認メインマシンからバックアップ側へパスワード無しでＳＳＨ接続できるか確認する。[root@noah ~]# ssh 192.168.11.2Last login: Wed Mar 18 11:03:41 2009 from 192.168.11.12[root@KURO-BOX ~]# 　←　できた！７．バックアップ先ディレクトリ作成バックアップ側にバックアップ用のディレクトリを作成する。[root@KURO-BOX ~]# mkdir /tmp/mirror　←　ミラー先ディレクトリ作成[root@KURO-BOX ~]# chown nobody:nobody /tmp/mirror/　←　ミラー先ディレクトリ所有者をnobodyに変更８．バックアップ実サーバ側から rsync でバックアップしてみる。[root@KURO-BOX ~]# exit　←　一旦実サーバに戻るlogoutConnection to 192.168.11.2 closed.[root@noah ~]# rsync -avz -e ssh --delete / 192.168.11.2:/tmp/mirror９．rsync実行スクリプトの作成毎回、rsync を手動で実行するのは面倒なので、自動実行用のスクリプトを作成する。※今回は、/etc, /home, /root, /usr, /var ディレクトリをバックアップすることにします。[root@noah ~]# vi backup.sh#!/bin/sh# 変数の設定BACKUP=192.168.11.2RSYNC=&#39;rsync -avz -e ssh --delete&#39;# pingで対象ホストが稼動してるか確認/bin/ping -c 1 $BACKUP# 稼動してれば、rsyncを実行、稼動してなければ、メールでエラーを通知if [ $? -eq 0 ] ; then  $RSYNC /etc  $BACKUP:/tmp/mirror/  $RSYNC /home $BACKUP:/tmp/mirror/  $RSYNC /root $BACKUP:/tmp/mirror/  $RSYNC /usr  $BACKUP:/tmp/mirror/  $RSYNC /var  $BACKUP:/tmp/mirror/else  echo &quot;rsync NG&quot; | mail -s &quot;rsync&quot; rootfi１０．定期自動実行設定バックアップを毎日同じ時間に定期的に実行するための設定をする。[root@noah ~]# echo &quot;0 5 * * * root /root/backup.sh&quot; &gt; /etc/cron.d/backup設定は以上です。定期起動させる前に、試しに backup.sh を動かしてみてもいいです。初回なので、結構時間がかかると思います。※当方は以前、別の方法でバックアップをしていましたが、それはヤメにしました。当分は、これでやってみることにします。それじゃ、また。">
-  <meta name="twitter:url" content="https://komasaru.github.io/pages/komasaru/2009/04/13/13012833/">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/04/13/13012833/">
 
   
     <meta name="twitter:card" content="summary">
@@ -56,7 +56,7 @@
   
 
 
-<link rel="canonical" href="https://komasaru.github.io/pages/komasaru/2009/04/13/13012833/">
+<link rel="canonical" href="https://komasaru.github.io/2009/04/13/13012833/">
 
 
 
@@ -66,7 +66,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
     }
   </script>
@@ -78,7 +78,7 @@
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "mk-mode.com",
-      "url": "https://komasaru.github.io/pages/komasaru",
+      "url": "https://komasaru.github.io",
       "sameAs": null
     }
   </script>
@@ -104,7 +104,7 @@
 </script>
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="/pages/komasaru/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/main.css">
 
 <!--[if IE ]>
   <style>
@@ -141,7 +141,7 @@
 <link rel="dns-prefetch" href="//twitter.com" />
 <link rel="dns-prefetch" href="//www.facebook.com" />
 
-<link rel="icon" href="/pages/komasaru/assets/images/favicon.ico">
+<link rel="icon" href="/assets/images/favicon.ico">
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-18154748-1']);
@@ -180,19 +180,19 @@
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         
-        <a class="site-title" href="/pages/komasaru/">mk-mode BLOG</a>
+        <a class="site-title" href="/">mk-mode BLOG</a>
         <ul class="visible-links"><li class="masthead__menu-item">
-              <a href="/pages/komasaru/year-archive/" >Archives</a>
+              <a href="/year-archive/" >Archives</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/categories/" >Categories</a>
+              <a href="/categories/" >Categories</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/tags/" >Tags</a>
+              <a href="/tags/" >Tags</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
             </li><li class="masthead__menu-item">
               <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
             </li><li class="masthead__menu-item">
-              <a href="/pages/komasaru/privacy.html" >Privacy Policy</a>
+              <a href="/privacy.html" >Privacy Policy</a>
             </li></ul>
         
         <button class="search__toggle" type="button">
@@ -231,7 +231,7 @@
       
 
       
-        <img src="/pages/komasaru/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
       
     </div>
   
@@ -563,7 +563,7 @@ fi
     
       
       
-      <a href="/pages/komasaru/tags/fedora" class="page__taxonomy-item" rel="tag">Fedora</a>
+      <a href="/tags/fedora" class="page__taxonomy-item" rel="tag">Fedora</a>
     
     </span>
   </p>
@@ -584,11 +584,11 @@ fi
     
       
       
-      <a href="/pages/komasaru/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
     
       
       
-      <a href="/pages/komasaru/categories/%E7%8E%84%E7%AE%B1" class="page__taxonomy-item" rel="tag">玄箱</a>
+      <a href="/categories/%E7%8E%84%E7%AE%B1" class="page__taxonomy-item" rel="tag">玄箱</a>
     
     </span>
   </p>
@@ -605,15 +605,15 @@ fi
       <section class="page__share">
   
 
-  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%EF%BC%A6%EF%BD%85%EF%BD%84%EF%BD%8F%EF%BD%92%EF%BD%81%EF%BC%91%EF%BC%90%E3%81%AB%EF%BE%90%EF%BE%97%EF%BD%B0%EF%BE%98%EF%BE%9D%EF%BD%B8%EF%BE%9E%EF%BE%82%EF%BD%B0%EF%BE%99%E3%83%BB%E3%81%9D%E3%81%AE%EF%BC%92%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F04%2F13%2F13012833%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%EF%BC%A6%EF%BD%85%EF%BD%84%EF%BD%8F%EF%BD%92%EF%BD%81%EF%BC%91%EF%BC%90%E3%81%AB%EF%BE%90%EF%BE%97%EF%BD%B0%EF%BE%98%EF%BE%9D%EF%BD%B8%EF%BE%9E%EF%BE%82%EF%BD%B0%EF%BE%99%E3%83%BB%E3%81%9D%E3%81%AE%EF%BC%92%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F04%2F13%2F13012833%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F04%2F13%2F13012833%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F04%2F13%2F13012833%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
   
 
   <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2Fpages%2Fkomasaru%2F2009%2F04%2F13%2F13012833%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F04%2F13%2F13012833%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -627,11 +627,11 @@ fi
       
   <nav class="pagination">
     
-      <a href="/pages/komasaru/2009/04/12/12002025/" class="pagination--pager" title="NOAH-800 + D945GCLF エアフローその後！
+      <a href="/2009/04/12/12002025/" class="pagination--pager" title="NOAH-800 + D945GCLF エアフローその後！
 ">Previous</a>
     
     
-      <a href="/pages/komasaru/2009/04/14/14002025/" class="pagination--pager" title="電卓購入・その２！
+      <a href="/2009/04/14/14002025/" class="pagination--pager" title="電卓購入・その２！
 ">Next</a>
     
   </nav>
@@ -666,7 +666,7 @@ fi
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/04/21/cpp-distance-between-2-celestial-bodies/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-04-21)</small>
     </h3>
@@ -687,7 +687,7 @@ fi
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
+        <a href="/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
 </a>
         &nbsp;<small>(2021-04-14)</small>
     </h3>
@@ -708,7 +708,7 @@ fi
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
+        <a href="/2021/04/01/blog-access/" rel="permalink">2021年3月 - OS・ブラウザ別アクセス状況！
 </a>
         &nbsp;<small>(2021-04-01)</small>
     </h3>
@@ -729,7 +729,7 @@ fi
     
     <h3 class="archive__item-title" itemprop="headline">
       
-        <a href="/pages/komasaru/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
+        <a href="/2021/03/17/cpp-sun-moon-apparent-position/" rel="permalink">C++ - JPL DE430 データから太陽・月の視位置を計算！
 </a>
         &nbsp;<small>(2021-03-17)</small>
     </h3>
@@ -769,7 +769,7 @@ fi
     <div class="page__footer">
       <footer>
         <!-- start custom footer snippets -->
-<div id="qr"><img src="/pages/komasaru/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
 <div id="google-ad-5"></div>
 <div class="page__footer-etc">
   <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
@@ -778,7 +778,7 @@ fi
   &emsp;合計 <tt id="pv-total">Loading...</tt><br />
   &emsp;今日 <tt id="pv-today">Loading...</tt><br />
   &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
-  <small>※<a href="/pages/komasaru/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
 </div>
 <p id="page-top">
   <a href="#">
@@ -821,9 +821,9 @@ fi
     </div>
 
     
-  <script defer src="/pages/komasaru/assets/js/main.min.js"></script>
+  <script defer src="/assets/js/main.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
-  <script defer src="/pages/komasaru/assets/js/my_custom.js"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
 
 
 <script>
@@ -874,7 +874,7 @@ fi
     
   <script>
     var disqus_config = function () {
-      this.page.url = "https://komasaru.github.io/pages/komasaru/2009/04/13/13012833/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.url = "https://komasaru.github.io/2009/04/13/13012833/";  // Replace PAGE_URL with your page's canonical URL variable
       this.page.identifier = "/2009/04/13/13012833"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() { // DON'T EDIT BELOW THIS LINE
