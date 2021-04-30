@@ -12004,4 +12004,10 @@ var store = [{
         "tags": ["C++","カレンダー"],
         "url": "/2021/04/28/cpp-sun-moon-rise-set-meridian/",
         "teaser": null
+      },{
+        "title": "2021年4月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"5月になりましたので、先月4月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 20,962 70.2810 Mac OS 5,870 19.6808 Linux 1,272 4.2647 Android 1,077 3.6109 Ubuntu Linux 458 1.5356 unknown 145 0.4862 Fedora Linux 35 0.1173 FreeBSD 4 0.0134 PlayStation 3 0.0101 合　計 29,826 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 17,293 57.9796 Mac...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2021/05/01/blog-access/",
+        "teaser": null
       }]
