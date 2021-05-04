@@ -12010,4 +12010,10 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2021/05/01/blog-access/",
         "teaser": null
+      },{
+        "title": "C++ - WGS84 (BLH) 座標 -> ECEF 座標 変換！",
+        "excerpt":"WGS84 の緯度(Beta)／経度(Lambda)／楕円体高(Height)を ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）座標に変換する処理を C++ で実装してみました。 過去には Python, Ruby, Fortran で実装しています。 Python - WGS84 (BLH) 座標 -&gt; ECEF 座標 変換！ Ruby - WGS84 (BLH) 座標 -&gt; ECEF 座標 変換！ Fortran - WGS84 (BLH) 座標 -&gt; ECEF 座標 変換！ 0. 前提条件 Debian GNU/Linux 10.8 (64bit) での作業を想定。 GCC 10.2.0...","categories": ["プログラミング","暦・カレンダー"],
+        "tags": ["C++","ISS","GPS"],
+        "url": "/2021/05/05/cpp-convert-blh-to-ecef/",
+        "teaser": null
       }]
