@@ -401,7 +401,7 @@
 
 <h3 id="1-ソースコードの作成">1. ソースコードの作成</h3>
 
-<p>File: <code class="language-plaintext highlighter-rouge">blh2ecef.f95</code></p>
+<p>File: <code class="language-plaintext highlighter-rouge">blh2ecef.cpp</code></p>
 
 <figure class="highlight"><pre><code class="language-c" data-lang="c"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
 2
@@ -538,6 +538,11 @@
 133
 134
 135
+136
+137
+138
+139
+140
 </pre></td><td class="code"><pre><span class="cm">/***********************************************************
   BLH -&gt; ECEF 変換
   : WGS84 の緯度(Beta)／経度(Lambda)／楕円体高(Height)を
@@ -579,10 +584,15 @@
 <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">double</span> <span class="n">kEd2</span>   <span class="o">=</span> <span class="n">kE2</span> <span class="o">*</span> <span class="n">kA</span> <span class="o">*</span> <span class="n">kA</span> <span class="o">/</span> <span class="p">(</span><span class="n">kB</span> <span class="o">*</span> <span class="n">kB</span><span class="p">);</span>
 
 <span class="c1">// 座標</span>
-<span class="k">struct</span> <span class="n">Coord</span> <span class="p">{</span>
-  <span class="kt">double</span> <span class="n">x</span><span class="p">;</span>  <span class="c1">// X or B(Beta)</span>
-  <span class="kt">double</span> <span class="n">y</span><span class="p">;</span>  <span class="c1">// Y or L(Lambda)</span>
-  <span class="kt">double</span> <span class="n">z</span><span class="p">;</span>  <span class="c1">// Z or H(Height)</span>
+<span class="k">struct</span> <span class="n">CoordB</span> <span class="p">{</span>
+  <span class="kt">double</span> <span class="n">b</span><span class="p">;</span>  <span class="c1">// B(Beta)</span>
+  <span class="kt">double</span> <span class="n">l</span><span class="p">;</span>  <span class="c1">// L(Lambda)</span>
+  <span class="kt">double</span> <span class="n">h</span><span class="p">;</span>  <span class="c1">// H(Height)</span>
+<span class="p">};</span>
+<span class="k">struct</span> <span class="n">CoordX</span> <span class="p">{</span>
+  <span class="kt">double</span> <span class="n">x</span><span class="p">;</span>  <span class="c1">// X</span>
+  <span class="kt">double</span> <span class="n">y</span><span class="p">;</span>  <span class="c1">// Y</span>
+  <span class="kt">double</span> <span class="n">z</span><span class="p">;</span>  <span class="c1">// Z</span>
 <span class="p">};</span>
 
 <span class="cm">/*
@@ -606,21 +616,21 @@
 <span class="cm">/*
  * @brief      BLH -&gt; ECEF
  *
- * @param[in]  BLH  座標 (Coord)
- * @return     ECEF 座標 (Coord)
+ * @param[in]  BLH  座標 (CoordB)
+ * @return     ECEF 座標 (CoordX)
  */</span>
-<span class="n">Coord</span> <span class="n">blh2ecef</span><span class="p">(</span><span class="n">Coord</span> <span class="n">c_src</span><span class="p">)</span> <span class="p">{</span>
-  <span class="n">Coord</span> <span class="n">c_res</span><span class="p">;</span>
+<span class="n">CoordX</span> <span class="n">blh2ecef</span><span class="p">(</span><span class="n">CoordB</span> <span class="n">c_src</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">CoordX</span> <span class="n">c_res</span><span class="p">;</span>
 
   <span class="n">try</span> <span class="p">{</span>
-    <span class="n">c_res</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">c_src</span><span class="p">.</span><span class="n">z</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">kPi180</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">kPi180</span><span class="p">);</span>
-    <span class="n">c_res</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">c_src</span><span class="p">.</span><span class="n">z</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">kPi180</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">kPi180</span><span class="p">);</span>
-    <span class="n">c_res</span><span class="p">.</span><span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span> <span class="o">-</span> <span class="n">kE2</span><span class="p">)</span> <span class="o">+</span> <span class="n">c_src</span><span class="p">.</span><span class="n">z</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">kPi180</span><span class="p">);</span>
+    <span class="n">c_res</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">b</span><span class="p">)</span> <span class="o">+</span> <span class="n">c_src</span><span class="p">.</span><span class="n">h</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">b</span> <span class="o">*</span> <span class="n">kPi180</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">l</span> <span class="o">*</span> <span class="n">kPi180</span><span class="p">);</span>
+    <span class="n">c_res</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">b</span><span class="p">)</span> <span class="o">+</span> <span class="n">c_src</span><span class="p">.</span><span class="n">h</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">b</span> <span class="o">*</span> <span class="n">kPi180</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">l</span> <span class="o">*</span> <span class="n">kPi180</span><span class="p">);</span>
+    <span class="n">c_res</span><span class="p">.</span><span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span> <span class="o">-</span> <span class="n">kE2</span><span class="p">)</span> <span class="o">+</span> <span class="n">c_src</span><span class="p">.</span><span class="n">h</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">c_src</span><span class="p">.</span><span class="n">b</span> <span class="o">*</span> <span class="n">kPi180</span><span class="p">);</span>
   <span class="p">}</span> <span class="n">catch</span> <span class="p">(...)</span> <span class="p">{</span>
     <span class="n">throw</span><span class="p">;</span>
   <span class="p">}</span>
@@ -632,8 +642,8 @@
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
   <span class="n">namespace</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">blh2ecef</span><span class="p">;</span>
-  <span class="n">ns</span><span class="o">::</span><span class="n">Coord</span> <span class="n">c_src</span><span class="p">;</span>  <span class="c1">// 元の座標</span>
-  <span class="n">ns</span><span class="o">::</span><span class="n">Coord</span> <span class="n">c_res</span><span class="p">;</span>  <span class="c1">// 変換後の座標</span>
+  <span class="n">ns</span><span class="o">::</span><span class="n">CoordB</span> <span class="n">c_src</span><span class="p">;</span>  <span class="c1">// 元の座標</span>
+  <span class="n">ns</span><span class="o">::</span><span class="n">CoordX</span> <span class="n">c_res</span><span class="p">;</span>  <span class="c1">// 変換後の座標</span>
 
   <span class="n">try</span> <span class="p">{</span>
     <span class="c1">// コマンドライン引数の個数チェック</span>
@@ -643,9 +653,9 @@
     <span class="p">}</span>
 
     <span class="c1">// 元の BLH(WGS84) 座標取得</span>
-    <span class="n">c_src</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">stod</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-    <span class="n">c_src</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">stod</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
-    <span class="n">c_src</span><span class="p">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">stod</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+    <span class="n">c_src</span><span class="p">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">stod</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+    <span class="n">c_src</span><span class="p">.</span><span class="n">l</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">stod</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+    <span class="n">c_src</span><span class="p">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">stod</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
 
     <span class="c1">// BLH -&gt; ECEF</span>
     <span class="n">c_res</span> <span class="o">=</span> <span class="n">ns</span><span class="o">::</span><span class="n">blh2ecef</span><span class="p">(</span><span class="n">c_src</span><span class="p">);</span>
@@ -653,12 +663,12 @@
     <span class="c1">// 結果出力</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">fixed</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setprecision</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"BLH: LATITUDE(BETA) = "</span>
-              <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">c_src</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;&lt;</span> <span class="s">" °"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+              <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">c_src</span><span class="p">.</span><span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="s">" °"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"  LONGITUDE(LAMBDA) = "</span>
-              <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">c_src</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;&lt;</span> <span class="s">" °"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+              <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">c_src</span><span class="p">.</span><span class="n">l</span> <span class="o">&lt;&lt;</span> <span class="s">" °"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">fixed</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setprecision</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"             HEIGHT = "</span>
-              <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>  <span class="o">&lt;&lt;</span> <span class="n">c_src</span><span class="p">.</span><span class="n">z</span> <span class="o">&lt;&lt;</span> <span class="s">" m"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+              <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>  <span class="o">&lt;&lt;</span> <span class="n">c_src</span><span class="p">.</span><span class="n">h</span> <span class="o">&lt;&lt;</span> <span class="s">" m"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"--&gt;"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"ECEF: X = "</span>
               <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">c_res</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;&lt;</span> <span class="s">" m"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
