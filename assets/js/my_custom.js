@@ -170,7 +170,7 @@ $(window).on('load', function(){
     str += '</script>';
     $("#google-ad-4").html(str);
 
-    // Goggle Adsense (Sidebar-2)
+    // Google Adsense (mk-mode Sidebar-1) (footer に)
     //var str = new String();
     //str += '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>';
     //str += '<ins class="adsbygoogle"';
@@ -180,7 +180,18 @@ $(window).on('load', function(){
     //str += '<script>';
     //str += '(adsbygoogle = window.adsbygoogle || []).push({});';
     //str += '</script>';
-    //$("#google-ad-5").html(str);
+    str += '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>';
+    str += '<!-- mk-mode Sidebar-1 -->';
+    str += '<ins class="adsbygoogle"';
+    str += '     style="display:block"';
+    str += '     data-ad-client="ca-pub-7320193476057758"';
+    str += '     data-ad-slot="1858392505"';
+    str += '     data-ad-format="auto"';
+    str += '     data-full-width-responsive="true"></ins>';
+    str += '<script>';
+    str += '     (adsbygoogle = window.adsbygoogle || []).push({});';
+    str += '</script>';
+    $("#google-ad-5").html(str);
 
     // Amazon Associate - link banner
     var str = new String();
