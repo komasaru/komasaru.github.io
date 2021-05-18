@@ -12022,4 +12022,10 @@ var store = [{
         "tags": ["C++","ISS","GPS"],
         "url": "/2021/05/12/cpp-convert-ecef-to-blh/",
         "teaser": null
+      },{
+        "title": "C++ - WGS84 (BLH) 座標 -> ENU 座標 変換！",
+        "excerpt":"前々回と前回、 BLH 座標（WGS84 の緯度(Beta)／経度(Lambda)／楕円体高(Height)）から ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）座標への変換や、その逆の変換の処理を C++ で実装しました。 C++ - WGS84 (BLH) 座標 -&gt; ECEF 座標 変換！ C++ - ECEF 座標 -&gt; WGS84 (BLH) 座標 変換！ 今回は BLH 座標から ENU 座標（地平座標; EastNorthUp）への変換処理を C++ で実装してみました。 0. 前提条件 Debian GNU/Linux 10.8 (64bit) での作業を想定。 GCC 10.2.0 (G++ 10.2.0) (C++17) でのコンパイルを想定。...","categories": ["プログラミング","暦・カレンダー"],
+        "tags": ["C++","ISS","GPS"],
+        "url": "/2021/05/19/cpp-convert-blh-to-enu/",
+        "teaser": null
       }]
