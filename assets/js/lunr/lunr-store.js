@@ -12028,4 +12028,10 @@ var store = [{
         "tags": ["C++","ISS","GPS"],
         "url": "/2021/05/19/cpp-convert-blh-to-enu/",
         "teaser": null
+      },{
+        "title": "2021年5月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"6月になりましたので、先月5月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 22,409 68.3994 Mac OS 7,270 22.1903 Linux 1,264 3.8581 Android 1,126 3.4369 Ubuntu Linux 492 1.5017 unknown 171 0.5219 Fedora Linux 22 0.0672 FreeBSD 8 0.0244 合　計 32,762 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 19,036 58.1039 Mac OS X 7,270...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2021/06/01/blog-access/",
+        "teaser": null
       }]
