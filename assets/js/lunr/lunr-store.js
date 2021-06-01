@@ -12035,8 +12035,8 @@ var store = [{
         "url": "/2021/06/01/blog-access/",
         "teaser": null
       },{
-        "title": "C++ - EOP（地球姿勢パラメータ）CSV 生成！",
-        "excerpt":"IERS（International Earth Rotation and Reference systems Service; 国際地球回転観測事業） の EOP（Earth Orientation Parameter; 地球姿勢（回転）パラメータ）から確定／速報／推定値を抽出し、 CSV データを生成するスクリプトを C++ で作成しました。（人工衛星の位置を正確に計算するために使用するデータ） 過去には Ruby や Python で生成しました。（但し、 CSV ファイル） Ruby, Python - EOP（地球姿勢パラメータ）CSV 生成！ 0. 前提条件 Debian GNU/Linux 10.8 (64bit) での作業を想定。 GCC 10.2.0 (G++ 10.2.0) (C++17) でのコンパイルを想定。 ここでは EOP（Earth Orientation Parameter; 地球姿勢（回転）パラメータ）が何かについての説明はしない。 1. 事前準備 今回使用するデータを用意しておく。...","categories": ["プログラミング","暦・カレンダー"],
+        "title": "C++ - EOP（地球姿勢パラメータ）データファイル 生成！",
+        "excerpt":"IERS（International Earth Rotation and Reference systems Service; 国際地球回転観測事業） の EOP（Earth Orientation Parameter; 地球姿勢（回転）パラメータ）から確定／速報／推定値を抽出し、テキストファイルを生成するスクリプトを C++ で作成しました。（人工衛星の位置を正確に計算するために使用するデータ） 過去には Ruby や Python で生成しました。（但し、 CSV ファイル） Ruby, Python - EOP（地球姿勢パラメータ）CSV 生成！ 0. 前提条件 Debian GNU/Linux 10.8 (64bit) での作業を想定。 GCC 10.2.0 (G++ 10.2.0) (C++17) でのコンパイルを想定。 ここでは EOP（Earth Orientation Parameter; 地球姿勢（回転）パラメータ）が何かについての説明はしない。 1. 事前準備 今回使用するデータを用意しておく。 こちら から...","categories": ["プログラミング","暦・カレンダー"],
         "tags": ["C++"],
         "url": "/2021/06/02/cpp-eop-getting-from-iers/",
         "teaser": null
