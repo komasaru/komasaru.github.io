@@ -12040,4 +12040,10 @@ var store = [{
         "tags": ["C++"],
         "url": "/2021/06/02/cpp-eop-getting-from-iers/",
         "teaser": null
+      },{
+        "title": "C++ - ISS 位置・速度（TEME 座標）の算出！",
+        "excerpt":"C++ で、 NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（UT1; 世界時1）の ISS の位置・速度（TEME 座標）を、 SGP4 アルゴリズムを用いて計算してみました。 過去には Ruby, Python, Fortran で実装しています。（但し、 Ruby, Python 版はブログ記事にはしていない） Fortran - ISS 位置・速度（TEME 座標）の算出！ 0. 前提条件 Debian GNU/Linux 10.9 (64bit) での作業を想定。 GCC 10.2.0 (G++ 10.2.0) (C++17) でのコンパイル＆ビルドを想定。 ここでは、各種座標系、 SGP4 アルゴリズム（Simplified General Perturbations Satellite Orbit Model 4; NASA, NORAD が使用している、近地球域の衛星の軌道計算用で、周回周期225分未満の衛星に使用すべきアルゴリズム）等についての詳細は説明しない。（TEME 座標については、次項で概要のみ説明）...","categories": ["プログラミング","暦・カレンダー"],
+        "tags": ["C++"],
+        "url": "/2021/06/16/cpp-iss-position-velocity/",
+        "teaser": null
       }]
