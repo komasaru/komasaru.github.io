@@ -10405,13 +10405,13 @@ var store = [{
       },{
         "title": "Python - WGS84 (BLH) 座標 -> ECEF 座標 変換！",
         "excerpt":"WGS84 の緯度(Beta)／経度(Lambda)／楕円体高(Height)を ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）座標に変換する処理を Python で実装してみました。 0. 前提条件 Python 3.6.5 での動作を想定。 ここでは、 WGS84(World Geodetic System 1984) 測地系や ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）の詳細についての説明はしない。 1. Python スクリプトの作成 Shebang ストリング（1行目）では、フルパスでコマンド指定している。（当方の慣習） File: blh2ecef.py 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18...","categories": ["プログラミング","暦・カレンダー"],
-        "tags": ["Python"],
+        "tags": ["Python","ISS","GPS"],
         "url": "/2018/09/02/python-convert-blh-to-ecef/",
         "teaser": null
       },{
         "title": "Python - ECEF 座標 -> WGS84 (BLH) 座標 変換！",
         "excerpt":"先日、 WGS84(World Geodetic System 1984) 測地系の緯度(Beta)／経度(Lambda)／楕円体高(Height)を ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）座標に変換する方法を Python で実装しました。 Python - WGS84 (BLH) 座標 -&gt; ECEF 座標 変換！ 今回は、逆に、 ECEF 座標を WGS84 の緯度(Beta)／経度(Lambda)／楕円体高(Height)に変換する方法を Python で実装してみました。 0. 前提条件 Python 3.6.5 での動作を想定。 ここでは、 WGS84(World Geodetic System 1984) 測地系や ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）の詳細についての説明はしない。 1. Python スクリプトの作成 Shebang ストリング（1行目）では、フルパスでコマンド指定している。（当方の慣習）...","categories": ["プログラミング","暦・カレンダー"],
-        "tags": ["Python"],
+        "tags": ["Python","ISS","GPS"],
         "url": "/2018/09/05/python-convert-ecef-to-blh/",
         "teaser": null
       },{
@@ -10897,7 +10897,7 @@ var store = [{
       },{
         "title": "Python - WGS84(BLH) 座標 -> ENU 座標 変換！",
         "excerpt":"以前、 BLH 座標（WGS84 の緯度(Beta)／経度(Lambda)／楕円体高(Height)）から ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）座標への変換や、その逆の変換の処理を Python で実装しました。 Python - WGS84 (BLH) 座標 -&gt; ECEF 座標 変換！ Python - ECEF 座標 -&gt; WGS84 (BLH) 座標 変換！ 今回は BLH 座標から ENU 座標（地平座標; EastNorthUp）への変換処理を Python で実装してみました。 0. 前提条件 Python 3.7.2 での動作を想定。 ここでは、 WGS84(World Geodetic System 1984) 測地系、 ECEF 座標（Earth...","categories": ["プログラミング","暦・カレンダー"],
-        "tags": ["Python"],
+        "tags": ["Python","ISS","GPS"],
         "url": "/2019/04/17/python-convert-blh-to-enu/",
         "teaser": null
       },{
@@ -10915,13 +10915,13 @@ var store = [{
       },{
         "title": "Ruby - WGS84 (BLH) 座標 -> ECEF 座標 変換！",
         "excerpt":"WGS84 の緯度(Beta)／経度(Lambda)／楕円体高(Height)を ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）座標に変換する処理を Ruby で実装してみました。 過去には Python で実装しています。 Python - WGS84 (BLH) 座標 -&gt; ECEF 座標 変換！ 0. 前提条件 Ruby 2.6.3 での動作を想定。 ここでは、 WGS84(World Geodetic System 1984) 測地系や ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）の詳細についての説明はしない。 1. Ruby スクリプトの作成 Shebang ストリング（1行目）では、フルパスでコマンド指定している。（当方の慣習） File: blh2ecef.rb 1 2 3 4 5 6...","categories": ["プログラミング","暦・カレンダー"],
-        "tags": ["Ruby"],
+        "tags": ["Ruby","ISS","GPS"],
         "url": "/2019/04/26/ruby-convert-blh-to-ecef/",
         "teaser": null
       },{
         "title": "Ruby - ECEF 座標 -> WGS84 (BLH) 座標 変換！",
         "excerpt":"先日、 WGS84(World Geodetic System 1984) 測地系の緯度(Beta)／経度(Lambda)／楕円体高(Height)を ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）座標に変換する方法を Ruby で実装しました。 Ruby - WGS84 (BLH) 座標 -&gt; ECEF 座標 変換！ 今回は、逆に、 ECEF 座標を WGS84 の緯度(Beta)／経度(Lambda)／楕円体高(Height)に変換する方法を Ruby で実装してみました。 過去には Python で実装しています。 Python - ECEF 座標 -&gt; WGS84 (BLH) 座標 変換！ 0. 前提条件 Ruby 2.6.3 での動作を想定。 ここでは、 WGS84(World Geodetic System...","categories": ["プログラミング","暦・カレンダー"],
-        "tags": ["Ruby"],
+        "tags": ["Ruby","ISS","GPS"],
         "url": "/2019/04/29/ruby-convert-ecef-to-blh/",
         "teaser": null
       },{
@@ -10933,25 +10933,25 @@ var store = [{
       },{
         "title": "Ruby - WGS84 (BLH) 座標 -> ENU 座標 変換！",
         "excerpt":"少し前に、 BLH 座標（WGS84 の緯度(Beta)／経度(Lambda)／楕円体高(Height)）から ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）座標への変換や、その逆の変換の処理を Ruby で実装しました。 Ruby - WGS84 (BLH) 座標 -&gt; ECEF 座標 変換！ Ruby - ECEF 座標 -&gt; WGS84 (BLH) 座標 変換！ 今回は、 BLH 座標から ENU 座標（地平座標; EastNorthUp）への変換処理を Ruby で実装してみました。 0. 前提条件 Ruby 2.6.3 での動作を想定。 ここでは、 WGS84(World Geodetic System 1984) 測地系、 ECEF 座標（Earth...","categories": ["プログラミング","暦・カレンダー"],
-        "tags": ["Ruby"],
+        "tags": ["Ruby","ISS","GPS"],
         "url": "/2019/05/02/ruby-convert-blh-to-enu/",
         "teaser": null
       },{
         "title": "Fortran - WGS84 (BLH) 座標 -> ECEF 座標 変換！",
         "excerpt":"WGS84 の緯度(Beta)／経度(Lambda)／楕円体高(Height)を ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）座標に変換する処理を Fortran 95 で実装してみました。 過去には Python, Ruby で実装しています。 Python - WGS84 (BLH) 座標 -&gt; ECEF 座標 変換！ Ruby - WGS84 (BLH) 座標 -&gt; ECEF 座標 変換！ 0. 前提条件 LMDE 3 (Linux Mint Debian Edition 3; 64bit) での作業を想定。 GCC 6.3.0 (GFortran 6.3.0) でのコンパイルを想定。 ここでは、 WGS84(World...","categories": ["プログラミング","暦・カレンダー"],
-        "tags": ["Fortran"],
+        "tags": ["Fortran","ISS","GPS"],
         "url": "/2019/05/05/fortran95-convert-blh-to-ecef/",
         "teaser": null
       },{
         "title": "Fortran - ECEF 座標 -> WGS84 (BLH) 座標 変換！",
         "excerpt":"先日、 WGS84(World Geodetic System 1984) 測地系の緯度(Beta)／経度(Lambda)／楕円体高(Height)を ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）座標に変換する方法を Fortran 95 で実装しました。 Fortran - WGS84 (BLH) 座標 -&gt; ECEF 座標 変換！ 今回は、逆に、 ECEF 座標を WGS84 の緯度(Beta)／経度(Lambda)／楕円体高(Height)に変換する方法を Fortran 95 で実装してみました。 過去には Python, Ruby で実装しています。 Python - ECEF 座標 -&gt; WGS84 (BLH) 座標 変換！ Ruby - ECEF 座標 -&gt; WGS84...","categories": ["プログラミング","暦・カレンダー"],
-        "tags": ["Fortran"],
+        "tags": ["Fortran","ISS","GPS"],
         "url": "/2019/05/08/fortran95-convert-ecef-to-blh/",
         "teaser": null
       },{
         "title": "Fortran - WGS84 (BLH) 座標 -> ENU 座標 変換！",
         "excerpt":"前々回と前回、 BLH 座標（WGS84 の緯度(Beta)／経度(Lambda)／楕円体高(Height)）から ECEF（Earth Centered Earth Fixed; 地球中心・地球固定直交座標系）座標への変換や、その逆の変換の処理を Fortran 95 で実装しました。 Fortran - WGS84 (BLH) 座標 -&gt; ECEF 座標 変換！ Fortran - ECEF 座標 -&gt; WGS84 (BLH) 座標 変換！ 今回は BLH 座標から ENU 座標（地平座標; EastNorthUp）への変換処理を Fortran 95 で実装してみました。 0. 前提条件 LMDE 3 (Linux Mint Debian Edition 3; 64bit) での作業を想定。...","categories": ["プログラミング","暦・カレンダー"],
-        "tags": ["Fortran"],
+        "tags": ["Fortran","ISS","GPS"],
         "url": "/2019/05/11/fortran95-convert-blh-to-enu/",
         "teaser": null
       },{
@@ -12037,13 +12037,19 @@ var store = [{
       },{
         "title": "C++ - EOP（地球姿勢パラメータ）データファイル 生成！",
         "excerpt":"IERS（International Earth Rotation and Reference systems Service; 国際地球回転観測事業） の EOP（Earth Orientation Parameter; 地球姿勢（回転）パラメータ）から確定／速報／推定値を抽出し、テキストファイルを生成するスクリプトを C++ で作成しました。（人工衛星の位置を正確に計算するために使用するデータ） 過去には Ruby や Python で生成しました。（但し、 CSV ファイル） Ruby, Python - EOP（地球姿勢パラメータ）CSV 生成！ 0. 前提条件 Debian GNU/Linux 10.8 (64bit) での作業を想定。 GCC 10.2.0 (G++ 10.2.0) (C++17) でのコンパイルを想定。 ここでは EOP（Earth Orientation Parameter; 地球姿勢（回転）パラメータ）が何かについての説明はしない。 1. 事前準備 今回使用するデータを用意しておく。 こちら から...","categories": ["プログラミング","暦・カレンダー"],
-        "tags": ["C++"],
+        "tags": ["C++","ISS"],
         "url": "/2021/06/02/cpp-eop-getting-from-iers/",
         "teaser": null
       },{
         "title": "C++ - ISS 位置・速度（TEME 座標）の算出！",
-        "excerpt":"C++ で、 NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（UT1; 世界時1）の ISS の位置・速度（TEME 座標）を、 SGP4 アルゴリズムを用いて計算してみました。 過去には Ruby, Python, Fortran で実装しています。（但し、 Ruby, Python 版はブログ記事にはしていない） Fortran - ISS 位置・速度（TEME 座標）の算出！ 0. 前提条件 Debian GNU/Linux 10.9 (64bit) での作業を想定。 GCC 10.2.0 (G++ 10.2.0) (C++17) でのコンパイル＆ビルドを想定。 ここでは、各種座標系、 SGP4 アルゴリズム（Simplified General Perturbations Satellite Orbit Model 4; NASA, NORAD が使用している、近地球域の衛星の軌道計算用で、周回周期225分未満の衛星に使用すべきアルゴリズム）等についての詳細は説明しない。（TEME 座標については、次項で概要のみ説明）...","categories": ["プログラミング","暦・カレンダー"],
-        "tags": ["C++"],
+        "excerpt":"C++ で、 NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（UT1; 世界時1）の ISS の位置・速度（TEME 座標）を、 SGP4 アルゴリズムを用いて計算してみました。 過去には Ruby, Python, Fortran で実装しています。（但し、 Ruby, Python 版はブログ記事にはしていない） Fortran - ISS 位置・速度（TEME 座標）の算出！ 0. 前提条件 Debian GNU/Linux 10.9 (64bit) での作業を想定。 GCC 10.2.0 (G++ 10.2.0) (C++17) でのコンパイル＆ビルドを想定。 ここでは、各種座標系、 SGP4 アルゴリズム（Simplified General Perturbations Satellite Orbit Model 4; NASA, NORAD が使用している、近地球域の衛星の軌道計算用で、周回周期225分未満の衛星に使用すべきアルゴリズム）等についての詳細は説明しない。（TEME 座標については、次項で概要のみ説明）...","categories": ["プログラミング"],
+        "tags": ["C++","ISS"],
         "url": "/2021/06/16/cpp-iss-position-velocity/",
+        "teaser": null
+      },{
+        "title": "C++ - ISS 位置・速度（BLH(WGS84)座標）の算出！",
+        "excerpt":"前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（UT1; 世界時1）の ISS の位置・速度（TEME 座標）を、 SGP4 アルゴリズムを用いて計算しました。 今回は、これの応用で、取得した TEME 座標を WGS84 座標（いわゆる、緯度・経度・高度(BLH)という座標）に変換します。 過去には Ruby, Python, Fortran で実装しています。（但し、 Ruby 版はブログ記事にはしていない） Fortran - ISS 位置・速度（WGS84(BLH) 座標）の算出！ Python - ISS 位置／速度計算（SGP4 アルゴリズム）！ 0. 前提条件 Debian GNU/Linux 10.9 (64bit) での作業を想定。 GCC 10.2.0 (G++ 10.2.0) (C++17) でのコンパイル＆ビルドを想定。 ここでは、各種座標系、 SGP4 アルゴリズム（Simplified...","categories": ["プログラミング"],
+        "tags": ["C++","ISS"],
+        "url": "/2021/06/30/cpp-iss-position-velocity-blh/",
         "teaser": null
       }]
