@@ -12052,4 +12052,10 @@ var store = [{
         "tags": ["C++","ISS"],
         "url": "/2021/06/30/cpp-iss-position-velocity-blh/",
         "teaser": null
+      },{
+        "title": "2021年6月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"7月になりましたので、先月6月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 22,793 68.6929 Mac OS 7,388 22.2658 Android 1,207 3.6376 Linux 1,105 3.3302 Ubuntu Linux 527 1.5883 unknown 117 0.3526 Fedora Linux 28 0.0844 FreeBSD 9 0.0271 NetBSD 6 0.0181 Solaris 1 0.0030 合　計 33,181 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2021/07/01/blog-access/",
+        "teaser": null
       }]
