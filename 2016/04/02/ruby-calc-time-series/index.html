@@ -1,0 +1,1788 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby - 各種時刻系の換算！ - mk-mode BLOG</title>
+<meta name="description" content="暦計算や天文計算を行う際に必要な各種時刻系について、調査して得た情報を自分なりにまとめてみました。そして、 Ruby を使用して換算してみました。  【2016-07-27 追記】以下で紹介の Ruby スクリプトを gem ライブラリにしました。mk_time - RubyGems.org もご参照ください。【追記ここまで】">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby - 各種時刻系の換算！">
+<meta property="og:url" content="https://komasaru.github.io/2016/04/02/ruby-calc-time-series/">
+
+
+  <meta property="og:description" content="暦計算や天文計算を行う際に必要な各種時刻系について、調査して得た情報を自分なりにまとめてみました。そして、 Ruby を使用して換算してみました。  【2016-07-27 追記】以下で紹介の Ruby スクリプトを gem ライブラリにしました。mk_time - RubyGems.org もご参照ください。【追記ここまで】">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby - 各種時刻系の換算！">
+  <meta name="twitter:description" content="暦計算や天文計算を行う際に必要な各種時刻系について、調査して得た情報を自分なりにまとめてみました。そして、 Ruby を使用して換算してみました。  【2016-07-27 追記】以下で紹介の Ruby スクリプトを gem ライブラリにしました。mk_time - RubyGems.org もご参照ください。【追記ここまで】">
+  <meta name="twitter:url" content="https://komasaru.github.io/2016/04/02/ruby-calc-time-series/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2016-04-02T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2016/04/02/ruby-calc-time-series/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby - 各種時刻系の換算！">
+    <meta itemprop="description" content="暦計算や天文計算を行う際に必要な各種時刻系について、調査して得た情報を自分なりにまとめてみました。そして、 Ruby を使用して換算してみました。  【2016-07-27 追記】以下で紹介の Ruby スクリプトを gem ライブラリにしました。mk_time - RubyGems.org もご参照ください。【追記ここまで】">
+    <meta itemprop="datePublished" content="April 02, 2016">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby - 各種時刻系の換算！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-04-02T00:20:00+09:00">2016-04-02 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>暦計算や天文計算を行う際に必要な各種時刻系について、調査して得た情報を自分なりにまとめてみました。</p>
+
+<p>そして、 Ruby を使用して換算してみました。</p>
+
+<blockquote>
+  <p>【2016-07-27 追記】
+以下で紹介の Ruby スクリプトを gem ライブラリにしました。
+<a href="https://rubygems.org/gems/mk_time" title="mk_time - RubyGems.org">mk_time - RubyGems.org</a> もご参照ください。
+【追記ここまで】</p>
+</blockquote>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Ruby 2.3.0-p0 での作業を想定。</li>
+  <li>天文学的な計算については疎いため、誤りがあるかもしれない。</li>
+</ul>
+
+<h3 id="1-各種時刻系について">1. 各種時刻系について</h3>
+
+<p>原子時系（世界時系を含む）、力学時系、座標時系の順に記述。</p>
+
+<ul>
+  <li>TAI（国際原子時; International Atomic Time）
+    <ul>
+      <li>UTC（協定世界時）を含む他の時刻基準の計算の基となる基礎的な国際時刻基準。</li>
+      <li>原子時計によって定義される高精度＆安定、地球ジオイド面での時刻系。</li>
+      <li>1 秒は SI 秒。</li>
+    </ul>
+  </li>
+  <li>UT（世界時; Universal Time）
+    <ul>
+      <li>ロンドンの旧グリニッジ天文台を通る子午線上で、平均太陽（平均的な動きの太陽）が南中する瞬間を12時として定義されている。</li>
+      <li>UT0, UT1, UT2, UTC の種類がある。</li>
+      <li>単に UT と呼んだ場合は UT1 を指すことが多い。</li>
+    </ul>
+  </li>
+  <li>UT0（世界時0; Universal Time 0）
+    <ul>
+      <li>世界各地の恒星や地球外の電波源の日周運動の観測結果を経度の差によって本初子午線における換算し平均して求めた時刻系。</li>
+      <li>極運動の効果（地球の地理学的極と自転軸の極とのずれ）の補正を含まない。（特定の観測地での地球自転に基づく時刻）</li>
+    </ul>
+  </li>
+  <li>UT1（世界時1; Universal Time 1）
+    <ul>
+      <li>UT0 から観測地の経度に表れる極運動の効果（地球の地理学的極と自転軸の極とのずれ）を補正した（観測地点に依存しない）時刻系。</li>
+      <li>いわゆる地球の自転による時刻系。</li>
+      <li>地球自転が一定していないため、季節により変動する。</li>
+      <li>UT1 = UTC + DUT1</li>
+    </ul>
+  </li>
+  <li>UT2（世界時2; Universal Time 2）
+    <ul>
+      <li>UT1 に季節変化を考慮（UT1 から年周期・半年周期等の成分の大部分を除外）した時刻系。</li>
+    </ul>
+  </li>
+  <li>UTC（協定世界時, Coordinated Universal Time）
+    <ul>
+      <li>TAI（国際原子時）に由来する原子時系時刻で、UT1（世界時1）に同調するよう調整された基準時刻。</li>
+      <li>世界各地の標準の基準となっている。</li>
+      <li>TAI（国際原子時）から整数秒ずれている。</li>
+      <li>UT1 - TAI の絶対値が 0.9 秒以内となるよううるう秒で調整されている。</li>
+      <li>TAI = UTC - (UTC - TAI) = UTC + うるう秒の総和</li>
+      <li>現時点の -(UTC - TAI)（うるう秒の総和）は「[こちら](http://jjy.nict.go.jp/QandA/data/leapsec.html “”)」を参照。</li>
+      <li>1 秒 = SI 秒</li>
+    </ul>
+  </li>
+  <li>DUT1（ΔUT1）
+    <ul>
+      <li>DUT1 = UT1 - UTC</li>
+      <li>現在は DUT1 の絶対値が1秒を越えないよう、うるう秒による調整が行われている。</li>
+      <li>現時点の DUT1 は「[こちら](http://jjy.nict.go.jp/QandA/data/dut1.html “”)」を参照。</li>
+    </ul>
+  </li>
+  <li>TT（地球時; Terrestrial Time）
+    <ul>
+      <li>かつて TDT（地球力学時）と呼ばれていた時刻系を再定義したもので、地球ジオイド面での座表時。</li>
+      <li>TAI の1977年1月1日0時0分0秒を力学時の1977年1月1.0003725日とし、TT の１日は平均海面における原子時計による秒の86400倍と定義されている。<br />
+（0.0003725 日 = 32.184 秒）</li>
+      <li>元期 J2000.0 は、ユリウス日で 2,451,545.0 TT（2000年1月1日12h TT）。</li>
+      <li>1 秒は SI 秒。</li>
+      <li>TT = TAI + 32.184 （秒）<br />
+さらには、
+        <ul>
+          <li>= UTC - (UTC - TAI) + 32.184</li>
+          <li>= UTC + うるう秒の総和 + 32.184</li>
+          <li>= UT1 - (UT1 - UTC) + うるう秒の総和 + 32.184</li>
+          <li>= UT1 - DUT1 + うるう秒の総和 + 32.184</li>
+          <li>= UT1 + ΔT<br />
+（但し、 ΔT は地球時と世界時のズレ。ユリウス日から直接 ΔT を求めるには「<a href="http://eclipse.gsfc.nasa.gov/SEcat5/deltatpoly.html" title="NASA - Polynomial Expressions for Delta T">NASA - Polynomial Expressions for Delta T</a>」を参照）</li>
+        </ul>
+      </li>
+      <li>ΔT = TT - UT1 = TAI - UTC - DUT1 + 32.184</li>
+    </ul>
+  </li>
+  <li>TDT（地球力学時; Terrestrial Dynamical Time）
+    <ul>
+      <li>かつて使われていた力学時。</li>
+      <li>現在は使用されていない。</li>
+      <li>TDT = TT = TAI + 32.184 （秒）</li>
+    </ul>
+  </li>
+  <li>TDB（太陽系力学時; Barycentric Dynamical Time）
+    <ul>
+      <li>太陽系重心における力学時。</li>
+      <li>一般相対性理論による重力の影響が加味されれている。</li>
+      <li>TT と比較すると周期的項が異なるが、その差は極小（最大でも10ms程度）のため無視しても問題ない。<br />
+TDB = TT + TDB_0 + 周期項<br />
+（但し、 TDB_0 = -6.55 * 10^(-5)）</li>
+      <li>2006年のIAU勧告では TDB は次のように定義された。（TDB は TT, TCG, TCB と原点がわずかにずれているため）<br />
+TDB = TCB - L_B * (JD_TCB - T_0) * 86400 + TDB_0<br />
+（但し、 JD_TCB: TCB におけるユリウス日, L_B = 1.550519768 * 10^(-8), T_0 = 2443144.5003725, TDB_0 = -6.55 * 10^(-5)）</li>
+    </ul>
+  </li>
+  <li>TCG（地球重心座標時; Geocentric Coordinate Time）
+    <ul>
+      <li>地球重心を原点として考える座標時。</li>
+      <li>周期的項はない。</li>
+      <li>TT と比較して1年あたり約22ミリ秒速く進む。</li>
+      <li>TCG - TT = L_G * (JD - T_0) * 86,400<br />
+（但し、 JD: ユリウス日, L_G = 6.969290134 * 10^(-10), T_0 = 2443144.5003725）</li>
+      <li>dTT / dTCG = 1 - L_G<br />
+（但し、L_G = 6.969290134 * 10^(-10)）
+（詳細不明）</li>
+    </ul>
+  </li>
+  <li>TCB（太陽系重心座標時; Barycentric Coordinate Time)
+    <ul>
+      <li>太陽系重心を原点として考える座標時。</li>
+      <li>TT と比較して1年あたり約0.49秒速く進む。</li>
+      <li>小さな周期的項が存在するが、周期項を無視して平均化すると、<br />
+TCB - TT = L_B * (JD - T_0) * 86400</li>
+      <li>2006年IAU勧告では、TDB（太陽系力学時）と TCB（太陽系重心座標時）の関係を次の一次式で定義するすることが推奨されている。<br />
+TDB = TCB − L_B * (JD_TCB − T_0) * 86,400 + TDB_0<br />
+（但し、 JD_TCB: TCB におけるユリウス日, L_B = 1.550519768 * 10^(-8), T_0 = 2443144.5003725, TDB_0 = -6.55 * 10^(-5)）</li>
+      <li>dTCG / dATCB = 1 - L_C<br />
+（但し、L_C = 1.4808268674 * 10^(-8), TCB = ATCB + 周期的項（1.6ms程度）, ATCB = Average of TCB）
+（詳細不明）</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="2-ruby-スクリプトの作成">2. Ruby スクリプトの作成</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">conv_time.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+</pre></td><td class="code"><pre><span class="c1">#! /usr/local/bin/ruby</span>
+<span class="c1"># coding: utf-8</span>
+<span class="c1">#=各種時刻換算</span>
+<span class="c1">#</span>
+<span class="c1"># date          name            version</span>
+<span class="c1"># 2016.03.22    mk-mode         1.00 新規作成</span>
+<span class="c1"># 2016.05.12    mk-mode         1.01 UPD: Fixed jst_to_utc method.</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright(C) 2016 mk-mode.com All Rights Reserved.</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1"># 引数 : JST（日本標準時）</span>
+<span class="c1">#          書式：YYYYMMDD or YYYYMMDDHHMMSS</span>
+<span class="c1">#          無指定なら現在(システム日時)と判断。</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1"># * 定数 DUT1 (= UT1 - UTC) の値は以下を参照。</span>
+<span class="c1">#     [日本標準時プロジェクト Announcement of DUT1](http://jjy.nict.go.jp/QandA/data/dut1.html)</span>
+<span class="c1">#   但し、値は 1.0 秒以下なので、精度を問わないなら 0.0 固定でもよい(?)</span>
+<span class="c1"># * UTC - TAI（協定世界時と国際原子時の差）は、以下のとおりとする。</span>
+<span class="c1">#   - 1972年07月01日より古い場合は一律で 10</span>
+<span class="c1">#   - 2015年07月01日以降は一律で 36</span>
+<span class="c1">#   - その他は、指定の値</span>
+<span class="c1">#     [うるう秒実施日一覧](http://jjy.nict.go.jp/QandA/data/leapsec.html)</span>
+<span class="c1"># * ΔT = TT - UT1 は、以下のとおりとする。</span>
+<span class="c1">#   - 1972-01-01 以降、うるう秒挿入済みの年+αまでは、以下で算出</span>
+<span class="c1">#       ΔT = 32.184 - (UTC - TAI)</span>
+<span class="c1">#     UTC - TAI は [うるう秒実施日一覧](http://jjy.nict.go.jp/QandA/data/leapsec.html) を参照</span>
+<span class="c1">#   - その他の期間は NASA 提供の略算式により算出</span>
+<span class="c1">#     [NASA - Polynomial Expressions for Delta T](http://eclipse.gsfc.nasa.gov/SEhelp/deltatpoly2004.html)</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="nb">require</span> <span class="s1">'date'</span>
+
+<span class="k">class</span> <span class="nc">ConvTime</span>
+  <span class="no">JST_UTC</span> <span class="o">=</span> <span class="mi">9</span>
+  <span class="no">DUT1</span>    <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># = UT1 - UTC</span>
+  <span class="no">TT_TAI</span>  <span class="o">=</span> <span class="mf">32.184</span>
+  <span class="no">L_G</span>     <span class="o">=</span> <span class="mf">6.969290134</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+  <span class="no">L_B</span>     <span class="o">=</span> <span class="mf">1.550519768</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">)</span>
+  <span class="no">T_0</span>     <span class="o">=</span> <span class="mf">2443144.5003725</span>
+  <span class="no">TDB_0</span>   <span class="o">=</span> <span class="o">-</span><span class="mf">6.55</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+  <span class="no">MSG_ERR</span> <span class="o">=</span> <span class="s2">"[ERROR] Format: YYYYMMDD or YYYYMMDDHHMMSS"</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="n">jst</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">now</span>
+    <span class="vi">@year</span>  <span class="o">=</span> <span class="n">jst</span><span class="p">.</span><span class="nf">year</span>
+    <span class="vi">@month</span> <span class="o">=</span> <span class="n">jst</span><span class="p">.</span><span class="nf">month</span>
+    <span class="vi">@day</span>   <span class="o">=</span> <span class="n">jst</span><span class="p">.</span><span class="nf">day</span>
+    <span class="vi">@hour</span>  <span class="o">=</span> <span class="n">jst</span><span class="p">.</span><span class="nf">hour</span>
+    <span class="vi">@min</span>   <span class="o">=</span> <span class="n">jst</span><span class="p">.</span><span class="nf">min</span>
+    <span class="vi">@sec</span>   <span class="o">=</span> <span class="n">jst</span><span class="p">.</span><span class="nf">sec</span>
+    <span class="vi">@jst</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="vi">@year</span><span class="p">,</span> <span class="vi">@month</span><span class="p">,</span> <span class="vi">@day</span><span class="p">,</span> <span class="vi">@hour</span><span class="p">,</span> <span class="vi">@min</span><span class="p">,</span> <span class="vi">@sec</span><span class="p">).</span><span class="nf">to_f</span>
+    <span class="n">get_arg</span>  <span class="c1"># 引数取得</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">exec</span>
+    <span class="k">begin</span>
+      <span class="n">jst_to_utc</span>      <span class="c1"># JST -&gt; UTC</span>
+      <span class="vi">@jd</span> <span class="o">=</span> <span class="n">gc_to_jd</span><span class="p">(</span>
+        <span class="vi">@year</span><span class="p">,</span> <span class="vi">@month</span><span class="p">,</span> <span class="vi">@day</span><span class="p">,</span> <span class="vi">@hour</span><span class="p">,</span> <span class="vi">@min</span><span class="p">,</span> <span class="vi">@sec</span>
+      <span class="p">)</span>               <span class="c1"># ユリウス日</span>
+      <span class="n">calc_ut1</span>        <span class="c1"># UT1</span>
+      <span class="n">calc_tai</span>        <span class="c1"># TAI</span>
+      <span class="n">calc_delta_t</span>    <span class="c1"># ΔT</span>
+      <span class="n">calc_tt</span>         <span class="c1"># TT</span>
+      <span class="n">calc_tcg</span>        <span class="c1"># TCG</span>
+      <span class="n">calc_tcb</span>        <span class="c1"># TCB</span>
+      <span class="n">t_tcb</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">at</span><span class="p">(</span><span class="vi">@tcb</span><span class="p">)</span>
+      <span class="vi">@jd_tcb</span> <span class="o">=</span> <span class="n">gc_to_jd</span><span class="p">(</span>
+        <span class="n">t_tcb</span><span class="p">.</span><span class="nf">year</span><span class="p">,</span> <span class="n">t_tcb</span><span class="p">.</span><span class="nf">month</span><span class="p">,</span> <span class="n">t_tcb</span><span class="p">.</span><span class="nf">day</span><span class="p">,</span>
+        <span class="n">t_tcb</span><span class="p">.</span><span class="nf">hour</span><span class="p">,</span> <span class="n">t_tcb</span><span class="p">.</span><span class="nf">min</span><span class="p">,</span> <span class="n">t_tcb</span><span class="p">.</span><span class="nf">sec</span>
+      <span class="p">)</span>               <span class="c1"># ユリウス日(TCB)</span>
+      <span class="n">calc_tdb</span>        <span class="c1"># TDB</span>
+      <span class="nb">display</span>         <span class="c1"># 結果出力</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"[</span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+      <span class="n">e</span><span class="p">.</span><span class="nf">backtrace</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">tr</span><span class="o">|</span> <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"</span><span class="se">\t</span><span class="si">#{</span><span class="n">tr</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 引数取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * コマンドライン引数を取得して日時の妥当性チェックを行う</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_arg</span>
+    <span class="k">return</span> <span class="k">unless</span> <span class="n">arg</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">.</span><span class="nf">shift</span>
+    <span class="p">(</span><span class="nb">puts</span> <span class="no">MSG_ERR</span><span class="p">;</span> <span class="nb">exit</span> <span class="mi">0</span><span class="p">)</span> <span class="k">unless</span> <span class="n">arg</span> <span class="o">=~</span> <span class="sr">/^\d{8}$|^\d{14}$/</span>
+    <span class="vi">@year</span><span class="p">,</span> <span class="vi">@month</span><span class="p">,</span> <span class="vi">@day</span> <span class="o">=</span> <span class="n">arg</span><span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">].</span><span class="nf">to_i</span><span class="p">,</span> <span class="n">arg</span><span class="p">[</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span><span class="p">,</span> <span class="n">arg</span><span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="vi">@hour</span><span class="p">,</span> <span class="vi">@min</span><span class="p">,</span>   <span class="vi">@sec</span> <span class="o">=</span> <span class="n">arg</span><span class="p">[</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span><span class="p">,</span> <span class="n">arg</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span><span class="p">,</span> <span class="n">arg</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="p">(</span><span class="nb">puts</span> <span class="no">MSG_ERR</span><span class="p">;</span> <span class="nb">exit</span> <span class="mi">0</span><span class="p">)</span> <span class="k">unless</span> <span class="no">Date</span><span class="p">.</span><span class="nf">valid_date?</span><span class="p">(</span><span class="vi">@year</span><span class="p">,</span> <span class="vi">@month</span><span class="p">,</span> <span class="vi">@day</span><span class="p">)</span>
+    <span class="p">(</span><span class="nb">puts</span> <span class="no">MSG_ERR</span><span class="p">;</span> <span class="nb">exit</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="vi">@hour</span> <span class="o">&gt;</span> <span class="mi">23</span> <span class="o">||</span> <span class="vi">@min</span> <span class="o">&gt;</span> <span class="mi">59</span> <span class="o">||</span> <span class="vi">@sec</span> <span class="o">&gt;</span> <span class="mi">59</span>
+    <span class="vi">@jst</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="vi">@year</span><span class="p">,</span> <span class="vi">@month</span><span class="p">,</span> <span class="vi">@day</span><span class="p">,</span> <span class="vi">@hour</span><span class="p">,</span> <span class="vi">@min</span><span class="p">,</span> <span class="vi">@sec</span><span class="p">).</span><span class="nf">to_f</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># JST -&gt; UTC</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * UTC = JST - 9</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">jst_to_utc</span>
+    <span class="vi">@utc</span> <span class="o">=</span> <span class="vi">@jst</span> <span class="o">-</span> <span class="no">JST_UTC</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>
+    <span class="n">tm_utc</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">at</span><span class="p">(</span><span class="vi">@utc</span><span class="p">)</span>
+    <span class="vi">@year</span>  <span class="o">=</span> <span class="n">tm_utc</span><span class="p">.</span><span class="nf">year</span>
+    <span class="vi">@month</span> <span class="o">=</span> <span class="n">tm_utc</span><span class="p">.</span><span class="nf">month</span>
+    <span class="vi">@day</span>   <span class="o">=</span> <span class="n">tm_utc</span><span class="p">.</span><span class="nf">day</span>
+    <span class="vi">@hour</span>  <span class="o">=</span> <span class="n">tm_utc</span><span class="p">.</span><span class="nf">hour</span>
+    <span class="vi">@min</span>   <span class="o">=</span> <span class="n">tm_utc</span><span class="p">.</span><span class="nf">min</span>
+    <span class="vi">@sec</span>   <span class="o">=</span> <span class="n">tm_utc</span><span class="p">.</span><span class="nf">sec</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 年月日(グレゴリオ暦)からユリウス日(JD)を計算する</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * フリーゲルの公式を使用する</span>
+  <span class="c1">#       JD = int(365.25 * year)</span>
+  <span class="c1">#          + int(year / 400)</span>
+  <span class="c1">#          - int(year / 100)</span>
+  <span class="c1">#          + int(30.59 * (month - 2))</span>
+  <span class="c1">#          + day</span>
+  <span class="c1">#          + 1721088</span>
+  <span class="c1">#   ※上記の int(x) は厳密には、x を超えない最大の整数</span>
+  <span class="c1">#     (ちなみに、準JDを求めるなら `+ 1721088` が `- 678912` となる)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">gc_to_jd</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">min</span><span class="p">,</span> <span class="n">sec</span><span class="p">)</span>
+    <span class="c1"># 1月,2月は前年の13月,14月とする</span>
+    <span class="k">if</span> <span class="n">month</span> <span class="o">&lt;</span> <span class="mi">3</span>
+      <span class="n">year</span>  <span class="o">-=</span> <span class="mi">1</span>
+      <span class="n">month</span> <span class="o">+=</span> <span class="mi">12</span>
+    <span class="k">end</span>
+    <span class="c1"># 日付(整数)部分計算</span>
+    <span class="n">jd</span>  <span class="o">=</span> <span class="p">(</span><span class="mf">365.25</span> <span class="o">*</span> <span class="n">year</span><span class="p">).</span><span class="nf">truncate</span>
+    <span class="n">jd</span> <span class="o">+=</span> <span class="p">(</span><span class="n">year</span> <span class="o">/</span> <span class="mf">400.0</span><span class="p">).</span><span class="nf">truncate</span>
+    <span class="n">jd</span> <span class="o">-=</span> <span class="p">(</span><span class="n">year</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">).</span><span class="nf">truncate</span>
+    <span class="n">jd</span> <span class="o">+=</span> <span class="p">(</span><span class="mf">30.59</span> <span class="o">*</span> <span class="p">(</span><span class="n">month</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)).</span><span class="nf">truncate</span>
+    <span class="n">jd</span> <span class="o">+=</span> <span class="n">day</span>
+    <span class="n">jd</span> <span class="o">+=</span> <span class="mf">1721088.5</span>
+    <span class="c1"># 時間(小数)部分計算</span>
+    <span class="n">t</span>  <span class="o">=</span> <span class="n">sec</span> <span class="o">/</span> <span class="mf">3600.0</span>
+    <span class="n">t</span> <span class="o">+=</span> <span class="n">min</span> <span class="o">/</span> <span class="mf">60.0</span>
+    <span class="n">t</span> <span class="o">+=</span> <span class="n">hour</span>
+    <span class="n">t</span>  <span class="o">=</span> <span class="n">t</span> <span class="o">/</span> <span class="mf">24.0</span>
+    <span class="k">return</span> <span class="n">jd</span> <span class="o">+</span> <span class="n">t</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># UT1</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * UT1 = UTC + DUT1</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_ut1</span>
+    <span class="vi">@ut1</span> <span class="o">=</span> <span class="vi">@utc</span> <span class="o">+</span> <span class="no">DUT1</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># TAI</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * TAI = UTC - UTC_TAI</span>
+  <span class="c1">#     但し、UTC_TAI（協定世界時と国際原子時の差）は、以下のとおりとする。</span>
+  <span class="c1">#     - 1972年07月01日より古い場合は一律で -10</span>
+  <span class="c1">#     - 2015年07月01日以降は一律で -36</span>
+  <span class="c1">#     - その他は、指定の値</span>
+  <span class="c1">#       [うるう秒実施日一覧](http://jjy.nict.go.jp/QandA/data/leapsec.html)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_tai</span>
+    <span class="n">ymd</span> <span class="o">=</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"%04d-%02d-%02d"</span><span class="p">,</span> <span class="vi">@year</span><span class="p">,</span> <span class="vi">@month</span><span class="p">,</span> <span class="vi">@day</span><span class="p">)</span>
+    <span class="k">case</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1972-07-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1973-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">11</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1974-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">12</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1975-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">13</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1976-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">14</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1977-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">15</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1978-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">16</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1979-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">17</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1980-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">18</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1981-07-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">19</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1982-07-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">20</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1983-07-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">21</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1985-07-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">22</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1988-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">23</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1990-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">24</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1991-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">25</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1992-07-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">26</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1993-07-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">27</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1994-07-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">28</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1996-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">29</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1997-07-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">30</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1999-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">31</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"2006-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">32</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"2009-01-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">33</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"2012-07-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">34</span>
+    <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"2015-07-01"</span><span class="p">;</span> <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">35</span>
+    <span class="k">else</span><span class="p">;</span>                    <span class="vi">@utc_tai</span> <span class="o">=</span> <span class="o">-</span><span class="mi">36</span>  <span class="c1"># &lt;= 次回うるう秒実施までの暫定措置</span>
+    <span class="k">end</span>
+    <span class="vi">@tai</span> <span class="o">=</span> <span class="vi">@utc</span> <span class="o">-</span> <span class="vi">@utc_tai</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># TT</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * TT = TAI + TT_TAI</span>
+  <span class="c1">#        = UT1 + ΔT</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_tt</span>
+    <span class="c1">#@tt = @tai + TT_TAI</span>
+    <span class="vi">@tt</span> <span class="o">=</span> <span class="vi">@ut1</span> <span class="o">+</span> <span class="vi">@delta_t</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># TCG</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * TCG = TT + L_G * (JD - T_0) * 86,400</span>
+  <span class="c1">#     （JD: ユリウス日,</span>
+  <span class="c1">#       L_G = 6.969290134 * 10^(-10), T_0 = 2,443,144.5003725）</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_tcg</span>
+    <span class="vi">@tcg</span> <span class="o">=</span> <span class="vi">@tt</span> <span class="o">+</span> <span class="no">L_G</span> <span class="o">*</span> <span class="p">(</span><span class="vi">@jd</span> <span class="o">-</span> <span class="no">T_0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">86400</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># TDB</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * TDB = TCB - L_B * (JD_TCB - T_0) * 86400 + TDB_0</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_tdb</span>
+    <span class="vi">@tdb</span> <span class="o">=</span> <span class="vi">@tcb</span> <span class="o">-</span> <span class="no">L_B</span> <span class="o">*</span> <span class="p">(</span><span class="vi">@jd_tcb</span> <span class="o">-</span> <span class="no">T_0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">86400</span> <span class="o">+</span> <span class="no">TDB_0</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># TCB</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * TCB = TT + L_B * (JD - T_0) * 86400</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_tcb</span>
+    <span class="vi">@tcb</span> <span class="o">=</span> <span class="vi">@tt</span> <span class="o">+</span> <span class="no">L_B</span> <span class="o">*</span> <span class="p">(</span><span class="vi">@jd</span> <span class="o">-</span> <span class="no">T_0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">86400</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># ΔT</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * ΔT = TT - UT1</span>
+  <span class="c1">#     但し、</span>
+  <span class="c1">#     - 1972-01-01 以降、うるう秒挿入済みの年+αまでは、以下で算出</span>
+  <span class="c1">#         ΔT = 32.184 - (UTC - TAI)</span>
+  <span class="c1">#       UTC - TAI は [うるう秒実施日一覧](http://jjy.nict.go.jp/QandA/data/leapsec.html) を参照</span>
+  <span class="c1">#     - その他の期間は NASA 提供の略算式により算出</span>
+  <span class="c1">#       [NASA - Polynomial Expressions for Delta T](http://eclipse.gsfc.nasa.gov/SEhelp/deltatpoly2004.html)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_delta_t</span>
+    <span class="n">ymd</span> <span class="o">=</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"%04d-%02d-%02d"</span><span class="p">,</span> <span class="vi">@year</span><span class="p">,</span> <span class="vi">@month</span><span class="p">,</span> <span class="vi">@day</span><span class="p">)</span>
+    <span class="k">case</span>
+    <span class="k">when</span> <span class="vi">@year</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">500</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="vi">@year</span><span class="o">-</span><span class="mi">1820</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span>
+      <span class="n">dt</span>  <span class="o">=</span> <span class="o">-</span><span class="mi">20</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mi">32</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="k">when</span> <span class="o">-</span><span class="mi">500</span> <span class="o">&lt;=</span> <span class="vi">@year</span> <span class="o">&amp;&amp;</span> <span class="vi">@year</span> <span class="o">&lt;</span> <span class="mi">500</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="vi">@year</span> <span class="o">/</span> <span class="mf">100.0</span>
+      <span class="n">dt</span>  <span class="o">=</span> <span class="mf">10583.6</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">1014.41</span> <span class="o">*</span> <span class="n">t</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">33.78311</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">2</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">5.952053</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">3</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.1798452</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">4</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.022174192</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">5</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.0090316521</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">6</span>
+    <span class="k">when</span> <span class="mi">500</span> <span class="o">&lt;=</span> <span class="vi">@year</span> <span class="o">&amp;&amp;</span> <span class="vi">@year</span> <span class="o">&lt;</span> <span class="mi">1600</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">year</span> <span class="o">-</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span>
+      <span class="n">dt</span>  <span class="o">=</span> <span class="mf">1574.2</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">556.01</span> <span class="o">*</span> <span class="n">t</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">71.23472</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">2</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.319781</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">3</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.8503463</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">4</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.005050998</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">5</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.0083572073</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">6</span>
+    <span class="k">when</span> <span class="mi">1600</span> <span class="o">&lt;=</span> <span class="vi">@year</span> <span class="o">&amp;&amp;</span> <span class="vi">@year</span> <span class="o">&lt;</span> <span class="mi">1700</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="vi">@year</span> <span class="o">-</span> <span class="mi">1600</span>
+      <span class="n">dt</span>  <span class="o">=</span> <span class="mi">120</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.9808</span> <span class="o">*</span> <span class="n">t</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.01532</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">2</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">/</span> <span class="mf">7129.0</span>
+    <span class="k">when</span> <span class="mi">1700</span> <span class="o">&lt;=</span> <span class="vi">@year</span> <span class="o">&amp;&amp;</span> <span class="vi">@year</span> <span class="o">&lt;</span> <span class="mi">1800</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="vi">@year</span> <span class="o">-</span> <span class="mi">1700</span>
+      <span class="n">dt</span>  <span class="o">=</span> <span class="mf">8.83</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.1603</span> <span class="o">*</span> <span class="n">t</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.0059285</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">2</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.00013336</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">3</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">4</span> <span class="o">/</span> <span class="mf">1174000.0</span>
+    <span class="k">when</span> <span class="mi">1800</span> <span class="o">&lt;=</span> <span class="vi">@year</span> <span class="o">&amp;&amp;</span> <span class="vi">@year</span> <span class="o">&lt;</span> <span class="mi">1860</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="vi">@year</span> <span class="o">-</span> <span class="mi">1800</span>
+      <span class="n">dt</span>  <span class="o">=</span> <span class="mf">13.72</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.332447</span> <span class="o">*</span> <span class="n">t</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.0068612</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">2</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.0041116</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">3</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.00037436</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">4</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.0000121272</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">5</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.0000001699</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">6</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.000000000875</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">7</span>
+    <span class="k">when</span> <span class="mi">1860</span> <span class="o">&lt;=</span> <span class="vi">@year</span> <span class="o">&amp;&amp;</span> <span class="vi">@year</span> <span class="o">&lt;</span> <span class="mi">1900</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="vi">@year</span> <span class="o">-</span> <span class="mi">1860</span>
+      <span class="n">dt</span>  <span class="o">=</span> <span class="mf">7.62</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.5737</span> <span class="o">*</span> <span class="n">t</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.251754</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">2</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.01680668</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">3</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.0004473624</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">4</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">5</span> <span class="o">/</span> <span class="mf">233174.0</span>
+    <span class="k">when</span> <span class="mi">1900</span> <span class="o">&lt;=</span> <span class="vi">@year</span> <span class="o">&amp;&amp;</span> <span class="vi">@year</span> <span class="o">&lt;</span> <span class="mi">1920</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="vi">@year</span> <span class="o">-</span> <span class="mi">1900</span>
+      <span class="n">dt</span>  <span class="o">=</span> <span class="o">-</span><span class="mf">2.79</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">1.494119</span> <span class="o">*</span> <span class="n">t</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.0598939</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">2</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.0061966</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">3</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.000197</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">4</span>
+    <span class="k">when</span> <span class="mi">1920</span> <span class="o">&lt;=</span> <span class="vi">@year</span> <span class="o">&amp;&amp;</span> <span class="vi">@year</span> <span class="o">&lt;</span> <span class="mi">1941</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="vi">@year</span> <span class="o">-</span> <span class="mi">1920</span>
+      <span class="n">dt</span>  <span class="o">=</span> <span class="mf">21.20</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.84493</span> <span class="o">*</span> <span class="n">t</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.076100</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">2</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.0020936</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">3</span>
+    <span class="k">when</span> <span class="mi">1941</span> <span class="o">&lt;=</span> <span class="vi">@year</span> <span class="o">&amp;&amp;</span> <span class="vi">@year</span> <span class="o">&lt;</span> <span class="mi">1961</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="vi">@year</span> <span class="o">-</span> <span class="mi">1950</span>
+      <span class="n">dt</span>  <span class="o">=</span> <span class="mf">29.07</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.407</span> <span class="o">*</span> <span class="n">t</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mf">233.0</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">/</span> <span class="mf">2547.0</span>
+    <span class="k">when</span> <span class="mi">1961</span> <span class="o">&lt;=</span> <span class="vi">@year</span> <span class="o">&amp;&amp;</span> <span class="vi">@year</span> <span class="o">&lt;</span> <span class="mi">1986</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"%04d-%02d-%02d"</span><span class="p">,</span> <span class="mi">1972</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="vi">@year</span> <span class="o">-</span> <span class="mi">1975</span>
+        <span class="n">dt</span>  <span class="o">=</span> <span class="mf">45.45</span>
+        <span class="n">dt</span> <span class="o">+=</span> <span class="mf">1.067</span> <span class="o">*</span> <span class="n">t</span>
+        <span class="n">dt</span> <span class="o">-=</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mf">260.0</span>
+        <span class="n">dt</span> <span class="o">-=</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">/</span> <span class="mf">718.0</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1972-07-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">10</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1973-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">11</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1974-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">12</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1975-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">13</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1976-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">14</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1977-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">15</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1978-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">16</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1979-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">17</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1980-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">18</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1981-07-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">19</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1982-07-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">20</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1983-07-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">21</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1985-07-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">22</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1988-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">23</span>
+      <span class="k">end</span>
+    <span class="k">when</span> <span class="mi">1986</span> <span class="o">&lt;=</span> <span class="vi">@year</span> <span class="o">&amp;&amp;</span> <span class="vi">@year</span> <span class="o">&lt;</span> <span class="mi">2005</span>
+      <span class="c1"># t = @year - 2000</span>
+      <span class="c1"># dt  = 63.86</span>
+      <span class="c1"># dt += 0.3345 * t</span>
+      <span class="c1"># dt -= 0.060374 * t ** 2</span>
+      <span class="c1"># dt += 0.0017275 * t ** 3</span>
+      <span class="c1"># dt += 0.000651814 * t ** 4</span>
+      <span class="c1"># dt += 0.00002373599 * t ** 5</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1988-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">23</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1990-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">24</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1991-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">25</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1992-07-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">26</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1993-07-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">27</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1994-07-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">28</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1996-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">29</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1997-07-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">30</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"1999-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">31</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"2006-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">32</span>
+      <span class="k">end</span>
+    <span class="k">when</span> <span class="mi">2005</span> <span class="o">&lt;=</span> <span class="vi">@year</span> <span class="o">&amp;&amp;</span> <span class="vi">@year</span> <span class="o">&lt;</span> <span class="mi">2050</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"2006-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">32</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"2009-01-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">33</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"2012-07-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">34</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"2015-07-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">35</span>
+      <span class="k">when</span> <span class="n">ymd</span> <span class="o">&lt;</span> <span class="s2">"2017-07-01"</span><span class="p">;</span> <span class="n">dt</span> <span class="o">=</span> <span class="no">TT_TAI</span> <span class="o">+</span> <span class="mi">36</span>  <span class="c1"># &lt;= 次回うるう秒実施までの暫定措置</span>
+      <span class="k">else</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="vi">@year</span> <span class="o">-</span> <span class="mi">2000</span>
+        <span class="n">dt</span>  <span class="o">=</span> <span class="mf">62.92</span>
+        <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.32217</span> <span class="o">*</span> <span class="n">t</span>
+        <span class="n">dt</span> <span class="o">+=</span> <span class="mf">0.005589</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">2</span>
+      <span class="k">end</span>
+    <span class="k">when</span> <span class="mi">2050</span> <span class="o">&lt;=</span> <span class="vi">@year</span> <span class="o">&amp;&amp;</span> <span class="vi">@year</span> <span class="o">&lt;=</span> <span class="mi">2150</span>
+      <span class="n">dt</span>  <span class="o">=</span> <span class="o">-</span><span class="mi">20</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mi">32</span> <span class="o">*</span> <span class="p">((</span><span class="vi">@year</span> <span class="o">-</span> <span class="mi">1820</span><span class="p">)</span><span class="o">/</span><span class="mf">100.0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+      <span class="n">dt</span> <span class="o">-=</span> <span class="mf">0.5628</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2150</span> <span class="o">-</span> <span class="vi">@year</span><span class="p">)</span>
+    <span class="k">when</span> <span class="mi">2150</span> <span class="o">&lt;</span> <span class="vi">@year</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="vi">@year</span><span class="o">-</span><span class="mi">1820</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span>
+      <span class="n">dt</span>  <span class="o">=</span> <span class="o">-</span><span class="mi">20</span>
+      <span class="n">dt</span> <span class="o">+=</span> <span class="mi">32</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="k">end</span>
+    <span class="vi">@delta_t</span> <span class="o">=</span> <span class="n">dt</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">display</span>
+    <span class="n">str</span> <span class="o">=</span>  <span class="s2">"      JST: </span><span class="si">#{</span><span class="no">Time</span><span class="p">.</span><span class="nf">at</span><span class="p">(</span><span class="vi">@jst</span><span class="p">).</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-%d %H:%M:%S.%3N"</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"      UTC: </span><span class="si">#{</span><span class="no">Time</span><span class="p">.</span><span class="nf">at</span><span class="p">(</span><span class="vi">@utc</span><span class="p">).</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-%d %H:%M:%S.%3N"</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"JST - UTC: </span><span class="si">#{</span><span class="no">JST_UTC</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"       JD: %.10f day</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@jd</span><span class="p">)</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"     DUT1: %.1f sec</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="no">DUT1</span><span class="p">)</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"      UT1: </span><span class="si">#{</span><span class="no">Time</span><span class="p">.</span><span class="nf">at</span><span class="p">(</span><span class="vi">@ut1</span><span class="p">).</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-%d %H:%M:%S.%3N"</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"UTC - TAI: </span><span class="si">#{</span><span class="vi">@utc_tai</span><span class="si">}</span><span class="s2"> sec</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"      TAI: </span><span class="si">#{</span><span class="no">Time</span><span class="p">.</span><span class="nf">at</span><span class="p">(</span><span class="vi">@tai</span><span class="p">).</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-%d %H:%M:%S.%3N"</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s2">" TT - TAI: %.3f sec</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="no">TT_TAI</span><span class="p">)</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"       TT: </span><span class="si">#{</span><span class="no">Time</span><span class="p">.</span><span class="nf">at</span><span class="p">(</span><span class="vi">@tt</span><span class="p">).</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-%d %H:%M:%S.%3N"</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"  delta T: %.3f sec</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@delta_t</span><span class="p">)</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"      TCG: </span><span class="si">#{</span><span class="no">Time</span><span class="p">.</span><span class="nf">at</span><span class="p">(</span><span class="vi">@tcg</span><span class="p">).</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-%d %H:%M:%S.%3N"</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"      TCB: </span><span class="si">#{</span><span class="no">Time</span><span class="p">.</span><span class="nf">at</span><span class="p">(</span><span class="vi">@tcb</span><span class="p">).</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-%d %H:%M:%S.%3N"</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"   JD_TCB: %.10f day</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@jd_tcb</span><span class="p">)</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"      TDB: </span><span class="si">#{</span><span class="no">Time</span><span class="p">.</span><span class="nf">at</span><span class="p">(</span><span class="vi">@tdb</span><span class="p">).</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-%d %H:%M:%S.%3N"</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="n">str</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">ConvTime</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">exec</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://github.com/komasaru/Calendar/blob/master/conv_time_old.rb" title="Calendar/conv_time.rb at master - komasaru/Calendar/conv_time_old.rb">Calendar/conv_time.rb at master - komasaru/Calendar/conv_time_old.rb</a></li>
+</ul>
+
+<h3 id="3-ruby-スクリプトの実行">3. Ruby スクリプトの実行</h3>
+
+<p>引数に JST（日本標準時; UTC + 9）で年月日 or 年月日時分秒を指定して実行。（引数無指定で、システム日時を JST と判断する）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./conv_time.rb 20160323
+      JST: 2016-03-23 00:00:00.000
+      UTC: 2016-03-22 15:00:00.000
+JST - UTC: 9
+       JD: 2457470.1250000000 day
+     DUT1: 0.0 sec
+      UT1: 2016-03-22 15:00:00.000
+UTC - TAI: -36 sec
+      TAI: 2016-03-22 15:00:36.000
+ TT - TAI: 32.184 sec
+       TT: 2016-03-22 15:01:08.184
+  delta T: 68.184 sec
+      TCG: 2016-03-22 15:01:09.046
+      TCB: 2016-03-22 15:01:27.375
+   JD_TCB: 2457470.1260069446 day
+      TDB: 2016-03-22 15:01:08.183
+</code></pre></div></div>
+
+<hr />
+
+<p>特に、 TT, TDB, TCG, TCB あたりは天文学的な計算を行う際に必要になってきます。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">カレンダー</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%9A%A6-%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">暦・カレンダー</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-04-02T00:20:00+09:00">2016-04-02 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+-+%E5%90%84%E7%A8%AE%E6%99%82%E5%88%BB%E7%B3%BB%E3%81%AE%E6%8F%9B%E7%AE%97%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2016%2F04%2F02%2Fruby-calc-time-series%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2016%2F04%2F02%2Fruby-calc-time-series%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2016%2F04%2F02%2Fruby-calc-time-series%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2016/04/01/blog-access/" class="pagination--pager" title="2016年3月 - OS・ブラウザ別アクセス状況！【自動集計】
+">Previous</a>
+    
+    
+      <a href="/2016/04/06/about-astro-coordinate-system/" class="pagination--pager" title="天球座標系について！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2016/04/02/ruby-calc-time-series/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2016/04/02/ruby-calc-time-series"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

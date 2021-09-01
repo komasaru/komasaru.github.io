@@ -1,0 +1,900 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>気象庁防災情報 XML 取得（その後）！ - mk-mode BLOG</title>
+<meta name="description" content="以前、「気象庁防災情報 XML」の受信方法等について紹介しました。よくあるフィードを自分で定期的に受信して情報を取得するような方法ではなく、フィードの発行があった場合のみ更新通知を受信し、その通知受信後に本フィードの情報を取得しに行くような方法です。（リアルタイムフィード機能を利用した方法）  Ruby on Rails - PubSubHubbub Subscriber 実装！  気象庁防災情報 XML - 受信手順（概要）！その後、受信した気象庁防災情報 XML のデータを利用したデータ参照ページを作成したので、その紹介です。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="気象庁防災情報 XML 取得（その後）！">
+<meta property="og:url" content="https://komasaru.github.io/2014/01/30/jma-xml-2/">
+
+
+  <meta property="og:description" content="以前、「気象庁防災情報 XML」の受信方法等について紹介しました。よくあるフィードを自分で定期的に受信して情報を取得するような方法ではなく、フィードの発行があった場合のみ更新通知を受信し、その通知受信後に本フィードの情報を取得しに行くような方法です。（リアルタイムフィード機能を利用した方法）  Ruby on Rails - PubSubHubbub Subscriber 実装！  気象庁防災情報 XML - 受信手順（概要）！その後、受信した気象庁防災情報 XML のデータを利用したデータ参照ページを作成したので、その紹介です。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="気象庁防災情報 XML 取得（その後）！">
+  <meta name="twitter:description" content="以前、「気象庁防災情報 XML」の受信方法等について紹介しました。よくあるフィードを自分で定期的に受信して情報を取得するような方法ではなく、フィードの発行があった場合のみ更新通知を受信し、その通知受信後に本フィードの情報を取得しに行くような方法です。（リアルタイムフィード機能を利用した方法）  Ruby on Rails - PubSubHubbub Subscriber 実装！  気象庁防災情報 XML - 受信手順（概要）！その後、受信した気象庁防災情報 XML のデータを利用したデータ参照ページを作成したので、その紹介です。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2014/01/30/jma-xml-2/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2014-01-30T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2014/01/30/jma-xml-2/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="気象庁防災情報 XML 取得（その後）！">
+    <meta itemprop="description" content="以前、「気象庁防災情報 XML」の受信方法等について紹介しました。よくあるフィードを自分で定期的に受信して情報を取得するような方法ではなく、フィードの発行があった場合のみ更新通知を受信し、その通知受信後に本フィードの情報を取得しに行くような方法です。（リアルタイムフィード機能を利用した方法）  Ruby on Rails - PubSubHubbub Subscriber 実装！  気象庁防災情報 XML - 受信手順（概要）！その後、受信した気象庁防災情報 XML のデータを利用したデータ参照ページを作成したので、その紹介です。">
+    <meta itemprop="datePublished" content="January 30, 2014">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">気象庁防災情報 XML 取得（その後）！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-01-30T00:20:00+09:00">2014-01-30 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>以前、「<a href="http://xml.kishou.go.jp/" title="気象庁防災情報 XML">気象庁防災情報 XML</a>」の受信方法等について紹介しました。</p>
+
+<p>よくあるフィードを自分で定期的に受信して情報を取得するような方法ではなく、フィードの発行があった場合のみ更新通知を受信し、その通知受信後に本フィードの情報を取得しに行くような方法です。（リアルタイムフィード機能を利用した方法）</p>
+
+<ul>
+  <li><a href="/2013/11/20/rails-implement-pubsubhubbub-subscriber/" title="Ruby on Rails - PubSubHubbub Subscriber 実装！">Ruby on Rails - PubSubHubbub Subscriber 実装！</a></li>
+  <li><a href="/2013/11/29/jma-disaster-info-xml/" title="気象庁防災情報 XML - 受信手順（概要）！">気象庁防災情報 XML - 受信手順（概要）！</a></li>
+</ul>
+
+<p>その後、受信した気象庁防災情報 XML のデータを利用したデータ参照ページを作成したので、その紹介です。</p>
+
+<!--more-->
+
+<h3 id="1-参照ページ概要">1. 参照ページ概要</h3>
+
+<ul>
+  <li>まず、気象庁防災情報 XML の情報の二次利用について
+    <ul>
+      <li>「公開ＸＭＬ電文の第三者への提供やホームページへの掲載等の二次的な利用については、利用目的が気象業務法の趣旨及び公序良俗に反しない限り、原則として制限はありません。」（引用元「<a href="http://xml.kishou.go.jp/open_trial/considerationforxml.pdf" title="外部サイトにつながり PDF ファイルを取得します">気象庁ホームページを通じて公開するＸＭＬ形式電文のご利用にあたっての留意事項</a>」）に準拠して当サイトでも利用している。</li>
+    </ul>
+  </li>
+  <li>「XML Feed 受信履歴」ページについて
+    <ul>
+      <li>随時送信されるフィードの受信履歴を確認できるページを設置。（1ページ）</li>
+      <li>内容の更新は、フィードを受信した都度。</li>
+      <li>「気象庁防災情報 XML」で一般に公開されている全ての情報を管理。（現時点）</li>
+      <li>「気象庁防災情報 XML」の仕様通りの「情報名称」単位で管理。</li>
+      <li>受信した XML フィードもそのまま閲覧できるように設定。</li>
+      <li>受信した XML フィードを XSLT スタイルシートで整形して閲覧できるようにも設定。</li>
+    </ul>
+  </li>
+  <li>データベースページについて
+    <ul>
+      <li>受信したフィードをデータベースに登録後、情報を参照しやすく加工したページを設置。（40ページ）</li>
+      <li>内容の更新は、15分間隔。（現時点）</li>
+      <li>「気象庁防災情報 XML」仕様の「情報名称」単位ではなく、ある程度まとめて管理。</li>
+      <li>詳細な内容のある情報については別途内容表示ページを設置。</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="2-作成ページ一覧">2. 作成ページ一覧</h3>
+
+<p>当方の<a href="http://www.mk-mode.com/rails/jmaxml" title="mk-mode SITE">ホームページ</a>上に、受信した「気象庁防災情報 XML」のデータを参照できるページを作成した。<br />
+以下がその一覧。</p>
+
+<ul>
+  <li>[XML Feed 受信履歴](http://www.mk-mode.com/rails/jmaxml “”)</li>
+  <li>DB - 気象（解析・予報）
+    <ul>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/keiho" title="DB - 気象警報・注意報">DB - 気象警報・注意報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/kisho" title="DB - 気象情報">DB - 気象情報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/gaikyo" title="DB - 天気概況">DB - 天気概況</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/yoho" title="DB - 天気予報">DB - 天気予報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/shukan_fuken" title="DB - 週間天気予報">DB - 週間天気予報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/shukan" title="DB - 週間天気予報（全般・地方）">DB - 週間天気予報（全般・地方）</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/umi_keiho_chiho" title="DB - 地方海上警報">DB - 地方海上警報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/umi_yoho_chiho" title="DB - 地方海上予報">DB - 地方海上予報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/typhoon" title="DB - 台風情報">DB - 台風情報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/typhoon_analyze" title="DB - 台風解析・予報">DB - 台風解析・予報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/tatsumaki" title="DB - 竜巻注意情報">DB - 竜巻注意情報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/kozui" title="DB - 指定河川洪水予報">DB - 指定河川洪水予報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/dosha" title="DB - 土砂災害警戒情報">DB - 土砂災害警戒情報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/kirokuame" title="DB - 記録的短時間大雨情報">DB - 記録的短時間大雨情報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/smog" title="DB - スモッグ気象情報">DB - スモッグ気象情報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/kohon" title="DB - 高温注意情報">DB - 高温注意情報</a></li>
+    </ul>
+  </li>
+  <li>DB - 気象（観測）
+    <ul>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/kisetsu" title="DB - 季節観測">DB - 季節観測</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/seibutsu" title="DB - 生物季節観測">DB - 生物季節観測</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/tokushu_etc" title="DB - 特殊気象報（各種現象）">DB - 特殊気象報（各種現象）</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/tokushu_kaze" title="DB - 特殊気象報（風）">DB - 特殊気象報（風）</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/tokushu_kiatsu" title="DB - 特殊気象報（気圧）">DB - 特殊気象報（気圧）</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/shigaisen" title="DB - 紫外線観測">DB - 紫外線観測</a></li>
+    </ul>
+  </li>
+  <li>DB - 気候
+    <ul>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/tenko" title="DB - 天候情報">DB - 天候情報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/yoho_kisetsu" title="DB - 季節予報">DB - 季節予報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/ijotenko" title="DB - 異常天候早期警戒情報">DB - 異常天候早期警戒情報</a></li>
+    </ul>
+  </li>
+  <li>DB - 海洋
+    <ul>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/choi" title="DB - 潮位情報">DB - 潮位情報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/kaihyo" title="DB - 海氷予報">DB - 海氷予報</a></li>
+    </ul>
+  </li>
+  <li>DB - 地震・津波
+    <ul>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/jishin_shindo" title="DB - 震度速報">DB - 震度速報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/jishin_shingen" title="DB - 震源速報">DB - 震源速報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/jishin_shingenshindo" title="DB - 地震情報">DB - 地震情報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/jishin_kencho" title="DB - 顕著な地震の震源要素更新">DB - 顕著な地震の震源要素更新</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/jishin_kaisu" title="DB - 地震回数">DB - 地震回数</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/jishin_katsudo" title="DB - 地震の活動状況等">DB - 地震の活動状況等</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/tokai" title="DB - 東海地震">DB - 東海地震</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/tsunami_keiho" title="DB - 津波警報・注意報・予報">DB - 津波警報・注意報・予報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/tsunami" title="DB - 津波情報">DB - 津波情報</a></li>
+    </ul>
+  </li>
+  <li>DB - 火山
+    <ul>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/kazan_kansoku" title="DB - 火山噴火観測報">DB - 火山噴火観測報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/kazan_kaisetsu" title="DB - 火山状況解説情報">DB - 火山状況解説情報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/kazan_funka_keiho" title="DB - 火山噴火警報・予報">DB - 火山噴火警報・予報</a></li>
+      <li><a href="http://www.mk-mode.com/rails/jmaxml_db/kazan_kaijo_keiho" title="DB - 火山海上警報・予報">DB - 火山海上警報・予報</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="3-ツイート">3. ツイート</h3>
+
+<p>受信した情報のうち、以下に該当するものはツイッターアカウント「<a href="https://twitter.com/wn_matsue" title="警戒・松江（非公式Bot）">警戒・松江（非公式Bot）</a>」でツイートしている。（可能な限り（当方サーバ等に不具合無い限り））<br />
+見て分かるように、台風・地震・津波・火山以外は「松江市民向け」となっている。</p>
+
+<ul>
+  <li>「季節観測」、「生物季節観測」、「特殊気象報」のうち「松江市」に関するもの。</li>
+  <li>「全般台風情報」、「全般台風情報（定型）」全て</li>
+  <li>「台風解析・予報情報（３日予報）」、「台風解析・予報情報（５日予報）」のうち「台風消滅」に関するもの。</li>
+  <li>「地方海上警報」のうち「山陰沖西部（日本海西部）」に関するもの。</li>
+  <li>「気象特別警報・警報・注意報」のうち「松江市」に関するもの。</li>
+  <li>「指定河川洪水予報」のうち「島根県」の河川に関するもの。</li>
+  <li>「土砂災害警戒情報」のうち「島根県」に関するもの。</li>
+  <li>「記録的短時間大雨情報」のうち「島根県」に関するもの。</li>
+  <li>「竜巻注意情報」のうち「島根県」に関するもの。</li>
+  <li>「府県気象情報」のうち「島根県」に関するもの。</li>
+  <li>「スモッグ気象情報」、「全般スモッグ気象情報」のうち「中国地方」・「山陰地方」・「島根県」に関するもの。</li>
+  <li>「地方天候情報」のうち「中国地方」・「山陰地方」に関するもの。</li>
+  <li>「府県天候情報」のうち「島根県」に関するもの。</li>
+  <li>「震度速報」、「震源に関する情報」、「震源・震度に関する情報」全て。</li>
+  <li>「津波警報・注意報・予報」全て。</li>
+  <li>「噴火警報・予報」、「火山現象に関する海上警報・海上予報」全て。</li>
+  <li>「府県潮位情報」のうち「島根県」に関するもの。</li>
+  <li>「異常天候早期警戒情報」のうち「中国地方」・「山陰地方」に関するもの。</li>
+  <li>「府県高温注意情報」のうち「島根県」に関するもの。</li>
+</ul>
+
+<p>ちなみに、ツイッターアカウント「<a href="https://twitter.com/wn_matsue" title="警戒・松江（非公式Bot）">警戒・松江（非公式Bot）</a>」では、別途（気象庁防災情報 XML とは別の経路から入手した）「緊急地震速報（予報第１報、警報）」もツイートしている。</p>
+
+<h3 id="4-その他">4. その他</h3>
+
+<p>現時点では、「<a href="http://xml.kishou.go.jp/" title="気象庁防災情報 XML">気象庁防災情報 XML</a>」では緊急地震速報や天気図情報等は一般には公開されていない。（情報の XML 化の対象にはなっている）<br />
+今後一般公開の対象になれば、当サイトでも対応していく予定。</p>
+
+<p>また、今後データベース参照ページ以外に、ランキング形式のページや現在発表中の一覧ページ等を作成するかも知れない。</p>
+
+<h3 id="参考サイト">参考サイト</h3>
+
+<ul>
+  <li><a href="http://xml.kishou.go.jp/" title="気象庁防災情報 XML">気象庁防災情報 XML</a></li>
+  <li><a href="/2013/11/20/rails-implement-pubsubhubbub-subscriber/" title="Ruby on Rails - PubSubHubbub Subscriber 実装！">Ruby on Rails - PubSubHubbub Subscriber 実装！</a></li>
+  <li><a href="/2013/11/29/jma-disaster-info-xml/" title="気象庁防災情報 XML - 受信手順（概要）！">気象庁防災情報 XML - 受信手順（概要）！</a></li>
+</ul>
+
+<hr />
+
+<p>こんなに迅速で有益な情報を放おって置くわけには行かず、今回のようなページを作成してみた次第です。</p>
+
+<p>また、「<a href="http://xml.kishou.go.jp/" title="気象庁防災情報 XML">気象庁防災情報 XML</a>」自体が現在「試験運用中」です。当方のサーバの稼働状況も含め正常に処理できないこともあるかも知れません。</p>
+
+<p>参考にしていただければ幸いです。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/atom" class="page__taxonomy-item" rel="tag">Atom</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/xml" class="page__taxonomy-item" rel="tag">XML</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/web%E3%82%B5%E3%82%A4%E3%83%88" class="page__taxonomy-item" rel="tag">Webサイト</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-01-30T00:20:00+09:00">2014-01-30 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E6%B0%97%E8%B1%A1%E5%BA%81%E9%98%B2%E7%81%BD%E6%83%85%E5%A0%B1+XML+%E5%8F%96%E5%BE%97%EF%BC%88%E3%81%9D%E3%81%AE%E5%BE%8C%EF%BC%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2014%2F01%2F30%2Fjma-xml-2%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2014%2F01%2F30%2Fjma-xml-2%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2014%2F01%2F30%2Fjma-xml-2%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2014/01/28/centos-6-5-summary-of-server-setting/" class="pagination--pager" title="CentOS 6.5 - サーバ構築まとめ！
+">Previous</a>
+    
+    
+      <a href="/2014/02/01/blog-access/" class="pagination--pager" title="2014年1月 - OS・ブラウザ別アクセス状況！【自動集計】
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2014/01/30/jma-xml-2/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2014/01/30/jma-xml-2"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

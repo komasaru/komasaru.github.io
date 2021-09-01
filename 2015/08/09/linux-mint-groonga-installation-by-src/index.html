@@ -1,0 +1,1154 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Linux Mint - Groonga インストール（by ソースビルド）！ - mk-mode BLOG</title>
+<meta name="description" content="オープンソースのカラムストア機能付き全文検索エンジン Groonga を、ソースをビルドしてインストールする方法についての記録です。（最後に簡単な使用例も紹介）">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Linux Mint - Groonga インストール（by ソースビルド）！">
+<meta property="og:url" content="https://komasaru.github.io/2015/08/09/linux-mint-groonga-installation-by-src/">
+
+
+  <meta property="og:description" content="オープンソースのカラムストア機能付き全文検索エンジン Groonga を、ソースをビルドしてインストールする方法についての記録です。（最後に簡単な使用例も紹介）">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Linux Mint - Groonga インストール（by ソースビルド）！">
+  <meta name="twitter:description" content="オープンソースのカラムストア機能付き全文検索エンジン Groonga を、ソースをビルドしてインストールする方法についての記録です。（最後に簡単な使用例も紹介）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2015/08/09/linux-mint-groonga-installation-by-src/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2015-08-09T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2015/08/09/linux-mint-groonga-installation-by-src/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Linux Mint - Groonga インストール（by ソースビルド）！">
+    <meta itemprop="description" content="オープンソースのカラムストア機能付き全文検索エンジン Groonga を、ソースをビルドしてインストールする方法についての記録です。（最後に簡単な使用例も紹介）">
+    <meta itemprop="datePublished" content="August 09, 2015">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Linux Mint - Groonga インストール（by ソースビルド）！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-08-09T00:20:00+09:00">2015-08-09 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>オープンソースのカラムストア機能付き全文検索エンジン <a href="http://groonga.org/ja/" title="Groonga - カラムストア機能付き全文検索エンジン">Groonga</a> を、ソースをビルドしてインストールする方法についての記録です。（最後に簡単な使用例も紹介）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Linux Mint 17.2(64bit) での作業を想定。</li>
+  <li>当記事執筆時点で最新の Groonga 5.0.5 をインストールする。</li>
+  <li>トークナイザは、デフォルトの N-gram 方式ではなく形態素解析器 MeCab を使用することを想定。</li>
+  <li>ここでは、全文検索がどういうものかという説明はしない。</li>
+  <li>以下の説明内で出力するデータは、可読性を考慮して整形している。</li>
+</ul>
+
+<h3 id="1-依存パッケージのインストール">1. 依存パッケージのインストール</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo apt-get -y install wget tar build-essential \
+&gt; zlib1g-dev liblzo2-dev libmsgpack-dev \
+&gt; libzmq-dev libevent-dev libmecab-dev
+</code></pre></div></div>
+
+<h3 id="2-アーカーブソースの取得">2. アーカーブソースの取得</h3>
+
+<p>アーカイブファイルをダウンロード後、展開する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ wget http://packages.groonga.org/source/groonga/groonga-5.0.5.tar.gz
+$ tar zxvf groonga-5.0.5.tar.gz
+</code></pre></div></div>
+
+<h3 id="3-ビルドインストール">3. ビルド＆インストール</h3>
+
+<p><code class="language-plaintext highlighter-rouge">configure</code>, <code class="language-plaintext highlighter-rouge">make</code>, <code class="language-plaintext highlighter-rouge">make install</code> する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd groonga-5.0.5
+$ ./configure
+$ make -j$(grep '^processor' /proc/cpuinfo | wc -l)
+$ sudo make install
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">make</code> の <code class="language-plaintext highlighter-rouge">-j$(grep '^processor' /proc/cpuinfo | wc -l)</code> の部分はプロセッサ数が明確なら <code class="language-plaintext highlighter-rouge">-j4</code> のように指定してもよいし、速度を気にしないのなら単に <code class="language-plaintext highlighter-rouge">make</code> のみでもよい。</li>
+  <li><code class="language-plaintext highlighter-rouge">configure</code> オプションについては <a href="http://groonga.org/ja/docs/install/others.html#source-configure">configure</a> を参照。</li>
+</ul>
+
+<p>そして、インストールされたかバージョンを表示して確認してみる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ groonga --version
+groonga 5.0.5 [linux-gnu,x86_64,utf8,match-escalation-threshold=0,nfkc,mecab,msgpack,onigmo,zlib,epoll]
+
+configure options: &lt;&gt;
+</code></pre></div></div>
+
+<h3 id="4-動作確認">4. 動作確認</h3>
+
+<p>簡単に動作確認してみる。（パスは適宜変更）<br />
+以下は、都道府県名のローマ字表記を <code class="language-plaintext highlighter-rouge">_key</code>、都道府県名の漢字表記を <code class="language-plaintext highlighter-rouge">name</code> として登録する例。（簡易都道府県名データベース）</p>
+
+<h4 id="4-1-データベースの作成">4-1. データベースの作成</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ mkdir ~/groonga-db
+$ groonga -n ~/groonga-db/test.db
+</code></pre></div></div>
+
+<p>データベース作成後は自動で対話モードに入るが、手動で対話モードへ入るには以下のようにする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ groonga ~/groonga-db/test.db
+</code></pre></div></div>
+
+<h4 id="4-2-テーブルの作成">4-2. テーブルの作成</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; table_create --name Prefs --flags TABLE_HASH_KEY --key_type ShortText
+[
+  [0,1436411689.75983,0.0292973518371582],
+  true
+]
+</code></pre></div></div>
+
+<h4 id="4-3-テーブルの表示">4-3. テーブルの表示</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+&gt; select --table Prefs
+[
+  [0,1436411701.50367,0.000922203063964844],
+  [
+    [
+      [0],
+      [
+        ["_id","UInt32"],
+        ["_key","ShortText"]
+      ]
+    ]
+  ]
+]
+</code></pre></div></div>
+
+<h4 id="4-4-カラムの作成">4-4. カラムの作成</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; column_create --table Prefs --name name --type ShortText
+[
+  [0,1436411764.36768,0.0517301559448242],
+  true
+]
+
+&gt; select --table Prefs
+[
+  [0,1436411783.16738,0.000133037567138672],
+  [
+    [
+      [0],
+      [
+        ["_id","UInt32"],
+        ["_key","ShortText"],
+        ["name","ShortText"]
+      ]
+    ]
+  ]
+]
+</code></pre></div></div>
+
+<h4 id="4-5-データのロード">4-5. データのロード</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; load --table Prefs
+[
+  {"_key":"Hokkaido","name":"北海道"},
+  {"_key":"Aomoriken","name":"青森県"},
+           :
+  ====&lt; 途中省略 &gt;====
+           :
+  {"_key":"Kagoshimaken","name":"鹿児島県"},
+  {"_key":"Okinawaken","name":"沖縄県"},
+]
+</code></pre></div></div>
+
+<p>もしくは、以下のようにコマンドラインから JSON 形式で作成したファイルを取り込んでもよい。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">load.grn</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre>load --table Prefs
+[
+  {"_key":"Hokkaido","name":"北海道"},
+  {"_key":"Aomoriken","name":"青森県"},
+           :
+  ====&lt; 途中省略 &gt;====
+           :
+  {"_key":"Kagoshimaken","name":"鹿児島県"},
+  {"_key":"Okinawaken","name":"沖縄県"},
+]
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ groonga ~/groonga-db/test.db &lt; load.grn
+[[0,1436415458.66362,0.00340938568115234],47]
+</code></pre></div></div>
+
+<h4 id="4-6-レコードの取得">4-6. レコードの取得</h4>
+
+<p>File: <code class="language-plaintext highlighter-rouge">"全レコードを取得（但し、先頭10件）"</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+</pre></td><td class="code"><pre>select --table Prefs
+[
+  [0,1436415521.50463,0.00343823432922363],
+  [
+    [
+      [47],
+      [
+        ["_id","UInt32"],
+        ["_key","ShortText"],
+        ["name","ShortText"]
+      ],
+      [1,"Hokkaido","北海道"],
+      [2,"Aomoriken","青森県"],
+      [3,"Iwateken","岩手県"],
+      [4,"Miyagiken","宮城県"],
+      [5,"Akitaken","秋田県"],
+      [6,"Yamagataken","山形県"],
+      [7,"Fukushimaken","福島県"],
+      [8,"Ibarakiken","茨城県"],
+      [9,"Tochigiken","栃木県"],
+      [10,"Gunmaken","群馬県"]
+    ]
+  ]
+]
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>File: <code class="language-plaintext highlighter-rouge">"ID</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre> が 32 のレコードを取得"
+&gt; select --table Prefs --query _id:32
+[
+  [0,1436415572.03281,0.0471560955047607],
+  [
+    [
+      [1],
+      [
+        ["_id","UInt32"],
+        ["_key","ShortText"],
+        ["name","ShortText"]
+      ],
+      [32,"Shimaneken","島根県"]
+    ]
+  ]
+]
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>File: <code class="language-plaintext highlighter-rouge">"KEY</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="code"><pre> が shimaneken のレコードを取得"
+&gt; select --table Prefs --query '_key:"Shimaneken"'
+[
+  [0,1436415572.03281,0.0471560955047607],
+  [
+    [
+      [1],
+      [
+        ["_id","UInt32"],
+        ["_key","ShortText"],
+        ["name","ShortText"]
+      ],
+      [32,"Shimaneken","島根県"]
+    ]
+  ]
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h4 id="4-7-全文検索用の語彙表の作成">4-7. 全文検索用の語彙表の作成</h4>
+
+<p>高速な全文検索を実現するためには転置インデックスが必要であるので、転置インデックスとして使用するテーブルを作成する。（トークナイザとして MeCab を使用する）</p>
+
+<p>辞書テーブルの作成は以下のようにする。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">辞書テーブルの作成</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="code"><pre>&gt; table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenMecab
+[[0,1436416480.43314,0.0687055587768555],true]
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>辞書テーブルへのカラムの作成は以下のようにする。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">辞書テーブルへのカラムの作成</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="code"><pre>&gt; column_create --table Terms --name pref_name --flags COLUMN_INDEX|WITH_POSITION --type Prefs --source name
+[[0,1436416570.78517,0.964933156967163],true]
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>辞書テーブルの確認は以下のようにする。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">辞書テーブルの確認</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+</pre></td><td class="code"><pre>&gt; select --table Terms
+[
+  [0,1436416592.4811,0.000155210494995117],
+  [
+    [
+      [50],
+      [
+        ["_id","UInt32"],
+        ["_key","ShortText"],
+        ["pref_name","UInt32"]
+      ],
+      [1,"三重",1],
+      [2,"京都",1],
+      [3,"佐賀",1],
+      [4,"兵庫",1],
+      [5,"北海道",1],
+      [6,"千葉",1],
+      [7,"和歌山",1],
+      [8,"埼玉",1],
+      [9,"大分",1],
+      [10,"大阪",1]
+    ]
+  ]
+]
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>テーブルの検索は以下のようにする。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">テーブルの検索</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre>&gt; select --table Prefs --query name:@府
+[
+  [0,1436416671.28152,0.000936269760131836],
+  [
+    [
+      [2],
+      [
+        ["_id","UInt32"],
+        ["_key","ShortText"],
+        ["name","ShortText"]
+      ],
+      [26,"Kyotofu","京都府"],
+      [27,"Osakafu","大阪府"]
+    ]
+  ]
+]
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h4 id="4-8-対話モードの終了">4-8. 対話モードの終了</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; quit
+</code></pre></div></div>
+
+<h3 id="5-参考サイト">5. 参考サイト</h3>
+
+<ul>
+  <li><a href="http://groonga.org/ja/" title="Groonga - カラムストア機能付き全文検索エンジン">Groonga - カラムストア機能付き全文検索エンジン</a></li>
+</ul>
+
+<hr />
+
+<p>慣れないうちは Groonga を単体で扱うのは若干面倒に感じます。</p>
+
+<p>当方は、Rroonga（Groonga の機能を Ruby から利用するためのライブラリ）や Mroonga（Groonga をベースとした MySQL のストレージエンジン）を使用することも考えています。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/groonga" class="page__taxonomy-item" rel="tag">Groonga</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/linuxmint" class="page__taxonomy-item" rel="tag">LinuxMint</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/pc-tips" class="page__taxonomy-item" rel="tag">PC_Tips</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-08-09T00:20:00+09:00">2015-08-09 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Linux+Mint+-+Groonga+%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%EF%BC%88by+%E3%82%BD%E3%83%BC%E3%82%B9%E3%83%93%E3%83%AB%E3%83%89%EF%BC%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2015%2F08%2F09%2Flinux-mint-groonga-installation-by-src%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2015%2F08%2F09%2Flinux-mint-groonga-installation-by-src%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2015%2F08%2F09%2Flinux-mint-groonga-installation-by-src%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2015/08/06/tmux-automatic-session-preservation/" class="pagination--pager" title="tmux - Window, Pane, Session 自動保存プラグイン！
+">Previous</a>
+    
+    
+      <a href="/2015/08/13/ruby-graph-drawing-by-gnuplot/" class="pagination--pager" title="Ruby - gnuplot でグラフ描画！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2015/08/09/linux-mint-groonga-installation-by-src/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2015/08/09/linux-mint-groonga-installation-by-src"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,1363 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>2011年8月 - OS・ブラウザ別アクセス状況！ - mk-mode BLOG</title>
+<meta name="description" content="当WordPressブログではアクセス解析に「CounterizeiII」を一部カスタマイズして使用していますが、月ごとのOS（バージョン別）・ブラウザ（バージョン別）の集計ができません。そこで、月ごとのOS（バージョン別）・ブラウザ（バージョン別）の集計を行うSQLを作成しました。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="2011年8月 - OS・ブラウザ別アクセス状況！">
+<meta property="og:url" content="https://komasaru.github.io/2011/09/02/02002014/">
+
+
+  <meta property="og:description" content="当WordPressブログではアクセス解析に「CounterizeiII」を一部カスタマイズして使用していますが、月ごとのOS（バージョン別）・ブラウザ（バージョン別）の集計ができません。そこで、月ごとのOS（バージョン別）・ブラウザ（バージョン別）の集計を行うSQLを作成しました。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="2011年8月 - OS・ブラウザ別アクセス状況！">
+  <meta name="twitter:description" content="当WordPressブログではアクセス解析に「CounterizeiII」を一部カスタマイズして使用していますが、月ごとのOS（バージョン別）・ブラウザ（バージョン別）の集計ができません。そこで、月ごとのOS（バージョン別）・ブラウザ（バージョン別）の集計を行うSQLを作成しました。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2011/09/02/02002014/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2011-09-02T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2011/09/02/02002014/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="2011年8月 - OS・ブラウザ別アクセス状況！">
+    <meta itemprop="description" content="当WordPressブログではアクセス解析に「CounterizeiII」を一部カスタマイズして使用していますが、月ごとのOS（バージョン別）・ブラウザ（バージョン別）の集計ができません。そこで、月ごとのOS（バージョン別）・ブラウザ（バージョン別）の集計を行うSQLを作成しました。">
+    <meta itemprop="datePublished" content="September 02, 2011">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">2011年8月 - OS・ブラウザ別アクセス状況！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-09-02T00:20:00+09:00">2011-09-02 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>当WordPressブログではアクセス解析に「CounterizeiII」を一部カスタマイズして使用していますが、月ごとのOS（バージョン別）・ブラウザ（バージョン別）の集計ができません。</p>
+
+<p>そこで、月ごとのOS（バージョン別）・ブラウザ（バージョン別）の集計を行うSQLを作成しました。</p>
+
+<!--more-->
+
+<p>単純にOS別（バージョン別）・ブラウザ別（バージョン別）に集計するには１つのテーブルを参照すればよいのですが、そこには日付情報がありませんので、月別の集計ができません。</p>
+
+<p>元の wp_Counterize テーブルの日付情報を紐付けしないといけません。</p>
+
+<p>結局以下のようなSQLを作成しました。</p>
+
+<h3 id="sql">SQL</h3>
+
+<h4 id="アクセスをos別に集計するsql">アクセスをOS別に集計するSQL</h4>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">B</span><span class="p">.</span><span class="n">osName</span><span class="p">,</span>
+       <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span>
+     <span class="p">(</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">/</span> <span class="n">E</span><span class="p">.</span><span class="n">cnt</span> <span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+  <span class="k">FROM</span> <span class="nv">`wp_Counterize`</span> <span class="k">AS</span> <span class="n">A</span>
+       <span class="k">INNER</span> <span class="k">JOIN</span>
+       <span class="nv">`wp_Counterize_UserAgents`</span> <span class="k">AS</span> <span class="n">B</span>
+       <span class="k">ON</span> <span class="n">A</span><span class="p">.</span><span class="n">agentID</span> <span class="o">=</span> <span class="n">B</span><span class="p">.</span><span class="n">agentID</span><span class="p">,</span>
+     <span class="p">(</span> <span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">cnt</span>
+         <span class="k">FROM</span> <span class="nv">`wp_Counterize`</span> <span class="k">AS</span> <span class="k">C</span>
+              <span class="k">INNER</span> <span class="k">JOIN</span>
+              <span class="nv">`wp_Counterize_UserAgents`</span> <span class="k">AS</span> <span class="n">D</span>
+              <span class="k">ON</span> <span class="k">C</span><span class="p">.</span><span class="n">agentID</span> <span class="o">=</span> <span class="n">D</span><span class="p">.</span><span class="n">agentID</span>
+        <span class="k">WHERE</span> <span class="k">C</span><span class="p">.</span><span class="nb">timestamp</span> <span class="k">BETWEEN</span> <span class="s1">'2011-08-01 00:00:00'</span>
+                              <span class="k">AND</span> <span class="s1">'2011-08-31 23:59:59'</span> <span class="p">)</span> <span class="k">AS</span> <span class="n">E</span>
+ <span class="k">WHERE</span> <span class="n">A</span><span class="p">.</span><span class="nb">timestamp</span> <span class="k">BETWEEN</span> <span class="s1">'2011-08-01 00:00:00'</span>
+                       <span class="k">AND</span> <span class="s1">'2011-08-31 23:59:59'</span>
+ <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">B</span><span class="p">.</span><span class="n">osCode</span>
+ <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">DESC</span>
+</code></pre></div></div>
+
+<ul>
+  <li>単純に “wp_Counterize” からの取得でなく “wp_Counterize_UserAgents” を INNER JOIN しているのは、互いに紐付きのないレコードをはじく為です。</li>
+  <li>「OS・バージョン別」、「ブラウザ別」、「ブラウザ・バージョン別」を集計するには上記のSQLの SELECT, GROUP BY を変えれば OK です。</li>
+</ul>
+
+<h4 id="指定期間内のトータルアクセス数を取得するsql">指定期間内のトータルアクセス数を取得するSQL</h4>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+  <span class="k">FROM</span> <span class="nv">`wp_Counterize`</span> <span class="k">AS</span> <span class="n">A</span>
+       <span class="k">INNER</span> <span class="k">JOIN</span>
+       <span class="nv">`wp_Counterize_UserAgents`</span> <span class="k">AS</span> <span class="n">B</span>
+       <span class="k">ON</span> <span class="n">A</span><span class="p">.</span><span class="n">agentID</span> <span class="o">=</span> <span class="n">B</span><span class="p">.</span><span class="n">agentID</span>
+ <span class="k">WHERE</span> <span class="n">A</span><span class="p">.</span><span class="nb">timestamp</span> <span class="k">BETWEEN</span> <span class="s1">'2011-08-01 00:00:00'</span>
+                       <span class="k">AND</span> <span class="s1">'2011-08-31 23:59:59'</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>以下に2011年8月の集計状況を掲載します。</p>
+
+<h3 id="2011年8月のアクセス状況">2011年8月のアクセス状況</h3>
+
+<h4 id="1-アクセスをos別に集計">1. アクセスをOS別に集計</h4>
+
+<table>
+  <tr>
+    <th>OS</th>
+    <th>PageViews</th>
+    <th>比率(%)</th>
+  </tr>
+  <tr>
+    <td>Windows</td>
+    <td align="right">17,112</td>
+    <td align="right">84.1836</td>
+  </tr>
+  <tr>
+    <td>Mac OS</td>
+    <td align="right">957</td>
+    <td align="right">4.7080</td>
+  </tr>
+  <tr>
+    <td>Unknown</td>
+    <td align="right">859</td>
+    <td align="right">4.2259</td>
+  </tr>
+  <tr>
+    <td>Linux</td>
+    <td align="right">635</td>
+    <td align="right">3.1239</td>
+  </tr>
+  <tr>
+    <td>CentOS Linux</td>
+    <td align="right">267</td>
+    <td align="right">1.3135</td>
+  </tr>
+  <tr>
+    <td>Ubuntu Linux</td>
+    <td align="right">153</td>
+    <td align="right">0.7527</td>
+  </tr>
+  <tr>
+    <td>iPhone OS</td>
+    <td align="right">136</td>
+    <td align="right">0.6691</td>
+  </tr>
+  <tr>
+    <td>Android</td>
+    <td align="right">110</td>
+    <td align="right">0.5412</td>
+  </tr>
+  <tr>
+    <td>RedHat Linux</td>
+    <td align="right">26</td>
+    <td align="right">0.1279</td>
+  </tr>
+  <tr>
+    <td>FreeBSD</td>
+    <td align="right">26</td>
+    <td align="right">0.1279</td>
+  </tr>
+  <tr>
+    <td>Debian GNU/Linux</td>
+    <td align="right">22</td>
+    <td align="right">0.1082</td>
+  </tr>
+  <tr>
+    <td>Fedora Linux</td>
+    <td align="right">17</td>
+    <td align="right">0.0836</td>
+  </tr>
+  <tr>
+    <td>GNU</td>
+    <td align="right">3</td>
+    <td align="right">0.0148</td>
+  </tr>
+  <tr>
+    <td>Gentoo Linux</td>
+    <td align="right">2</td>
+    <td align="right">0.0098</td>
+  </tr>
+  <tr>
+    <td>NetBSD</td>
+    <td align="right">1</td>
+    <td align="right">0.0049</td>
+  </tr>
+  <tr>
+    <td>SuSE Linux</td>
+    <td align="right">1</td>
+    <td align="right">0.0049</td>
+  </tr>
+  <tr>
+    <td>合計</td>
+    <td align="right">20,327</td>
+    <td align="right">100.0000</td>
+  </tr>
+</table>
+<p>Windows がダントツです。</p>
+
+<h4 id="2-アクセスをosバージョン別に集計上位20件">2. アクセスをOS・バージョン別に集計（上位20件）</h4>
+
+<table>
+  <tr>
+    <th>OS</th>
+    <th>Version</th>
+    <th>PageViews</th>
+    <th>比率(%)</th>
+  </tr>
+  <tr>
+    <td>Windows</td>
+    <td>XP</td>
+    <td align="right">10,783</td>
+    <td align="right">53.0477</td>
+  </tr>
+  <tr>
+    <td>Windows</td>
+    <td>7 64 bit</td>
+    <td align="right">2,646</td>
+    <td align="right">13.0172</td>
+  </tr>
+  <tr>
+    <td>Windows</td>
+    <td>7</td>
+    <td align="right">2,126</td>
+    <td align="right">10.4590</td>
+  </tr>
+  <tr>
+    <td>Windows</td>
+    <td>Vista</td>
+    <td align="right">1,163</td>
+    <td align="right">5.7215</td>
+  </tr>
+  <tr>
+    <td>Mac OS</td>
+    <td>X</td>
+    <td align="right">941</td>
+    <td align="right">4.6293</td>
+  </tr>
+  <tr>
+    <td>Unknown</td>
+    <td></td>
+    <td align="right">859</td>
+    <td align="right">4.2259</td>
+  </tr>
+  <tr>
+    <td>Linux</td>
+    <td>64 bit</td>
+    <td align="right">352</td>
+    <td align="right">1.7317</td>
+  </tr>
+  <tr>
+    <td>Linux</td>
+    <td></td>
+    <td align="right">283</td>
+    <td align="right">1.3922</td>
+  </tr>
+  <tr>
+    <td>CentOS Linux</td>
+    <td>3.6-1.el5.centos</td>
+    <td align="right">112</td>
+    <td align="right">0.5510</td>
+  </tr>
+  <tr>
+    <td>Windows</td>
+    <td>Server 2003</td>
+    <td align="right">105</td>
+    <td align="right">0.5166</td>
+  </tr>
+  <tr>
+    <td>Windows</td>
+    <td>2000</td>
+    <td align="right">95</td>
+    <td align="right">0.4674</td>
+  </tr>
+  <tr>
+    <td>Windows</td>
+    <td>Vista 64 bit</td>
+    <td align="right">76</td>
+    <td align="right">0.3739</td>
+  </tr>
+  <tr>
+    <td>iPhone OS</td>
+    <td>4_3_5</td>
+    <td align="right">54</td>
+    <td align="right">0.2657</td>
+  </tr>
+  <tr>
+    <td>Ubuntu Linux</td>
+    <td>10.10</td>
+    <td align="right">51</td>
+    <td align="right">0.2509</td>
+  </tr>
+  <tr>
+    <td>CentOS Linux</td>
+    <td>3.6-1.el5.centos 64 bit</td>
+    <td align="right">50</td>
+    <td align="right">0.2460</td>
+  </tr>
+  <tr>
+    <td>iPhone OS</td>
+    <td>4_3_3</td>
+    <td align="right">43</td>
+    <td align="right">0.2115</td>
+  </tr>
+  <tr>
+    <td>Android</td>
+    <td>2.3.3</td>
+    <td align="right">39</td>
+    <td align="right">0.1919</td>
+  </tr>
+  <tr>
+    <td>Windows</td>
+    <td>XP 64 bit</td>
+    <td align="right">37</td>
+    <td align="right">0.1820</td>
+  </tr>
+  <tr>
+    <td>Ubuntu Linux</td>
+    <td>10.04</td>
+    <td align="right">35</td>
+    <td align="right">0.1722</td>
+  </tr>
+  <tr>
+    <td>Ubuntu Linux</td>
+    <td>10.04 64 bit</td>
+    <td align="right">34</td>
+    <td align="right">0.1673</td>
+  </tr>
+  <tr>
+    <td align="center">:</td>
+    <td align="center">:</td>
+    <td align="center">:</td>
+    <td align="center">:</td>
+  </tr>
+  <tr>
+    <td>合計</td>
+    <td> </td>
+    <td align="right">20,327</td>
+    <td align="right">100.0000</td>
+  </tr>
+</table>
+<p>まだまだ、WindowsXP が優勢です。</p>
+
+<h4 id="3-アクセスをブラウザ別に集計">3. アクセスをブラウザ別に集計</h4>
+
+<table>
+  <tr>
+    <th>ブラウザ</th>
+    <th>PageViews</th>
+    <th>比率(%)</th>
+  </tr>
+  <tr>
+    <td>Internet Explorer</td>
+    <td align="right">8,468</td>
+    <td align="right">41.6589</td>
+  </tr>
+  <tr>
+    <td>Mozilla Firefox</td>
+    <td align="right">6,448</td>
+    <td align="right">31.7214</td>
+  </tr>
+  <tr>
+    <td>Chrome</td>
+    <td align="right">2,766</td>
+    <td align="right">13.6075</td>
+  </tr>
+  <tr>
+    <td>Unknown</td>
+    <td align="right">684</td>
+    <td align="right">3.3650</td>
+  </tr>
+  <tr>
+    <td>Opera</td>
+    <td align="right">539</td>
+    <td align="right">2.6516</td>
+  </tr>
+  <tr>
+    <td>Mobile Safari</td>
+    <td align="right">456</td>
+    <td align="right">2.2433</td>
+  </tr>
+  <tr>
+    <td>Sleipnir</td>
+    <td align="right">428</td>
+    <td align="right">2.1056</td>
+  </tr>
+  <tr>
+    <td>WordPress</td>
+    <td align="right">122</td>
+    <td align="right">0.6002</td>
+  </tr>
+  <tr>
+    <td>iPhone</td>
+    <td align="right">101</td>
+    <td align="right">0.4969</td>
+  </tr>
+  <tr>
+    <td>Lunascape</td>
+    <td align="right">70</td>
+    <td align="right">0.3444</td>
+  </tr>
+  <tr>
+    <td>Debian IceWeasel</td>
+    <td align="right">54</td>
+    <td align="right">0.2657</td>
+  </tr>
+  <tr>
+    <td>iPod</td>
+    <td align="right">35</td>
+    <td align="right">0.1722</td>
+  </tr>
+  <tr>
+    <td>RockMelt</td>
+    <td align="right">26</td>
+    <td align="right">0.1279</td>
+  </tr>
+  <tr>
+    <td>Chromium</td>
+    <td align="right">18</td>
+    <td align="right">0.0886</td>
+  </tr>
+  <tr>
+    <td>Mozilla SeaMonkey</td>
+    <td align="right">15</td>
+    <td align="right">0.0738</td>
+  </tr>
+  <tr>
+    <td>AOL Browser</td>
+    <td align="right">14</td>
+    <td align="right">0.0689</td>
+  </tr>
+  <tr>
+    <td>Palemoon</td>
+    <td align="right">13</td>
+    <td align="right">0.0640</td>
+  </tr>
+  <tr>
+    <td>Epiphany</td>
+    <td align="right">9</td>
+    <td align="right">0.0443</td>
+  </tr>
+  <tr>
+    <td>KKman</td>
+    <td align="right">7</td>
+    <td align="right">0.0344</td>
+  </tr>
+  <tr>
+    <td>Netscape Navigator</td>
+    <td align="right">7</td>
+    <td align="right">0.0344</td>
+  </tr>
+  <tr>
+    <td>Namoroka</td>
+    <td align="right">6</td>
+    <td align="right">0.0295</td>
+  </tr>
+  <tr>
+    <td>Avant Browser</td>
+    <td align="right">6</td>
+    <td align="right">0.0295</td>
+  </tr>
+  <tr>
+    <td>Mozilla</td>
+    <td align="right">6</td>
+    <td align="right">0.0295</td>
+  </tr>
+  <tr>
+    <td>PHP</td>
+    <td align="right">5</td>
+    <td align="right">0.0246</td>
+  </tr>
+  <tr>
+    <td>SRWare Iron</td>
+    <td align="right">4</td>
+    <td align="right">0.0197</td>
+  </tr>
+  <tr>
+    <td>Maxthon</td>
+    <td align="right">4</td>
+    <td align="right">0.0197</td>
+  </tr>
+  <tr>
+    <td>Camino</td>
+    <td align="right">3</td>
+    <td align="right">0.0148</td>
+  </tr>
+  <tr>
+    <td>Deepnet Explorer</td>
+    <td align="right">3</td>
+    <td align="right">0.0148</td>
+  </tr>
+  <tr>
+    <td>Conkeror</td>
+    <td align="right">2</td>
+    <td align="right">0.0098</td>
+  </tr>
+  <tr>
+    <td>MyIE2</td>
+    <td align="right">2</td>
+    <td align="right">0.0098</td>
+  </tr>
+  <tr>
+    <td>Mozilla Firebird</td>
+    <td align="right">2</td>
+    <td align="right">0.0098</td>
+  </tr>
+  <tr>
+    <td>Shiretoko</td>
+    <td align="right">2</td>
+    <td align="right">0.0098</td>
+  </tr>
+  <tr>
+    <td>Konqueror</td>
+    <td align="right">1</td>
+    <td align="right">0.0049</td>
+  </tr>
+  <tr>
+    <td>W3M</td>
+    <td align="right">1</td>
+    <td align="right">0.0049</td>
+  </tr>
+  <tr>
+    <td>合計</td>
+    <td align="right">20,327</td>
+    <td align="right">100.0000</td>
+  </tr>
+</table>
+<p>IE、Firefox、Chrome で 85％ になります。</p>
+
+<h4 id="4-アクセスをブラウザバージョン別に集計上位20件">4. アクセスをブラウザ・バージョン別に集計（上位20件）</h4>
+
+<table>
+  <tr>
+    <th>ブラウザ</th>
+    <th>Version</th>
+    <th>PageViews</th>
+    <th>比率(%)</th>
+  </tr>
+  <tr>
+    <td>Internet Explorer</td>
+    <td>6.0</td>
+    <td align="right">3,623</td>
+    <td align="right">17.8236</td>
+  </tr>
+  <tr>
+    <td>Internet Explorer</td>
+    <td>8.0</td>
+    <td align="right">2,296</td>
+    <td align="right">11.2953</td>
+  </tr>
+  <tr>
+    <td>Mozilla Firefox</td>
+    <td>5.0</td>
+    <td align="right">2,025</td>
+    <td align="right">9.9621</td>
+  </tr>
+  <tr>
+    <td>Mozilla Firefox</td>
+    <td>6.0</td>
+    <td align="right">1,686</td>
+    <td align="right">8.2944</td>
+  </tr>
+  <tr>
+    <td>Internet Explorer</td>
+    <td>7.0</td>
+    <td align="right">1,606</td>
+    <td align="right">7.9008</td>
+  </tr>
+  <tr>
+    <td>Chrome</td>
+    <td>13.0.782.112</td>
+    <td align="right">1,042</td>
+    <td align="right">5.1262</td>
+  </tr>
+  <tr>
+    <td>Internet Explorer</td>
+    <td>9.0</td>
+    <td align="right">883</td>
+    <td align="right">4.3440</td>
+  </tr>
+  <tr>
+    <td>Unknown</td>
+    <td></td>
+    <td align="right">684</td>
+    <td align="right">3.3650</td>
+  </tr>
+  <tr>
+    <td>Mozilla Firefox</td>
+    <td>3.6.18</td>
+    <td align="right">629</td>
+    <td align="right">3.0944</td>
+  </tr>
+  <tr>
+    <td>Chrome</td>
+    <td>13.0.782.215</td>
+    <td align="right">530</td>
+    <td align="right">2.6074</td>
+  </tr>
+  <tr>
+    <td>Mozilla Firefox</td>
+    <td>5.0.1</td>
+    <td align="right">468</td>
+    <td align="right">2.3024</td>
+  </tr>
+  <tr>
+    <td>Sleipnir</td>
+    <td>2.9.7</td>
+    <td align="right">400</td>
+    <td align="right">1.9678</td>
+  </tr>
+  <tr>
+    <td>Chrome</td>
+    <td>13.0.782.107</td>
+    <td align="right">375</td>
+    <td align="right">1.8448</td>
+  </tr>
+  <tr>
+    <td>Mozilla Firefox</td>
+    <td>3.0.5</td>
+    <td align="right">357</td>
+    <td align="right">1.7563</td>
+  </tr>
+  <tr>
+    <td>Chrome</td>
+    <td>12.0.742.122</td>
+    <td align="right">322</td>
+    <td align="right">1.5841</td>
+  </tr>
+  <tr>
+    <td>Opera</td>
+    <td>8.01</td>
+    <td align="right">272</td>
+    <td align="right">1.3381</td>
+  </tr>
+  <tr>
+    <td>Chrome</td>
+    <td>11.0.696</td>
+    <td align="right">256</td>
+    <td align="right">1.2594</td>
+  </tr>
+  <tr>
+    <td>Mozilla Firefox</td>
+    <td>3.6.20</td>
+    <td align="right">255</td>
+    <td align="right">1.2545</td>
+  </tr>
+  <tr>
+    <td>Safari</td>
+    <td>5.1</td>
+    <td align="right">178</td>
+    <td align="right">0.8757</td>
+  </tr>
+  <tr>
+    <td>Opera</td>
+    <td>11.50</td>
+    <td align="right">167</td>
+    <td align="right">0.8216</td>
+  </tr>
+  <tr>
+    <td align="center">:</td>
+    <td align="center">:</td>
+    <td align="center">:</td>
+    <td align="center">:</td>
+  </tr>
+  <tr>
+    <td>合計</td>
+    <td> </td>
+    <td align="right">20,327</td>
+    <td align="right">100.0000</td>
+  </tr>
+</table>
+
+<hr />
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/mysql" class="page__taxonomy-item" rel="tag">MySQL</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/wordpress" class="page__taxonomy-item" rel="tag">WordPress</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%96%E3%83%AD%E3%82%B0" class="page__taxonomy-item" rel="tag">ブログ</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-09-02T00:20:00+09:00">2011-09-02 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=2011%E5%B9%B48%E6%9C%88+-+OS%E3%83%BB%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E5%88%A5%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E7%8A%B6%E6%B3%81%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2011%2F09%2F02%2F02002014%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2011%2F09%2F02%2F02002014%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2011%2F09%2F02%2F02002014%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2011/09/01/01002024/" class="pagination--pager" title="Ruby - cronで「invalid byte sequence in US-ASCII」例外発生！
+">Previous</a>
+    
+    
+      <a href="/2011/09/04/04002010/" class="pagination--pager" title="VisualBasic - CSVをTABLEタグに変換！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2011/09/02/02002014/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2011/09/02/02002014"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,1036 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Debian 9 (Stretch) - MariaDB 10.3 サーバ構築（ソースビルド）！ - mk-mode BLOG</title>
+<meta name="description" content="Debian GNU/Linux 9 (Stretch) 上に DB サーバ MariaDB（10.3系）を構築する方法についての記録です。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Debian 9 (Stretch) - MariaDB 10.3 サーバ構築（ソースビルド）！">
+<meta property="og:url" content="https://komasaru.github.io/2018/12/08/debian-9-mariadb-installation-by-src/">
+
+
+  <meta property="og:description" content="Debian GNU/Linux 9 (Stretch) 上に DB サーバ MariaDB（10.3系）を構築する方法についての記録です。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Debian 9 (Stretch) - MariaDB 10.3 サーバ構築（ソースビルド）！">
+  <meta name="twitter:description" content="Debian GNU/Linux 9 (Stretch) 上に DB サーバ MariaDB（10.3系）を構築する方法についての記録です。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2018/12/08/debian-9-mariadb-installation-by-src/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2018-12-08T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2018/12/08/debian-9-mariadb-installation-by-src/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Debian 9 (Stretch) - MariaDB 10.3 サーバ構築（ソースビルド）！">
+    <meta itemprop="description" content="Debian GNU/Linux 9 (Stretch) 上に DB サーバ MariaDB（10.3系）を構築する方法についての記録です。">
+    <meta itemprop="datePublished" content="December 08, 2018">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Debian 9 (Stretch) - MariaDB 10.3 サーバ構築（ソースビルド）！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2018-12-08T00:20:00+09:00">2018-12-08 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Debian GNU/Linux 9 (Stretch) 上に DB サーバ MariaDB（10.3系）を構築する方法についての記録です。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Debian GNU/Linux 9 (Stretch) での作業を想定。</li>
+  <li>接続元のマシンは LMDE 3 (Linux Mint Debian Edition 3; 64bit) を想定。</li>
+  <li>インストールする MariaDB は、当記事執筆（≠公開）時点で最新の 10.3.9 とする。</li>
+  <li>MariaDB とは言っても中身は MySQL が元になっているので、各所で “mysql” のキーワードが出現する。</li>
+  <li>データディレクトリは “/var/lib/mysql” ディレクトリ配下とする。</li>
+  <li>root ユーザでの作業を想定。</li>
+</ul>
+
+<h3 id="1-sourceslist-ファイルの編集">1. sources.list ファイルの編集</h3>
+
+<p>今回は MariaDB をソースをビルドしてインストールするので、本来は “sources.list” の編集は必要ないが、 MariaDB のビルドに依存するパッケージをインストールすために使用するので、編集する。<br />
+<code class="language-plaintext highlighter-rouge">/etc/apt/sources.list</code> に直接記述してもよいが、今回は <code class="language-plaintext highlighter-rouge">/etc/apt/sources.list.d/mariadb.list</code> に新規作成する。<br />
+記述する内容は「<a href="https://downloads.mariadb.org/mariadb/repositories/#mirror=yamagata-university" title="repository configuration tool">こちら(repository configuration tool)</a>」で確認可能。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/apt/sources.list.d/mariadb.list</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="code"><pre># MariaDB 10.3 repository list - created 2018-09-19 16:23 UTC
+# http://downloads.mariadb.org/mariadb/repositories/
+deb [arch=amd64,i386,ppc64el] http://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.3/debian stretch main
+deb-src http://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.3/debian stretch main
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>“sources.list” を使用しない方法等については「<a href="http://downloads.mariadb.org/mariadb/repositories/" title="MariaDB - Setting up MariaDB Repositories - MariaDB">こちら</a>」を参照。</p>
+
+<h3 id="2-パッケージリストの更新">2. パッケージリストの更新</h3>
+
+<p>“sources.list” を編集したので、パッケージリストを更新する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y update
+</code></pre></div></div>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      :
+===&lt; 中略 &gt;===
+      :
+
+エラー:2 http://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.3/debian stretch InRelease
+  公開鍵を利用できないため、以下の署名は検証できませんでした: NO_PUBKEY F1656F24C74CD1D8
+無視:8 https://packages.groonga.org/debian stretch InRelease
+ヒット:9 https://packages.groonga.org/debian stretch Release
+パッケージリストを読み込んでいます... 完了
+W: GPG エラー: http://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.3/debian stretch InRelease: 公開鍵を利用できないため、以下の署名は検証できませんでした: NO_PUBKEY F1656F24C74CD1D8
+E: リポジトリ http://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.3/debian stretch InRelease は署名されていません。
+N: このようなリポジトリから更新を安全に行うことができないので、デフォルトでは更新が無効になっています。
+N: リポジトリの作成とユーザ設定の詳細は、apt-secure(8) man ページを参照してください。
+</code></pre></div></div>
+
+<p>上記のように、 GPG 公開鍵に関するエラーが出力される場合は、以下のようにした後に再実行する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F1656F24C74CD1D8
+</code></pre></div></div>
+
+<h3 id="3-依存パッケージのインストール">3. 依存パッケージのインストール</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt build-dep mariadb-server
+</code></pre></div></div>
+
+<p>または、「<a href="https://mariadb.com/kb/en/library/Build_Environment_Setup_for_Linux/" title="Build Environment Setup for Linux - MariaDB Knowledge Base">こちら</a>」を参考に、ビルドに必要なパッケージをインストールしてもよい。（但し、インストール漏れに注意）</p>
+
+<h3 id="4-sourceslist-ファイルの削除">4. sources.list ファイルの削除</h3>
+
+<p>1 で作成した MariaDB 用 sources.list ファイル “/etc/apt/sources.list.d/mariadb.list” はもう不要なので削除しておく。（”/etc/apt/sources.list” を直接編集したのなら、 MariaDB に関する記述を削除する）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># rm -f /etc/apt/sources.list.d/mariadb.list
+</code></pre></div></div>
+
+<h3 id="5-アーカイブの取得">5. アーカイブの取得</h3>
+
+<p>「<a href="https://downloads.mariadb.org/" title="Downloads - MariaDB">こちら</a>」から MariaDB の最新 Stable 版をダウンロードし、適当なディレクトリに配置する。（今回、当方はダウンロードした “mariadb-10.3.9.tar.gz” を “/usr/local/src” ディレクトリ配下に配置した）</p>
+
+<p>そして、展開する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd /usr/local/src
+# tar zxvf mariadb-10.3.9.tar.gz
+</code></pre></div></div>
+
+<h3 id="6-ソースのビルドインストール">6. ソースのビルド＆インストール</h3>
+
+<p>先ほど展開したディレクトリと同じ階層にビルド用のディレクトリを作成する。（先ほど展開したディレクトリ内ではない）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mkdir build-mariadb
+</code></pre></div></div>
+
+<p>次に、ビルド用ディレクトリ内へ移動して cmake する。（各種ビルドオプションは当方の例）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd build-mariadb
+# cmake ../mariadb-10.3.9 -DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
+-DMYSQL_DATADIR=/var/lib/mysql \
+-DMYSQL_UNIX_ADDR=/var/run/mysqld/mysqld.sock \
+-DENABLED_LOCAL_INFILE=1 \
+-DDEFAULT_CHARSET=utf8_mb4 \
+-DDEFAULT_COLLATION=utf8_general_ci \
+-DWITH_EXTRA_CHARSETS=all \
+-DWITH_INNOBASE_STORAGE_ENGINE=1
+</code></pre></div></div>
+
+<p>そして、 make 後、インストールする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># make -j$(grep '^processor' /proc/cpuinfo | wc -l)
+# make install
+</code></pre></div></div>
+
+<h3 id="7-ユーザグループ作成">7. ユーザ・グループ作成</h3>
+
+<p>MySQL 用のユーザとグループを作成する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># groupadd mysql
+# useradd -r -g mysql mysql
+</code></pre></div></div>
+
+<h3 id="8-データディレクトリ作成">8. データディレクトリ作成</h3>
+
+<p>データディレクトリが無ければ作成し、所有者・グループを設定しておく。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mkdir /var/lib/mysql
+# chown -R mysql. /var/lib/mysql
+</code></pre></div></div>
+
+<h3 id="9-ログディレクトリ作成">9. ログディレクトリ作成</h3>
+
+<p>ログ用ディレクトリを作成し、所有者・グループを設定しておく。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mkdir /var/log/mysql
+# chown -R mysql. /var/log/mysql/
+</code></pre></div></div>
+
+<h3 id="10-ソケットpidディレクトリ作成">10. ソケット・PIDディレクトリ作成</h3>
+
+<p>ソケット・プロセスID用ディレクトリの所有者・グループを設定する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mkdir /var/run/mysqld
+# chown -R mysql. /var/run/mysqld
+</code></pre></div></div>
+
+<h3 id="11-設定ファイルの編集">11. 設定ファイルの編集</h3>
+
+<p>用意されている設定ファイルの中から自分の環境に近いものを <code class="language-plaintext highlighter-rouge">/etc/my.cnf</code> として複製し、更に自分の環境に合うよう編集する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cp /usr/local/mysql/support-files/my-huge.cnf /etc/my.cnf
+</code></pre></div></div>
+
+<p>【注意】<br />
+<code class="language-plaintext highlighter-rouge">/etc/my.cnf</code> より後に <code class="language-plaintext highlighter-rouge">/etc/mysql/my.cnf</code> が読み込まれる（<code class="language-plaintext highlighter-rouge">/etc/my.cnf</code> の内容よりも <code class="language-plaintext highlighter-rouge">/etc/mysql/my.cnf</code> の内容が優先される）ので、 <code class="language-plaintext highlighter-rouge">/etc/my.cnf</code> のみを使用したければ <code class="language-plaintext highlighter-rouge">/etc/mysql/my.cnf</code> を削除するか、（拡張子が <code class="language-plaintext highlighter-rouge">.cnf</code> で終わらないよう）リネームするなどする。<br />
+<code class="language-plaintext highlighter-rouge">/etc/my.cnf</code> を作成せず、最初から <code class="language-plaintext highlighter-rouge">/etc/mysql/my.cnf</code> を編集する方法でも良いだろう。</p>
+
+<h3 id="12-初期-db-の生成">12. 初期 DB の生成</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd /usr/local/mysql
+# scripts/mysql_install_db --user=mysql --basedir=/usr/local/mysql --datadir=/var/lib/mysql --defaults-file=/etc/my.cnf
+</code></pre></div></div>
+
+<h3 id="13-起動スクリプトの作成">13. 起動スクリプトの作成</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cp support-files/mysql.server /etc/init.d/mysqld
+# chmod +x /etc/init.d/mysqld
+</code></pre></div></div>
+
+<h3 id="14-pid-ディレクトリの自動生成">14. PID ディレクトリの自動生成</h3>
+
+<p>前項の方法で起動スクリプトを用意した場合、 <code class="language-plaintext highlighter-rouge">/var/run</code>(or <code class="language-plaintext highlighter-rouge">/run</code>) 配下のディレクトリは自動で生成してくれないので、自動で生成するよう、 <code class="language-plaintext highlighter-rouge">/usr/lib/tmpfiles.d/var.conf</code> に以下の1行を追加する。（<code class="language-plaintext highlighter-rouge">/var/run</code>(or <code class="language-plaintext highlighter-rouge">/run</code>) ディレクトリは tmpfs を使用しているため、 OS 再起動後には消滅する。通常は、起動スクリプト内で生成するよう設定されていることが多いが、今回使用したスクリプト内では設定されていなかった。）<br />
+（当方ブログ過去記事「<a href="https://www.mk-mode.com/octopress/2015/12/08/linux-dir-file-automatic-creation-on-boot/" title="Linux - マシン起動時にディレクトリ・ファイルを自動作成！">Linux - マシン起動時にディレクトリ・ファイルを自動作成！</a>」も参照）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/usr/lib/tmpfiles.d/var.conf</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+</pre></td><td class="code"><pre>d /var/run/mysqld 0755 mysql root -
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>もしくは、 <code class="language-plaintext highlighter-rouge">mysqld_save</code> コマンド実行直前に以下のような記述を追加してもよいだろう。（当方、未確認）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/init.d/mysqld</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+</pre></td><td class="code"><pre>test -e /var/run/mysqld || install -m 755 -o mysql -g root -d /var/run/mysqld
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="15-環境変数-path-の設定">15. 環境変数 PATH の設定</h3>
+
+<p>mysql コマンドへのパスを設定するために /etc/profile の最終行に以下の記述を追加する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/profile</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="code"><pre><span class="nv">PATH</span><span class="o">=</span>/usr/local/mysql/bin:<span class="nv">$PATH</span>
+<span class="nb">export </span>PATH
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>そして、即時有効化。（マシン再起動でもよい）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># source /etc/profile
+</code></pre></div></div>
+
+<h3 id="16-起動再起動ステータス確認停止のテスト">16. 起動・再起動・ステータス確認・停止のテスト</h3>
+
+<p>起動・再起動・ステータス確認・停止ができるか確認する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># /etc/init.d/mysqld start
+# /etc/init.d/mysqld restart
+# /etc/init.d/mysqld status
+# /etc/init.d/mysqld stop
+</code></pre></div></div>
+
+<p>もちろん、”service” コマンドでも起動・再起動・ステータス確認・停止ができるはずです。</p>
+
+<p>また、 init サービスではなく systemd として使用したければ、 <code class="language-plaintext highlighter-rouge">apt install systemd-sysv</code> を実行して、マシンをリブートする。（systemd-sysv インストール済みなら、リブート不要かも？ <code class="language-plaintext highlighter-rouge">systemctl daemon-reload</code> のみでよいかも？）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl start mysqld
+# systemctl restart mysqld
+# systemctl status mysqld
+# systemctl stop mysqld
+</code></pre></div></div>
+
+<h3 id="17-セキュリティ設定">17. セキュリティ設定</h3>
+
+<p>MariaDB サーバが起動していることを確認し、root のバスワード設定、テストDB削除等を行う。<br />
+（root のパスワードのみ設定して、後はデフォルト（エンター押下）。但し、 root によるリモート接続を行いたければ Disallow root login remotely? で n 応答）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd /usr/local/mysql/bin
+# ./mysql_secure_installation
+</code></pre></div></div>
+
+<h3 id="18-動作確認">18. 動作確認</h3>
+
+<p>MariaDB サーバにログインしてみる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mysql -u root -p
+Enter password:        # &lt;= root パスワードで応答
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 18
+Server version: 10.3.9-MariaDB-log Source distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+root@localhost:(none) 17:21:08&gt; show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
++--------------------+
+3 rows in set (0.002 sec)
+
+root@localhost:(none) 17:21:11&gt; exit
+Bye
+</code></pre></div></div>
+
+<ul>
+  <li>上記の（やや複雑な）プロンプトは当方の設定によるもの。</li>
+</ul>
+
+<h3 id="19-自動起動の設定">19. 自動起動の設定</h3>
+
+<p>OS 起動時に自動で起動するように設定するには次のようにする。（以下は systemd-sysv で設定する場合）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl is-enabled mysqld
+mysqld.service is not a native service, redirecting to systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install is-enabled mysqld
+disabled
+
+# systemctl enable mysqld
+mysqld.service is not a native service, redirecting to systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable mysqld
+
+# systemctl is-enabled mysqld
+mysqld.service is not a native service, redirecting to systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install is-enabled mysqld
+enabled
+</code></pre></div></div>
+
+<h3 id="20-ファイアウォールufwの設定">20. ファイアウォール(ufw)の設定</h3>
+
+<p>TCP ポート 3306 を開放する。（リモートアクセスに必要）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ufw allow 3306/tcp
+Rule added
+
+# ufw status
+    :
+3306/tcp                   ALLOW       Anywhere
+    :
+</code></pre></div></div>
+
+<hr />
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/debian" class="page__taxonomy-item" rel="tag">Debian</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/mariadb" class="page__taxonomy-item" rel="tag">MariaDB</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2018-12-08T00:20:00+09:00">2018-12-08 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Debian+9+%28Stretch%29+-+MariaDB+10.3+%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89%EF%BC%88%E3%82%BD%E3%83%BC%E3%82%B9%E3%83%93%E3%83%AB%E3%83%89%EF%BC%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2018%2F12%2F08%2Fdebian-9-mariadb-installation-by-src%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2018%2F12%2F08%2Fdebian-9-mariadb-installation-by-src%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2018%2F12%2F08%2Fdebian-9-mariadb-installation-by-src%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2018/12/05/debian-9-systemd-timesyncd/" class="pagination--pager" title="Debian 9 (Stretch) - 時刻同期設定(systemd-timesyncd)！
+">Previous</a>
+    
+    
+      <a href="/2018/12/11/fortran95-nonlinear-equation-by-bisection/" class="pagination--pager" title="Fortran - 非線形方程式の解法（二分法）！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2018/12/08/debian-9-mariadb-installation-by-src/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2018/12/08/debian-9-mariadb-installation-by-src"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

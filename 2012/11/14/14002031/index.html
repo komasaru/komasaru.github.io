@@ -1,0 +1,995 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>玄箱HG - Debian 5.0(lenny) 化！ - mk-mode BLOG</title>
+<meta name="description" content="過去にも、何度か記事にしたことのある「玄箱/HG」についてです。Debian 3.0(woody) 化、Debian 3.1(sarge) 化、Debian 4.0(etch) 化、Fedora 7 化 〜 Fedora 12 化したりしてきました。今回は、今さらながら Debian 5.0(lenny) 化してみました。以前も、Debian 5.0(lenny) 化したことがありましたが、今回の方法が正しい方法です。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="玄箱HG - Debian 5.0(lenny) 化！">
+<meta property="og:url" content="https://komasaru.github.io/2012/11/14/14002031/">
+
+
+  <meta property="og:description" content="過去にも、何度か記事にしたことのある「玄箱/HG」についてです。Debian 3.0(woody) 化、Debian 3.1(sarge) 化、Debian 4.0(etch) 化、Fedora 7 化 〜 Fedora 12 化したりしてきました。今回は、今さらながら Debian 5.0(lenny) 化してみました。以前も、Debian 5.0(lenny) 化したことがありましたが、今回の方法が正しい方法です。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="玄箱HG - Debian 5.0(lenny) 化！">
+  <meta name="twitter:description" content="過去にも、何度か記事にしたことのある「玄箱/HG」についてです。Debian 3.0(woody) 化、Debian 3.1(sarge) 化、Debian 4.0(etch) 化、Fedora 7 化 〜 Fedora 12 化したりしてきました。今回は、今さらながら Debian 5.0(lenny) 化してみました。以前も、Debian 5.0(lenny) 化したことがありましたが、今回の方法が正しい方法です。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2012/11/14/14002031/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2012-11-14T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2012/11/14/14002031/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="玄箱HG - Debian 5.0(lenny) 化！">
+    <meta itemprop="description" content="過去にも、何度か記事にしたことのある「玄箱/HG」についてです。Debian 3.0(woody) 化、Debian 3.1(sarge) 化、Debian 4.0(etch) 化、Fedora 7 化 〜 Fedora 12 化したりしてきました。今回は、今さらながら Debian 5.0(lenny) 化してみました。以前も、Debian 5.0(lenny) 化したことがありましたが、今回の方法が正しい方法です。">
+    <meta itemprop="datePublished" content="November 14, 2012">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">玄箱HG - Debian 5.0(lenny) 化！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-11-14T00:20:00+09:00">2012-11-14 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>過去にも、何度か記事にしたことのある「玄箱/HG」についてです。</p>
+
+<p>Debian 3.0(woody) 化、Debian 3.1(sarge) 化、Debian 4.0(etch) 化、Fedora 7 化 〜 Fedora 12 化したりしてきました。</p>
+
+<p>今回は、今さらながら Debian 5.0(lenny) 化してみました。
+以前も、Debian 5.0(lenny) 化したことがありましたが、今回の方法が正しい方法です。</p>
+
+<!--more-->
+
+<h3 id="作業記録">作業記録</h3>
+
+<h4 id="0-前提条件">0. 前提条件</h4>
+
+<ul>
+  <li>「玄箱/HG」への Debian 5.0(lenny) の構築を想定。
+「玄箱」への構築も同様だが、一部使用するファイルが異なる。</li>
+  <li>シリアルコンソールは使用しない（ハンダ付けしていない）。</li>
+  <li>U-Boot 導入済み。</li>
+  <li>作業を行うマシンは Linux Mint 13 Maya
+Telnet 接続ができて、ZIP 展開ができて、FTP コマンドが使えれば、OS はなんでもよい。
+ファームウェアに Windows 用インストーラがあるからといって、Windows である必要もない。</li>
+</ul>
+
+<h4 id="1-事前準備">1. 事前準備</h4>
+
+<p>以下の計８個のファイルを作業用マシンにダウンロードしておく。
+※「玄箱/HG」ではなく「玄箱」に構築する場合は、使用するファイルが異なる場合があります。各サイトでご確認ください。</p>
+
+<ul>
+  <li>
+    <p>kuroutoshikou web page</p>
+  </li>
+  <li>
+    <p>玄箱/HGのファームウェア kurog101.zip<br />http://www.kuroutoshikou.com/products/kuro-box/kurog101.zip</p>
+  </li>
+  <li>
+    <p>Revulo’s Laboratory</p>
+  </li>
+  <li>debian-lenny-installer-kuroBOX-20090317.tgz<br />http://download.revulo.com/kuro-box/debian-lenny-installer-kuroBOX-20090317.tgz</li>
+  <li>debian-lenny-kuroBOX-20090317.tgz<br />http://cid-a95b9af71540ba41.skydrive.live.com/self.aspx/.Public/kuro-box/debian-lenny-kuroBOX-20090317.tgz</li>
+  <li>
+    <p>kuro-bootsel2-debian.tgz<br />http://download.revulo.com/kuro-box/kuro-bootsel2-debian.tgz</p>
+  </li>
+  <li>
+    <p>玄箱でNetBSDを動かす</p>
+  </li>
+  <li>
+    <p>kuro-bootsel2.20080419.tar.gz<br />http://kurobsd.ki.nu/download/testing/powerpc/selector/bootsel2/kuro-bootsel2.20080419.tar.gz</p>
+  </li>
+  <li>
+    <p>Genbako kernel collection</p>
+  </li>
+  <li>loader.o<br />http://www.genbako.com/loader.o/loader.o</li>
+  <li>kernelimage-2.6.25.1-kuroHG.tgz<br />http://www.genbako.com/kernelimage-2.6.25.1-kuroHG.tgz</li>
+  <li>modules-2.6.25.1-kuroHG.tgz<br />http://www.genbako.com/modules-2.6.25.1-kuroHG.tgz</li>
+</ul>
+
+<h4 id="2-玄箱hgのemモード化">2. 玄箱/HGのEMモード化</h4>
+
+<p>当方の場合、玄箱/HG に U-Boot 導入済みで、シリアルコンソールを使用しない環境なので、”netcat” コマンドで EM モードにする。
+※U-Boot, “netcat” については <a href="/2010/04/11/11002043/" title="玄箱HG - U-Boot化！">玄箱HG - U-Boot化！</a> を参照。
+U-Boot を使用しない環境なら、
+Kernel 2.4 系なら、</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># echo -n "NGNG" &gt; /dev/fl3
+</code></pre></div></div>
+
+<p>Kernel 2.6 系なら、</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># echo -n "NGNG" &gt; /dev/mtdblock2
+</code></pre></div></div>
+
+<p>でしょうか。
+その他、強制的に EM モード化する方法もあります。</p>
+
+<h4 id="3-玄箱hg-へログイン">3. 玄箱/HG へログイン</h4>
+
+<p>EM モードで起動した玄箱/HG へ Telnet で root でログインする。
+パスワードは kuroadmin (玄箱なら kuro)</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># telnet 192.168.11.21
+</code></pre></div></div>
+
+<p>IPアドレスはDHCP環境により異なります。</p>
+
+<h4 id="4-パーティション割り当て">4. パーティション割り当て</h4>
+
+<p>一旦、パーティションを全削除後、以下の容量で割り当てる。</p>
+<table>
+  <tr>
+    <th align="center">パーティション</th><th align="center">容量</th><th align="center">用途</th>
+  </tr>
+  <tr>
+    <td>/dev/hda1</td><td align="right">2 GB</td><td>MontaVista用</td>
+  </tr>
+  <tr>
+    <td>/dev/hda2</td><td align="right">256 MB</td><td>スワップ領域</td>
+  </tr>
+  <tr>
+    <td>/dev/hda3</td><td align="right">4 GB</td><td>Debian(lenny)用</td>
+  </tr>
+  <tr>
+    <td>/dev/hda4</td><td align="right">残り</td><td>データ用</td>
+  </tr>
+</table>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mfdisk -e /dev/hda
+# mfdisk -c /dev/hda
+</code></pre></div></div>
+
+<p>※ /dev/hda2 のパーティションタイプを “82 (Linux swap)” にすることに注意。
+※ “p” とか “n” とかで設定する。 “mfdisk” の基本的な使い方なのでここでは説明しない。別途お調べください。</p>
+
+<h4 id="5-パーティションフォーマット">5. パーティションフォーマット</h4>
+
+<p>割り当てたパーティションをフォーマットし、 /dev/hda1 を /mnt にマウントしておく。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mke2fs -j /dev/hda1
+# mke2fs -j /dev/hda3
+# mke2fs -j /dev/hda4
+# mkswap /dev/hda2
+# mount -t ext3 /dev/hda1 /mnt
+</code></pre></div></div>
+
+<p>※ “mke2fs”, “mkswap” の基本的な使い方なので詳細はここでは説明しない。別途お調べください。</p>
+
+<h4 id="6ファームウェアの展開">6．ファームウェアの展開</h4>
+
+<p>作業用マシンで、玄箱/HG のファームウェア “kurog101.zip” を展開し、現れた “image.zip” をさらに展開する。
+現れた “tmpimage.tgz” だけを、玄箱/HG の “/mnt” ディレクトリに FTP 転送する。
+※FTP コマンドについては、基本的なことなのでここでは説明しない。
+そして、玄箱/HG 側で “/mnt” ディレクトリに移動し、”tmpimage.tgz” を展開する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd /mnt
+# tar zxvf tmpimage.tgz
+</code></pre></div></div>
+
+<h4 id="7-玄箱hgのemモード解除">7. 玄箱/HGのEMモード解除</h4>
+
+<p>当方、U-Boot 導入済みで、シリアルコンソールを使用しない環境なので、”netcat” コマンドで EM モードを解除する。
+一般的には、Kernel 2.4 系なら、</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># echo -n "OKOK" &gt; /dev/fl3
+</code></pre></div></div>
+
+<p>Kernel 2.6 系なら、</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># echo -n "OKOK" &gt; /dev/mtdblock2
+</code></pre></div></div>
+
+<p>でしょうか。</p>
+
+<h4 id="8-玄箱hg-のリブート">8. 玄箱/HG のリブート</h4>
+
+<p>玄箱/HG をリブートする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># reboot
+</code></pre></div></div>
+
+<h4 id="9-lenny化用ファイルの転送">9. lenny化用ファイルの転送</h4>
+
+<p>以下の７個のファイルを 玄箱/HG の /tmp ディレクトリに FTP 転送する。</p>
+
+<ul>
+  <li>debian-lenny-installer-kuroBOX-20090317.tgz</li>
+  <li>debian-lenny-kuroBOX-20090317.tgz</li>
+  <li>kuro-bootsel2-debian.tgz</li>
+  <li>kuro-bootsel2.20080419.tar.gz</li>
+  <li>loader.o</li>
+  <li>kernelimage-2.6.25.1-kuroHG.tgz</li>
+  <li>modules-2.6.25.1-kuroHG.tgz</li>
+</ul>
+
+<h4 id="10-lenny-インストール">10. lenny インストール</h4>
+
+<p>玄箱/HG 側で、”/tmp” ディレクトリに移動し、”debian-lenny-installer-kuroBOX-20090317.tgz” を展開する。
+そして、展開して現れたファイルのうち、玄箱/HG 用のインストールスクリプトを実行する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd /tmp
+# tar zxvf debian-lenny-installer-kuroBOX-20090317.tgz
+# sh debian-lenny-installer-kuroHG.sh
+</code></pre></div></div>
+
+<p>これで、”/dev/hda3” に Debian(lenny) がインストールされる。
+また、起動時に “/dev/hda1” ではなく “/dev/hda3” がルートになるようになる。</p>
+
+<h4 id="11-ネットワークの設定">11. ネットワークの設定</h4>
+
+<p>ここで、ネットワークの設定をしておかないと、玄箱/HG をリブートした時に Telnet 接続できなくなる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># vi /mnt/etc/hostname
+# vi /mnt/etc/hosts
+# vi /mnt/etc/resolve.conf
+# vi /mnt/etc/network/interfaces
+</code></pre></div></div>
+
+<p>自分の環境に合わせて修正する。
+各ファイルの内容はよくある Linux でのネットワーク設定なので、ここでは説明しない。各自お調べください。</p>
+
+<h4 id="12-玄箱hg-のリブート">12. 玄箱/HG のリブート</h4>
+
+<p>以上の設定が完了したら、玄箱/HG をリブートする。
+Debian lennyが起動する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># reboot
+</code></pre></div></div>
+
+<h4 id="13-玄箱hg-debian-lenny-へログイン">13. 玄箱/HG Debian lenny へログイン</h4>
+
+<p>起動したら、Telnet でログインする。
+ユーザ名/パスワードは “tmp-kun/tmp-kun”
+root ユーザのパスワードは “root”。
+仮に、ログインできないようなら、これまでの設定が誤っている可能性があるので、見直してみる。</p>
+
+<h4 id="14ユーザ作成等">14．ユーザ作成等</h4>
+
+<p>新たにユーザを作成したり、tmp-kun ユーザを削除したり、root のパスワードを変更したりする。</p>
+
+<h4 id="15-パブリックキー設定">15. パブリックキー設定</h4>
+
+<p>以下のコマンドで、パブリックキーを設定する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># aptitude install debian-archive-keyring
+</code></pre></div></div>
+
+<h4 id="16-debian-lenny-アップデート">16. Debian lenny アップデート</h4>
+
+<p>以下のコマンドで、Debian lenny をアップデートする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># aptitude update
+# aptitude safe-upgrade
+</code></pre></div></div>
+
+<p>これで、lenny 化は完了。
+あとは、通常の Debian GNU/Linux として使用すればよい。
+※しかし、2012/02/06 で Debian Lennyのセキュリティサポートの提供が終了しているので、パッケージリストの更新 “apt-get update” が効かない。
+※さらに、Debian 6.0(squeeze) へアップグレードした方がよさそう。</p>
+
+<h4 id="参考サイト">参考サイト</h4>
+
+<ul>
+  <li><a href="http://www.revulo.com/kuro-box/Debian/lenny.html" title="玄箱に Debian 5.0 (lenny) をインストールする - Revulo's Laboratory">玄箱に Debian 5.0 (lenny) をインストールする - Revulo’s Laboratory</a></li>
+</ul>
+
+<h4 id="その他">その他</h4>
+
+<p>直接 Debian lenny を起動せずに、一旦 MontaVista Linux を経由してから起動するようになっている。
+Kernel バージョンの違いにより直接起動できないからだ。</p>
+
+<p>ちなみに、MontaVista Linux ではなく Debian etch を経由させる方法もあるようだ。
+しかし、当方の場合、etch と lenny が交互に起動するという現象に陥ってしまうので、MontaVista Linux 経由で lenny を起動させるようにした。</p>
+
+<p>また、冒頭にも記載したが、「玄箱/HG」でなく「玄箱」の場合は使用するファイルが異なるものもある。（「玄箱」、「玄箱/HG」共通で使えるファイルもある）
+「玄箱」への構築の場合は、各サイトでご確認ください。</p>
+
+<hr />
+
+<p>RAM 128MB ほどの NAS マシンなので、１台であれこれやろうとするとさすがに重くなって使い物になりませんが、ファイルサーバくらいには十分活用できます。</p>
+
+<p>ちなみに、Debian 5.0(lenny) は 2012/02/06 でセキュリティサポートの提供が終了しているようなので、Debian 6.0(squeeze) 化も目論んでいるところであります。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/debian" class="page__taxonomy-item" rel="tag">Debian</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E7%8E%84%E7%AE%B1" class="page__taxonomy-item" rel="tag">玄箱</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-11-14T00:20:00+09:00">2012-11-14 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E7%8E%84%E7%AE%B1HG+-+Debian+5.0%28lenny%29+%E5%8C%96%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2012%2F11%2F14%2F14002031%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2012%2F11%2F14%2F14002031%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2012%2F11%2F14%2F14002031%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2012/11/12/12002031/" class="pagination--pager" title="Ruby - 非線形方程式の解法（２分法）！
+">Previous</a>
+    
+    
+      <a href="/2012/11/15/15002004/" class="pagination--pager" title="玄箱HG - Debian 6.0(squeeze) 化！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2012/11/14/14002031/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2012/11/14/14002031"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

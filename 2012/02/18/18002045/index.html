@@ -1,0 +1,914 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>株価 - 売買サインチェック（単純移動平均・ゴールデンクロス/デッドクロス版）！ - mk-mode BLOG</title>
+<meta name="description" content="Ruby + MySQL で自作した株価取得のシステム。全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。今回は、単純移動平均線（= SMA）のゴールデンクロス・デッドクロスを買いサイン・売りサインとした場合のその後の株価の変動を検証してみました。※全体的にどんな傾向があるのかを把握するのと、Ruby の学習が目的です。個人的な記録ですので、興味が無ければ読み飛ばしてください。ゴールデンクロス（デッドクロス）とは短期と長期の移動平均線を計算し、短期の値が長期の値を上抜けた（下抜けた）場合のことを言います。株式用語については、ここでは詳しく説明しません。Web等で調べてください。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="株価 - 売買サインチェック（単純移動平均・ゴールデンクロス/デッドクロス版）！">
+<meta property="og:url" content="https://komasaru.github.io/2012/02/18/18002045/">
+
+
+  <meta property="og:description" content="Ruby + MySQL で自作した株価取得のシステム。全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。今回は、単純移動平均線（= SMA）のゴールデンクロス・デッドクロスを買いサイン・売りサインとした場合のその後の株価の変動を検証してみました。※全体的にどんな傾向があるのかを把握するのと、Ruby の学習が目的です。個人的な記録ですので、興味が無ければ読み飛ばしてください。ゴールデンクロス（デッドクロス）とは短期と長期の移動平均線を計算し、短期の値が長期の値を上抜けた（下抜けた）場合のことを言います。株式用語については、ここでは詳しく説明しません。Web等で調べてください。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="株価 - 売買サインチェック（単純移動平均・ゴールデンクロス/デッドクロス版）！">
+  <meta name="twitter:description" content="Ruby + MySQL で自作した株価取得のシステム。全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。今回は、単純移動平均線（= SMA）のゴールデンクロス・デッドクロスを買いサイン・売りサインとした場合のその後の株価の変動を検証してみました。※全体的にどんな傾向があるのかを把握するのと、Ruby の学習が目的です。個人的な記録ですので、興味が無ければ読み飛ばしてください。ゴールデンクロス（デッドクロス）とは短期と長期の移動平均線を計算し、短期の値が長期の値を上抜けた（下抜けた）場合のことを言います。株式用語については、ここでは詳しく説明しません。Web等で調べてください。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2012/02/18/18002045/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2012-02-18T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2012/02/18/18002045/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="株価 - 売買サインチェック（単純移動平均・ゴールデンクロス/デッドクロス版）！">
+    <meta itemprop="description" content="Ruby + MySQL で自作した株価取得のシステム。全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。今回は、単純移動平均線（= SMA）のゴールデンクロス・デッドクロスを買いサイン・売りサインとした場合のその後の株価の変動を検証してみました。※全体的にどんな傾向があるのかを把握するのと、Ruby の学習が目的です。個人的な記録ですので、興味が無ければ読み飛ばしてください。ゴールデンクロス（デッドクロス）とは短期と長期の移動平均線を計算し、短期の値が長期の値を上抜けた（下抜けた）場合のことを言います。株式用語については、ここでは詳しく説明しません。Web等で調べてください。">
+    <meta itemprop="datePublished" content="February 18, 2012">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">株価 - 売買サインチェック（単純移動平均・ゴールデンクロス/デッドクロス版）！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-02-18T00:20:00+09:00">2012-02-18 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。</p>
+
+<p>今回は、単純移動平均線（= SMA）のゴールデンクロス・デッドクロスを買いサイン・売りサインとした場合のその後の株価の変動を検証してみました。
+※全体的にどんな傾向があるのかを把握するのと、Ruby の学習が目的です。</p>
+
+<p>個人的な記録ですので、興味が無ければ読み飛ばしてください。</p>
+
+<p>ゴールデンクロス（デッドクロス）とは短期と長期の移動平均線を計算し、短期の値が長期の値を上抜けた（下抜けた）場合のことを言います。
+株式用語については、ここでは詳しく説明しません。Web等で調べてください。</p>
+
+<!--more-->
+
+<p>以下に、前提条件・検証結果を掲載します。</p>
+
+<h3 id="１前提条件">１．前提条件</h3>
+
+<h4 id="１定義">１．定義</h4>
+
+<p>何を以って、買いサイン・売りサインと見なすかですが、今回は</p>
+
+<ul>
+  <li>その日の短期SMAが長期SMAを上回った場合を「買いサイン」</li>
+  <li>その日の短期SMAが長期SMAを下回った場合を「売りサイン」</li>
+</ul>
+
+<p>としました。</p>
+
+<p><img src="/images/2012/02/SIGNAL_CROSS.jpg" alt="SIGNAL_CROSS" title="SIGNAL_CROSS" /></p>
+
+<p>検証した短期SMAと長期SMAの日数の組み合わせは、[5, 25], [5, 75], [25, 75] です。
+また、調整後終値（株式分割があった場合の調整値）を考慮していません。</p>
+
+<h4 id="２検証銘柄と検証期間">２．検証銘柄と検証期間</h4>
+
+<p>2012年2月14日現在上場している全市場の3,600銘柄を対象に、2000年1月1日から2011年12月31日の株価データを使用して検証しました。
+また、複数の市場に上場している銘柄については、優先市場のみで検証しました。
+※2012/02/19 修正（売買サイン判定基準を微調整）
+※全取引件数は 7,963,439 件</p>
+
+<h3 id="２検証結果">２．検証結果</h3>
+
+<h4 id="１サインが発生した件数">１．サインが発生した件数</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SIGN       (  5 )    ( 25 )    ( 75 )
+[Long ]   215,427   109,335    57,546
+[Short]   217,327   111,352    59,761
+</code></pre></div></div>
+
+<p>５日で計算するよりも25日、25日で計算するよりも75日の方が絞られる。</p>
+
+<h4 id="２各サイン発生日後に上昇変動なし下降した件数">２．各サイン発生○日後に上昇・変動なし・下降した件数</h4>
+
+<p>以下は [ 短期EMA=5日, 長期EMA=25日 ] で計算した場合です。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[SIGN][DAYS]  [UP   ] (     %)  [EVEN ] (     %)  [DOWN ] (     %)
+Long  (  1 )   85,389 (39.65%)   25,071 (11.64%)  104,881 (48.70%)
+Long  (  2 )   88,050 (40.90%)   15,488 ( 7.19%)  111,744 (51.91%)
+Long  (  3 )   88,727 (41.23%)   12,148 ( 5.64%)  114,341 (53.13%)
+Long  (  4 )   89,082 (41.41%)   10,360 ( 4.82%)  115,676 (53.77%)
+Long  (  5 )   89,435 (41.59%)    9,172 ( 4.27%)  116,422 (54.14%)
+Long  (  6 )   90,185 (41.96%)    8,383 ( 3.90%)  116,381 (54.14%)
+Long  (  7 )   90,558 (42.14%)    7,602 ( 3.54%)  116,717 (54.32%)
+Long  (  8 )   90,988 (42.36%)    7,109 ( 3.31%)  116,721 (54.33%)
+Long  (  9 )   91,206 (42.47%)    6,557 ( 3.05%)  117,003 (54.48%)
+Long  ( 10 )   91,618 (42.67%)    6,264 ( 2.92%)  116,816 (54.41%)
+Long  ( 11 )   91,935 (42.84%)    5,836 ( 2.72%)  116,837 (54.44%)
+Long  ( 12 )   92,518 (43.13%)    5,615 ( 2.62%)  116,381 (54.25%)
+Long  ( 13 )   92,802 (43.30%)    5,349 ( 2.50%)  116,173 (54.20%)
+Long  ( 14 )   92,934 (43.38%)    5,124 ( 2.39%)  116,160 (54.23%)
+Long  ( 15 )   93,224 (43.55%)    4,902 ( 2.29%)  115,955 (54.16%)
+Long  ( 16 )   93,484 (43.70%)    4,709 ( 2.20%)  115,729 (54.10%)
+Long  ( 17 )   93,756 (43.88%)    4,538 ( 2.12%)  115,359 (53.99%)
+Long  ( 18 )   93,915 (44.00%)    4,430 ( 2.08%)  115,110 (53.93%)
+Long  ( 19 )   93,718 (43.99%)    4,336 ( 2.04%)  114,977 (53.97%)
+Long  ( 20 )   93,897 (44.14%)    4,199 ( 1.97%)  114,616 (53.88%)
+Long  ( 21 )   93,728 (44.11%)    3,998 ( 1.88%)  114,752 (54.01%)
+Long  ( 22 )   93,520 (44.04%)    3,929 ( 1.85%)  114,893 (54.11%)
+Long  ( 23 )   93,521 (44.07%)    3,837 ( 1.81%)  114,873 (54.13%)
+Long  ( 24 )   93,583 (44.11%)    3,691 ( 1.74%)  114,881 (54.15%)
+Long  ( 25 )   93,568 (44.11%)    3,664 ( 1.73%)  114,869 (54.16%)
+Short (  1 )   98,457 (45.33%)   25,913 (11.93%)   92,839 (42.74%)
+Short (  2 )  102,872 (47.39%)   16,487 ( 7.60%)   97,699 (45.01%)
+Short (  3 )  104,284 (48.07%)   13,083 ( 6.03%)   99,556 (45.89%)
+Short (  4 )  104,672 (48.28%)   11,068 ( 5.10%)  101,083 (46.62%)
+Short (  5 )  104,855 (48.38%)    9,863 ( 4.55%)  102,014 (47.07%)
+Short (  6 )  104,272 (48.14%)    8,940 ( 4.13%)  103,375 (47.73%)
+Short (  7 )  104,003 (48.06%)    8,318 ( 3.84%)  104,077 (48.10%)
+Short (  8 )  103,835 (48.03%)    7,627 ( 3.53%)  104,737 (48.44%)
+Short (  9 )  103,385 (47.87%)    7,333 ( 3.40%)  105,230 (48.73%)
+Short ( 10 )  102,822 (47.64%)    6,862 ( 3.18%)  106,138 (49.18%)
+Short ( 11 )  102,468 (47.50%)    6,495 ( 3.01%)  106,762 (49.49%)
+Short ( 12 )  102,083 (47.34%)    6,120 ( 2.84%)  107,431 (49.82%)
+Short ( 13 )  101,699 (47.17%)    5,875 ( 2.73%)  108,017 (50.10%)
+Short ( 14 )  101,106 (46.91%)    5,743 ( 2.66%)  108,677 (50.42%)
+Short ( 15 )  100,823 (46.80%)    5,477 ( 2.54%)  109,140 (50.66%)
+Short ( 16 )  100,509 (46.67%)    5,251 ( 2.44%)  109,615 (50.89%)
+Short ( 17 )  100,282 (46.57%)    5,161 ( 2.40%)  109,890 (51.03%)
+Short ( 18 )   99,934 (46.42%)    4,942 ( 2.30%)  110,401 (51.28%)
+Short ( 19 )   99,838 (46.39%)    4,859 ( 2.26%)  110,534 (51.36%)
+Short ( 20 )   99,648 (46.31%)    4,795 ( 2.23%)  110,746 (51.46%)
+Short ( 21 )   99,564 (46.28%)    4,696 ( 2.18%)  110,879 (51.54%)
+Short ( 22 )   99,644 (46.33%)    4,531 ( 2.11%)  110,900 (51.56%)
+Short ( 23 )   99,612 (46.33%)    4,318 ( 2.01%)  111,091 (51.67%)
+Short ( 24 )   99,577 (46.33%)    4,253 ( 1.98%)  111,085 (51.69%)
+Short ( 25 )   99,562 (46.35%)    4,191 ( 1.95%)  111,052 (51.70%)
+</code></pre></div></div>
+
+<p>特に大きな特徴はないように思える。
+[ 短期SMA=5日, 長期SMA=75日 ]、[ 短期SMA=25日, 長期SMA=75日 ] で計算して検証した結果は掲載していないが、同じような結果となっていた。</p>
+
+<h4 id="３何日後に最も上昇買い下降売りしたか">３．何日後に最も上昇（買い）/下降（売り）したか</h4>
+
+<p>買いサイン発生後、何日後に最も上昇したか、
+売りサイン発生後、何日後に最も下降したか、を検証。
+以下は [ 短期SMA=5日, 長期SMA=25日 ] で計算した場合です。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[DAYS]   [Long ]  [Short]
+(  1 )    35,850   27,941
+(  2 )    20,016   17,285
+(  3 )    15,119   13,461
+(  4 )    12,470   11,711
+(  5 )    11,063   10,695
+(  6 )    10,060   10,028
+(  7 )     9,172    9,571
+(  8 )     8,625    8,992
+(  9 )     8,148    8,564
+( 10 )     7,788    8,400
+( 11 )     7,403    8,263
+( 12 )     7,508    8,408
+( 13 )     7,407    8,427
+( 14 )     7,275    8,254
+( 15 )     7,421    8,227
+( 16 )     7,221    8,235
+( 17 )     7,479    8,442
+( 18 )     7,702    8,680
+( 19 )     7,839    9,129
+( 20 )     7,844    9,676
+( 21 )     8,746   10,062
+( 22 )     9,406   10,942
+( 23 )    10,485   12,615
+( 24 )    13,247   15,359
+( 25 )    22,037   25,271
+</code></pre></div></div>
+
+<p>買い（売り）サインが発生した翌日と25日後に大きく上昇（下降）している。
+[ 短期SMA=5日, 長期SMA=75日 ]、[ 短期SMA=25日, 長期SMA=75日 ] で計算して検証した結果は掲載していないが、[ 短期SMA=5日, 長期SMA=75日 ]では翌日と75日後に、[ 短期SMA=25日, 長期SMA=75日 ] でも翌日と75日後に大きく上昇（下降）していた。</p>
+
+<h4 id="４買いサイン発生から売りサイン発生までの間隔と差が--か-０-か--を集計">４．買いサイン発生から売りサイン発生までの間隔と差が ＋ か ０ か − を集計</h4>
+
+<p>以下は [ 短期SMA=5日, 長期SMA=25日 ] で計算した場合です。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[DAYS]    [UP   ]   [EVEN ]   [DOWN ]
+(  1 )      1,530     1,256    11,179
+(  2 )        810       456     9,061
+(  3 )        574       294     9,101
+(  4 )        326       169     9,834
+(  5 )         30        44    11,815
+   :          :         :         :
+( 21 )      1,849       200     2,497
+( 22 )      1,983       167     1,933
+( 23 )      2,069       146     1,497
+( 24 )      1,992       117     1,126
+( 25 )      1,895        98       820
+   :          :         :         :
+</code></pre></div></div>
+
+<p>買いサインが発生した直後は株価が下降するが22日後頃から上昇する傾向にある。
+[ 短期SMA=5日, 長期SMA=75日 ]、[ 短期SMA=25日, 長期SMA=75日 ] で計算して検証した結果は掲載していないが、[ 短期SMA=5日, 長期SMA=75日 ] では54日後頃から、[ 短期SMA=25日, 長期SMA=75日 ] では68日後頃から上昇する傾向にあった。</p>
+
+<hr />
+
+<p>先日からやっている単純移動平均や指数移動平均の終値の上抜け・下抜け具合から買いサイン・売りサインを判定するよりは、若干ですが有効性はありそうに感じました。</p>
+
+<p>Ruby 学習の延長で検証作業を行ってみましたが、こうして実際に実用的な何かを作成してみることで知識も深まっていきます。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/mysql" class="page__taxonomy-item" rel="tag">MySQL</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%A0%AA%E5%BC%8F" class="page__taxonomy-item" rel="tag">株式</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-02-18T00:20:00+09:00">2012-02-18 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E6%A0%AA%E4%BE%A1+-+%E5%A3%B2%E8%B2%B7%E3%82%B5%E3%82%A4%E3%83%B3%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%EF%BC%88%E5%8D%98%E7%B4%94%E7%A7%BB%E5%8B%95%E5%B9%B3%E5%9D%87%E3%83%BB%E3%82%B4%E3%83%BC%E3%83%AB%E3%83%87%E3%83%B3%E3%82%AF%E3%83%AD%E3%82%B9%2F%E3%83%87%E3%83%83%E3%83%89%E3%82%AF%E3%83%AD%E3%82%B9%E7%89%88%EF%BC%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2012%2F02%2F18%2F18002045%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2012%2F02%2F18%2F18002045%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2012%2F02%2F18%2F18002045%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2012/02/16/16002013/" class="pagination--pager" title="Ruby on Rails - 3.1.3 から 3.2.1 へアップグレード！
+">Previous</a>
+    
+    
+      <a href="/2012/02/19/19002009/" class="pagination--pager" title="株価 - 売買サインチェック（指数移動平均・ゴールデンクロス/デッドクロス版）！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2012/02/18/18002045/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2012/02/18/18002045"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

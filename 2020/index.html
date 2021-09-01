@@ -1,0 +1,2337 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>mk-mode BLOG</title>
+<meta name="description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="mk-mode BLOG">
+<meta property="og:url" content="https://komasaru.github.io/2020/">
+
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="mk-mode BLOG">
+  <meta name="twitter:description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2020/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2020-01-01T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2020/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--archive-taxonomy wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      <div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <div class="archive">
+    <h1 class="page__title"></h1>
+    <div id="google-ad-1"></div>
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/12/16/cpp-lorenz-attractor-by-runge-kutta-method/" rel="permalink">C++ - ローレンツ・アトラクタ（Runge-Kutta 法）
+</a>
+        &nbsp;<small>(2020-12-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ でローレンツ・アトラクタの計算をしてみました。
+今回は、微分方程式の近似解法に Runge-Kutta（ルンゲ＝クッタ）法を使用します。
+
+前回は、微分方程式の近似解法に Euler（オイラー）法を使用しています。
+
+
+  C++ - ローレンツ・アトラクタ（Euler 法）
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/12/09/cpp-lorenz-attractor-by-euler-method/" rel="permalink">C++ - ローレンツ・アトラクタ（Euler 法）
+</a>
+        &nbsp;<small>(2020-12-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ でローレンツ・アトラクタの計算をしてみました。
+今回は、微分方程式の近似解法に Euler（オイラー）法を使用します。
+
+過去には Ruby や Python で同様のことをしています。
+
+
+  Ruby - ローレンツ・アトラクタ（Euler 法）！
+  Python - ローレンツ・アトラクタ（Eul...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/12/02/cpp-convert-infix-to-rpn-by-binary-tree/" rel="permalink">C++ - 数式文字列 =&gt; 逆ポーランド記法 変換＆計算（二分木使用）！
+</a>
+        &nbsp;<small>(2020-12-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、入力した数式の文字列を逆ポーランド記法（RPN; 後置記法）に変換する処理を実装してみました。（ついでに、後置・中置・前置記法での計算も）
+前回・前々回はスタックを使用した処理についてでした。
+
+
+  C++ - 数式文字列 =&gt; 逆ポーランド記法 変換！
+  C++ - 逆ポーランド記法の評価...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/12/01/blog-access/" rel="permalink">2020年11月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2020-12-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">12月になりましたので、先月11月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/11/25/cpp-calc-with-rpn-stack/" rel="permalink">C++ - 逆ポーランド記法の評価（計算）！
+</a>
+        &nbsp;<small>(2020-11-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で、入力した数式の文字列を逆ポーランド記法（RPN; 後置記法）に変換する処理を実装してみました。（スタック使用）
+
+
+  C++ - 数式文字列 =&gt; 逆ポーランド記法 変換！
+
+
+今回は、出力された逆ポーランド記法での表現を読み込んで計算する処理を実装してみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/11/18/cpp-convert-infix-to-rpn-with-stack/" rel="permalink">C++ - 数式文字列 =&gt; 逆ポーランド記法 変換（スタック使用）！
+</a>
+        &nbsp;<small>(2020-11-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、入力した数式の文字列を逆ポーランド記法（RPN; 後置記法）に変換する処理を実装してみました。
+今回はスタックを使用した処理です。（後日、二分木を使用した処理についても紹介予定）
+逆ポーランド記法の数式文字列から値を計算する処理（逆ポーランド計算機）については、次回紹介予定です。
+
+ちなみに、過去には...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/11/11/ruby-convert-infix-to-rpn-by-binary-tree/" rel="permalink">Ruby - 数式文字列 =&gt; 逆ポーランド記法 変換＆計算（二分木使用）！
+</a>
+        &nbsp;<small>(2020-11-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby で、入力した数式の文字列を逆ポーランド記法（RPN; 後置記法）に変換する処理を実装してみました。（ついでに、後置・中置・前置記法での計算も）
+前回・前々回はスタックを使用した処理についてでした。
+
+
+  Ruby - 数式文字列 =&gt; 逆ポーランド記法 変換（スタック使用）！
+  Ruby - ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/11/04/ruby-calc-with-rpn-stack/" rel="permalink">Ruby - 逆ポーランド記法の評価（計算）！
+</a>
+        &nbsp;<small>(2020-11-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 Ruby で、入力した数式の文字列を逆ポーランド記法（RPN; 後置記法）に変換する処理を実装してみました。（スタック使用）
+
+
+  Ruby - 数式文字列 =&gt; 逆ポーランド記法 変換！
+
+
+今回は、出力された逆ポーランド記法での表現を読み込んで計算する処理を実装してみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/11/01/blog-access/" rel="permalink">2020年10月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2020-11-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">11月になりましたので、先月10月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/10/28/ruby-convert-infix-to-rpn-with-stack/" rel="permalink">Ruby - 数式文字列 =&gt; 逆ポーランド記法 変換（スタック使用）！
+</a>
+        &nbsp;<small>(2020-10-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby で、入力した数式の文字列を逆ポーランド記法（RPN; 後置記法）に変換する処理を実装してみました。
+今回はスタックを使用した処理です。（後日、二分木を使用した処理についても紹介予定）
+逆ポーランド記法の数式文字列から値を計算する処理（逆ポーランド計算機）については、次回紹介予定です。
+
+ちなみに、過去に...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/10/21/cpp-geodesical-calculation-by-vincenty-2/" rel="permalink">C++ - Vincenty 法による地球楕円体上の位置計算！
+</a>
+        &nbsp;<small>(2020-10-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">地球楕円体上の任意の2地点間の距離やそれぞれから見た方位角、また、1地点から見た方位角・距離にある地点の位置等を計算するために Vincenty 法なるアルゴリズムが存在します。
+
+前回、 C++ で「地球楕円体上の任意の2地点間の距離やそれぞれから見た方位角」の計算処理を実装してみました。
+今回は、 C++ で...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/10/14/cpp-geodesical-calculation-by-vincenty-1/" rel="permalink">C++ - Vincenty 法による地球楕円体上の距離計算！
+</a>
+        &nbsp;<small>(2020-10-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">地球楕円体上の任意の2地点間の距離やそれぞれから見た方位角、また、1地点から見た方位角・距離にある地点の位置等を計算するために Vincenty 法なるアルゴリズムが存在します。
+
+今回、 C++ で「地球楕円体上の任意の2地点間の距離やそれぞれから見た方位角」の計算処理を実装してみました。
+
+過去には、 Rub...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/10/07/cpp-rcc-kendall/" rel="permalink">C++ - ケンドール順位相関係数の計算！
+</a>
+        &nbsp;<small>(2020-10-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ でケンドールの順位相関係数(Kendall’s Rank Correlation Coefficient)の計算をしてみました。
+
+過去には Ruby や Fortran で行っています。
+
+
+  Ruby - ケンドール順位相関係数の計算！
+  Fortran - ケンドール順位相関係数の計算！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/10/01/blog-access/" rel="permalink">2020年9月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2020-10-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">10月になりましたので、先月9月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/09/30/cpp-rcc-spearman/" rel="permalink">C++ - スピアマン順位相関係数の計算！
+</a>
+        &nbsp;<small>(2020-09-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ でスピアマンの順位相関係数(Spearman’s Rank Correlation Coefficient)の計算をしてみました。
+
+過去には Ruby や Fortran で行っています。
+
+
+  Ruby - スピアマン順位相関係数の計算！
+  Fortran - スピアマン順位相関係数の計算！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/09/23/cpp-ranking-with-same-rank-2/" rel="permalink">C++ - ランク付け（同順位は中央順位法で）！
+</a>
+        &nbsp;<small>(2020-09-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で複数の整数入力値にランクを付ける処理（同順位考慮）を実装してみましたが、今回はその発展形として、同順位（タイ）がある場合は中央（平均）順位(mid-rank)法で順位を付けるようにしてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/09/16/cpp-ranking-with-same-rank/" rel="permalink">C++ - ランク付け（同順位考慮）！
+</a>
+        &nbsp;<small>(2020-09-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で複数の整数入力値にランクを付ける処理（同順位考慮）を実装してみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/09/09/cpp-binomial-coefficients/" rel="permalink">C++ - 二項係数の計算！
+</a>
+        &nbsp;<small>(2020-09-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で二項係数の計算をしてみました。（各種計算式を使用して）
+
+過去には Ruby や Fortran で計算しています。
+
+
+  Ruby - 二項係数の計算！
+  Fortran - 二項係数の計算！ 
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/09/02/cpp-real-number-judgment/" rel="permalink">C++ - 実数判定（正規表現）！
+</a>
+        &nbsp;<small>(2020-09-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で文字列が実数か否かを正規表現を使用して判定する方法についてです。
+（別途作成予定のツールで部品として使用するための事前準備）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/09/01/blog-access/" rel="permalink">2020年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2020-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/08/26/cpp-integer-judgment/" rel="permalink">C++ - 整数判定（正規表現）！
+</a>
+        &nbsp;<small>(2020-08-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で文字列が整数か否かを正規表現を使用して判定する方法についてです。
+（別途作成予定のツールで部品として使用するための事前準備）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/08/19/cpp-factorial-calculation/" rel="permalink">C++ - 階乗計算(with GMP)！
+</a>
+        &nbsp;<small>(2020-08-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で任意精度算術ライブラリ GMP(The GNU Multi Precision Arithmetic Library) を使って、階乗の計算をしてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/08/12/cpp-spline-interpolation/" rel="permalink">C++ - 3次スプライン補間！
+</a>
+        &nbsp;<small>(2020-08-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で3次スプライン補間のアルゴリズムを実装してみました。
+
+過去には Ruby, Python, Fortran で実装しています。
+
+
+  Ruby - ３次スプライン補間！
+  Python - ３次スプライン補間！
+  Fortran - ３次スプライン補間！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/08/07/cpp-lu-decomposition-by-crout/" rel="permalink">C++ - LU 分解（クラウト法(Crout method)）！
+</a>
+        &nbsp;<small>(2020-08-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で正方行列の LU 分解アルゴリズムを実装してみました。
+
+今回使用する分解法は「クラウト法(Crout method)」です。
+
+過去には Ruby, Fortran で実装しています。
+
+
+  Ruby - LU 分解（クラウト法(Crout method)）！
+  Fortran - LU 分解（ク...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/08/02/cpp-lu-decomposition-by-inner-product/" rel="permalink">C++ - LU 分解（内積形式ガウス法(inner-product form)）！
+</a>
+        &nbsp;<small>(2020-08-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で正方行列の LU 分解アルゴリズムを実装してみました。
+
+今回使用する分解法は「内積形式ガウス法(inner-product form)」です。
+
+過去には Ruby, Fortran で実装しています。
+
+
+  Ruby - LU 分解（内積形式ガウス法(inner-product form)）！
+ ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/08/01/blog-access/" rel="permalink">2020年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2020-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/07/28/cpp-lu-decomposition-by-outer-product/" rel="permalink">C++ - LU 分解（外積形式ガウス法(outer-product form)）！
+</a>
+        &nbsp;<small>(2020-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で正方行列の LU 分解アルゴリズムを実装してみました。
+
+今回使用する分解法は「外積形式ガウス法(outer-product form)」です。
+
+過去には Ruby, Fortran で実装しています。
+
+
+  Ruby - LU 分解（外積形式ガウス法(outer-product form)）！
+ ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/07/23/cpp-adjusted-coefficient-of-determination/" rel="permalink">C++ - 重回帰分析・自由度調整済み決定係数の計算！
+</a>
+        &nbsp;<small>(2020-07-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">重回帰分析における自由度調整済み決定係数の計算を C++ で行ってみました。
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran - 重回帰分析・自由度調整済み決定係数の計算！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/07/18/cpp-multiple-regression-function-2d/" rel="permalink">C++ - 重回帰分析（2次多項式モデル）！
+</a>
+        &nbsp;<small>(2020-07-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、数値からなる同サイズの配列3個を説明変数2個・目的変数1個とみなして重回帰式を計算する方法についての記録です。（今回は2次多項式モデル）
+連立1次方程式を解くのに「ガウスの消去法」を使用します。
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran - 2 つの配列から重回帰分析（...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/07/13/cpp-multiple-regression-equation-3e/" rel="permalink">C++ - 重回帰式計算（説明変数3個）！
+</a>
+        &nbsp;<small>(2020-07-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、数値からなる同サイズの配列4個を説明変数3個・目的変数1個とみなして重回帰式を計算する方法についての記録です。
+連立1次方程式を解くのに「ガウスの消去法」を使用します。
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran - 重回帰式計算（説明変数2個）（その2）！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/07/08/cpp-multiple-regression-equation/" rel="permalink">C++ - 重回帰式計算（説明変数2個）！
+</a>
+        &nbsp;<small>(2020-07-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、数値からなる同サイズの配列3個を説明変数2個・目的変数1個とみなして重回帰式を計算する方法についての記録です。
+今回は連立1次方程式を解くのに「ガウスの消去法」を使用します。
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran - 重回帰式計算（説明変数2個）（その2）！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/07/03/cpp-regression-coefficient-of-determination-2d/" rel="permalink">C++ - 単回帰分析（2次曲線回帰）の決定係数計算！
+</a>
+        &nbsp;<small>(2020-07-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で単回帰分析（2次曲線回帰）の決定係数を計算してみました。
+
+過去には Fortran 等で実装しています。
+
+
+  Ruby - 単回帰分析（2次曲線回帰）の決定係数計算！
+  Fortran - 単回帰分析（2次曲線回帰）の決定係数計算！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/07/01/blog-access/" rel="permalink">2020年6月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2020-07-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">7月になりましたので、先月6月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/06/27/cpp-regression-coefficient-of-determination/" rel="permalink">C++ - 単回帰分析（線形回帰）の決定係数計算！
+</a>
+        &nbsp;<small>(2020-06-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で2つの単回帰分析（線形回帰; 単回帰直線）の決定係数を計算してみました。
+
+過去には Fortran 等で実装しています。
+
+
+  Ruby - 単回帰分析（線形回帰）の決定係数計算！
+  Fortran - 単回帰分析（線形回帰）の決定係数計算！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/06/22/cpp-simple-regression-curve-expe/" rel="permalink">C++ - 単回帰曲線（e指数回帰モデル）の計算！
+</a>
+        &nbsp;<small>(2020-06-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰曲線（e指数回帰モデル）を計算する方法についての記録です。
+今回は連立1次方程式を解くのに「ガウスの消去法」を使用します。
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran - 2つの配列から単回帰曲線（e指数回...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/06/17/cpp-simple-regression-curve-exp/" rel="permalink">C++ - 単回帰曲線（指数（ab指数）回帰モデル）の計算！
+</a>
+        &nbsp;<small>(2020-06-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰曲線（指数（ab指数）回帰モデル）を計算する方法についての記録です。
+今回は連立1次方程式を解くのに「ガウスの消去法」を使用します。
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran - 2つの配列から単回帰曲線...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/06/12/cpp-simple-regression-curve-pow/" rel="permalink">C++ - 単回帰曲線（べき乗回帰モデル）の計算！
+</a>
+        &nbsp;<small>(2020-06-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰曲線（べき乗回帰モデル）を計算する方法についての記録です。
+今回は連立1次方程式を解くのに「ガウスの消去法」を使用します。
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran - 2つの配列から単回帰曲線（べき乗回...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/06/07/cpp-simple-regression-curve-frac/" rel="permalink">C++ - 単回帰曲線（分数（逆数）回帰モデル）の計算！
+</a>
+        &nbsp;<small>(2020-06-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰曲線（分数（逆数）回帰モデル）を計算する方法についての記録です。
+今回は連立1次方程式を解くのに「ガウスの消去法」を使用します。
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran - 2つの配列から単回帰曲線（分...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/06/02/cpp-simple-regression-curve-ln/" rel="permalink">C++ - 単回帰曲線（自然対数回帰モデル）の計算！
+</a>
+        &nbsp;<small>(2020-06-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰曲線（自然対数回帰モデル）を計算する方法についての記録です。
+今回は連立1次方程式を解くのに「ガウスの消去法」を使用します。
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran - 2つの配列から単回帰曲線（自然対...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/06/01/blog-access/" rel="permalink">2020年5月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2020-06-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">6月になりましたので、先月5月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/05/28/cpp-simple-regression-curve-sqrt/" rel="permalink">C++ - 単回帰曲線（ルート回帰モデル）の計算！
+</a>
+        &nbsp;<small>(2020-05-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰曲線（ルート回帰モデル）を計算する方法についての記録です。
+今回は連立1次方程式を解くのに「ガウスの消去法」を使用します。
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran - 2つの配列から単回帰曲線（ルート回...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/05/23/cpp-simple-regression-curve-4d/" rel="permalink">C++ - 単回帰曲線（4次回帰モデル）の計算！
+</a>
+        &nbsp;<small>(2020-05-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰曲線（4次回帰モデル）を計算する方法についての記録です。
+今回は連立1次方程式を解くのに「ガウスの消去法」を使用します。
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran - 2つの配列から単回帰曲線（4次回帰モ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/05/18/cpp-simple-regression-curve-3d/" rel="permalink">C++ - 単回帰曲線（3次回帰モデル）の計算！
+</a>
+        &nbsp;<small>(2020-05-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰曲線（3次回帰モデル）を計算する方法についての記録です。
+今回は連立1次方程式を解くのに「ガウスの消去法」を使用します。
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran - 2つの配列から単回帰曲線（3次回帰モ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/05/13/cpp-simple-regression-curve-2d/" rel="permalink">C++ - 単回帰曲線（2次回帰モデル）の計算！
+</a>
+        &nbsp;<small>(2020-05-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰曲線（2次回帰モデル）を計算する方法についての記録です。
+今回は連立1次方程式を解くのに「ガウスの消去法」を使用します。
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran - 2つの配列から単回帰曲線（2次回帰）...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/05/08/cpp-simple-linear-regression-line/" rel="permalink">C++ - 単回帰直線の計算！
+</a>
+        &nbsp;<small>(2020-05-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰直線を計算する方法についての記録です。
+今回は連立1次方程式を解くのに「ガウスの消去法」を使用します。（分散／共分散を使用する方法（実際にはその変形版）もある）
+
+過去には Fortran 等で実装しています。
+
+
+  Fortran ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/05/01/blog-access/" rel="permalink">2020年4月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2020-05-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">5月になりましたので、先月4月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/04/19/ruby-convert-val-to-3-digit/" rel="permalink">Ruby - 3桁区切りの数字に変換（その2）！
+</a>
+        &nbsp;<small>(2020-04-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、 Ruby で正規表現を利用して数値を3桁区切りの数字に変換する方法（3種）を紹介しました。
+
+
+  Ruby - 3桁区切りの数字に変換！
+
+
+今回、1種追加します。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/04/07/cpp-read-csv-data/" rel="permalink">C++ - CSV データ読み込み！
+</a>
+        &nbsp;<small>(2020-04-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">かつて、 C++ で CSV データを読み込む方法について記録しました。
+
+
+  C++ - CSV データ読み込み！
+
+
+今回も同様のことをしてみましたが、ある（古めの）書籍に掲載されていたものをほぼそのまま実装してみました。
+
+
+  プログラミング作法 - Amazon.co.jp
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/04/01/blog-access/" rel="permalink">2020年3月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2020-04-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">4月になりましたので、先月3月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/03/28/fortran95-inverse-matrix-by-cofactor-matrix/" rel="permalink">Fortran - 逆行列の計算（余因子行列を使用）！
+</a>
+        &nbsp;<small>(2020-03-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 Fortran 95 で余因子展開による行列式の計算を行いましたが、今回は、それを応用して、逆行列の計算を行ってみました。
+
+少し前に、同じことを Ruby で Array クラスを拡張する方法で実装しています。
+
+
+  Ruby - 逆行列の計算（余因子行列を使用）！！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/03/23/fortran95-determinant-by-cofactor-expansion/" rel="permalink">Fortran - 行列式の計算（余因子展開による）！
+</a>
+        &nbsp;<small>(2020-03-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Fortran 95 で余因子展開による行列式の計算を行ってみました。
+
+少し前に、同じことを Ruby で Array クラスを拡張する方法で実装しています。
+
+
+  Ruby - 行列式の計算（余因子展開による）！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/03/09/ruby-inverse-matrix-by-cofactor-matrix/" rel="permalink">Ruby - 逆行列の計算（余因子行列を使用）！
+</a>
+        &nbsp;<small>(2020-03-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 Ruby で余因子展開による行列式の計算を行いましたが、今回は、それを応用して、逆行列の計算を行ってみました。
+
+
+  Ruby - 行列式の計算（余因子展開による）！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/03/06/ruby-determinant-by-cofactor-expansion/" rel="permalink">Ruby - 行列式の計算（余因子展開による）！
+</a>
+        &nbsp;<small>(2020-03-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby で余因子展開による行列式の計算を行ってみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/03/03/fortran95-adjusted-coefficient-of-determination/" rel="permalink">Fortran - 重回帰分析・自由度調整済み決定係数の計算！
+</a>
+        &nbsp;<small>(2020-03-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">重回帰分析における自由度調整済み決定係数の計算を Fortran 95 で行ってみました。
+
+前回、同じことを Ruby で Array クラスを拡張する方法で実装しています。
+
+
+  Ruby - 重回帰分析・自由度調整済み決定係数の計算！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/03/01/blog-access/" rel="permalink">2020年2月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2020-03-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">3月になりましたので、先月2月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/29/ruby-adjusted-coefficient-of-determination/" rel="permalink">Ruby - 重回帰分析・自由度調整済み決定係数の計算！
+</a>
+        &nbsp;<small>(2020-02-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">重回帰分析における自由度調整済み決定係数の計算を Ruby で行ってみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/26/fortran95-multiple-regression-function-3exp/" rel="permalink">Fortran - 重回帰式計算（説明変数3個）！
+</a>
+        &nbsp;<small>(2020-02-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、 Fortran 95 で、説明（独立）変数2個、目的（従属）変数1個の「重回帰式」を計算する方法を紹介しました。
+
+
+  Fortran - 重回帰式計算（説明変数2個）！
+  Fortran - 重回帰式計算（説明変数2個）（その2）！ 
+
+
+今回は、説明（独立）変数3個の場合の重回帰式を計算してみまし...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/23/ruby-multiple-regression-function-3exp/" rel="permalink">Ruby - Array クラスを拡張して重回帰分析（説明変数3個）！
+</a>
+        &nbsp;<small>(2020-02-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、 Ruby で、説明（独立）変数2個、目的（従属）変数1個の「重回帰式」を計算する方法を紹介しました。
+
+
+  Ruby - Array クラス拡張で重回帰式計算！
+  Ruby - Array クラスを拡張して重回帰分析（2次多項式モデル）！
+
+
+今回は、説明（独立）変数3個の場合の重回帰式を計算してみま...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/20/fortran95-rcc-kendall/" rel="permalink">Fortran - ケンドール順位相関係数の計算！
+</a>
+        &nbsp;<small>(2020-02-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Fortran 95 でケンドールの順位相関係数(Kendall’s Rank Correlation Coefficient)の計算をしてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/17/fortran95-rcc-spearman/" rel="permalink">Fortran - スピアマン順位相関係数の計算！
+</a>
+        &nbsp;<small>(2020-02-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Fortran 95 でスピアマンの順位相関係数(Spearman’s Rank Correlation Coefficient)の計算をしてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/14/ruby-rcc-kendall/" rel="permalink">Ruby - ケンドール順位相関係数の計算！
+</a>
+        &nbsp;<small>(2020-02-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby でケンドールの順位相関係数(Kendall’s Rank Correlation Coefficient)の計算をしてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/11/ruby-rcc-spearman/" rel="permalink">Ruby - スピアマン順位相関係数の計算！
+</a>
+        &nbsp;<small>(2020-02-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby でスピアマンの順位相関係数(Spearman’s Rank Correlation Coefficient)の計算をしてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/08/fortran95-binomial-coefficients/" rel="permalink">Fortran - 二項係数の計算！
+</a>
+        &nbsp;<small>(2020-02-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Fortran 95 で二項係数の計算をしてみました。（各種計算式を使用して）
+また、計算結果が多倍長になることを考慮し、多倍長演算ライブラリ FMLIB を使用しています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/05/ruby-binomial-coefficients/" rel="permalink">Ruby - 二項係数の計算！
+</a>
+        &nbsp;<small>(2020-02-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby で二項係数の計算をしてみました。（各種計算式を使用して）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/02/debian-10-virtualbox-installation/" rel="permalink">Debian 10 (buster) - 仮想化ソフト VirtualBox のインストール！
+</a>
+        &nbsp;<small>(2020-02-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に仮想化ソフト VirtualBox をインストールする方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/01/blog-access/" rel="permalink">2020年1月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2020-02-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">2月になりましたので、先月1月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/29/debian-10-gmt-installation/" rel="permalink">Debian 10 (buster) - 地図描画ツール GMT インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2020-01-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に地図描画ツール GMT(Generic Mapping Tool) をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/26/debian-10-monit-installation/" rel="permalink">Debian 10 (buster) - Monit でプロセス監視（ソースビルド）！
+</a>
+        &nbsp;<small>(2020-01-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) にプロセス監視ツール monit をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/23/debian-10-munin-additional-setting/" rel="permalink">Debian 10 (buster) - munin 各種監視追加！
+</a>
+        &nbsp;<small>(2020-01-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) にインストールしたサーバ監視ツール munin に各種監視を追加する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーして...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/20/debian-10-munin-installation/" rel="permalink">Debian 10 (buster) - サーバ監視ツール munin 導入！
+</a>
+        &nbsp;<small>(2020-01-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) にサーバ監視ツール munin をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/17/debian-10-php-installation-by-src-with-nginx-cooperation/" rel="permalink">Debian 10 (buster) - PHP インストール（Nginx と連携）！
+</a>
+        &nbsp;<small>(2020-01-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に PHP をソースをビルドしてインストールし、 Web／リバースプロキシサーバ Nginx と連携する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/14/debian-10-git-installation-by-src/" rel="permalink">Debian 10 (buster) - Git インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2020-01-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に Git サーバをソースをビルドしてインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/11/debian-10-automatic-backup-setting/" rel="permalink">Debian 10 (buster) - 自動バックアップ運用！
+</a>
+        &nbsp;<small>(2020-01-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) で自動バックアップ運用する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/08/debian-10-logwatch-installation/" rel="permalink">Debian 10 (buster) - ログ解析ツール logwatch インストール！
+</a>
+        &nbsp;<small>(2020-01-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) にログ監視ツール LogWatch をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/05/debian-10-python-3-7-installation-by-src/" rel="permalink">Debian 10 (buster) - Python 3.7 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2020-01-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に Python 3.7 をソースをビルドしてインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてくださ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/02/tweet-summary-2019/" rel="permalink">2019年 - ツイート集計！
+</a>
+        &nbsp;<small>(2020-01-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">改めまして、旧年明けまして、新年おめでとうございます。
+
+2019年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。（今回から投稿元別のツイート数も集計しております）
+
+当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベー...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/01/blog-access/" rel="permalink">2019年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）
+</a>
+        &nbsp;<small>(2020-01-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">旧年明けまして、新年おめでとうございます。
+
+旧年中はお世話になりました。 本年もどうぞよろしくお願いします。
+
+話は変わりまして、先月12月分の当ブログアクセス状況を公開します。
+
+</p>
+  </article>
+</div>
+
+    
+    <div id="google-ad-3"></div>
+    <div id="google-ad-2"></div>
+  </div>
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+
+  </body>
+</html>

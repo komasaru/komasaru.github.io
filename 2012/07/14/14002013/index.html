@@ -1,0 +1,960 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Cygwin - 最新の GCC をソースからインストール！ - mk-mode BLOG</title>
+<meta name="description" content="当方が普段使用している Cygwin 1.7.15 には、パッケージからインストール可能な GCC (GNU Compiler Collection) 3.4.4 が入っています。しかし、当記事執筆時点では GCC は 4.7.1 が最新のようです。C++ でプログラミングしたいものがあるため、GCC の最新版をソースからインストールしてみました。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Cygwin - 最新の GCC をソースからインストール！">
+<meta property="og:url" content="https://komasaru.github.io/2012/07/14/14002013/">
+
+
+  <meta property="og:description" content="当方が普段使用している Cygwin 1.7.15 には、パッケージからインストール可能な GCC (GNU Compiler Collection) 3.4.4 が入っています。しかし、当記事執筆時点では GCC は 4.7.1 が最新のようです。C++ でプログラミングしたいものがあるため、GCC の最新版をソースからインストールしてみました。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Cygwin - 最新の GCC をソースからインストール！">
+  <meta name="twitter:description" content="当方が普段使用している Cygwin 1.7.15 には、パッケージからインストール可能な GCC (GNU Compiler Collection) 3.4.4 が入っています。しかし、当記事執筆時点では GCC は 4.7.1 が最新のようです。C++ でプログラミングしたいものがあるため、GCC の最新版をソースからインストールしてみました。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2012/07/14/14002013/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2012-07-14T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2012/07/14/14002013/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Cygwin - 最新の GCC をソースからインストール！">
+    <meta itemprop="description" content="当方が普段使用している Cygwin 1.7.15 には、パッケージからインストール可能な GCC (GNU Compiler Collection) 3.4.4 が入っています。しかし、当記事執筆時点では GCC は 4.7.1 が最新のようです。C++ でプログラミングしたいものがあるため、GCC の最新版をソースからインストールしてみました。">
+    <meta itemprop="datePublished" content="July 14, 2012">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Cygwin - 最新の GCC をソースからインストール！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-07-14T00:20:00+09:00">2012-07-14 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>当方が普段使用している Cygwin 1.7.15 には、パッケージからインストール可能な GCC (GNU Compiler Collection) 3.4.4 が入っています。
+しかし、当記事執筆時点では GCC は 4.7.1 が最新のようです。</p>
+
+<p>C++ でプログラミングしたいものがあるため、GCC の最新版をソースからインストールしてみました。</p>
+
+<!--more-->
+
+<h3 id="作業記録">作業記録</h3>
+
+<h4 id="0-前提条件">0. 前提条件</h4>
+
+<p>作業した環境は Cygwin 1.7.15 です。</p>
+
+<h4 id="1-事前準備">1. 事前準備</h4>
+
+<p>以下のものを予め setup.exe 等でインストールしておく。</p>
+
+<ul>
+  <li>bash (Base section)</li>
+  <li>gzip (Base section, 1.2.4以上)</li>
+  <li>binutils (Devel section)</li>
+  <li>bzip2 (Utils section, 1.0.2)</li>
+  <li>gcc-core (Devel section, 他の C コンパイラでもOK)</li>
+  <li>gcc-g++ (Devel section, C++ コンパイラをビルドするなら必要)</li>
+  <li>gcc-ada (Devel section, Ada コンパイラをインストールするなら必要)</li>
+  <li>m4 (Interpreters section)</li>
+  <li>make (Devel section, 3.79.1以上)</li>
+  <li>zip (Archive section, Java をインストールするなら必要)</li>
+  <li>unzip (Archive section, Java をインストールするなら必要)</li>
+  <li>gcc-java (Devel section, Java で jar コマンドに必要)</li>
+</ul>
+
+<p>さらに、パッケージのバージョンとステータスをチェックしておく。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cygcheck -c  \
+bash binutils bzip2 cygwin gcc-ada gcc-core gcc-g++ gcc-java gzip m4 make unzip zip
+Cygwin Package Information
+Package              Version        Status
+bash                 4.1.10-4       OK
+binutils             2.22.51-2      OK
+bzip2                1.0.6-2        OK
+cygwin               1.7.15-1       OK
+gcc-core             3.4.4-999      OK
+gcc-g++              3.4.4-999      OK
+gzip                 1.4-1          OK
+m4                   1.4.16-1       OK
+make                 3.82.90-1      OK
+unzip                6.0-10         OK
+zip                  3.0-11         OK
+</code></pre></div></div>
+
+<p>gcc-ada, gcc-java が表示されないけど。。。</p>
+
+<h4 id="1-アーカイブダウンロード">1. アーカイブダウンロード</h4>
+
+<p>GCC のビルドに必要な以下のアーカイブを作業用ディテクトリ（無ければ作成する）に移動してダウンロードする。
+当方は、/usr/src ディテクトリに wget コマンドでダウンロードした。
+（参考にしたサイトでは、作業ディレクトリは /usr/local/contrib としていました。）
+各リンクはすぐに見つけられると思います。</p>
+
+<ul>
+  <li>GMP ( 多倍精度演算ライブラリ )
+    <ul>
+      <li><a href="http://gmplib.org/" title="http://gmplib.org/">http://gmplib.org/</a> から “gmp-5.0.5.tar.bz2”</li>
+    </ul>
+  </li>
+  <li>MPFR ( 多倍精度浮動小数演算ライブラリ )
+    <ul>
+      <li><a href="http://mpfr.org/" title="http://mpfr.org/">http://mpfr.org/</a> から “mpfr-3.1.0.tar.bz2”</li>
+    </ul>
+  </li>
+  <li>MPC ( 多倍精度複素数演算ライブラリ )
+    <ul>
+      <li><a href="http://www.multiprecision.org/" title="http://www.multiprecision.org/">http://www.multiprecision.org/</a> から “mpc-0.9.tar.gz”</li>
+    </ul>
+  </li>
+  <li>GCC ( GNU コンパイラコレクション本体 )
+    <ul>
+      <li><a href="http://gcc.gnu.org/mirrors.html" title="http://gcc.gnu.org/mirrors.html">http://gcc.gnu.org/mirrors.html</a> から “gcc-4.7.1.tar.bz2”</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd /usr/src
+$ wget ftp://ftp.gmplib.org/pub/gmp-5.0.5/gmp-5.0.5.tar.bz2
+$ wget http://www.mpfr.org/mpfr-current/mpfr-3.1.0.tar.bz2
+$ wget http://www.multiprecision.org/mpc/download/mpc-0.9.tar.gz
+$ wget http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-4.7.1/gcc-4.7.1.tar.bz2
+</code></pre></div></div>
+
+<h4 id="2-環境変数の設定">2. 環境変数の設定</h4>
+
+<p>シェルに bash を使っているのなら、.bash_profile もしくは .bashrc に以下の記述を追加し、source コマンドで有効化（もしくは Cygwin 再起動）する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ vi ~/.bash_profile
+export LD_LIBRARY_PATH=/usr/local/lib
+export LIBRARY_PATH=/usr/local/lib
+export CPATH=/usr/local/include
+$ source ~/.bash_profile
+</code></pre></div></div>
+
+<h4 id="3-gmp-ビルドインストール">3. GMP ビルド＆インストール</h4>
+
+<p>作業用ディレクトリ（当方は /usr/src ）へ移動して、以下のコマンドを実行する。
+よくある手順です。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd /usr/src
+$ tar -xf gmp-5.0.5.tar.bz2
+$ cd gmp-5.0.5
+$ ./configure
+$ make
+$ make check
+$ make install
+$ make clean
+</code></pre></div></div>
+
+<p>ここで、GMP 有効化のため Cygwin を再起動する。
+（当方の場合、こうしないと次の MPFR がビルドできなかったので。）</p>
+
+<h4 id="4-mpfr-ビルドインストール">4. MPFR ビルド＆インストール</h4>
+
+<p>作業用ディレクトリ（当方は /usr/src ）へ移動して、以下のコマンドを実行する。
+よくある手順です。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd /usr/src
+$ tar -xf mpfr-3.1.0.tar.bz2
+$ cd mpfr-3.1.0
+$ ./configure
+$ make
+$ make check
+$ make install
+$ make clean
+</code></pre></div></div>
+
+<p>ここは Cygwin の再起動は不要だった。</p>
+
+<h4 id="5-mpc-ビルドインストール">5. MPC ビルド＆インストール</h4>
+
+<p>作業用ディレクトリ（当方は /usr/src ）へ移動して、以下のコマンドを実行する。
+よくある手順です。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd /usr/src
+$ tar -xf mpc-0.9.tar.gz
+$ cd mpfr-3.1.0
+$ ./configure
+$ make
+$ make check
+$ make install
+$ make clean
+</code></pre></div></div>
+
+<p>ここも Cygwin の再起動は不要だった。</p>
+
+<h4 id="6-gcc-ビルドインストール">6. GCC ビルド＆インストール</h4>
+
+<p>今までの手順とは少しだけ異なる。
+ビルド用のディテクトリを別途作成する必要がある。
+（今回インストールするのは C, C++ のみ）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd /usr/src
+$ tar -xf gcc-4.7.1.tar.bz2
+$ mkdir build
+$ cd build
+$ ../gcc-*/configure --enable-languages=c,c++
+$ make
+$ make install
+$ make clean
+</code></pre></div></div>
+
+<p>当方の環境では、 make に約6時間半かかった。また、make check はできなかったがその他の処理は正常に完了した。
+インストールできているか確認してみる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ gcc --version
+gcc (GCC) 4.7.1
+Copyright (C) 2012 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+$ g++ --version
+g++ (GCC) 4.7.1
+Copyright (C) 2012 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+</code></pre></div></div>
+
+<h4 id="7-テスト用ソース作成">7. テスト用ソース作成</h4>
+
+<p>コンパイルテスト用に簡単な C++ ソースを作成する。
+【ファイル名：hello_world.cpp】</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Hello, World!"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="8-コンパイル実行">8. コンパイル＆実行</h4>
+
+<p>作成した C++ ソースをコンパイルして実行する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ g++ hello_world.cpp -o hello_world
+$ ./hello_world
+Hello, World!
+</code></pre></div></div>
+
+<p>テスト成功！</p>
+
+<h4 id="9-その他">9. その他</h4>
+
+<p>参考にしたサイトでは、最新の GMP 5.0.5, MPC 0.9 のビルドの前に設定ファイルの変更が必要とありましたが、当方は対応していません。
+変更しなくても大丈夫でした。（今のところ）</p>
+
+<h4 id="参考サイト">参考サイト</h4>
+
+<p>以下のサイトを参考にしました。</p>
+
+<ul>
+  <li><a href="http://cygwin.wikia.com/wiki/How_to_install_a_newer_version_of_GCC" title="How to install a newer version of GCC - Cygwin Wiki">How to install a newer version of GCC - Cygwin Wiki</a></li>
+</ul>
+
+<hr />
+
+<p>これで、Cygwin の最新の GCC 環境が整いました。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/cygwin" class="page__taxonomy-item" rel="tag">Cygwin</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/c%E8%A8%80%E8%AA%9E" class="page__taxonomy-item" rel="tag">C言語</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-07-14T00:20:00+09:00">2012-07-14 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Cygwin+-+%E6%9C%80%E6%96%B0%E3%81%AE+GCC+%E3%82%92%E3%82%BD%E3%83%BC%E3%82%B9%E3%81%8B%E3%82%89%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2012%2F07%2F14%2F14002013%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2012%2F07%2F14%2F14002013%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2012%2F07%2F14%2F14002013%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2012/07/12/12002024/" class="pagination--pager" title="Java - Tidy で Web スクレイピング！
+">Previous</a>
+    
+    
+      <a href="/2012/07/16/16002016/" class="pagination--pager" title="Ruby - RubyGmes パッケージの全削除！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2012/07/14/14002013/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2012/07/14/14002013"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

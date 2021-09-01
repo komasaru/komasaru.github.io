@@ -1,0 +1,876 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Windows - カレンダーGUIアプリ完成！ - mk-mode BLOG</title>
+<meta name="description" content="これまで、Rubyスクリプト版やコマンドラインExeアプリを作成してきたカレンダー等のソフト。  Ruby - 旧暦カレンダー作成スクリプト！  旧暦カレンダー作成実行ファイル！  Ruby - 日・月の出・入・南中スクリプト作成！  日・月の出・入・南中計算実行ファイル！">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Windows - カレンダーGUIアプリ完成！">
+<meta property="og:url" content="https://komasaru.github.io/2011/09/26/26002040/">
+
+
+  <meta property="og:description" content="これまで、Rubyスクリプト版やコマンドラインExeアプリを作成してきたカレンダー等のソフト。  Ruby - 旧暦カレンダー作成スクリプト！  旧暦カレンダー作成実行ファイル！  Ruby - 日・月の出・入・南中スクリプト作成！  日・月の出・入・南中計算実行ファイル！">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Windows - カレンダーGUIアプリ完成！">
+  <meta name="twitter:description" content="これまで、Rubyスクリプト版やコマンドラインExeアプリを作成してきたカレンダー等のソフト。  Ruby - 旧暦カレンダー作成スクリプト！  旧暦カレンダー作成実行ファイル！  Ruby - 日・月の出・入・南中スクリプト作成！  日・月の出・入・南中計算実行ファイル！">
+  <meta name="twitter:url" content="https://komasaru.github.io/2011/09/26/26002040/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2011-09-26T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2011/09/26/26002040/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Windows - カレンダーGUIアプリ完成！">
+    <meta itemprop="description" content="これまで、Rubyスクリプト版やコマンドラインExeアプリを作成してきたカレンダー等のソフト。  Ruby - 旧暦カレンダー作成スクリプト！  旧暦カレンダー作成実行ファイル！  Ruby - 日・月の出・入・南中スクリプト作成！  日・月の出・入・南中計算実行ファイル！">
+    <meta itemprop="datePublished" content="September 26, 2011">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Windows - カレンダーGUIアプリ完成！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-09-26T00:20:00+09:00">2011-09-26 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>これまで、Rubyスクリプト版やコマンドラインExeアプリを作成してきたカレンダー等のソフト。</p>
+
+<ul>
+  <li><a href="/2011/09/10/10002053/" title="Ruby - 旧暦カレンダー作成スクリプト！">Ruby - 旧暦カレンダー作成スクリプト！</a></li>
+  <li><a href="/2011/09/12/12002027/" title="旧暦カレンダー作成実行ファイル！">旧暦カレンダー作成実行ファイル！</a></li>
+  <li><a href="/2011/09/15/15002042/" title="Ruby - 日・月の出・入・南中スクリプト作成！">Ruby - 日・月の出・入・南中スクリプト作成！</a></li>
+  <li><a href="/2011/09/18/18002020/" title="日・月の出・入・南中計算実行ファイル！">日・月の出・入・南中計算実行ファイル！</a></li>
+</ul>
+
+<!--more-->
+
+<p>今回は、Windows .NET Framework で動作するGUIアプリを作成しました。
+初版なのでバグ等あるかもしれませんし、さらに機能を追加するかもしれませんが、とりあえず公開してみます。
+ダウンロード → <a href="http://www.mk-mode.com/rails/docs/MKCalendar.lzh" title="カレンダーアプリ (Ver.1.0.0.0)">カレンダーアプリ (Ver.1.0.0.0)</a>
+※その他のアプリ等も置いています。[ <a href="http://www.mk-mode.com/rails/archive" title="mk-mode SITE : アーカイブ">mk-mode SITE : アーカイブ</a> ]</p>
+
+<h4 id="アプリ説明">アプリ説明</h4>
+
+<p>アプリに添付している”Readme.txt”を掲載します。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>======================================================================
+【ソ フ ト名】         MK-Calendar
+【バージョン】         Ver1.0.0.0
+【登録名】             MKCalendar.lzh
+【著作権者】           mk-mode.com
+【作成方法】           lhaで解凍
+【ソフトウェア種別】   フリーソフト
+======================================================================
+
+【ソフト紹介】
+    Microsoft Visual C# Express Edition で作成したカンレンダーアプリです。
+    日めくりカレンダー・月間カレンダー・年間カレンダーの表示が可能です。
+    ※実行時、最大で40MByteほどメモリを消費します。
+
+【配布ファイル】
+    MKCalendar.exe    アプリ本体
+    CalendarLib.dll   ライブラリファイル
+    Readme.txt        本ファイル
+
+【動作条件】
+    Microsoft .NET Framework 3.0 以上がインストールされているWindowsマシン。
+
+【動作確認】
+    当方では、以下の条件で動作を確認しております。
+    ・自作AT互換機
+    ・Windowx XP SP3
+    ・Microsoft .NET Framework 4.0
+
+【インストール方法】
+    インストーラはありません。圧縮ファイル（lzhファイル）を適当な場所に解凍する
+    だけです。
+
+【アンインストール方法】
+    レジストリは使用していませんので、フォルダごと削除してください。
+
+【使用方法】
+    ・MKCalendar.exe を実行するだけです。
+    ・実行直後にタスクトレイに格納されますので、ダブルクリックしてメニューを表示
+      するか、右クリックでメニューを表示します。
+    ・メニューから選択することで各カレンダーを表示します。
+    ・各カレンダー最小化時にはタスクトレイに格納します。
+    ・その他、直感的に操作可能だと思います。
+
+【設定方法】
+    メニューの「設定」で以下の項目の設定が可能です。
+    ※設定情報は当アプリと同じフォルダの "settings.xml" に保存します。
+    ・月間カレンダー内の初期表示タブ（初期値：「カレンダー」）
+    ・日・月の出・入・南中の時刻、出・入の方位角、南中の高度を計算するための位置
+      情報（初期値：「島根県庁」）
+
+【カレンダーについて】
+    ・表示可能な年月日は 1900年01月01日 ～ 2099年12月31日 としています。
+    ・祝日は現行の「国民の祝日に関する法律」（平成一七年五月二〇日改正）に基づく
+      ものです。
+    ・日・月の出・入の方位角、日・月の南中高度については、補正の方法により計算結
+      果が他の情報などと異なる場合があります。
+    ・「年間カレンダー」は数字のみの表示です。
+    ・「月間カレンダー」、「日めくりカレンダー」に表示する項目は以下のとおり。
+      ・西暦年            ・和暦（平成）      ・和暦（昭和）      ・和暦（大正）
+      ・月                ・月（和名）        ・月（英名）        ・日          
+      ・曜日              ・曜日（英略）      ・祝日              ・干支（年）  
+      ・干支（日）        ・旧暦              ・六曜              ・二十四節気  
+      ・雑節              ・節句              
+      ・ユリウス通日      ・修正ユリウス日    
+      ・黄経（太陽）      ・黄経（月）        ・月齢              
+      ・日の出時刻        ・日の南中時刻      ・日の入時刻        
+      ・日の出方位角      ・日の南中高度      ・日の入方位角      
+      ・月の出時刻        ・月の南中時刻      ・月の入時刻
+      ・月の出方位角      ・月の南中高度      ・月の入方位角      
+
+【開発環境】
+    機種      AT互換機
+    CPU       Core2Duo E8500 3.16GHz
+    メモリ    4GByte ( 実質 3.25GByte )
+    OS        WindowsXP SP3
+    開発言語  Microsoft Visual C# 2010 Express Edition
+
+【更新履歴】
+    Ver 1.0.0.0    2011/09/26 初版公開
+
+【再配布規定】
+    このソフトウェアの著作権は mk-mode.com に帰属していますが、自由に再配布して
+    いただいて結構です。
+    再配布の際は、書庫ファイル及び格納ファイルを改変しないで下さい。
+
+【免責事項】
+    このソフトウェアは個人利用が目的で作成したものです。
+    このソフトウェアを使った結果生じた事故、トラブル等については、一切の責任を持
+    ちません。
+    このプログラムの修正、バージョンアップの義務を負いません。
+
+【その他】
+    バグ報告、感想などは以下まで。
+    E-mail： webmaster@mk-mode.com
+
+</code></pre></div></div>
+
+<h4 id="スクリーンショット">スクリーンショット</h4>
+
+<p>●日めくりカレンダー</p>
+
+<p><img src="/images/2011/09/MKCALENDAR_11.jpg" alt="MKCALENDAR_1" title="MKCALENDAR_1" /></p>
+
+<p>●月間カレンダー</p>
+
+<p><img src="/images/2011/09/MKCALENDAR_2.jpg" alt="MKCALENDAR_2" title="MKCALENDAR_2" /></p>
+
+<p><img src="/images/2011/09/MKCALENDAR_3.jpg" alt="MKCALENDAR_3" title="MKCALENDAR_3" /></p>
+
+<p>●年間カレンダー</p>
+
+<p><img src="/images/2011/09/MKCALENDAR_4.jpg" alt="MKCALENDAR_4" title="MKCALENDAR_4" /></p>
+
+<p>●設定</p>
+
+<p><img src="/images/2011/09/MKCALENDAR_5.jpg" alt="MKCALENDAR_5" title="MKCALENDAR_5" /></p>
+
+<hr />
+
+<p>個人利用が目的で作成したものなので、今のところベクター等へのアップは考えていません。
+※仕様をもっと固めて、各種の調整を行えばアップするかもしれませんが・・・</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/visualc" class="page__taxonomy-item" rel="tag">VisualC＃</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/windows" class="page__taxonomy-item" rel="tag">Windows</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-09-26T00:20:00+09:00">2011-09-26 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Windows+-+%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BCGUI%E3%82%A2%E3%83%97%E3%83%AA%E5%AE%8C%E6%88%90%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2011%2F09%2F26%2F26002040%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2011%2F09%2F26%2F26002040%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2011%2F09%2F26%2F26002040%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2011/09/22/22002000/" class="pagination--pager" title="日数計算の方法！
+">Previous</a>
+    
+    
+      <a href="/2011/09/28/28002002/" class="pagination--pager" title="NetBeans 7.0.1 - Ruby on Railsプラグインをインストール！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2011/09/26/26002040/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2011/09/26/26002040"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

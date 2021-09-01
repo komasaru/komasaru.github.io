@@ -1,0 +1,1476 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Python - 赤道・黄道座標の変換！ - mk-mode BLOG</title>
+<meta name="description" content="以前、赤道直交座標と黄道直交座標を相互に変換したり、直交座標と極座標を相互に変換したりする RubyGems ライブラリを作成しました。  Ruby - 赤道・黄道座標の変換（by 自作 gem ライブラリ）！今回は、同様のことを Python で行ってみました。（但し、PyPI ライブラリではない）">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Python - 赤道・黄道座標の変換！">
+<meta property="og:url" content="https://komasaru.github.io/2018/07/26/python-coordinate-conversion/">
+
+
+  <meta property="og:description" content="以前、赤道直交座標と黄道直交座標を相互に変換したり、直交座標と極座標を相互に変換したりする RubyGems ライブラリを作成しました。  Ruby - 赤道・黄道座標の変換（by 自作 gem ライブラリ）！今回は、同様のことを Python で行ってみました。（但し、PyPI ライブラリではない）">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Python - 赤道・黄道座標の変換！">
+  <meta name="twitter:description" content="以前、赤道直交座標と黄道直交座標を相互に変換したり、直交座標と極座標を相互に変換したりする RubyGems ライブラリを作成しました。  Ruby - 赤道・黄道座標の変換（by 自作 gem ライブラリ）！今回は、同様のことを Python で行ってみました。（但し、PyPI ライブラリではない）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2018/07/26/python-coordinate-conversion/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2018-07-26T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2018/07/26/python-coordinate-conversion/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Python - 赤道・黄道座標の変換！">
+    <meta itemprop="description" content="以前、赤道直交座標と黄道直交座標を相互に変換したり、直交座標と極座標を相互に変換したりする RubyGems ライブラリを作成しました。  Ruby - 赤道・黄道座標の変換（by 自作 gem ライブラリ）！今回は、同様のことを Python で行ってみました。（但し、PyPI ライブラリではない）">
+    <meta itemprop="datePublished" content="July 26, 2018">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Python - 赤道・黄道座標の変換！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2018-07-26T00:20:00+09:00">2018-07-26 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>以前、赤道直交座標と黄道直交座標を相互に変換したり、直交座標と極座標を相互に変換したりする RubyGems ライブラリを作成しました。</p>
+
+<ul>
+  <li><a href="/2016/09/24/ruby-coordinate-conversion-by-my-gem" title="Ruby - 赤道・黄道座標の変換（by 自作 gem ライブラリ）！">Ruby - 赤道・黄道座標の変換（by 自作 gem ライブラリ）！</a></li>
+</ul>
+
+<p>今回は、同様のことを Python で行ってみました。（但し、PyPI ライブラリではない）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Python 3.6.5 での作業を想定。</li>
+  <li>天文学的な計算については疎いため、誤りがあるかもしれない。</li>
+</ul>
+
+<h3 id="1-アルゴリズムについて">1. アルゴリズムについて</h3>
+
+<p>過去記事を参照。</p>
+
+<ul>
+  <li><a href="/2016/05/08/convert-celestial-coordinates" title="赤道座標と黄道座標、直交座標と極座標の変換！">赤道座標と黄道座標、直交座標と極座標の変換！</a></li>
+</ul>
+
+<h3 id="2-python-スクリプトの作成">2. Python スクリプトの作成</h3>
+
+<ul>
+  <li>ライブラリ内で NumPy の matrix を使用。</li>
+</ul>
+
+<p>次のスクリプトは実行部分。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">conv_coord.py</code></p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+</pre></td><td class="code"><pre><span class="c1">#! /usr/local/bin/python3.6
+</span><span class="s">"""
+赤道・黄道座標変換
+
+  date          name            version
+  2018.04.27    mk-mode         1.00 新規作成
+
+Copyright(C) 2018 mk-mode.com All Rights Reserved.
+"""</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">from</span> <span class="nn">lib</span> <span class="kn">import</span> <span class="n">coord</span> <span class="k">as</span> <span class="n">lcd</span>
+
+
+<span class="k">class</span> <span class="nc">ConvCoord</span><span class="p">:</span>
+    <span class="c1"># 黄道傾斜角(単位: rad)
+</span>    <span class="n">EPS</span> <span class="o">=</span> <span class="mf">23.43929</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+    <span class="c1"># 元の赤道直交座標
+</span>    <span class="c1"># (ある日の地球重心から見た太陽重心の位置(単位: AU))
+</span>    <span class="n">POS</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.99443659220700997281</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.03816291768957833647</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01655177670960058384</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">rect_ec</span> <span class="o">=</span> <span class="n">lcd</span><span class="p">.</span><span class="n">rect_eq2ec</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">POS</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">EPS</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">rect_eq</span> <span class="o">=</span> <span class="n">lcd</span><span class="p">.</span><span class="n">rect_ec2eq</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">rect_ec</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">EPS</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">pol_eq</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">lcd</span><span class="p">.</span><span class="n">rect2pol</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">rect_eq</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">pol_ec</span> <span class="o">=</span> <span class="n">lcd</span><span class="p">.</span><span class="n">pol_eq2ec</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">pol_eq</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">EPS</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">pol_eq</span> <span class="o">=</span> <span class="n">lcd</span><span class="p">.</span><span class="n">pol_ec2eq</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">pol_ec</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">EPS</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">rect_eq_2</span> <span class="o">=</span> <span class="n">lcd</span><span class="p">.</span><span class="n">pol2rect</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">pol_eq</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">r</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">__display</span><span class="p">()</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span> <span class="nf">__display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">""" 結果出力 """</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">pass</span>
+            <span class="k">print</span><span class="p">((</span>
+                <span class="s">"元の赤道直交座標:</span><span class="se">\n</span><span class="s">  {}</span><span class="se">\n</span><span class="s">"</span>
+                <span class="s">"黄道直交座標に変換:</span><span class="se">\n</span><span class="s">  {}</span><span class="se">\n</span><span class="s">"</span>
+                <span class="s">"赤道直交座標に戻す:</span><span class="se">\n</span><span class="s">  {}</span><span class="se">\n</span><span class="s">"</span>
+                <span class="s">"赤道極座標に変換:</span><span class="se">\n</span><span class="s">  {} (R = {})</span><span class="se">\n</span><span class="s">"</span>
+                <span class="s">"黄道極座標に変換:</span><span class="se">\n</span><span class="s">  {}</span><span class="se">\n</span><span class="s">"</span>
+                <span class="s">"赤道極座標に戻す:</span><span class="se">\n</span><span class="s">  {}</span><span class="se">\n</span><span class="s">"</span>
+                <span class="s">"赤道直交座標に戻す:</span><span class="se">\n</span><span class="s">  {}"</span>
+            <span class="p">).</span><span class="nb">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">POS</span><span class="p">,</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">rect_ec</span><span class="p">,</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">rect_eq</span><span class="p">,</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">pol_eq</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">r</span><span class="p">,</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">pol_ec</span><span class="p">,</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">pol_eq</span><span class="p">,</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">rect_eq_2</span>
+            <span class="p">))</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">ConvCoord</span><span class="p">()</span>
+        <span class="n">obj</span><span class="p">.</span><span class="k">exec</span><span class="p">()</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="p">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="n">sys</span><span class="p">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>次の3つのスクリプトはライブラリ部分。（lib ディレクトリを作成後、その配下へ）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">lib/coord.py</code></p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+</pre></td><td class="code"><pre><span class="s">"""
+Modules for coordinates
+"""</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">lib</span> <span class="kn">import</span> <span class="n">matrix</span>        <span class="k">as</span> <span class="n">lmtx</span>
+<span class="kn">from</span> <span class="nn">lib</span> <span class="kn">import</span> <span class="n">trigonometric</span> <span class="k">as</span> <span class="n">ltrg</span>
+
+
+<span class="k">def</span> <span class="nf">rect_eq2ec</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
+    <span class="s">""" 直交座標：赤道座標 -&gt; 黄道座標.
+
+    :param  list rect: 赤道直交座標
+    :param  float eps: 黄道傾斜角 (Unit: rad)
+    :return list     : 黄道直交座標
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">mtx_rect</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">matrix</span><span class="p">([</span><span class="n">rect</span><span class="p">]).</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">r_mtx</span> <span class="o">=</span> <span class="n">lmtx</span><span class="p">.</span><span class="n">r_x</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lmtx</span><span class="p">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">r_mtx</span><span class="p">,</span> <span class="n">mtx_rect</span><span class="p">).</span><span class="n">A1</span><span class="p">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+<span class="k">def</span> <span class="nf">rect_ec2eq</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
+    <span class="s">""" 直交座標：黄道座標 -&gt; 赤道座標.
+
+    :param  list rect: 黄道直交座標
+    :param  float eps: 黄道傾斜角 (Unit: rad)
+    :return list     : 赤道直交座標
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">mtx_rect</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">matrix</span><span class="p">([</span><span class="n">rect</span><span class="p">]).</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">r_mtx</span> <span class="o">=</span> <span class="n">lmtx</span><span class="p">.</span><span class="n">r_x</span><span class="p">(</span><span class="o">-</span><span class="n">eps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lmtx</span><span class="p">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">r_mtx</span><span class="p">,</span> <span class="n">mtx_rect</span><span class="p">).</span><span class="n">A1</span><span class="p">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+<span class="k">def</span> <span class="nf">pol_eq2ec</span><span class="p">(</span><span class="n">pol</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
+    <span class="s">""" 極座標：赤道座標 -&gt; 黄道座標.
+
+    :param  list  pol: 赤道極座標
+    :param  float eps: 黄道傾斜角 (Unit: rad)
+    :return list     : 黄道極座標 [λ, β]
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">alp</span><span class="p">,</span> <span class="n">dlt</span> <span class="o">=</span> <span class="n">pol</span>
+        <span class="n">lmd</span> <span class="o">=</span> <span class="n">ltrg</span><span class="p">.</span><span class="n">comp_lambda</span><span class="p">(</span><span class="n">alp</span><span class="p">,</span> <span class="n">dlt</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+        <span class="n">bet</span> <span class="o">=</span> <span class="n">ltrg</span><span class="p">.</span><span class="n">comp_beta</span><span class="p">(</span><span class="n">alp</span><span class="p">,</span> <span class="n">dlt</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">lmd</span><span class="p">,</span> <span class="n">bet</span><span class="p">]</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+<span class="k">def</span> <span class="nf">pol_ec2eq</span><span class="p">(</span><span class="n">pol</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
+    <span class="s">""" 極座標：赤道座標 -&gt; 黄道座標.
+
+    :param  list  pol: 赤道極座標
+    :param  float eps: 黄道傾斜角 (Unit: rad)
+    :return list     : 黄道極座標 [α, δ]
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">lmd</span><span class="p">,</span> <span class="n">bet</span> <span class="o">=</span> <span class="n">pol</span>
+        <span class="n">alp</span> <span class="o">=</span> <span class="n">ltrg</span><span class="p">.</span><span class="n">comp_alpha</span><span class="p">(</span><span class="n">lmd</span><span class="p">,</span> <span class="n">bet</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+        <span class="n">dlt</span> <span class="o">=</span> <span class="n">ltrg</span><span class="p">.</span><span class="n">comp_delta</span><span class="p">(</span><span class="n">lmd</span><span class="p">,</span> <span class="n">bet</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">alp</span><span class="p">,</span> <span class="n">dlt</span><span class="p">]</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+<span class="k">def</span> <span class="nf">rect2pol</span><span class="p">(</span><span class="n">rect</span><span class="p">):</span>
+    <span class="s">""" 直交座標 -&gt; 極座標
+
+    :param  list rect: 直交座標
+    :return list     : 極座標 [[λ, φ], 距離]
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">rect</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">lmd</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lmd</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">lmd</span> <span class="o">%=</span> <span class="n">math</span><span class="p">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="n">z</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[[</span><span class="n">lmd</span><span class="p">,</span> <span class="n">phi</span><span class="p">],</span> <span class="n">d</span><span class="p">]</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+<span class="k">def</span> <span class="nf">pol2rect</span><span class="p">(</span><span class="n">pol</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+    <span class="s">""" 極座標 -&gt; 直交座標
+
+    :param  list pol: 極座標
+    :return list    : 直交座標
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">lmd</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">pol</span>
+        <span class="n">r_mtx</span> <span class="o">=</span> <span class="n">lmtx</span><span class="p">.</span><span class="n">r_y</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+        <span class="n">r_mtx</span> <span class="o">=</span> <span class="n">lmtx</span><span class="p">.</span><span class="n">r_z</span><span class="p">(</span><span class="o">-</span><span class="n">lmd</span><span class="p">,</span> <span class="n">r_mtx</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lmtx</span><span class="p">.</span><span class="n">rotate</span><span class="p">(</span>
+            <span class="n">r_mtx</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">matrix</span><span class="p">([[</span><span class="n">r</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+        <span class="p">).</span><span class="n">A1</span><span class="p">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>File: <code class="language-plaintext highlighter-rouge">lib/matrix.py</code></p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+</pre></td><td class="code"><pre><span class="s">"""
+Modules for matrixes
+"""</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+
+<span class="n">R_UNIT</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s">"float64"</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">r_x</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">r_src</span><span class="o">=</span><span class="n">R_UNIT</span><span class="p">):</span>
+    <span class="s">""" 回転行列生成(x軸中心)
+          ( 1      0          0     )
+          ( 0  +cos(phi)  +sin(phi) )
+          ( 0  -sin(phi)  +cos(phi) )
+
+    :param  np.matrix r_src: Rotation matrix
+    :param  float       phi: Angle (Unit: rad)
+    :return np.matrix r_dst: Rotated matrix
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span> <span class="n">np</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+        <span class="n">r_mx</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">matrix</span><span class="p">([</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span>  <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span>
+        <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s">"float64"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r_mx</span> <span class="o">*</span> <span class="n">r_src</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+<span class="k">def</span> <span class="nf">r_y</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">r_src</span><span class="o">=</span><span class="n">R_UNIT</span><span class="p">):</span>
+    <span class="s">""" 回転行列生成(y軸中心)
+          ( +cos(theta)  0  -sin(theta) )
+          (     0        1      0       )
+          ( +sin(theta)  0  +cos(theta) )
+
+    :param  np.matrix r_src: Rotation matrix
+    :param  float     theta: Angle (Unit: rad)
+    :return np.matrix r_dst: Rotated matrix
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">r_mx</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">matrix</span><span class="p">([</span>
+            <span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>  <span class="n">c</span><span class="p">]</span>
+        <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s">"float64"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r_mx</span> <span class="o">*</span> <span class="n">r_src</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+<span class="k">def</span> <span class="nf">r_z</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="n">r_src</span><span class="o">=</span><span class="n">R_UNIT</span><span class="p">):</span>
+    <span class="s">""" 回転行列生成(z軸中心)
+          ( +cos(psi)  +sin(psi)  0 )
+          ( -sin(psi)  +cos(psi)  0 )
+          (     0          0      1 )
+
+    :param  np.matrix r_src: Rotation matrix
+    :param  float       psi: Angle (Unit: rad)
+    :return np.matrix r_dst: Rotated matrix
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">psi</span><span class="p">),</span> <span class="n">np</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
+        <span class="n">r_mx</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">matrix</span><span class="p">([</span>
+            <span class="p">[</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s">"float64"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r_mx</span> <span class="o">*</span> <span class="n">r_src</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+<span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+    <span class="s">""" 座標回転
+
+    :param  np.matrix r    : 回転行列
+    :param  np.matrix pos  : 回転前直交座標
+    :return np.matrix pos_r: 回転後直交座標
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">r</span> <span class="o">*</span> <span class="n">pos</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>File: <code class="language-plaintext highlighter-rouge">lib/trigonometric.py</code></p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+</pre></td><td class="code"><pre><span class="s">"""
+Modules for trigonometrics
+"""</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+
+<span class="k">def</span> <span class="nf">comp_lambda</span><span class="p">(</span><span class="n">alp</span><span class="p">,</span> <span class="n">dlt</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
+    <span class="s">""" λ の計算
+        * λ = arctan((sinδ sinε + cosδ sinα cosε ) / cosδ cosα)
+
+    :param  float alp: α (Unit: rad)
+    :param  float dlt: δ (Unit: rad)
+    :param  float eps: ε (Unit: rad)
+    :return float lmd: λ (Unit: rad)
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dlt</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span> \
+          <span class="o">+</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dlt</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alp</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dlt</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alp</span><span class="p">)</span>
+        <span class="n">lmd</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lmd</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">lmd</span> <span class="o">%=</span> <span class="n">math</span><span class="p">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">lmd</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+<span class="k">def</span> <span class="nf">comp_beta</span><span class="p">(</span><span class="n">alp</span><span class="p">,</span> <span class="n">dlt</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
+    <span class="s">""" β の計算
+        * β = arcsisn((sinδ cosε - cosδ sinα sinε)
+
+    :param  float alp: α (unit: rad)
+    :param  float dlt: δ (unit: rad)
+    :param  float eps: ε (unit: rad)
+    :return float bet: β (unit: rad)
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dlt</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span> \
+          <span class="o">-</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dlt</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alp</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">math</span><span class="p">.</span><span class="n">asin</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+<span class="k">def</span> <span class="nf">comp_alpha</span><span class="p">(</span><span class="n">lmd</span><span class="p">,</span> <span class="n">bet</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
+    <span class="s">""" α の計算
+        * α = arctan((-sinβ sinε + cosβ sinλ cosε ) / cosβ cosλ)
+
+    :param  float lmd: λ (unit: rad)
+    :param  float bet: β (unit: rad)
+    :param  float eps: ε (unit: rad)
+    :return float alp: α (unit: rad)
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="o">-</span><span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">bet</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span> \
+          <span class="o">+</span>  <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">bet</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lmd</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span>  <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">bet</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lmd</span><span class="p">)</span>
+        <span class="n">alp</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">alp</span> <span class="o">%=</span> <span class="n">math</span><span class="p">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">alp</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+<span class="k">def</span> <span class="nf">comp_delta</span><span class="p">(</span><span class="n">lmd</span><span class="p">,</span> <span class="n">bet</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
+    <span class="s">""" δ の計算
+        * δ = arcsisn((sinβ cosε + cosβ sinλ sinε)
+
+    :param  float lmd: λ (unit: rad)
+    :param  float bet: β (unit: rad)
+    :param  float eps: ε (unit: rad)
+    :return float dlt: δ (unit: rad)
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">bet</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span> \
+          <span class="o">+</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">bet</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lmd</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">math</span><span class="p">.</span><span class="n">asin</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/b8fca575ddab23c56d94a9155446f7ea" title="Gist - Python script to convert coordinates.">Gist - Python script to convert coordinates.</a></li>
+</ul>
+
+<h3 id="3-python-スクリプトの実行">3. Python スクリプトの実行</h3>
+
+<ul>
+  <li>黄道傾斜角εや元の赤道直交座標(3x1行列)は実行スクリプト内で指定する。</li>
+</ul>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./conv_coord.py
+元の赤道直交座標:
+  [0.99443659220701, -0.038162917689578336, -0.016551776709600584]
+黄道直交座標に変換:
+  [0.99443659220701, -0.04159771108146677, -5.622172494390565e-06]
+赤道直交座標に戻す:
+  [0.99443659220701, -0.038162917689578336, -0.016551776709600584]
+赤道極座標に変換:
+  [6.24482770879939, -0.01663059980037209] (R = 0.9953062370542631)
+黄道極座標に変換:
+  [6.241379248856413, -5.648686087788284e-06]
+赤道極座標に戻す:
+  [6.24482770879939, -0.01663059980037209]
+赤道直交座標に戻す:
+  [0.99443659220701, -0.03816291768957855, -0.01655177670960066]
+</code></pre></div></div>
+
+<hr />
+
+<p>これらの座標変換は、天体の各種計算でよく使用します。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/python" class="page__taxonomy-item" rel="tag">Python</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">カレンダー</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%9A%A6-%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">暦・カレンダー</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2018-07-26T00:20:00+09:00">2018-07-26 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Python+-+%E8%B5%A4%E9%81%93%E3%83%BB%E9%BB%84%E9%81%93%E5%BA%A7%E6%A8%99%E3%81%AE%E5%A4%89%E6%8F%9B%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2018%2F07%2F26%2Fpython-coordinate-conversion%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2018%2F07%2F26%2Fpython-coordinate-conversion%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2018%2F07%2F26%2Fpython-coordinate-conversion%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2018/07/23/python-calc-time-series/" class="pagination--pager" title="Python - 各種時刻系の変換！
+">Previous</a>
+    
+    
+      <a href="/2018/07/29/python-calendar-library/" class="pagination--pager" title="Python - カレンダ計算ライブラリの作成！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2018/07/26/python-coordinate-conversion/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2018/07/26/python-coordinate-conversion"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

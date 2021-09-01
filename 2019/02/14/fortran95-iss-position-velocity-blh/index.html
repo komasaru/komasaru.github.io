@@ -1,0 +1,1368 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Fortran - ISS 位置・速度（WGS84(BLH) 座標）の算出！ - mk-mode BLOG</title>
+<meta name="description" content="前回、 Fortran 95 で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（UT1; 世界時1）の ISS の位置・速度（TEME 座標）を、 SGP4 アルゴリズムを用いて計算しました。今回は、これの応用として、取得した TEME 座標を WGS84 座標（いわゆる、緯度・経度・高度(BLH)という座標）に変換します。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Fortran - ISS 位置・速度（WGS84(BLH) 座標）の算出！">
+<meta property="og:url" content="https://komasaru.github.io/2019/02/14/fortran95-iss-position-velocity-blh/">
+
+
+  <meta property="og:description" content="前回、 Fortran 95 で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（UT1; 世界時1）の ISS の位置・速度（TEME 座標）を、 SGP4 アルゴリズムを用いて計算しました。今回は、これの応用として、取得した TEME 座標を WGS84 座標（いわゆる、緯度・経度・高度(BLH)という座標）に変換します。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Fortran - ISS 位置・速度（WGS84(BLH) 座標）の算出！">
+  <meta name="twitter:description" content="前回、 Fortran 95 で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（UT1; 世界時1）の ISS の位置・速度（TEME 座標）を、 SGP4 アルゴリズムを用いて計算しました。今回は、これの応用として、取得した TEME 座標を WGS84 座標（いわゆる、緯度・経度・高度(BLH)という座標）に変換します。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2019/02/14/fortran95-iss-position-velocity-blh/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2019-02-14T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2019/02/14/fortran95-iss-position-velocity-blh/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Fortran - ISS 位置・速度（WGS84(BLH) 座標）の算出！">
+    <meta itemprop="description" content="前回、 Fortran 95 で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（UT1; 世界時1）の ISS の位置・速度（TEME 座標）を、 SGP4 アルゴリズムを用いて計算しました。今回は、これの応用として、取得した TEME 座標を WGS84 座標（いわゆる、緯度・経度・高度(BLH)という座標）に変換します。">
+    <meta itemprop="datePublished" content="February 14, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Fortran - ISS 位置・速度（WGS84(BLH) 座標）の算出！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-02-14T00:20:00+09:00">2019-02-14 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>前回、 Fortran 95 で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（UT1; 世界時1）の ISS の位置・速度（TEME 座標）を、 SGP4 アルゴリズムを用いて計算しました。</p>
+
+<p>今回は、これの応用として、取得した TEME 座標を WGS84 座標（いわゆる、緯度・経度・高度(BLH)という座標）に変換します。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>LMDE 3 (Linuz Mint Debian Edition 3; 64bit) での作業を想定。</li>
+  <li>GCC 6.3.0 でのビルド（コンパイル＆リンク）を想定。</li>
+  <li>ここでは、各種座標系、 SGP4 アルゴリズム（Simplified General Perturbations Satellite Orbit Model 4; NASA, NORAD が使用している、近地球域の衛星の軌道計算用で、周回周期225分未満の衛星に使用すべきアルゴリズム）等についての詳細は説明しない。</li>
+</ul>
+
+<h3 id="1-各種座標系について">1. 各種座標系について</h3>
+
+<ul>
+  <li>TEME 座標とは「真赤道面平均春分点」のことで、 “True Equator, Mean Equinox” の略。</li>
+  <li>PEF 座標とは「擬地球固定座標系」のことで、 “Pseudo Earth Fixed” の略。</li>
+  <li>ECEF 座標とは「地球中心・地球固定直交座標系」のことで、 “Earth Centered, Earth Fixed” の略。</li>
+  <li>WGS84 座標とは「世界測地系1984」のことで、 “World Geodetic System 1984” の略。 GPS で使用する測地系。</li>
+</ul>
+
+<h3 id="2-ソースコードの作成">2. ソースコードの作成</h3>
+
+<p>以下は、実行部分。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">iss_sgp4.f95</code></p>
+
+<figure class="highlight"><pre><code class="language-fortran" data-lang="fortran"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+</pre></td><td class="code"><pre><span class="c1">!*******************************************************************************</span><span class="w">
+</span><span class="c1">! Getting of ISS position.</span><span class="w">
+</span><span class="c1">!</span><span class="w">
+</span><span class="c1">!   date          name            version</span><span class="w">
+</span><span class="c1">!   2018.11.27    mk-mode.com     1.00 新規作成</span><span class="w">
+</span><span class="c1">!</span><span class="w">
+</span><span class="c1">! Copyright(C) 2018 mk-mode.com All Rights Reserved.</span><span class="w">
+</span><span class="c1">! ---</span><span class="w">
+</span><span class="c1">! 引数 : JST（日本標準時）</span><span class="w">
+</span><span class="c1">!          YYYYMMDD[HHMMSS[MMM]]</span><span class="w">
+</span><span class="c1">!          無指定なら現在(システム日時)を JST とみなす。</span><span class="w">
+</span><span class="c1">!          （上記最後の MMM はミリ秒）</span><span class="w">
+</span><span class="c1">! ---</span><span class="w">
+</span><span class="c1">! MEMO:</span><span class="w">
+</span><span class="c1">!   TEME: True Equator, Mean Equinox; 真赤道面平均春分点</span><span class="w">
+</span><span class="c1">!    PEF: Pseudo Earth Fixed; 擬地球固定座標系</span><span class="w">
+</span><span class="c1">!   ECEF: Earth Centered, Earth Fixed; 地球中心・地球固定直交座標系</span><span class="w">
+</span><span class="c1">!*******************************************************************************</span><span class="w">
+</span><span class="c1">!</span><span class="w">
+</span><span class="k">program</span><span class="w"> </span><span class="n">iss_sgp4</span><span class="w">
+  </span><span class="k">use</span><span class="w"> </span><span class="n">const</span><span class="p">,</span><span class="w">       </span><span class="k">only</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">SP</span><span class="p">,</span><span class="w"> </span><span class="n">DP</span><span class="p">,</span><span class="w"> </span><span class="n">JST_UTC</span><span class="p">,</span><span class="w"> </span><span class="n">UID</span><span class="p">,</span><span class="w"> </span><span class="n">F_TLE</span><span class="p">,</span><span class="w"> </span><span class="n">SEC_D</span><span class="p">,</span><span class="w"> </span><span class="n">TT_TAI</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span><span class="w">
+                        </span><span class="p">&amp;</span><span class="w"> </span><span class="n">DAY_JC</span><span class="p">,</span><span class="w"> </span><span class="n">FMT_DT_0</span><span class="p">,</span><span class="w"> </span><span class="n">FMT_DT_1</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span><span class="w">
+                        </span><span class="p">&amp;</span><span class="w"> </span><span class="n">getgravconst</span><span class="w">
+  </span><span class="k">use</span><span class="w"> </span><span class="n">propagation</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">propagate</span><span class="w">
+  </span><span class="k">use</span><span class="w"> </span><span class="n">io</span><span class="w">
+  </span><span class="k">use</span><span class="w"> </span><span class="n">model</span><span class="w">
+  </span><span class="k">use</span><span class="w"> </span><span class="n">ext</span><span class="w">
+  </span><span class="k">use</span><span class="w"> </span><span class="n">eph</span><span class="w">
+  </span><span class="k">implicit</span><span class="w"> </span><span class="k">none</span><span class="w">
+  </span><span class="k">type</span><span class="p">(</span><span class="n">t_time</span><span class="p">)</span><span class="w">  </span><span class="p">::</span><span class="w"> </span><span class="n">jst</span><span class="p">,</span><span class="w"> </span><span class="n">utc</span><span class="p">,</span><span class="w"> </span><span class="n">ut1</span><span class="p">,</span><span class="w"> </span><span class="n">tai</span><span class="p">,</span><span class="w"> </span><span class="n">tt</span><span class="w">
+  </span><span class="k">type</span><span class="p">(</span><span class="n">t_eop</span><span class="p">)</span><span class="w">   </span><span class="p">::</span><span class="w"> </span><span class="n">eop</span><span class="w">
+  </span><span class="k">type</span><span class="p">(</span><span class="n">t_sat</span><span class="p">)</span><span class="w">   </span><span class="p">::</span><span class="w"> </span><span class="n">satrec</span><span class="w">
+  </span><span class="k">type</span><span class="p">(</span><span class="n">t_cst</span><span class="p">)</span><span class="w">   </span><span class="p">::</span><span class="w"> </span><span class="n">gravconst</span><span class="w">
+  </span><span class="kt">character</span><span class="p">(</span><span class="mi">69</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">tle</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w">
+  </span><span class="kt">integer</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span><span class="w">   </span><span class="p">::</span><span class="w"> </span><span class="n">dat</span><span class="w">
+  </span><span class="kt">real</span><span class="p">(</span><span class="n">DP</span><span class="p">)</span><span class="w">      </span><span class="p">::</span><span class="w"> </span><span class="n">jd_ut1</span><span class="p">,</span><span class="w"> </span><span class="n">jd_tt</span><span class="p">,</span><span class="w"> </span><span class="n">t_tt</span><span class="p">,</span><span class="w"> </span><span class="n">gmst</span><span class="p">,</span><span class="w"> </span><span class="n">om</span><span class="p">,</span><span class="w"> </span><span class="n">gmst_g</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">v</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w">
+  </span><span class="kt">real</span><span class="p">(</span><span class="n">DP</span><span class="p">)</span><span class="w">      </span><span class="p">::</span><span class="w"> </span><span class="n">mtx_z</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">mtx_pm</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w">
+  </span><span class="kt">real</span><span class="p">(</span><span class="n">DP</span><span class="p">)</span><span class="w">      </span><span class="p">::</span><span class="w"> </span><span class="n">r_pef</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">r_ecef</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">om_e</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">v_pef</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">v_ecef</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w">
+  </span><span class="kt">real</span><span class="p">(</span><span class="n">DP</span><span class="p">)</span><span class="w">      </span><span class="p">::</span><span class="w"> </span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">lon</span><span class="p">,</span><span class="w"> </span><span class="n">ht</span><span class="p">,</span><span class="w"> </span><span class="n">vel_ecef</span><span class="w">
+
+  </span><span class="c1">! コマンドライン引数（現在日時(JST)）取得</span><span class="w">
+  </span><span class="k">call</span><span class="w"> </span><span class="n">get_arg</span><span class="p">(</span><span class="n">jst</span><span class="p">)</span><span class="w">
+  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">jst</span><span class="o">%</span><span class="n">year</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">stop</span><span class="w">
+
+  </span><span class="c1">! 初期処理</span><span class="w">
+  </span><span class="k">call</span><span class="w"> </span><span class="n">init</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(A)'</span><span class="p">,</span><span class="w"> </span><span class="s2">"[初期データ]"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(A, " JST")'</span><span class="p">,</span><span class="w">            </span><span class="n">date_fmt</span><span class="p">(</span><span class="n">jst</span><span class="p">)</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(A, " UTC")'</span><span class="p">,</span><span class="w">            </span><span class="n">date_fmt</span><span class="p">(</span><span class="n">utc</span><span class="p">)</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(A, " UT1")'</span><span class="p">,</span><span class="w">            </span><span class="n">date_fmt</span><span class="p">(</span><span class="n">ut1</span><span class="p">)</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("TAI - UTC = ", I0)'</span><span class="p">,</span><span class="w">             </span><span class="n">dat</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(A, " TAI")'</span><span class="p">,</span><span class="w">            </span><span class="n">date_fmt</span><span class="p">(</span><span class="n">tai</span><span class="p">)</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(A, "  TT")'</span><span class="p">,</span><span class="w">            </span><span class="n">date_fmt</span><span class="p">(</span><span class="n">tt</span><span class="w"> </span><span class="p">)</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("JD(UT1) = ", F11.3, " day")'</span><span class="p">,</span><span class="w"> </span><span class="n">jd_ut1</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("JD(TT ) = ", F16.8, " day")'</span><span class="p">,</span><span class="w">  </span><span class="n">jd_tt</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(" T(TT ) = ", F10.8)'</span><span class="p">,</span><span class="w">           </span><span class="n">t_tt</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("TLE = ", A)'</span><span class="p">,</span><span class="w">                 </span><span class="n">tle</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("      ", A)'</span><span class="p">,</span><span class="w">                 </span><span class="n">tle</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w">
+
+  </span><span class="c1">! ISS 位置・速度取得</span><span class="w">
+  </span><span class="k">call</span><span class="w"> </span><span class="n">get_iss</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(/A)'</span><span class="p">,</span><span class="w"> </span><span class="s2">"[途中経過]"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("TEME POS = ", 3F16.8)'</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("     VEL = ", 3F16.8)'</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="w">
+
+  </span><span class="c1">! TEME -&gt; BLH 変換</span><span class="w">
+  </span><span class="k">call</span><span class="w"> </span><span class="n">teme2blh</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("  GMST = ", F10.8, " rad.")'</span><span class="p">,</span><span class="w">                 </span><span class="n">gmst</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("    om = ", F10.8, " rad.")'</span><span class="p">,</span><span class="w">                   </span><span class="n">om</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("GMST_G = ", F10.8, " rad.")'</span><span class="p">,</span><span class="w">               </span><span class="n">gmst_g</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("ROTATE MATRIX(for GMST) =", 3(/3(E20.8)))'</span><span class="p">,</span><span class="w">  </span><span class="n">mtx_z</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("ROTATE MATRIX(for PM) =",   3(/3(E20.8)))'</span><span class="p">,</span><span class="w"> </span><span class="n">mtx_pm</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("POSITION(PEF) = ",             /3(F16.8))'</span><span class="p">,</span><span class="w">  </span><span class="n">r_pef</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("POSITION(ECEF) = ",            /3(F16.8))'</span><span class="p">,</span><span class="w"> </span><span class="n">r_ecef</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("om_earth =",                   /3(E20.8))'</span><span class="p">,</span><span class="w">   </span><span class="n">om_e</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("VELOCITY(PEF) = ",             /3(F16.8))'</span><span class="p">,</span><span class="w">  </span><span class="n">v_pef</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("VELOCITY(ECEF) = ",            /3(F16.8))'</span><span class="p">,</span><span class="w"> </span><span class="n">v_ecef</span><span class="w">
+
+  </span><span class="c1">! 最終結果出力</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(/A)'</span><span class="p">,</span><span class="w"> </span><span class="s2">"[計算結果]"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(A)'</span><span class="p">,</span><span class="w">  </span><span class="s2">"WGS84(BLH):"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("  POSITION  LAT = ", F9.4, " °"  )'</span><span class="p">,</span><span class="w">      </span><span class="n">lat</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("            LON = ", F9.4, " °"  )'</span><span class="p">,</span><span class="w">      </span><span class="n">lon</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("         HEIGHT = ", F9.4, " km"  )'</span><span class="p">,</span><span class="w">       </span><span class="n">ht</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("  VELOCITY      = ", F9.4, " km/s")'</span><span class="p">,</span><span class="w"> </span><span class="n">vel_ecef</span><span class="w">
+
+  </span><span class="k">stop</span><span class="w">
+</span><span class="k">contains</span><span class="w">
+  </span><span class="c1">! コマンドライン引数取得</span><span class="w">
+  </span><span class="c1">! * YYYYMMDD[HHMMSS[MMM]] 形式</span><span class="w">
+  </span><span class="c1">! * 17桁超入力された場合は、18桁目以降の部分は切り捨てる</span><span class="w">
+  </span><span class="c1">! * コマンドライン引数がなければ、システム日時を JST とする</span><span class="w">
+  </span><span class="c1">! * 日時の整合性チェックは行わない</span><span class="w">
+  </span><span class="c1">!</span><span class="w">
+  </span><span class="c1">! :param(out) type(t_time) jst</span><span class="w">
+  </span><span class="k">subroutine</span><span class="w"> </span><span class="n">get_arg</span><span class="p">(</span><span class="n">jst</span><span class="p">)</span><span class="w">
+    </span><span class="k">implicit</span><span class="w"> </span><span class="k">none</span><span class="w">
+    </span><span class="k">type</span><span class="p">(</span><span class="n">t_time</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="k">out</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">jst</span><span class="w">
+    </span><span class="kt">character</span><span class="p">(</span><span class="mi">17</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">gc</span><span class="w">
+    </span><span class="kt">integer</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span><span class="w">   </span><span class="p">::</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="w">
+    </span><span class="kt">integer</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span><span class="w">   </span><span class="p">::</span><span class="w"> </span><span class="n">len_gc</span><span class="w">
+
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iargc</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+      </span><span class="k">call</span><span class="w"> </span><span class="nb">date_and_time</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span><span class="w">
+      </span><span class="n">jst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">t_time</span><span class="p">(</span><span class="n">dt</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">7</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span><span class="w">
+    </span><span class="k">else</span><span class="w">
+      </span><span class="k">call</span><span class="w"> </span><span class="n">getarg</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">gc</span><span class="p">)</span><span class="w">
+      </span><span class="n">len_gc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="n">gc</span><span class="p">))</span><span class="w">
+      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">len_gc</span><span class="w"> </span><span class="p">/</span><span class="o">=</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="ow">.and.</span><span class="w"> </span><span class="n">len_gc</span><span class="w"> </span><span class="p">/</span><span class="o">=</span><span class="w"> </span><span class="mi">14</span><span class="w"> </span><span class="ow">.and.</span><span class="w"> </span><span class="n">len_gc</span><span class="w"> </span><span class="p">/</span><span class="o">=</span><span class="w"> </span><span class="mi">17</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+        </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">"Format: YYYYMMDD[HHMMSS[MMM]"</span><span class="w">
+        </span><span class="k">return</span><span class="w">
+      </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+      </span><span class="k">read</span><span class="w"> </span><span class="p">(</span><span class="n">gc</span><span class="p">,</span><span class="w"> </span><span class="n">FMT_DT_0</span><span class="p">)</span><span class="w"> </span><span class="n">jst</span><span class="w">
+    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+  </span><span class="k">end</span><span class="w"> </span><span class="k">subroutine</span><span class="w"> </span><span class="n">get_arg</span><span class="w">
+
+  </span><span class="c1">! 初期処理</span><span class="w">
+  </span><span class="k">subroutine</span><span class="w"> </span><span class="n">init</span><span class="w">
+    </span><span class="k">implicit</span><span class="w"> </span><span class="k">none</span><span class="w">
+
+    </span><span class="c1">! 各種時刻換算</span><span class="w">
+    </span><span class="k">call</span><span class="w"> </span><span class="n">add_day</span><span class="p">(</span><span class="n">jst</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">JST_UTC</span><span class="w"> </span><span class="p">/</span><span class="w"> </span><span class="mf">24.0_DP</span><span class="p">,</span><span class="w"> </span><span class="n">utc</span><span class="p">)</span><span class="w">
+    </span><span class="k">call</span><span class="w"> </span><span class="n">get_eop</span><span class="p">(</span><span class="n">utc</span><span class="p">,</span><span class="w"> </span><span class="n">eop</span><span class="p">)</span><span class="w">
+    </span><span class="k">call</span><span class="w"> </span><span class="n">add_day</span><span class="p">(</span><span class="n">utc</span><span class="p">,</span><span class="w"> </span><span class="n">eop</span><span class="o">%</span><span class="n">dut1</span><span class="p">/</span><span class="w"> </span><span class="n">SEC_D</span><span class="p">,</span><span class="w"> </span><span class="n">ut1</span><span class="p">)</span><span class="w">
+    </span><span class="k">call</span><span class="w"> </span><span class="n">get_dat</span><span class="p">(</span><span class="n">utc</span><span class="p">,</span><span class="w"> </span><span class="n">dat</span><span class="p">)</span><span class="w">
+    </span><span class="k">call</span><span class="w"> </span><span class="n">add_day</span><span class="p">(</span><span class="n">utc</span><span class="p">,</span><span class="w"> </span><span class="n">dat</span><span class="w"> </span><span class="p">/</span><span class="w"> </span><span class="n">SEC_D</span><span class="p">,</span><span class="w"> </span><span class="n">tai</span><span class="p">)</span><span class="w">
+    </span><span class="k">call</span><span class="w"> </span><span class="n">add_day</span><span class="p">(</span><span class="n">tai</span><span class="p">,</span><span class="w"> </span><span class="n">TT_TAI</span><span class="w"> </span><span class="p">/</span><span class="w"> </span><span class="n">SEC_D</span><span class="p">,</span><span class="w"> </span><span class="n">tt</span><span class="p">)</span><span class="w">
+    </span><span class="k">call</span><span class="w"> </span><span class="n">gc2jd</span><span class="p">(</span><span class="n">ut1</span><span class="p">,</span><span class="w"> </span><span class="n">jd_ut1</span><span class="p">)</span><span class="w">
+    </span><span class="k">call</span><span class="w"> </span><span class="n">gc2jd</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span><span class="w"> </span><span class="n">jd_tt</span><span class="p">)</span><span class="w">
+    </span><span class="n">t_tt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">jd_tt</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">2451545.0_DP</span><span class="p">)</span><span class="w"> </span><span class="p">/</span><span class="w"> </span><span class="n">DAY_JC</span><span class="w">
+
+    </span><span class="c1">! TLE 読み込み</span><span class="w">
+    </span><span class="k">call</span><span class="w"> </span><span class="n">get_tle</span><span class="p">(</span><span class="n">ut1</span><span class="p">,</span><span class="w"> </span><span class="n">tle</span><span class="p">)</span><span class="w">
+  </span><span class="k">end</span><span class="w"> </span><span class="k">subroutine</span><span class="w"> </span><span class="n">init</span><span class="w">
+
+  </span><span class="c1">! ISS 位置・速度取得</span><span class="w">
+  </span><span class="k">subroutine</span><span class="w"> </span><span class="n">get_iss</span><span class="w">
+    </span><span class="k">implicit</span><span class="w"> </span><span class="k">none</span><span class="w">
+
+    </span><span class="c1">! WGS84 用定数の取得</span><span class="w">
+    </span><span class="n">gravconst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getgravconst</span><span class="p">(</span><span class="s2">"wgs84"</span><span class="p">)</span><span class="w">
+
+    </span><span class="c1">! ISS 初期位置・速度の取得</span><span class="w">
+    </span><span class="k">call</span><span class="w"> </span><span class="n">twoline2rv</span><span class="p">(</span><span class="n">tle</span><span class="p">,</span><span class="w"> </span><span class="n">gravconst</span><span class="p">,</span><span class="w"> </span><span class="n">satrec</span><span class="p">)</span><span class="w">
+
+    </span><span class="c1">! 指定 UT1 の ISS 位置・速度の取得</span><span class="w">
+    </span><span class="k">call</span><span class="w"> </span><span class="n">propagate</span><span class="p">(</span><span class="n">gravconst</span><span class="p">,</span><span class="w"> </span><span class="n">satrec</span><span class="p">,</span><span class="w"> </span><span class="n">ut1</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w">
+
+    </span><span class="c1">! Error 時、終了</span><span class="w">
+    </span><span class="c1">!   1 - mean elements, ecc &gt;= 1.0 or ecc &lt; -0.001 or a &lt; 0.95 er</span><span class="w">
+    </span><span class="c1">!   2 - mean motion less than 0.0</span><span class="w">
+    </span><span class="c1">!   3 - pert elements, ecc &lt; 0.0  or  ecc &gt; 1.0</span><span class="w">
+    </span><span class="c1">!   4 - semi-latus rectum &lt; 0.0</span><span class="w">
+    </span><span class="c1">!   5 - epoch elements are sub-orbital</span><span class="w">
+    </span><span class="c1">!   6 - satellite has decayed</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satrec</span><span class="o">%</span><span class="n">error</span><span class="w"> </span><span class="p">/</span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+      </span><span class="k">print</span><span class="w"> </span><span class="s1">'(A, I0, A)'</span><span class="p">,</span><span class="w"> </span><span class="s2">"ERROR! ["</span><span class="p">,</span><span class="w"> </span><span class="n">satrec</span><span class="o">%</span><span class="n">error</span><span class="p">,</span><span class="w"> </span><span class="s2">"]"</span><span class="w">
+      </span><span class="k">stop</span><span class="w">
+    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+  </span><span class="k">end</span><span class="w"> </span><span class="k">subroutine</span><span class="w"> </span><span class="n">get_iss</span><span class="w">
+
+  </span><span class="c1">! TEME -&gt; BLH 変換</span><span class="w">
+  </span><span class="k">subroutine</span><span class="w"> </span><span class="n">teme2blh</span><span class="w">
+    </span><span class="k">implicit</span><span class="w"> </span><span class="k">none</span><span class="w">
+
+    </span><span class="c1">! GMST（グリニッジ平均恒星時）計算</span><span class="w">
+    </span><span class="n">gmst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calc_gmst</span><span class="p">(</span><span class="n">jd_ut1</span><span class="p">)</span><span class="w">
+    </span><span class="c1">! Ω（月の平均昇交点黄経）計算（IAU1980章動理論）</span><span class="w">
+    </span><span class="n">om</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calc_om</span><span class="p">(</span><span class="n">t_tt</span><span class="p">)</span><span class="w">
+    </span><span class="c1">! GMST に運動項を適用（1997年より新しい場合）</span><span class="w">
+    </span><span class="n">gmst_g</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">apply_kinematic</span><span class="p">(</span><span class="n">gmst</span><span class="p">,</span><span class="w"> </span><span class="n">jd_ut1</span><span class="p">,</span><span class="w"> </span><span class="n">om</span><span class="p">)</span><span class="w">
+    </span><span class="c1">! GMST 回転行列（z軸を中心とした回転）</span><span class="w">
+    </span><span class="n">mtx_z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r_z</span><span class="p">(</span><span class="n">gmst_g</span><span class="p">)</span><span class="w">
+    </span><span class="c1">! 極運動(Polar Motion)回転行列</span><span class="w">
+    </span><span class="n">mtx_pm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r_pm</span><span class="p">(</span><span class="n">eop</span><span class="o">%</span><span class="n">pm_x</span><span class="p">,</span><span class="w"> </span><span class="n">eop</span><span class="o">%</span><span class="n">pm_y</span><span class="p">,</span><span class="w"> </span><span class="n">t_tt</span><span class="p">)</span><span class="w">
+    </span><span class="c1">! PEF 座標の計算（GMST 回転行列の適用）</span><span class="w">
+    </span><span class="n">r_pef</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">matmul</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">mtx_z</span><span class="p">)</span><span class="w">
+    </span><span class="c1">! ECEF 座標（位置）の計算（極運動(Polar Motion)の適用）</span><span class="w">
+    </span><span class="n">r_ecef</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">matmul</span><span class="p">(</span><span class="n">r_pef</span><span class="p">,</span><span class="w"> </span><span class="n">mtx_pm</span><span class="p">)</span><span class="w">
+    </span><span class="c1">! Ω_earth値の計算</span><span class="w">
+    </span><span class="n">om_e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calc_om_e</span><span class="p">(</span><span class="n">eop</span><span class="o">%</span><span class="n">lod</span><span class="p">)</span><span class="w">
+    </span><span class="c1">! PEF 座標（速度）の計算（GMST 回転行列の適用）</span><span class="w">
+    </span><span class="n">v_pef</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">matmul</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">mtx_z</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">v_cross</span><span class="p">(</span><span class="n">om_e</span><span class="p">,</span><span class="w"> </span><span class="n">r_pef</span><span class="p">)</span><span class="w">
+    </span><span class="c1">! ECEF 座標（速度）の計算（極運動(Polar Motion)の適用）</span><span class="w">
+    </span><span class="n">v_ecef</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">matmul</span><span class="p">(</span><span class="n">v_pef</span><span class="p">,</span><span class="w"> </span><span class="n">mtx_pm</span><span class="p">)</span><span class="w">
+    </span><span class="c1">! ECEF 座標 =&gt; BLH(Beta, Lambda, Height) 変換</span><span class="w">
+    </span><span class="k">call</span><span class="w"> </span><span class="n">ecef2blh</span><span class="p">(</span><span class="n">r_ecef</span><span class="p">,</span><span class="w"> </span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">lon</span><span class="p">,</span><span class="w"> </span><span class="n">ht</span><span class="p">)</span><span class="w">
+    </span><span class="n">vel_ecef</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">v_ecef</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">v_ecef</span><span class="p">))</span><span class="w">
+  </span><span class="k">end</span><span class="w"> </span><span class="k">subroutine</span><span class="w"> </span><span class="n">teme2blh</span><span class="w">
+
+  </span><span class="c1">! TLE 取得</span><span class="w">
+  </span><span class="c1">!</span><span class="w">
+  </span><span class="c1">! :param(in)  type(t_time)     ut1: UT1</span><span class="w">
+  </span><span class="c1">! :param(out) character(69) tle(2): TLE(2行)</span><span class="w">
+  </span><span class="k">subroutine</span><span class="w"> </span><span class="n">get_tle</span><span class="p">(</span><span class="n">ut1</span><span class="p">,</span><span class="w"> </span><span class="n">tle</span><span class="p">)</span><span class="w">
+    </span><span class="k">implicit</span><span class="w"> </span><span class="k">none</span><span class="w">
+    </span><span class="k">type</span><span class="p">(</span><span class="n">t_time</span><span class="p">),</span><span class="w">  </span><span class="k">intent</span><span class="p">(</span><span class="k">in</span><span class="p">)</span><span class="w">  </span><span class="p">::</span><span class="w"> </span><span class="n">ut1</span><span class="w">
+    </span><span class="kt">character</span><span class="p">(</span><span class="mi">69</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="k">out</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">tle</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w">
+    </span><span class="kt">character</span><span class="p">(</span><span class="mi">69</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="n">buf_p</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w">
+    </span><span class="kt">integer</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span><span class="w">   </span><span class="p">::</span><span class="w"> </span><span class="n">ios</span><span class="w">
+    </span><span class="k">type</span><span class="p">(</span><span class="n">t_time</span><span class="p">)</span><span class="w">  </span><span class="p">::</span><span class="w"> </span><span class="n">utc</span><span class="w">  </span><span class="c1">! TLE 内の日時</span><span class="w">
+    </span><span class="kt">integer</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span><span class="w">   </span><span class="p">::</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w">
+    </span><span class="kt">real</span><span class="p">(</span><span class="n">DP</span><span class="p">)</span><span class="w">      </span><span class="p">::</span><span class="w"> </span><span class="n">d</span><span class="w">
+    </span><span class="kt">character</span><span class="p">(</span><span class="mi">17</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">s_ut1</span><span class="p">,</span><span class="w"> </span><span class="n">s_utc</span><span class="w">
+
+    </span><span class="k">write</span><span class="w"> </span><span class="p">(</span><span class="n">s_ut1</span><span class="p">,</span><span class="w"> </span><span class="n">FMT_DT_1</span><span class="p">)</span><span class="w"> </span><span class="n">ut1</span><span class="w">
+
+    </span><span class="c1">! ファイル OPEN</span><span class="w">
+    </span><span class="k">open</span><span class="w"> </span><span class="p">(</span><span class="n">unit</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">UID</span><span class="p">,</span><span class="w">         </span><span class="p">&amp;</span><span class="w">
+        </span><span class="p">&amp;</span><span class="w"> </span><span class="n">iostat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ios</span><span class="p">,</span><span class="w">         </span><span class="p">&amp;</span><span class="w">
+        </span><span class="p">&amp;</span><span class="w"> </span><span class="n">file</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">F_TLE</span><span class="p">,</span><span class="w">       </span><span class="p">&amp;</span><span class="w">
+        </span><span class="p">&amp;</span><span class="w"> </span><span class="n">action</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"read"</span><span class="p">,</span><span class="w">      </span><span class="p">&amp;</span><span class="w">
+        </span><span class="p">&amp;</span><span class="w"> </span><span class="n">form</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"formatted"</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span><span class="w">
+        </span><span class="p">&amp;</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"old"</span><span class="p">)</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ios</span><span class="w"> </span><span class="p">/</span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+      </span><span class="k">print</span><span class="w"> </span><span class="s1">'("[ERROR:", I0 ,"] Failed to open file: ", A)'</span><span class="p">,</span><span class="w"> </span><span class="n">ios</span><span class="p">,</span><span class="w"> </span><span class="n">F_TLE</span><span class="w">
+      </span><span class="k">stop</span><span class="w">
+    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+
+    </span><span class="n">tle</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">""</span><span class="w">
+    </span><span class="n">buf_p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">""</span><span class="w">
+    </span><span class="k">do</span><span class="w">
+      </span><span class="k">read</span><span class="w"> </span><span class="p">(</span><span class="n">UID</span><span class="p">,</span><span class="w"> </span><span class="s1">'(A)'</span><span class="p">,</span><span class="w"> </span><span class="n">iostat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ios</span><span class="p">)</span><span class="w"> </span><span class="n">buf</span><span class="w">
+      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ios</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+        </span><span class="k">exit</span><span class="w">
+      </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ios</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+        </span><span class="k">print</span><span class="w"> </span><span class="s1">'("[ERROR:", I0 ,"] Failed to read file: ", A)'</span><span class="p">,</span><span class="w"> </span><span class="n">ios</span><span class="p">,</span><span class="w"> </span><span class="n">F_TLE</span><span class="w">
+      </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="n">buf</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">cycle</span><span class="w">
+      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">buf</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">/</span><span class="o">=</span><span class="w"> </span><span class="s2">"1"</span><span class="w"> </span><span class="ow">.and.</span><span class="w"> </span><span class="n">buf</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">/</span><span class="o">=</span><span class="w"> </span><span class="s2">"2"</span><span class="p">)</span><span class="w"> </span><span class="k">cycle</span><span class="w">
+      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">buf</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"1"</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+        </span><span class="k">read</span><span class="w"> </span><span class="p">(</span><span class="n">buf</span><span class="p">(</span><span class="mi">19</span><span class="p">:</span><span class="mi">20</span><span class="p">),</span><span class="w"> </span><span class="s1">'(I2)'</span><span class="p">)</span><span class="w"> </span><span class="n">y</span><span class="w">
+        </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2000</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="w">
+        </span><span class="k">read</span><span class="w"> </span><span class="p">(</span><span class="n">buf</span><span class="p">(</span><span class="mi">21</span><span class="p">:</span><span class="mi">32</span><span class="p">),</span><span class="w"> </span><span class="s1">'(F12.8)'</span><span class="p">)</span><span class="w"> </span><span class="n">d</span><span class="w">
+        </span><span class="k">call</span><span class="w"> </span><span class="n">add_day</span><span class="p">(</span><span class="n">t_time</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">utc</span><span class="p">)</span><span class="w">
+        </span><span class="k">write</span><span class="w"> </span><span class="p">(</span><span class="n">s_utc</span><span class="p">,</span><span class="w"> </span><span class="n">FMT_DT_1</span><span class="p">)</span><span class="w"> </span><span class="n">utc</span><span class="w">
+        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_utc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">s_ut1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+          </span><span class="n">tle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buf_p</span><span class="w">
+          </span><span class="k">exit</span><span class="w">
+        </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+      </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+      </span><span class="k">read</span><span class="w"> </span><span class="p">(</span><span class="n">buf</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="s1">'(I1)'</span><span class="p">)</span><span class="w"> </span><span class="n">l</span><span class="w">
+      </span><span class="n">buf_p</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buf</span><span class="w">
+    </span><span class="k">end</span><span class="w"> </span><span class="k">do</span><span class="w">
+
+    </span><span class="c1">! 上記の処理で該当レコードが得られなかった場合は、最初の2行</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="n">tle</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+      </span><span class="k">rewind</span><span class="p">(</span><span class="n">UID</span><span class="p">)</span><span class="w">
+      </span><span class="k">do</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w">
+        </span><span class="k">read</span><span class="w"> </span><span class="p">(</span><span class="n">UID</span><span class="p">,</span><span class="w"> </span><span class="s1">'(A)'</span><span class="p">,</span><span class="w"> </span><span class="n">iostat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ios</span><span class="p">)</span><span class="w"> </span><span class="n">tle</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w">
+      </span><span class="k">end</span><span class="w"> </span><span class="k">do</span><span class="w">
+    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+
+    </span><span class="c1">! ファイル CLOSE</span><span class="w">
+    </span><span class="k">close</span><span class="p">(</span><span class="n">UID</span><span class="p">)</span><span class="w">
+  </span><span class="k">end</span><span class="w"> </span><span class="k">subroutine</span><span class="w"> </span><span class="n">get_tle</span><span class="w">
+</span><span class="k">end</span><span class="w"> </span><span class="k">program</span><span class="w"> </span><span class="n">iss_sgp4</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>モジュール等を含めた全てのファイルは GitHub リポジトリとして公開しているので、そちらを参照のこと。</p>
+
+<ul>
+  <li><a href="https://github.com/komasaru/iss/tree/master/iss_sgp4" title="iss/iss_sgp4 at master · komasaru/iss">iss/iss_sgp4 at master · komasaru/iss</a></li>
+</ul>
+
+<h3 id="3-準備">3. 準備</h3>
+
+<ul>
+  <li>GitHub リポジトリ <a href="https://github.com/komasaru/iss/tree/master/tle2rv" title="iss/tle2rv at master · komasaru/iss">iss/tle2rv at master · komasaru/iss</a> から上記以外の全てのファイルを取得しておく。</li>
+  <li><code class="language-plaintext highlighter-rouge">tle_iss_nasa.txt</code>, <code class="language-plaintext highlighter-rouge">Leap_Second.dat</code>, <code class="language-plaintext highlighter-rouge">eop.csv</code> を最新のものにしておく。
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">tle_iss_nasa.txt</code> の取得は「<a href="/2018/08/14/python-tle-getting-from-nasa" title="Python - TLE（2行軌道要素形式）の取得(NASA)！">Python - TLE（2行軌道要素形式）の取得(NASA)！</a>」を参考に。</li>
+      <li><code class="language-plaintext highlighter-rouge">Leap_Second.dat</code> は「<a href="https://hpiers.obspm.fr/iers/bul/bulc/Leap_Second.dat" title="Leap_Second.dat">こちら</a>」を取得したものをそのまま配置する。</li>
+      <li><code class="language-plaintext highlighter-rouge">eop.csv</code> の取得は「<a href="/2018/08/29/ruby-python-eop-getting-from-iers" title="Ruby, Python - EOP（地球姿勢パラメータ）CSV 生成！">Ruby, Python - EOP（地球姿勢パラメータ）CSV 生成！</a>」</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="4-ビルド">4. ビルド</h3>
+
+<p>Makefile を使用するので、以下のようにすればよい。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ make
+</code></pre></div></div>
+
+<h3 id="5-実行">5. 実行</h3>
+
+<p>以下は、日本標準時(JST) 2019年1月1日（0時0分0.000秒）の ISS の位置・速度（WGS84(BLH) 座標）を計算する例。<br />
+計算の流れが分かるよう、途中経過も出力するようにしている。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./iss_sgp4 20190101
+[初期データ]
+2019-01-01 00:00:00.000 JST
+2018-12-31 15:00:00.000 UTC
+2018-12-31 14:59:59.963 UT1
+TAI - UTC = 37
+2018-12-31 15:00:37.000 TAI
+2018-12-31 15:01:09.184  TT
+JD(UT1) = 2458484.125 day
+JD(TT ) = 2458484.12580074 day
+ T(TT ) = 0.18998291
+TLE = 1 25544U 98067A   18332.51648093  .00016717  00000-0  10270-3 0  9000
+      2 25544  51.6394 279.8120 0005142  90.0655 270.1087 15.54020670 24063
+
+[途中経過]
+TEME POS =    -923.64052601   6327.37451246  -2273.32176709
+     VEL =      -5.27233259      1.18198845      5.43472644
+  GMST = 5.67215877 rad.
+    om = 2.05236340 rad.
+GMST_G = 5.67215878 rad.
+ROTATE MATRIX(for GMST) =
+      0.81905952E+00     -0.57370855E+00      0.00000000E+00
+      0.57370855E+00      0.81905952E+00      0.00000000E+00
+      0.00000000E+00      0.00000000E+00      0.10000000E+01
+ROTATE MATRIX(for PM) =
+      0.10000000E+01     -0.43289968E-10      0.48424645E-09
+      0.43289968E-10      0.10000000E+01     -0.13400880E-08
+     -0.48424645E-09      0.13400880E-08      0.10000000E+01
+POSITION(PEF) =
+  -4386.58540889   4652.59588753  -2273.32176709
+POSITION(ECEF) =
+  -4386.58541019   4652.59589039  -2273.32175873
+om_earth =
+      0.00000000E+00      0.00000000E+00      0.72921151E-04
+VELOCITY(PEF) =
+     -4.65719844     -1.73678852      5.43472644
+VELOCITY(ECEF) =
+     -4.65719844     -1.73678852      5.43472644
+
+[計算結果]
+WGS84(BLH):
+  POSITION  LAT =  -19.6855 °
+            LON =  133.3144 °
+         HEIGHT =  410.7864 km
+  VELOCITY      =    7.3649 km/s
+</code></pre></div></div>
+
+<ul>
+  <li>JST（日本標準時）は「年・月・日・時・分・秒・ミリ秒」を最大17桁（時・分・秒（ミリ秒）は省略可）で指定する。</li>
+  <li>JST（日本標準時）を指定しない場合は、システム日時を JST とみなす。</li>
+</ul>
+
+<hr />
+
+<p>当方、このプログラムを応用して 10秒間隔2日分の JSON データを作成するプログラムも作成しています。</p>
+
+<ul>
+  <li><a href="https://github.com/komasaru/iss/tree/master/iss_sgp4_json" title="iss/iss_sgp4_json at master · komasaru/iss">iss/iss_sgp4_json at master · komasaru/iss</a></li>
+</ul>
+
+<p>さらに、 Python や GMT と連携し、 ISS が特定の地点に近付いたら自動でツイートするようにもしております。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/fortran" class="page__taxonomy-item" rel="tag">Fortran</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-02-14T00:20:00+09:00">2019-02-14 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Fortran+-+ISS+%E4%BD%8D%E7%BD%AE%E3%83%BB%E9%80%9F%E5%BA%A6%EF%BC%88WGS84%28BLH%29+%E5%BA%A7%E6%A8%99%EF%BC%89%E3%81%AE%E7%AE%97%E5%87%BA%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2019%2F02%2F14%2Ffortran95-iss-position-velocity-blh%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2019%2F02%2F14%2Ffortran95-iss-position-velocity-blh%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2019%2F02%2F14%2Ffortran95-iss-position-velocity-blh%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2019/02/11/fortran95-iss-position-velocity/" class="pagination--pager" title="Fortran - ISS 位置・速度（TEME 座標）の算出！
+">Previous</a>
+    
+    
+      <a href="/2019/02/17/fortran95-random-number-by-box-muller/" class="pagination--pager" title="Fortran - 正規乱数（ボックス＝ミューラー法）！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2019/02/14/fortran95-iss-position-velocity-blh/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2019/02/14/fortran95-iss-position-velocity-blh"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

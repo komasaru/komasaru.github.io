@@ -1,0 +1,1127 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>D945GCLF + Fedora10 サーバ構築メモ - mk-mode BLOG</title>
+<meta name="description" content="『Fedoraで自宅サーバー構築』を参考にして構築したときのメモです。以前、Fedora9で構築しようとしましたが、カーネルがD945GCLFのLanカードドライバに非対応のようでインストール自体が失敗したため、Fedora８で構築し運用していました。しかし、新しい物好きの僕なので、Fedora10でのサーバ構築に挑んでみたのでした。幸い自分が必要としているサービスは何とか構築できたので、以下に記録として残しておくことにしました。ただし、基本は『Fedoraで自宅サーバー構築』ですので、あしからず。。。構築記録（ ■：構築済み、□：未構築、△：不要と判断したもの ）Fedoraインストール■ Fedora 10 インストール→ Fedora 9 のインストールと同様の方法で Fedora 10 をインストール。内部クライアント(Windows)からLinuxサーバーをリモート操作する■ WindowsからSSHサーバーへリモート接続(Poderosaパスワード方式ログイン編)Fedora初期設定■ Fedora 9初期設定→ ネットワーク設定は kajuhome.com を参照。仮想マシン構築△ 仮想マシン構築△ ドメインＵディスクサイズ拡張Perlモジュールを簡単にインストールできるようにする■ Perlモジュールパッケージ管理システム導入(cpan2rpm)→ cpan2rpm はインストール完了。しかしperlモジュールのインストールはエラー。・以下のディレクトリがないとのエラーのようなので、mkdir で作成したら成功。/root/rpmbuild/SRPMS/SRPMS/root/rpmbuild/SRPMS/BUILD/root/rpmbuild/SRPMS/SOURCES/root/rpmbuild/SRPMS/SPECS/root/rpmbuild/SRPMS/RPMSサーバー公開前のセキュリティ強化■ ファイル改竄検知システム導入(Tripwire)■ rootkit検知ツール導入(chkrootkit)■ アンチウィルスソフト導入(Clam AntiVirus)■ ファイアウォール構築(iptables)システム時刻を自動的に合わせる■ NTPサーバー構築外部クライアント(Windows)からLinuxサーバーをリモート操作する△ SSHサーバー構築(OpenSSH)→ 次項の”OpenSSH+CHroot”をインストールするため。■ SSHサーバー構築(OpenSSH+Chroot)→ エラー。(configure: error: PAM headers not found)以下を実行。yum -y install pam-devel→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-4.5p1-1.i386.rpm→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-server-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-server-4.5p1-1.i386.rpm→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-clients-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-clients-4.5p1-1.i386.rpm→　成功！よって、rm -f /usr/src/redhat/RPMS/i386/*ではエラーとなるので、以下を実行！rm -f rpmbuild/SRPMS/RPMS/i386/*→　成功！■ WindowsからSSHサーバーへリモート接続(Poderosa鍵方式ログイン編)Linuxサーバーをルーターにする△ PCルーター構築(PPPoE+iptables)LAN内クライアントマシンへIPアドレスを自動で割当てる△ DHCPサーバー構築(dhcp)外部からドメイン名でサーバーにアクセスできるようにする△ ドメイン名取得(ieServer.Net編)※無料△ ドメイン名取得(独自ドメイン編)※有料△ ドメイン名取得(jpドメイン編)※有料内部からドメイン名でサーバーにアクセスできるようにする■ DNSサーバー構築(BIND)インターネットとフレッツ・スクウェアへ同時に接続できるようにする△ PPPoEマルチセッション設定(PPPoE)Linuxサーバーに接続したプリンタをLAN内で共有する△ プリントサーバー構築(CUPS)Webサーバーを公開する■ Webサーバー構築(Apache)■ Webサーバー間通信内容暗号化(Apache+mod_SSL)△ ユーザディレクトリ作成(/~ユーザ名/)△ Webページパスワード制限(htpasswd)△ バーチャルホスト設定■ Webサーバー間通信内容圧縮(mod_deflate)Windowsで作成したWebページをWebサーバーへアップロードする(SCP使用)■ WindowsからSSHサーバーへファイル転送(WinSCP)Windowsで作成したWebページをWebサーバーへアップロードする(FTP使用)■ FTPサーバー構築(vsftpd)△ WindowsからFTPサーバーへファイル転送(FileZilla)Webページへのアクセス統計をWebブラウザからみれるようにする■ Apacheアクセスログ解析(AWStats)cpan2rpm --no-sign --make-no-test --install Geo::IPfreeではエラーとなるので、cpan2rpm --no-sign --make-no-test --install Test::Simpleの後に、以下を実行！cpan2rpm --no-sign --make-no-test --install Geo::IPfree→　成功！△ バーチャルホスト用アクセスログ解析(AWStats)■ リファラスパム対策自宅サーバーのWebサイト内をGoogleのように検索できるようにする■ サイト内検索システム構築(Namazu)独自のメールアドレスをつくる(Postfix編)■ メールサーバー構築(Postfix+Dovecot)■ メールサーバー間通信内容暗号化(OpenSSL+Postfix+Dovecot)→ 実際にはPOP(110),SMTP(25)で稼動。■ taRgreyによるスパム対策(taRgrey)cd rpmbuild/SOURCES/ではエラーとなるので、以下を実行！cd /root/rpmbuild/SRPMS/SOURCES/→　成功！rpmbuild -bb --clean rpmbuild/SPECS/postfix.specではエラーとなるので、以下を実行！rpmbuild -bb --clean /root/rpmbuild/SRPMS/SPECS/postfix.spec→　成功！(但し、依存性問題発生したので、必要なpackageインストール)rpm -Uvh --force rpmbuild/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh --force /root/rpmbuild/SRPMS/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpm→　成功！etc…■ メールサーバーでウィルス&amp;スパムチェック(Postfix+Clam AntiVirus+SpamAssassin)△ バーチャルドメイン設定(Postfix&amp;Dovecot+qmail&amp;vpopmail)△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(Postfix+qmailadmin)△ メール自動返信機能導入(Vacation)△ メーリングリストサーバー構築(Postfix+Mailman)■ Postfixログ解析ツール導入(pflogsumm)独自のメールアドレスをつくる(qmail編)△ メールサーバー構築(qmail+Dovecot)△ メールサーバー間通信内容暗号化(ucspi-tcp-ssl)△ メールサーバーでウィルス&amp;スパムチェック(Qmail-Scanner+Clam AntiVirus+SpamAssassin+maildrop)△ バーチャルドメイン設定(vpopmail)△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(qmailadmin)△ qmailログ解析ツール導入(qmailanalog)メールサーバー共通■ OP25B(Outbound Port 25 Blocking)対策■ 複数ドメイン宛メールの集約(Fetchmail+hotwayd)■ メール格納形式変更HotmailやYahoo!メールのようにWebブラウザ上でメールできるようにする■ Webmailシステム構築(SquirrelMail)→ ログイン時、”このページにアクセスするにはアカウントが必要です。”のエラーになる。(/var/lib/php/session のオーナーをapache:apacheにしても）→ 再度 “/var/www/webmail/config/conf.pl” を設定しなおしたらOK。(?)△ バーチャルホスト設定(Virtual Host Domain Name Management)HotmailやYahoo!メールのように携帯電話でメールできるようにする■ 携帯用Webmailシステム構築(WebMailClient2 for Keitai)LinuxサーバーをWindowsのファイルサーバーにする■ Windowsファイルサーバー構築(Samba)LinuxサーバーをiTunesのミュージックサーバーにする△ DAAPサーバー構築(Firefly)Linuxサーバーを内部／外部共用のWindowsのファイルサーバーにする△ Webフォルダサーバー構築(WebDAV)一般ユーザにWebブラウザ上での各種設定機能を提供する△ Usermin導入(Usermin)△ UserminでVacation設定(Usermin::Vacation)LinuxのパスワードとSambaのパスワードを同期する△ Windowsネットワーク用統合認証サーバー構築(OpenLDAP+Samba)データベースシステムを作る(MySQL編)■ データベースサーバー構築(MySQL)■ MySQLデータベース自動バックアップ運用(mysqlhotcopy)→ DBのバックアップ、リストアは未確認。■ MySQL用GUI設定ツール導入(phpMyAdmin)SNS(ソーシャルネットワーキングサイト)を作る△ SNS構築(OpenPNE)Weblog(ブログ)サイトを作る■ ブログサイト構築(WordPress)CMSでWebサイトを構築する(XOOPS編)△ コミュニティサイト構築(XOOPS)CMSでWebサイトを構築する(joomla!編)△ CMSによるWebサイト構築(joomla!)バージョン管理システムを構築する△ バージョン管理システム構築(Subversion)サーバーの状態をブラウザから監視する(Nagios編)■ 統合監視システム構築(Nagios)→ インストールしたものの、不要と感じたため、サービスは停止。△ リモートホストサービス監視(Nagios+nrpe)サーバーの状態をブラウザから監視する(RRDtool編)■ サーバー監視システム構築(RRDtool+Cacti)■ Apacheアクセス統計監視グラフ追加(apachestats)△ BINDアクセス統計監視グラフ追加(bind9-snmp)サーバーの状態をブラウザから監視する(MRTG編)△ ネットワークトラフィック監視システム導入(NET-SNMP+MRTG)Webブラウジングを高速化する△ プロキシサーバー構築(Squid)△ プロキシサーバーでウィルスチェック(Squid+SquidClamAV+ClamAV)LinuxをHDDビデオレコーダーにする△ TV録画機能導入(GV-MVP/RX2+ivtv-1.0) kernel-2.6.22系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.21系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.20系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.19系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.8) kernel-2.6.18系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.7) kernel-2.6.17系△ TV録画予約システム構築(vrs)△ 録画データの活用サーバー公開後のセキュリティ強化■ 不正アクセス検知システム導入(Snort+SnortSnarf+Oinkmaster)rpm -Uvh /usr/src/redhat/RPMS/i386/snort-2.8.0.1-1.i386.rpmではエラーになる（Fedora10の場合）ので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/snort-2.8.3.1-1.i386.rpm→　成功！■ iptablesログ解析(IPTables log analyzer)■ ログ監視ツール導入(SWATCH)ユーザのホームディレクトリ容量を制限する△ ホームディレクトリ容量制限(quota)サーバーのファイルを自動的にバックアップする■ 自動バックアップ運用(tar+GnuPG+rsync/ftp)△ リアルタイムミラーリングツール導入(lsyncd+rsyncd)外部から安全にLANへ接続できるようにする△ VPNサーバー構築(OpenVPN)△ Windows上にVNCサーバー導入(UltraVNC)その他■ ハードディスクの温度設定hddtempのインストール。yum install hddtemphddtemp の実行。hddtemp /dev/sda">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="D945GCLF + Fedora10 サーバ構築メモ">
+<meta property="og:url" content="https://komasaru.github.io/2009/01/05/05165522/">
+
+
+  <meta property="og:description" content="『Fedoraで自宅サーバー構築』を参考にして構築したときのメモです。以前、Fedora9で構築しようとしましたが、カーネルがD945GCLFのLanカードドライバに非対応のようでインストール自体が失敗したため、Fedora８で構築し運用していました。しかし、新しい物好きの僕なので、Fedora10でのサーバ構築に挑んでみたのでした。幸い自分が必要としているサービスは何とか構築できたので、以下に記録として残しておくことにしました。ただし、基本は『Fedoraで自宅サーバー構築』ですので、あしからず。。。構築記録（ ■：構築済み、□：未構築、△：不要と判断したもの ）Fedoraインストール■ Fedora 10 インストール→ Fedora 9 のインストールと同様の方法で Fedora 10 をインストール。内部クライアント(Windows)からLinuxサーバーをリモート操作する■ WindowsからSSHサーバーへリモート接続(Poderosaパスワード方式ログイン編)Fedora初期設定■ Fedora 9初期設定→ ネットワーク設定は kajuhome.com を参照。仮想マシン構築△ 仮想マシン構築△ ドメインＵディスクサイズ拡張Perlモジュールを簡単にインストールできるようにする■ Perlモジュールパッケージ管理システム導入(cpan2rpm)→ cpan2rpm はインストール完了。しかしperlモジュールのインストールはエラー。・以下のディレクトリがないとのエラーのようなので、mkdir で作成したら成功。/root/rpmbuild/SRPMS/SRPMS/root/rpmbuild/SRPMS/BUILD/root/rpmbuild/SRPMS/SOURCES/root/rpmbuild/SRPMS/SPECS/root/rpmbuild/SRPMS/RPMSサーバー公開前のセキュリティ強化■ ファイル改竄検知システム導入(Tripwire)■ rootkit検知ツール導入(chkrootkit)■ アンチウィルスソフト導入(Clam AntiVirus)■ ファイアウォール構築(iptables)システム時刻を自動的に合わせる■ NTPサーバー構築外部クライアント(Windows)からLinuxサーバーをリモート操作する△ SSHサーバー構築(OpenSSH)→ 次項の”OpenSSH+CHroot”をインストールするため。■ SSHサーバー構築(OpenSSH+Chroot)→ エラー。(configure: error: PAM headers not found)以下を実行。yum -y install pam-devel→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-4.5p1-1.i386.rpm→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-server-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-server-4.5p1-1.i386.rpm→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-clients-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-clients-4.5p1-1.i386.rpm→　成功！よって、rm -f /usr/src/redhat/RPMS/i386/*ではエラーとなるので、以下を実行！rm -f rpmbuild/SRPMS/RPMS/i386/*→　成功！■ WindowsからSSHサーバーへリモート接続(Poderosa鍵方式ログイン編)Linuxサーバーをルーターにする△ PCルーター構築(PPPoE+iptables)LAN内クライアントマシンへIPアドレスを自動で割当てる△ DHCPサーバー構築(dhcp)外部からドメイン名でサーバーにアクセスできるようにする△ ドメイン名取得(ieServer.Net編)※無料△ ドメイン名取得(独自ドメイン編)※有料△ ドメイン名取得(jpドメイン編)※有料内部からドメイン名でサーバーにアクセスできるようにする■ DNSサーバー構築(BIND)インターネットとフレッツ・スクウェアへ同時に接続できるようにする△ PPPoEマルチセッション設定(PPPoE)Linuxサーバーに接続したプリンタをLAN内で共有する△ プリントサーバー構築(CUPS)Webサーバーを公開する■ Webサーバー構築(Apache)■ Webサーバー間通信内容暗号化(Apache+mod_SSL)△ ユーザディレクトリ作成(/~ユーザ名/)△ Webページパスワード制限(htpasswd)△ バーチャルホスト設定■ Webサーバー間通信内容圧縮(mod_deflate)Windowsで作成したWebページをWebサーバーへアップロードする(SCP使用)■ WindowsからSSHサーバーへファイル転送(WinSCP)Windowsで作成したWebページをWebサーバーへアップロードする(FTP使用)■ FTPサーバー構築(vsftpd)△ WindowsからFTPサーバーへファイル転送(FileZilla)Webページへのアクセス統計をWebブラウザからみれるようにする■ Apacheアクセスログ解析(AWStats)cpan2rpm --no-sign --make-no-test --install Geo::IPfreeではエラーとなるので、cpan2rpm --no-sign --make-no-test --install Test::Simpleの後に、以下を実行！cpan2rpm --no-sign --make-no-test --install Geo::IPfree→　成功！△ バーチャルホスト用アクセスログ解析(AWStats)■ リファラスパム対策自宅サーバーのWebサイト内をGoogleのように検索できるようにする■ サイト内検索システム構築(Namazu)独自のメールアドレスをつくる(Postfix編)■ メールサーバー構築(Postfix+Dovecot)■ メールサーバー間通信内容暗号化(OpenSSL+Postfix+Dovecot)→ 実際にはPOP(110),SMTP(25)で稼動。■ taRgreyによるスパム対策(taRgrey)cd rpmbuild/SOURCES/ではエラーとなるので、以下を実行！cd /root/rpmbuild/SRPMS/SOURCES/→　成功！rpmbuild -bb --clean rpmbuild/SPECS/postfix.specではエラーとなるので、以下を実行！rpmbuild -bb --clean /root/rpmbuild/SRPMS/SPECS/postfix.spec→　成功！(但し、依存性問題発生したので、必要なpackageインストール)rpm -Uvh --force rpmbuild/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh --force /root/rpmbuild/SRPMS/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpm→　成功！etc…■ メールサーバーでウィルス&amp;スパムチェック(Postfix+Clam AntiVirus+SpamAssassin)△ バーチャルドメイン設定(Postfix&amp;Dovecot+qmail&amp;vpopmail)△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(Postfix+qmailadmin)△ メール自動返信機能導入(Vacation)△ メーリングリストサーバー構築(Postfix+Mailman)■ Postfixログ解析ツール導入(pflogsumm)独自のメールアドレスをつくる(qmail編)△ メールサーバー構築(qmail+Dovecot)△ メールサーバー間通信内容暗号化(ucspi-tcp-ssl)△ メールサーバーでウィルス&amp;スパムチェック(Qmail-Scanner+Clam AntiVirus+SpamAssassin+maildrop)△ バーチャルドメイン設定(vpopmail)△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(qmailadmin)△ qmailログ解析ツール導入(qmailanalog)メールサーバー共通■ OP25B(Outbound Port 25 Blocking)対策■ 複数ドメイン宛メールの集約(Fetchmail+hotwayd)■ メール格納形式変更HotmailやYahoo!メールのようにWebブラウザ上でメールできるようにする■ Webmailシステム構築(SquirrelMail)→ ログイン時、”このページにアクセスするにはアカウントが必要です。”のエラーになる。(/var/lib/php/session のオーナーをapache:apacheにしても）→ 再度 “/var/www/webmail/config/conf.pl” を設定しなおしたらOK。(?)△ バーチャルホスト設定(Virtual Host Domain Name Management)HotmailやYahoo!メールのように携帯電話でメールできるようにする■ 携帯用Webmailシステム構築(WebMailClient2 for Keitai)LinuxサーバーをWindowsのファイルサーバーにする■ Windowsファイルサーバー構築(Samba)LinuxサーバーをiTunesのミュージックサーバーにする△ DAAPサーバー構築(Firefly)Linuxサーバーを内部／外部共用のWindowsのファイルサーバーにする△ Webフォルダサーバー構築(WebDAV)一般ユーザにWebブラウザ上での各種設定機能を提供する△ Usermin導入(Usermin)△ UserminでVacation設定(Usermin::Vacation)LinuxのパスワードとSambaのパスワードを同期する△ Windowsネットワーク用統合認証サーバー構築(OpenLDAP+Samba)データベースシステムを作る(MySQL編)■ データベースサーバー構築(MySQL)■ MySQLデータベース自動バックアップ運用(mysqlhotcopy)→ DBのバックアップ、リストアは未確認。■ MySQL用GUI設定ツール導入(phpMyAdmin)SNS(ソーシャルネットワーキングサイト)を作る△ SNS構築(OpenPNE)Weblog(ブログ)サイトを作る■ ブログサイト構築(WordPress)CMSでWebサイトを構築する(XOOPS編)△ コミュニティサイト構築(XOOPS)CMSでWebサイトを構築する(joomla!編)△ CMSによるWebサイト構築(joomla!)バージョン管理システムを構築する△ バージョン管理システム構築(Subversion)サーバーの状態をブラウザから監視する(Nagios編)■ 統合監視システム構築(Nagios)→ インストールしたものの、不要と感じたため、サービスは停止。△ リモートホストサービス監視(Nagios+nrpe)サーバーの状態をブラウザから監視する(RRDtool編)■ サーバー監視システム構築(RRDtool+Cacti)■ Apacheアクセス統計監視グラフ追加(apachestats)△ BINDアクセス統計監視グラフ追加(bind9-snmp)サーバーの状態をブラウザから監視する(MRTG編)△ ネットワークトラフィック監視システム導入(NET-SNMP+MRTG)Webブラウジングを高速化する△ プロキシサーバー構築(Squid)△ プロキシサーバーでウィルスチェック(Squid+SquidClamAV+ClamAV)LinuxをHDDビデオレコーダーにする△ TV録画機能導入(GV-MVP/RX2+ivtv-1.0) kernel-2.6.22系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.21系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.20系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.19系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.8) kernel-2.6.18系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.7) kernel-2.6.17系△ TV録画予約システム構築(vrs)△ 録画データの活用サーバー公開後のセキュリティ強化■ 不正アクセス検知システム導入(Snort+SnortSnarf+Oinkmaster)rpm -Uvh /usr/src/redhat/RPMS/i386/snort-2.8.0.1-1.i386.rpmではエラーになる（Fedora10の場合）ので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/snort-2.8.3.1-1.i386.rpm→　成功！■ iptablesログ解析(IPTables log analyzer)■ ログ監視ツール導入(SWATCH)ユーザのホームディレクトリ容量を制限する△ ホームディレクトリ容量制限(quota)サーバーのファイルを自動的にバックアップする■ 自動バックアップ運用(tar+GnuPG+rsync/ftp)△ リアルタイムミラーリングツール導入(lsyncd+rsyncd)外部から安全にLANへ接続できるようにする△ VPNサーバー構築(OpenVPN)△ Windows上にVNCサーバー導入(UltraVNC)その他■ ハードディスクの温度設定hddtempのインストール。yum install hddtemphddtemp の実行。hddtemp /dev/sda">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="D945GCLF + Fedora10 サーバ構築メモ">
+  <meta name="twitter:description" content="『Fedoraで自宅サーバー構築』を参考にして構築したときのメモです。以前、Fedora9で構築しようとしましたが、カーネルがD945GCLFのLanカードドライバに非対応のようでインストール自体が失敗したため、Fedora８で構築し運用していました。しかし、新しい物好きの僕なので、Fedora10でのサーバ構築に挑んでみたのでした。幸い自分が必要としているサービスは何とか構築できたので、以下に記録として残しておくことにしました。ただし、基本は『Fedoraで自宅サーバー構築』ですので、あしからず。。。構築記録（ ■：構築済み、□：未構築、△：不要と判断したもの ）Fedoraインストール■ Fedora 10 インストール→ Fedora 9 のインストールと同様の方法で Fedora 10 をインストール。内部クライアント(Windows)からLinuxサーバーをリモート操作する■ WindowsからSSHサーバーへリモート接続(Poderosaパスワード方式ログイン編)Fedora初期設定■ Fedora 9初期設定→ ネットワーク設定は kajuhome.com を参照。仮想マシン構築△ 仮想マシン構築△ ドメインＵディスクサイズ拡張Perlモジュールを簡単にインストールできるようにする■ Perlモジュールパッケージ管理システム導入(cpan2rpm)→ cpan2rpm はインストール完了。しかしperlモジュールのインストールはエラー。・以下のディレクトリがないとのエラーのようなので、mkdir で作成したら成功。/root/rpmbuild/SRPMS/SRPMS/root/rpmbuild/SRPMS/BUILD/root/rpmbuild/SRPMS/SOURCES/root/rpmbuild/SRPMS/SPECS/root/rpmbuild/SRPMS/RPMSサーバー公開前のセキュリティ強化■ ファイル改竄検知システム導入(Tripwire)■ rootkit検知ツール導入(chkrootkit)■ アンチウィルスソフト導入(Clam AntiVirus)■ ファイアウォール構築(iptables)システム時刻を自動的に合わせる■ NTPサーバー構築外部クライアント(Windows)からLinuxサーバーをリモート操作する△ SSHサーバー構築(OpenSSH)→ 次項の”OpenSSH+CHroot”をインストールするため。■ SSHサーバー構築(OpenSSH+Chroot)→ エラー。(configure: error: PAM headers not found)以下を実行。yum -y install pam-devel→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-4.5p1-1.i386.rpm→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-server-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-server-4.5p1-1.i386.rpm→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-clients-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-clients-4.5p1-1.i386.rpm→　成功！よって、rm -f /usr/src/redhat/RPMS/i386/*ではエラーとなるので、以下を実行！rm -f rpmbuild/SRPMS/RPMS/i386/*→　成功！■ WindowsからSSHサーバーへリモート接続(Poderosa鍵方式ログイン編)Linuxサーバーをルーターにする△ PCルーター構築(PPPoE+iptables)LAN内クライアントマシンへIPアドレスを自動で割当てる△ DHCPサーバー構築(dhcp)外部からドメイン名でサーバーにアクセスできるようにする△ ドメイン名取得(ieServer.Net編)※無料△ ドメイン名取得(独自ドメイン編)※有料△ ドメイン名取得(jpドメイン編)※有料内部からドメイン名でサーバーにアクセスできるようにする■ DNSサーバー構築(BIND)インターネットとフレッツ・スクウェアへ同時に接続できるようにする△ PPPoEマルチセッション設定(PPPoE)Linuxサーバーに接続したプリンタをLAN内で共有する△ プリントサーバー構築(CUPS)Webサーバーを公開する■ Webサーバー構築(Apache)■ Webサーバー間通信内容暗号化(Apache+mod_SSL)△ ユーザディレクトリ作成(/~ユーザ名/)△ Webページパスワード制限(htpasswd)△ バーチャルホスト設定■ Webサーバー間通信内容圧縮(mod_deflate)Windowsで作成したWebページをWebサーバーへアップロードする(SCP使用)■ WindowsからSSHサーバーへファイル転送(WinSCP)Windowsで作成したWebページをWebサーバーへアップロードする(FTP使用)■ FTPサーバー構築(vsftpd)△ WindowsからFTPサーバーへファイル転送(FileZilla)Webページへのアクセス統計をWebブラウザからみれるようにする■ Apacheアクセスログ解析(AWStats)cpan2rpm --no-sign --make-no-test --install Geo::IPfreeではエラーとなるので、cpan2rpm --no-sign --make-no-test --install Test::Simpleの後に、以下を実行！cpan2rpm --no-sign --make-no-test --install Geo::IPfree→　成功！△ バーチャルホスト用アクセスログ解析(AWStats)■ リファラスパム対策自宅サーバーのWebサイト内をGoogleのように検索できるようにする■ サイト内検索システム構築(Namazu)独自のメールアドレスをつくる(Postfix編)■ メールサーバー構築(Postfix+Dovecot)■ メールサーバー間通信内容暗号化(OpenSSL+Postfix+Dovecot)→ 実際にはPOP(110),SMTP(25)で稼動。■ taRgreyによるスパム対策(taRgrey)cd rpmbuild/SOURCES/ではエラーとなるので、以下を実行！cd /root/rpmbuild/SRPMS/SOURCES/→　成功！rpmbuild -bb --clean rpmbuild/SPECS/postfix.specではエラーとなるので、以下を実行！rpmbuild -bb --clean /root/rpmbuild/SRPMS/SPECS/postfix.spec→　成功！(但し、依存性問題発生したので、必要なpackageインストール)rpm -Uvh --force rpmbuild/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh --force /root/rpmbuild/SRPMS/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpm→　成功！etc…■ メールサーバーでウィルス&amp;スパムチェック(Postfix+Clam AntiVirus+SpamAssassin)△ バーチャルドメイン設定(Postfix&amp;Dovecot+qmail&amp;vpopmail)△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(Postfix+qmailadmin)△ メール自動返信機能導入(Vacation)△ メーリングリストサーバー構築(Postfix+Mailman)■ Postfixログ解析ツール導入(pflogsumm)独自のメールアドレスをつくる(qmail編)△ メールサーバー構築(qmail+Dovecot)△ メールサーバー間通信内容暗号化(ucspi-tcp-ssl)△ メールサーバーでウィルス&amp;スパムチェック(Qmail-Scanner+Clam AntiVirus+SpamAssassin+maildrop)△ バーチャルドメイン設定(vpopmail)△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(qmailadmin)△ qmailログ解析ツール導入(qmailanalog)メールサーバー共通■ OP25B(Outbound Port 25 Blocking)対策■ 複数ドメイン宛メールの集約(Fetchmail+hotwayd)■ メール格納形式変更HotmailやYahoo!メールのようにWebブラウザ上でメールできるようにする■ Webmailシステム構築(SquirrelMail)→ ログイン時、”このページにアクセスするにはアカウントが必要です。”のエラーになる。(/var/lib/php/session のオーナーをapache:apacheにしても）→ 再度 “/var/www/webmail/config/conf.pl” を設定しなおしたらOK。(?)△ バーチャルホスト設定(Virtual Host Domain Name Management)HotmailやYahoo!メールのように携帯電話でメールできるようにする■ 携帯用Webmailシステム構築(WebMailClient2 for Keitai)LinuxサーバーをWindowsのファイルサーバーにする■ Windowsファイルサーバー構築(Samba)LinuxサーバーをiTunesのミュージックサーバーにする△ DAAPサーバー構築(Firefly)Linuxサーバーを内部／外部共用のWindowsのファイルサーバーにする△ Webフォルダサーバー構築(WebDAV)一般ユーザにWebブラウザ上での各種設定機能を提供する△ Usermin導入(Usermin)△ UserminでVacation設定(Usermin::Vacation)LinuxのパスワードとSambaのパスワードを同期する△ Windowsネットワーク用統合認証サーバー構築(OpenLDAP+Samba)データベースシステムを作る(MySQL編)■ データベースサーバー構築(MySQL)■ MySQLデータベース自動バックアップ運用(mysqlhotcopy)→ DBのバックアップ、リストアは未確認。■ MySQL用GUI設定ツール導入(phpMyAdmin)SNS(ソーシャルネットワーキングサイト)を作る△ SNS構築(OpenPNE)Weblog(ブログ)サイトを作る■ ブログサイト構築(WordPress)CMSでWebサイトを構築する(XOOPS編)△ コミュニティサイト構築(XOOPS)CMSでWebサイトを構築する(joomla!編)△ CMSによるWebサイト構築(joomla!)バージョン管理システムを構築する△ バージョン管理システム構築(Subversion)サーバーの状態をブラウザから監視する(Nagios編)■ 統合監視システム構築(Nagios)→ インストールしたものの、不要と感じたため、サービスは停止。△ リモートホストサービス監視(Nagios+nrpe)サーバーの状態をブラウザから監視する(RRDtool編)■ サーバー監視システム構築(RRDtool+Cacti)■ Apacheアクセス統計監視グラフ追加(apachestats)△ BINDアクセス統計監視グラフ追加(bind9-snmp)サーバーの状態をブラウザから監視する(MRTG編)△ ネットワークトラフィック監視システム導入(NET-SNMP+MRTG)Webブラウジングを高速化する△ プロキシサーバー構築(Squid)△ プロキシサーバーでウィルスチェック(Squid+SquidClamAV+ClamAV)LinuxをHDDビデオレコーダーにする△ TV録画機能導入(GV-MVP/RX2+ivtv-1.0) kernel-2.6.22系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.21系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.20系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.19系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.8) kernel-2.6.18系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.7) kernel-2.6.17系△ TV録画予約システム構築(vrs)△ 録画データの活用サーバー公開後のセキュリティ強化■ 不正アクセス検知システム導入(Snort+SnortSnarf+Oinkmaster)rpm -Uvh /usr/src/redhat/RPMS/i386/snort-2.8.0.1-1.i386.rpmではエラーになる（Fedora10の場合）ので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/snort-2.8.3.1-1.i386.rpm→　成功！■ iptablesログ解析(IPTables log analyzer)■ ログ監視ツール導入(SWATCH)ユーザのホームディレクトリ容量を制限する△ ホームディレクトリ容量制限(quota)サーバーのファイルを自動的にバックアップする■ 自動バックアップ運用(tar+GnuPG+rsync/ftp)△ リアルタイムミラーリングツール導入(lsyncd+rsyncd)外部から安全にLANへ接続できるようにする△ VPNサーバー構築(OpenVPN)△ Windows上にVNCサーバー導入(UltraVNC)その他■ ハードディスクの温度設定hddtempのインストール。yum install hddtemphddtemp の実行。hddtemp /dev/sda">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/01/05/05165522/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2009-01-05T16:55:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2009/01/05/05165522/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="D945GCLF + Fedora10 サーバ構築メモ">
+    <meta itemprop="description" content="『Fedoraで自宅サーバー構築』を参考にして構築したときのメモです。以前、Fedora9で構築しようとしましたが、カーネルがD945GCLFのLanカードドライバに非対応のようでインストール自体が失敗したため、Fedora８で構築し運用していました。しかし、新しい物好きの僕なので、Fedora10でのサーバ構築に挑んでみたのでした。幸い自分が必要としているサービスは何とか構築できたので、以下に記録として残しておくことにしました。ただし、基本は『Fedoraで自宅サーバー構築』ですので、あしからず。。。構築記録（ ■：構築済み、□：未構築、△：不要と判断したもの ）Fedoraインストール■ Fedora 10 インストール→ Fedora 9 のインストールと同様の方法で Fedora 10 をインストール。内部クライアント(Windows)からLinuxサーバーをリモート操作する■ WindowsからSSHサーバーへリモート接続(Poderosaパスワード方式ログイン編)Fedora初期設定■ Fedora 9初期設定→ ネットワーク設定は kajuhome.com を参照。仮想マシン構築△ 仮想マシン構築△ ドメインＵディスクサイズ拡張Perlモジュールを簡単にインストールできるようにする■ Perlモジュールパッケージ管理システム導入(cpan2rpm)→ cpan2rpm はインストール完了。しかしperlモジュールのインストールはエラー。・以下のディレクトリがないとのエラーのようなので、mkdir で作成したら成功。/root/rpmbuild/SRPMS/SRPMS/root/rpmbuild/SRPMS/BUILD/root/rpmbuild/SRPMS/SOURCES/root/rpmbuild/SRPMS/SPECS/root/rpmbuild/SRPMS/RPMSサーバー公開前のセキュリティ強化■ ファイル改竄検知システム導入(Tripwire)■ rootkit検知ツール導入(chkrootkit)■ アンチウィルスソフト導入(Clam AntiVirus)■ ファイアウォール構築(iptables)システム時刻を自動的に合わせる■ NTPサーバー構築外部クライアント(Windows)からLinuxサーバーをリモート操作する△ SSHサーバー構築(OpenSSH)→ 次項の”OpenSSH+CHroot”をインストールするため。■ SSHサーバー構築(OpenSSH+Chroot)→ エラー。(configure: error: PAM headers not found)以下を実行。yum -y install pam-devel→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-4.5p1-1.i386.rpm→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-server-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-server-4.5p1-1.i386.rpm→　成功！rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-clients-4.5p1-1.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-clients-4.5p1-1.i386.rpm→　成功！よって、rm -f /usr/src/redhat/RPMS/i386/*ではエラーとなるので、以下を実行！rm -f rpmbuild/SRPMS/RPMS/i386/*→　成功！■ WindowsからSSHサーバーへリモート接続(Poderosa鍵方式ログイン編)Linuxサーバーをルーターにする△ PCルーター構築(PPPoE+iptables)LAN内クライアントマシンへIPアドレスを自動で割当てる△ DHCPサーバー構築(dhcp)外部からドメイン名でサーバーにアクセスできるようにする△ ドメイン名取得(ieServer.Net編)※無料△ ドメイン名取得(独自ドメイン編)※有料△ ドメイン名取得(jpドメイン編)※有料内部からドメイン名でサーバーにアクセスできるようにする■ DNSサーバー構築(BIND)インターネットとフレッツ・スクウェアへ同時に接続できるようにする△ PPPoEマルチセッション設定(PPPoE)Linuxサーバーに接続したプリンタをLAN内で共有する△ プリントサーバー構築(CUPS)Webサーバーを公開する■ Webサーバー構築(Apache)■ Webサーバー間通信内容暗号化(Apache+mod_SSL)△ ユーザディレクトリ作成(/~ユーザ名/)△ Webページパスワード制限(htpasswd)△ バーチャルホスト設定■ Webサーバー間通信内容圧縮(mod_deflate)Windowsで作成したWebページをWebサーバーへアップロードする(SCP使用)■ WindowsからSSHサーバーへファイル転送(WinSCP)Windowsで作成したWebページをWebサーバーへアップロードする(FTP使用)■ FTPサーバー構築(vsftpd)△ WindowsからFTPサーバーへファイル転送(FileZilla)Webページへのアクセス統計をWebブラウザからみれるようにする■ Apacheアクセスログ解析(AWStats)cpan2rpm --no-sign --make-no-test --install Geo::IPfreeではエラーとなるので、cpan2rpm --no-sign --make-no-test --install Test::Simpleの後に、以下を実行！cpan2rpm --no-sign --make-no-test --install Geo::IPfree→　成功！△ バーチャルホスト用アクセスログ解析(AWStats)■ リファラスパム対策自宅サーバーのWebサイト内をGoogleのように検索できるようにする■ サイト内検索システム構築(Namazu)独自のメールアドレスをつくる(Postfix編)■ メールサーバー構築(Postfix+Dovecot)■ メールサーバー間通信内容暗号化(OpenSSL+Postfix+Dovecot)→ 実際にはPOP(110),SMTP(25)で稼動。■ taRgreyによるスパム対策(taRgrey)cd rpmbuild/SOURCES/ではエラーとなるので、以下を実行！cd /root/rpmbuild/SRPMS/SOURCES/→　成功！rpmbuild -bb --clean rpmbuild/SPECS/postfix.specではエラーとなるので、以下を実行！rpmbuild -bb --clean /root/rpmbuild/SRPMS/SPECS/postfix.spec→　成功！(但し、依存性問題発生したので、必要なpackageインストール)rpm -Uvh --force rpmbuild/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpmではエラーとなるので、以下を実行！rpm -Uvh --force /root/rpmbuild/SRPMS/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpm→　成功！etc…■ メールサーバーでウィルス&amp;スパムチェック(Postfix+Clam AntiVirus+SpamAssassin)△ バーチャルドメイン設定(Postfix&amp;Dovecot+qmail&amp;vpopmail)△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(Postfix+qmailadmin)△ メール自動返信機能導入(Vacation)△ メーリングリストサーバー構築(Postfix+Mailman)■ Postfixログ解析ツール導入(pflogsumm)独自のメールアドレスをつくる(qmail編)△ メールサーバー構築(qmail+Dovecot)△ メールサーバー間通信内容暗号化(ucspi-tcp-ssl)△ メールサーバーでウィルス&amp;スパムチェック(Qmail-Scanner+Clam AntiVirus+SpamAssassin+maildrop)△ バーチャルドメイン設定(vpopmail)△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(qmailadmin)△ qmailログ解析ツール導入(qmailanalog)メールサーバー共通■ OP25B(Outbound Port 25 Blocking)対策■ 複数ドメイン宛メールの集約(Fetchmail+hotwayd)■ メール格納形式変更HotmailやYahoo!メールのようにWebブラウザ上でメールできるようにする■ Webmailシステム構築(SquirrelMail)→ ログイン時、”このページにアクセスするにはアカウントが必要です。”のエラーになる。(/var/lib/php/session のオーナーをapache:apacheにしても）→ 再度 “/var/www/webmail/config/conf.pl” を設定しなおしたらOK。(?)△ バーチャルホスト設定(Virtual Host Domain Name Management)HotmailやYahoo!メールのように携帯電話でメールできるようにする■ 携帯用Webmailシステム構築(WebMailClient2 for Keitai)LinuxサーバーをWindowsのファイルサーバーにする■ Windowsファイルサーバー構築(Samba)LinuxサーバーをiTunesのミュージックサーバーにする△ DAAPサーバー構築(Firefly)Linuxサーバーを内部／外部共用のWindowsのファイルサーバーにする△ Webフォルダサーバー構築(WebDAV)一般ユーザにWebブラウザ上での各種設定機能を提供する△ Usermin導入(Usermin)△ UserminでVacation設定(Usermin::Vacation)LinuxのパスワードとSambaのパスワードを同期する△ Windowsネットワーク用統合認証サーバー構築(OpenLDAP+Samba)データベースシステムを作る(MySQL編)■ データベースサーバー構築(MySQL)■ MySQLデータベース自動バックアップ運用(mysqlhotcopy)→ DBのバックアップ、リストアは未確認。■ MySQL用GUI設定ツール導入(phpMyAdmin)SNS(ソーシャルネットワーキングサイト)を作る△ SNS構築(OpenPNE)Weblog(ブログ)サイトを作る■ ブログサイト構築(WordPress)CMSでWebサイトを構築する(XOOPS編)△ コミュニティサイト構築(XOOPS)CMSでWebサイトを構築する(joomla!編)△ CMSによるWebサイト構築(joomla!)バージョン管理システムを構築する△ バージョン管理システム構築(Subversion)サーバーの状態をブラウザから監視する(Nagios編)■ 統合監視システム構築(Nagios)→ インストールしたものの、不要と感じたため、サービスは停止。△ リモートホストサービス監視(Nagios+nrpe)サーバーの状態をブラウザから監視する(RRDtool編)■ サーバー監視システム構築(RRDtool+Cacti)■ Apacheアクセス統計監視グラフ追加(apachestats)△ BINDアクセス統計監視グラフ追加(bind9-snmp)サーバーの状態をブラウザから監視する(MRTG編)△ ネットワークトラフィック監視システム導入(NET-SNMP+MRTG)Webブラウジングを高速化する△ プロキシサーバー構築(Squid)△ プロキシサーバーでウィルスチェック(Squid+SquidClamAV+ClamAV)LinuxをHDDビデオレコーダーにする△ TV録画機能導入(GV-MVP/RX2+ivtv-1.0) kernel-2.6.22系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.21系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.20系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.19系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.8) kernel-2.6.18系△ TV録画機能導入(GV-MVP/RX2+ivtv-0.7) kernel-2.6.17系△ TV録画予約システム構築(vrs)△ 録画データの活用サーバー公開後のセキュリティ強化■ 不正アクセス検知システム導入(Snort+SnortSnarf+Oinkmaster)rpm -Uvh /usr/src/redhat/RPMS/i386/snort-2.8.0.1-1.i386.rpmではエラーになる（Fedora10の場合）ので、以下を実行！rpm -Uvh rpmbuild/SRPMS/RPMS/i386/snort-2.8.3.1-1.i386.rpm→　成功！■ iptablesログ解析(IPTables log analyzer)■ ログ監視ツール導入(SWATCH)ユーザのホームディレクトリ容量を制限する△ ホームディレクトリ容量制限(quota)サーバーのファイルを自動的にバックアップする■ 自動バックアップ運用(tar+GnuPG+rsync/ftp)△ リアルタイムミラーリングツール導入(lsyncd+rsyncd)外部から安全にLANへ接続できるようにする△ VPNサーバー構築(OpenVPN)△ Windows上にVNCサーバー導入(UltraVNC)その他■ ハードディスクの温度設定hddtempのインストール。yum install hddtemphddtemp の実行。hddtemp /dev/sda">
+    <meta itemprop="datePublished" content="January 05, 2009">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">D945GCLF + Fedora10 サーバ構築メモ
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2009-01-05T16:55:00+09:00">2009-01-05 16:55</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>『<a href="http://fedorasrv.com/" title="Fedoraで自宅サーバー構築">Fedoraで自宅サーバー構築</a>』を参考にして構築したときのメモです。</p>
+
+<p>以前、Fedora9で構築しようとしましたが、カーネルがD945GCLFのLanカードドライバに非対応のようでインストール自体が失敗したため、Fedora８で構築し運用していました。</p>
+
+<p>しかし、新しい物好きの僕なので、Fedora10でのサーバ構築に挑んでみたのでした。</p>
+
+<p>幸い自分が必要としているサービスは何とか構築できたので、以下に記録として残しておくことにしました。</p>
+
+<p>ただし、基本は『<a href="http://fedorasrv.com/" title="Fedoraで自宅サーバー構築">Fedoraで自宅サーバー構築</a>』ですので、あしからず。。。</p>
+
+<h3 id="構築記録">構築記録</h3>
+
+<p>（ ■：構築済み、□：未構築、△：不要と判断したもの ）</p>
+
+<h4 id="fedoraインストール">Fedoraインストール</h4>
+
+<p>■ Fedora 10 インストール
+→ Fedora 9 のインストールと同様の方法で Fedora 10 をインストール。</p>
+
+<h4 id="内部クライアントwindowsからlinuxサーバーをリモート操作する">内部クライアント(Windows)からLinuxサーバーをリモート操作する</h4>
+
+<p>■ WindowsからSSHサーバーへリモート接続(Poderosaパスワード方式ログイン編)</p>
+
+<h4 id="fedora初期設定">Fedora初期設定</h4>
+
+<p>■ Fedora 9初期設定
+→ ネットワーク設定は kajuhome.com を参照。</p>
+
+<h4 id="仮想マシン構築">仮想マシン構築</h4>
+
+<p>△ 仮想マシン構築
+△ ドメインＵディスクサイズ拡張</p>
+
+<h4 id="perlモジュールを簡単にインストールできるようにする">Perlモジュールを簡単にインストールできるようにする</h4>
+
+<p>■ Perlモジュールパッケージ管理システム導入(cpan2rpm)
+→ cpan2rpm はインストール完了。しかしperlモジュールのインストールはエラー。
+・以下のディレクトリがないとのエラーのようなので、mkdir で作成したら成功。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/root/rpmbuild/SRPMS/SRPMS
+/root/rpmbuild/SRPMS/BUILD
+/root/rpmbuild/SRPMS/SOURCES
+/root/rpmbuild/SRPMS/SPECS
+/root/rpmbuild/SRPMS/RPMS
+
+</code></pre></div></div>
+
+<h4 id="サーバー公開前のセキュリティ強化">サーバー公開前のセキュリティ強化</h4>
+
+<p>■ ファイル改竄検知システム導入(Tripwire)
+■ rootkit検知ツール導入(chkrootkit)
+■ アンチウィルスソフト導入(Clam AntiVirus)
+■ ファイアウォール構築(iptables)</p>
+
+<h4 id="システム時刻を自動的に合わせる">システム時刻を自動的に合わせる</h4>
+
+<p>■ NTPサーバー構築</p>
+
+<h4 id="外部クライアントwindowsからlinuxサーバーをリモート操作する">外部クライアント(Windows)からLinuxサーバーをリモート操作する</h4>
+
+<p>△ SSHサーバー構築(OpenSSH)
+→ 次項の”OpenSSH+CHroot”をインストールするため。
+■ SSHサーバー構築(OpenSSH+Chroot)
+→ エラー。(configure: error: PAM headers not found)
+以下を実行。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yum -y install pam-devel
+
+</code></pre></div></div>
+
+<p>→　成功！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-4.5p1-1.i386.rpm
+
+</code></pre></div></div>
+
+<p>ではエラーとなるので、以下を実行！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-4.5p1-1.i386.rpm
+
+</code></pre></div></div>
+
+<p>→　成功！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-server-4.5p1-1.i386.rpm
+
+</code></pre></div></div>
+
+<p>ではエラーとなるので、以下を実行！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-server-4.5p1-1.i386.rpm
+
+</code></pre></div></div>
+
+<p>→　成功！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpm -Uvh /usr/src/redhat/RPMS/i386/openssh-clients-4.5p1-1.i386.rpm
+
+</code></pre></div></div>
+
+<p>ではエラーとなるので、以下を実行！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpm -Uvh rpmbuild/SRPMS/RPMS/i386/openssh-clients-4.5p1-1.i386.rpm
+
+</code></pre></div></div>
+
+<p>→　成功！
+よって、</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rm -f /usr/src/redhat/RPMS/i386/*
+</code></pre></div></div>
+
+<p>ではエラーとなるので、以下を実行！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rm -f rpmbuild/SRPMS/RPMS/i386/*
+</code></pre></div></div>
+
+<p>→　成功！
+■ WindowsからSSHサーバーへリモート接続(Poderosa鍵方式ログイン編)</p>
+
+<h4 id="linuxサーバーをルーターにする">Linuxサーバーをルーターにする</h4>
+
+<p>△ PCルーター構築(PPPoE+iptables)</p>
+
+<h4 id="lan内クライアントマシンへipアドレスを自動で割当てる">LAN内クライアントマシンへIPアドレスを自動で割当てる</h4>
+
+<p>△ DHCPサーバー構築(dhcp)</p>
+
+<h4 id="外部からドメイン名でサーバーにアクセスできるようにする">外部からドメイン名でサーバーにアクセスできるようにする</h4>
+
+<p>△ ドメイン名取得(ieServer.Net編)※無料
+△ ドメイン名取得(独自ドメイン編)※有料
+△ ドメイン名取得(jpドメイン編)※有料</p>
+
+<h4 id="内部からドメイン名でサーバーにアクセスできるようにする">内部からドメイン名でサーバーにアクセスできるようにする</h4>
+
+<p>■ DNSサーバー構築(BIND)</p>
+
+<h4 id="インターネットとフレッツスクウェアへ同時に接続できるようにする">インターネットとフレッツ・スクウェアへ同時に接続できるようにする</h4>
+
+<p>△ PPPoEマルチセッション設定(PPPoE)</p>
+
+<h4 id="linuxサーバーに接続したプリンタをlan内で共有する">Linuxサーバーに接続したプリンタをLAN内で共有する</h4>
+
+<p>△ プリントサーバー構築(CUPS)</p>
+
+<h4 id="webサーバーを公開する">Webサーバーを公開する</h4>
+
+<p>■ Webサーバー構築(Apache)
+■ Webサーバー間通信内容暗号化(Apache+mod_SSL)
+△ ユーザディレクトリ作成(/~ユーザ名/)
+△ Webページパスワード制限(htpasswd)
+△ バーチャルホスト設定
+■ Webサーバー間通信内容圧縮(mod_deflate)</p>
+
+<h4 id="windowsで作成したwebページをwebサーバーへアップロードするscp使用">Windowsで作成したWebページをWebサーバーへアップロードする(SCP使用)</h4>
+
+<p>■ WindowsからSSHサーバーへファイル転送(WinSCP)</p>
+
+<h4 id="windowsで作成したwebページをwebサーバーへアップロードするftp使用">Windowsで作成したWebページをWebサーバーへアップロードする(FTP使用)</h4>
+
+<p>■ FTPサーバー構築(vsftpd)
+△ WindowsからFTPサーバーへファイル転送(FileZilla)</p>
+
+<h4 id="webページへのアクセス統計をwebブラウザからみれるようにする">Webページへのアクセス統計をWebブラウザからみれるようにする</h4>
+
+<p>■ Apacheアクセスログ解析(AWStats)</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cpan2rpm --no-sign --make-no-test --install Geo::IPfree
+
+</code></pre></div></div>
+
+<p>ではエラーとなるので、</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cpan2rpm --no-sign --make-no-test --install Test::Simple
+
+</code></pre></div></div>
+
+<p>の後に、以下を実行！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cpan2rpm --no-sign --make-no-test --install Geo::IPfree
+
+</code></pre></div></div>
+
+<p>→　成功！
+△ バーチャルホスト用アクセスログ解析(AWStats)
+■ リファラスパム対策</p>
+
+<h4 id="自宅サーバーのwebサイト内をgoogleのように検索できるようにする">自宅サーバーのWebサイト内をGoogleのように検索できるようにする</h4>
+
+<p>■ サイト内検索システム構築(Namazu)</p>
+
+<h4 id="独自のメールアドレスをつくるpostfix編">独自のメールアドレスをつくる(Postfix編)</h4>
+
+<p>■ メールサーバー構築(Postfix+Dovecot)
+■ メールサーバー間通信内容暗号化(OpenSSL+Postfix+Dovecot)
+→ 実際にはPOP(110),SMTP(25)で稼動。
+■ taRgreyによるスパム対策(taRgrey)</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd rpmbuild/SOURCES/
+
+</code></pre></div></div>
+
+<p>ではエラーとなるので、以下を実行！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd /root/rpmbuild/SRPMS/SOURCES/
+
+</code></pre></div></div>
+
+<p>→　成功！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpmbuild -bb --clean rpmbuild/SPECS/postfix.spec
+
+</code></pre></div></div>
+
+<p>ではエラーとなるので、以下を実行！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpmbuild -bb --clean /root/rpmbuild/SRPMS/SPECS/postfix.spec
+
+</code></pre></div></div>
+
+<p>→　成功！
+(但し、依存性問題発生したので、必要なpackageインストール)</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpm -Uvh --force rpmbuild/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpm
+
+</code></pre></div></div>
+
+<p>ではエラーとなるので、以下を実行！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpm -Uvh --force /root/rpmbuild/SRPMS/RPMS/i386/postfix-2.5.5-1.fc10.i386.rpm
+
+</code></pre></div></div>
+
+<p>→　成功！
+etc…
+■ メールサーバーでウィルス&amp;スパムチェック(Postfix+Clam AntiVirus+SpamAssassin)
+△ バーチャルドメイン設定(Postfix&amp;Dovecot+qmail&amp;vpopmail)
+△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(Postfix+qmailadmin)
+△ メール自動返信機能導入(Vacation)
+△ メーリングリストサーバー構築(Postfix+Mailman)
+■ Postfixログ解析ツール導入(pflogsumm)</p>
+
+<h4 id="独自のメールアドレスをつくるqmail編">独自のメールアドレスをつくる(qmail編)</h4>
+
+<p>△ メールサーバー構築(qmail+Dovecot)
+△ メールサーバー間通信内容暗号化(ucspi-tcp-ssl)
+△ メールサーバーでウィルス&amp;スパムチェック(Qmail-Scanner+Clam AntiVirus+SpamAssassin+maildrop)
+△ バーチャルドメイン設定(vpopmail)
+△ vpopmail用メールアカウント&amp;メーリングリスト管理システム導入(qmailadmin)
+△ qmailログ解析ツール導入(qmailanalog)</p>
+
+<h4 id="メールサーバー共通">メールサーバー共通</h4>
+
+<p>■ OP25B(Outbound Port 25 Blocking)対策
+■ 複数ドメイン宛メールの集約(Fetchmail+hotwayd)
+■ メール格納形式変更</p>
+
+<h4 id="hotmailやyahooメールのようにwebブラウザ上でメールできるようにする">HotmailやYahoo!メールのようにWebブラウザ上でメールできるようにする</h4>
+
+<p>■ Webmailシステム構築(SquirrelMail)
+→ ログイン時、”このページにアクセスするにはアカウントが必要です。”
+のエラーになる。(/var/lib/php/session のオーナーをapache:apacheにしても）
+→ 再度 “/var/www/webmail/config/conf.pl” を設定しなおしたらOK。(?)
+△ バーチャルホスト設定(Virtual Host Domain Name Management)</p>
+
+<h4 id="hotmailやyahooメールのように携帯電話でメールできるようにする">HotmailやYahoo!メールのように携帯電話でメールできるようにする</h4>
+
+<p>■ 携帯用Webmailシステム構築(WebMailClient2 for Keitai)</p>
+
+<h4 id="linuxサーバーをwindowsのファイルサーバーにする">LinuxサーバーをWindowsのファイルサーバーにする</h4>
+
+<p>■ Windowsファイルサーバー構築(Samba)</p>
+
+<h4 id="linuxサーバーをitunesのミュージックサーバーにする">LinuxサーバーをiTunesのミュージックサーバーにする</h4>
+
+<p>△ DAAPサーバー構築(Firefly)</p>
+
+<h4 id="linuxサーバーを内部外部共用のwindowsのファイルサーバーにする">Linuxサーバーを内部／外部共用のWindowsのファイルサーバーにする</h4>
+
+<p>△ Webフォルダサーバー構築(WebDAV)</p>
+
+<h4 id="一般ユーザにwebブラウザ上での各種設定機能を提供する">一般ユーザにWebブラウザ上での各種設定機能を提供する</h4>
+
+<p>△ Usermin導入(Usermin)
+△ UserminでVacation設定(Usermin::Vacation)</p>
+
+<h4 id="linuxのパスワードとsambaのパスワードを同期する">LinuxのパスワードとSambaのパスワードを同期する</h4>
+
+<p>△ Windowsネットワーク用統合認証サーバー構築(OpenLDAP+Samba)</p>
+
+<h4 id="データベースシステムを作るmysql編">データベースシステムを作る(MySQL編)</h4>
+
+<p>■ データベースサーバー構築(MySQL)
+■ MySQLデータベース自動バックアップ運用(mysqlhotcopy)
+→ DBのバックアップ、リストアは未確認。
+■ MySQL用GUI設定ツール導入(phpMyAdmin)</p>
+
+<h4 id="snsソーシャルネットワーキングサイトを作る">SNS(ソーシャルネットワーキングサイト)を作る</h4>
+
+<p>△ SNS構築(OpenPNE)</p>
+
+<h4 id="weblogブログサイトを作る">Weblog(ブログ)サイトを作る</h4>
+
+<p>■ ブログサイト構築(WordPress)</p>
+
+<h4 id="cmsでwebサイトを構築するxoops編">CMSでWebサイトを構築する(XOOPS編)</h4>
+
+<p>△ コミュニティサイト構築(XOOPS)</p>
+
+<h4 id="cmsでwebサイトを構築するjoomla編">CMSでWebサイトを構築する(joomla!編)</h4>
+
+<p>△ CMSによるWebサイト構築(joomla!)</p>
+
+<h4 id="バージョン管理システムを構築する">バージョン管理システムを構築する</h4>
+
+<p>△ バージョン管理システム構築(Subversion)</p>
+
+<h4 id="サーバーの状態をブラウザから監視するnagios編">サーバーの状態をブラウザから監視する(Nagios編)</h4>
+
+<p>■ 統合監視システム構築(Nagios)
+→ インストールしたものの、不要と感じたため、サービスは停止。
+△ リモートホストサービス監視(Nagios+nrpe)</p>
+
+<h4 id="サーバーの状態をブラウザから監視するrrdtool編">サーバーの状態をブラウザから監視する(RRDtool編)</h4>
+
+<p>■ サーバー監視システム構築(RRDtool+Cacti)
+■ Apacheアクセス統計監視グラフ追加(apachestats)
+△ BINDアクセス統計監視グラフ追加(bind9-snmp)</p>
+
+<h4 id="サーバーの状態をブラウザから監視するmrtg編">サーバーの状態をブラウザから監視する(MRTG編)</h4>
+
+<p>△ ネットワークトラフィック監視システム導入(NET-SNMP+MRTG)</p>
+
+<h4 id="webブラウジングを高速化する">Webブラウジングを高速化する</h4>
+
+<p>△ プロキシサーバー構築(Squid)
+△ プロキシサーバーでウィルスチェック(Squid+SquidClamAV+ClamAV)</p>
+
+<h4 id="linuxをhddビデオレコーダーにする">LinuxをHDDビデオレコーダーにする</h4>
+
+<p>△ TV録画機能導入(GV-MVP/RX2+ivtv-1.0) kernel-2.6.22系
+△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.21系
+△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.20系
+△ TV録画機能導入(GV-MVP/RX2+ivtv-0.10) kernel-2.6.19系
+△ TV録画機能導入(GV-MVP/RX2+ivtv-0.8) kernel-2.6.18系
+△ TV録画機能導入(GV-MVP/RX2+ivtv-0.7) kernel-2.6.17系
+△ TV録画予約システム構築(vrs)
+△ 録画データの活用</p>
+
+<h4 id="サーバー公開後のセキュリティ強化">サーバー公開後のセキュリティ強化</h4>
+
+<p>■ 不正アクセス検知システム導入(Snort+SnortSnarf+Oinkmaster)</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpm -Uvh /usr/src/redhat/RPMS/i386/snort-2.8.0.1-1.i386.rpm
+
+</code></pre></div></div>
+
+<p>ではエラーになる（Fedora10の場合）ので、以下を実行！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpm -Uvh rpmbuild/SRPMS/RPMS/i386/snort-2.8.3.1-1.i386.rpm
+
+</code></pre></div></div>
+
+<p>→　成功！
+■ iptablesログ解析(IPTables log analyzer)
+■ ログ監視ツール導入(SWATCH)</p>
+
+<h4 id="ユーザのホームディレクトリ容量を制限する">ユーザのホームディレクトリ容量を制限する</h4>
+
+<p>△ ホームディレクトリ容量制限(quota)</p>
+
+<h4 id="サーバーのファイルを自動的にバックアップする">サーバーのファイルを自動的にバックアップする</h4>
+
+<p>■ 自動バックアップ運用(tar+GnuPG+rsync/ftp)
+△ リアルタイムミラーリングツール導入(lsyncd+rsyncd)</p>
+
+<h4 id="外部から安全にlanへ接続できるようにする">外部から安全にLANへ接続できるようにする</h4>
+
+<p>△ VPNサーバー構築(OpenVPN)
+△ Windows上にVNCサーバー導入(UltraVNC)</p>
+
+<h3 id="その他">その他</h3>
+
+<h4 id="-ハードディスクの温度設定">■ ハードディスクの温度設定</h4>
+
+<p>hddtempのインストール。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yum install hddtemp
+
+</code></pre></div></div>
+
+<p>hddtemp の実行。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hddtemp /dev/sda
+
+</code></pre></div></div>
+
+<hr />
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/fedora" class="page__taxonomy-item" rel="tag">Fedora</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2009-01-05T16:55:00+09:00">2009-01-05 16:55</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=D945GCLF+%2B+Fedora10+%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89%E3%83%A1%E3%83%A2%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F01%2F05%2F05165522%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F01%2F05%2F05165522%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F01%2F05%2F05165522%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="#" class="pagination--pager disabled">Previous</a>
+    
+    
+      <a href="/2009/01/05/05190900/" class="pagination--pager" title="WordPress 2.7 にアップグレード ＆ テーマ変更！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2009/01/05/05165522/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2009/01/05/05165522"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

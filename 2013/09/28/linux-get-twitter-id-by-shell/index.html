@@ -1,0 +1,830 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Linux - シェルスクリプトで Twitter アカウント ID を取得！ - mk-mode BLOG</title>
+<meta name="description" content="Twitter API を使用せず、特定の Twitter アカウントの ID （数字だけのID）を取得する方法についてです。今回紹介する方法だと、アカウント ID を取得するだけのことに API 認証までしなくてもよいです。実際には、シェルスクリプトで HTML を解析する方法になっています。（前回の「Linux - シェルスクリプトで天気予報取得！」の応用です）最終的にワンライナー（１行完結のスクリプト）にしているが、以下で順を追って説明します。また、後半ではブラウザ ＋ JavaScript でアカウント ID を取得する方法も紹介しています。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Linux - シェルスクリプトで Twitter アカウント ID を取得！">
+<meta property="og:url" content="https://komasaru.github.io/2013/09/28/linux-get-twitter-id-by-shell/">
+
+
+  <meta property="og:description" content="Twitter API を使用せず、特定の Twitter アカウントの ID （数字だけのID）を取得する方法についてです。今回紹介する方法だと、アカウント ID を取得するだけのことに API 認証までしなくてもよいです。実際には、シェルスクリプトで HTML を解析する方法になっています。（前回の「Linux - シェルスクリプトで天気予報取得！」の応用です）最終的にワンライナー（１行完結のスクリプト）にしているが、以下で順を追って説明します。また、後半ではブラウザ ＋ JavaScript でアカウント ID を取得する方法も紹介しています。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Linux - シェルスクリプトで Twitter アカウント ID を取得！">
+  <meta name="twitter:description" content="Twitter API を使用せず、特定の Twitter アカウントの ID （数字だけのID）を取得する方法についてです。今回紹介する方法だと、アカウント ID を取得するだけのことに API 認証までしなくてもよいです。実際には、シェルスクリプトで HTML を解析する方法になっています。（前回の「Linux - シェルスクリプトで天気予報取得！」の応用です）最終的にワンライナー（１行完結のスクリプト）にしているが、以下で順を追って説明します。また、後半ではブラウザ ＋ JavaScript でアカウント ID を取得する方法も紹介しています。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/09/28/linux-get-twitter-id-by-shell/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-09-28T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/09/28/linux-get-twitter-id-by-shell/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Linux - シェルスクリプトで Twitter アカウント ID を取得！">
+    <meta itemprop="description" content="Twitter API を使用せず、特定の Twitter アカウントの ID （数字だけのID）を取得する方法についてです。今回紹介する方法だと、アカウント ID を取得するだけのことに API 認証までしなくてもよいです。実際には、シェルスクリプトで HTML を解析する方法になっています。（前回の「Linux - シェルスクリプトで天気予報取得！」の応用です）最終的にワンライナー（１行完結のスクリプト）にしているが、以下で順を追って説明します。また、後半ではブラウザ ＋ JavaScript でアカウント ID を取得する方法も紹介しています。">
+    <meta itemprop="datePublished" content="September 28, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Linux - シェルスクリプトで Twitter アカウント ID を取得！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-09-28T00:20:00+09:00">2013-09-28 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Twitter API を使用せず、特定の Twitter アカウントの ID （数字だけのID）を取得する方法についてです。<br />
+今回紹介する方法だと、アカウント ID を取得するだけのことに API 認証までしなくてもよいです。</p>
+
+<p>実際には、シェルスクリプトで HTML を解析する方法になっています。（前回の「<a href="/2013/09/27/linux-webscraping-by-shellscript" title="Linux - シェルスクリプトで天気予報取得！">Linux - シェルスクリプトで天気予報取得！</a>」の応用です）</p>
+
+<p>最終的にワンライナー（１行完結のスクリプト）にしているが、以下で順を追って説明します。<br />
+また、後半ではブラウザ ＋ JavaScript でアカウント ID を取得する方法も紹介しています。</p>
+
+<!--more-->
+
+<h4 id="0-前提条件">0. 前提条件</h4>
+
+<ul>
+  <li>Linux Mint 14 (64bit) での作業を想定。</li>
+  <li>bash もしくは zsh での作業を想定。（当方、動作確認済み）</li>
+  <li><code class="language-plaintext highlighter-rouge">curl</code>, <code class="language-plaintext highlighter-rouge">grep</code>, <code class="language-plaintext highlighter-rouge">sed</code> コマンドの詳細は説明しない。（特に難しいオプションは使用していない）</li>
+  <li>正規表現の詳細は説明しない。（特に難しい正規表現は使用していない）</li>
+  <li>取得元サイトの HTML ソースは予期せず変更されることがあるので注意。</li>
+  <li>Twitter のアカウントには、以下の３つがあることを理解しておく。
+    <ul>
+      <li>半角英数字・記号からなる一意の「アカウント名」</li>
+      <li>任意の「表示名」</li>
+      <li>数字だけからなる一意の「アカウント ID」</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="1-html-取得">1. HTML 取得</h4>
+
+<p>調べたいアカウントの Twitter ページの URL は <code class="language-plaintext highlighter-rouge">https://twitter.com/hoge</code> なので、<code class="language-plaintext highlighter-rouge">curl</code> コマンドで以下のようにして HTML を取得する。（”hoge” は調べたいアカウントのアカウント名（API で言うところの screen_name））</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl https://twitter.com/hoge
+</code></pre></div></div>
+
+<p>ページの HTML が全部取得される。</p>
+
+<h4 id="2-必要な行のみ抽出">2. 必要な行のみ抽出</h4>
+
+<p>取得された HTML から、<code class="language-plaintext highlighter-rouge">grep</code> コマンドで必要な部分のみ抽出する。<br />
+HTML ソースを眺めると分かると思うが、<code class="language-plaintext highlighter-rouge">&lt;div class="profile-card-inner" data-screen-name="hoge" data-user-id="999999999"&gt;</code> という行を抽出すればよい。<br />
+なので、<code class="language-plaintext highlighter-rouge">profile-card-inner</code> という文字列が存在する行のみを抽出するようにする。<br />
+（”data-screen-name” や “data-user-id” を含む行を抽出してもよいが、それらは複数行存在する。１行しか存在しない “profile-card-inner” を含む行を抽出する方が簡素な処理になるだろう）</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl https://twitter.com/hoge | <span class="nb">grep</span> <span class="nt">-e</span> <span class="s2">"profile-card-inner"</span>
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+ 14  181k   14 26536    0     0  25541      0  0:00:07  0:00:01  0:00:06 31292    &lt;div <span class="nv">class</span><span class="o">=</span><span class="s2">"profile-card-inner"</span> data-screen-name<span class="o">=</span><span class="s2">"hoge"</span> data-user-id<span class="o">=</span><span class="s2">"999999999"</span><span class="o">&gt;</span>
+100  181k  100  181k    0     0   108k      0  0:00:01  0:00:01 <span class="nt">--</span>:--:--  122k
+</code></pre></div></div>
+
+<p>ただし、<code class="language-plaintext highlighter-rouge">curl</code> コマンドが標準エラー出力に余分な情報も出力する。</p>
+
+<h4 id="3-標準エラー出力を抑制">3. 標準エラー出力を抑制</h4>
+
+<p><code class="language-plaintext highlighter-rouge">curl</code> コマンドによる余分な出力情報を破棄するため、以下のようにする。（標準エラー出力を破棄するようにする）</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl https://twitter.com/hoge 2&gt; /dev/null | <span class="nb">grep</span> <span class="nt">-e</span> <span class="s2">"profile-card-inner"</span>
+    &lt;div <span class="nv">class</span><span class="o">=</span><span class="s2">"profile-card-inner"</span> data-screen-name<span class="o">=</span><span class="s2">"hoge"</span> data-user-id<span class="o">=</span><span class="s2">"999999999"</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<h4 id="4-該当の数字文字列を抽出">4. 該当の数字文字列を抽出</h4>
+
+<p>取得した行内の “data-user-id” に設定されている数字を <code class="language-plaintext highlighter-rouge">sed</code> コマンド＋正規表現で抽出する。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl https://twitter.com/hoge 2&gt; /dev/null | <span class="nb">grep</span> <span class="nt">-e</span> <span class="s2">"profile-card-inner"</span> | <span class="nb">sed</span> <span class="nt">-e</span> <span class="s1">'s/^.*data-user-id="\(.*\)"&gt;$/ID: \1/'</span>
+ID: 999999999
+</code></pre></div></div>
+
+<p>これで完成である。</p>
+
+<h4 id="5-その他ブラウザで-javascript-を使用する方法">5. その他（ブラウザで JavaScript を使用する方法）</h4>
+
+<p>HTML 内の指定の属性の値を取得するという意味で考えると、JavaScript を使用してアカウント ID を取得することもできる。</p>
+
+<p>以下のような文字列を URL としてブラウザのお気に入りに登録する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javascript:(function(){window.alert('ID:'+$('.profile-card-inner[data-user-id]').attr('data-user-id'));})()
+</code></pre></div></div>
+
+<p>そして、アカウント ID を調べたいアカウントのページ（<code class="language-plaintext highlighter-rouge">https://twitter.com/hoge</code>）を開き、ブックマークから実行する（先ほどの登録したリンクを開く）と、ダイアログが開いてアカウント ID が表示される。</p>
+
+<hr />
+
+<p>他にも方法はあるかも知れませんが、当方はこれらで落ち着いています。<br />
+ブラウザ＋ JavaScript でアカウント ID を調べるほうが多いかも知れませんが。。。</p>
+
+<p>ただ、当然ながら処理するアカウントが大量にある場合などは、定石とおり Twitter API で認証して取得する方法が良いでしょう。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/javascript" class="page__taxonomy-item" rel="tag">JavaScript</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/twitter" class="page__taxonomy-item" rel="tag">Twitter</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/pc-tips" class="page__taxonomy-item" rel="tag">PC_Tips</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/sns" class="page__taxonomy-item" rel="tag">SNS</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-09-28T00:20:00+09:00">2013-09-28 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Linux+-+%E3%82%B7%E3%82%A7%E3%83%AB%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%81%A7+Twitter+%E3%82%A2%E3%82%AB%E3%82%A6%E3%83%B3%E3%83%88+ID+%E3%82%92%E5%8F%96%E5%BE%97%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F09%2F28%2Flinux-get-twitter-id-by-shell%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F09%2F28%2Flinux-get-twitter-id-by-shell%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F09%2F28%2Flinux-get-twitter-id-by-shell%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/09/27/linux-webscraping-by-shellscript/" class="pagination--pager" title="Linux - シェルスクリプトで天気予報取得！
+">Previous</a>
+    
+    
+      <a href="/2013/09/29/linux-generate-barcode-image/" class="pagination--pager" title="Linux - バーコード画像生成！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/09/28/linux-get-twitter-id-by-shell/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/09/28/linux-get-twitter-id-by-shell"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,1242 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Fortran - JPL 天文暦バイナリデータの読み込み！ - mk-mode BLOG</title>
+<meta name="description" content="NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している月・惑星の暦の最新版 DE430 のバイナリ形式のデータを Fortran 95 で読み込んでみました。過去には Ruby や Python でも行いましたが。  Ruby - JPL 天文暦バイナリデータの読み込み！  Python - JPL 天文暦バイナリデータの読み込み！">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Fortran - JPL 天文暦バイナリデータの読み込み！">
+<meta property="og:url" content="https://komasaru.github.io/2019/01/09/fortran95-jpl-ephemeris-binary-reading/">
+
+
+  <meta property="og:description" content="NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している月・惑星の暦の最新版 DE430 のバイナリ形式のデータを Fortran 95 で読み込んでみました。過去には Ruby や Python でも行いましたが。  Ruby - JPL 天文暦バイナリデータの読み込み！  Python - JPL 天文暦バイナリデータの読み込み！">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Fortran - JPL 天文暦バイナリデータの読み込み！">
+  <meta name="twitter:description" content="NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している月・惑星の暦の最新版 DE430 のバイナリ形式のデータを Fortran 95 で読み込んでみました。過去には Ruby や Python でも行いましたが。  Ruby - JPL 天文暦バイナリデータの読み込み！  Python - JPL 天文暦バイナリデータの読み込み！">
+  <meta name="twitter:url" content="https://komasaru.github.io/2019/01/09/fortran95-jpl-ephemeris-binary-reading/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2019-01-09T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2019/01/09/fortran95-jpl-ephemeris-binary-reading/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Fortran - JPL 天文暦バイナリデータの読み込み！">
+    <meta itemprop="description" content="NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している月・惑星の暦の最新版 DE430 のバイナリ形式のデータを Fortran 95 で読み込んでみました。過去には Ruby や Python でも行いましたが。  Ruby - JPL 天文暦バイナリデータの読み込み！  Python - JPL 天文暦バイナリデータの読み込み！">
+    <meta itemprop="datePublished" content="January 09, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Fortran - JPL 天文暦バイナリデータの読み込み！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-01-09T00:20:00+09:00">2019-01-09 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している月・惑星の暦の最新版 DE430 のバイナリ形式のデータを Fortran 95 で読み込んでみました。</p>
+
+<p>過去には Ruby や Python でも行いましたが。</p>
+
+<ul>
+  <li><a href="/2016/04/26/ruby-read-jpl-bin-data" title="Ruby - JPL 天文暦バイナリデータの読み込み！">Ruby - JPL 天文暦バイナリデータの読み込み！</a></li>
+  <li><a href="/2018/06/16/python-read-jpl-bin-data" title="Python - JPL 天文暦バイナリデータの読み込み！">Python - JPL 天文暦バイナリデータの読み込み！</a></li>
+</ul>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>LMDE 3 (Linux Mint Debian Edition 3; 64bit) での作業を想定。</li>
+  <li>GCC 6.3.0 (GFortran 6.3.0) でのコンパイルを想定。</li>
+</ul>
+
+<h3 id="1-天文暦バイナリデータについて">1. 天文暦バイナリデータについて</h3>
+
+<p>当ブログ過去記事を参照のこと。</p>
+
+<ul>
+  <li><a href="/2016/04/18/merging-jpl-data" title="JPL 天文暦データのバイナリ化！">JPL 天文暦データのバイナリ化！</a></li>
+</ul>
+
+<p>また、天文暦データには各種バージョンが存在するが、日本の国立天文台が現在使用している DE430 を当方も使用する。</p>
+
+<h3 id="2-ソースコードの作成">2. ソースコードの作成</h3>
+
+<ul>
+  <li>以下は実行部分。</li>
+</ul>
+
+<p>File: <code class="language-plaintext highlighter-rouge">jpl_read_430.f95</code></p>
+
+<figure class="highlight"><pre><code class="language-fortran" data-lang="fortran"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+</pre></td><td class="code"><pre><span class="c1">!*******************************************************************************</span><span class="w">
+</span><span class="c1">! JPLEPH(JPL の DE430 バイナリデータ)読み込み</span><span class="w">
+</span><span class="c1">! * 対象天体</span><span class="w">
+</span><span class="c1">!      1: 水星            (Mercury)</span><span class="w">
+</span><span class="c1">!      2: 金星            (Venus)</span><span class="w">
+</span><span class="c1">!      3: 地球 - 月の重心 (Earth-Moon barycenter)</span><span class="w">
+</span><span class="c1">!      4: 火星            (Mars)</span><span class="w">
+</span><span class="c1">!      5: 木星            (Jupiter)</span><span class="w">
+</span><span class="c1">!      6: 土星            (Saturn)</span><span class="w">
+</span><span class="c1">!      7: 天王星          (Uranus)</span><span class="w">
+</span><span class="c1">!      8: 海王星          (Neptune)</span><span class="w">
+</span><span class="c1">!      9: 冥王星          (Pluto)</span><span class="w">
+</span><span class="c1">!     10: 月（地心）      (Moon (geocentric))</span><span class="w">
+</span><span class="c1">!     11: 太陽            (Sun)</span><span class="w">
+</span><span class="c1">!     12: 地球の章動(1980年IAUモデル) (Earth Nutations in longitude and obliquity(IAU 1980 model))</span><span class="w">
+</span><span class="c1">!     13: 月の秤動        (Lunar mantle libration)</span><span class="w">
+
+</span><span class="c1">!   Date          Author          Version</span><span class="w">
+</span><span class="c1">!   2018.10.21    mk-mode.com     1.00 新規作成</span><span class="w">
+</span><span class="c1">!   2018.11.09    mk-mode.com     1.01 時刻の取扱変更(マイクロ秒 =&gt; ミリ秒)</span><span class="w">
+</span><span class="c1">!</span><span class="w">
+</span><span class="c1">! Copyright(C) 2018 mk-mode.com All Rights Reserved.</span><span class="w">
+</span><span class="c1">! ---</span><span class="w">
+</span><span class="c1">! 引数</span><span class="w">
+</span><span class="c1">!   [第１] 天体番号（省略可）</span><span class="w">
+</span><span class="c1">!          * 1 〜 13</span><span class="w">
+</span><span class="c1">!          * 省略時は 11 を指定したとみなす</span><span class="w">
+</span><span class="c1">!   [第２] ユリウス日（省略可）</span><span class="w">
+</span><span class="c1">!          * 省略時は現在日時を UTC とみなしたユリウス日</span><span class="w">
+</span><span class="c1">! ---</span><span class="w">
+</span><span class="c1">! * 構造型 type(t_time) は time    モジュール内で定義</span><span class="w">
+</span><span class="c1">! * 構造型 type(t_bin)  は eph_jpl モジュール内で定義</span><span class="w">
+</span><span class="c1">!*******************************************************************************</span><span class="w">
+</span><span class="c1">!</span><span class="w">
+</span><span class="k">program</span><span class="w"> </span><span class="n">jpl_read_430</span><span class="w">
+  </span><span class="k">use</span><span class="w"> </span><span class="n">const</span><span class="w">
+  </span><span class="k">use</span><span class="w"> </span><span class="n">time</span><span class="w">
+  </span><span class="k">use</span><span class="w"> </span><span class="n">eph_jpl</span><span class="w">
+  </span><span class="k">implicit</span><span class="w"> </span><span class="k">none</span><span class="w">
+  </span><span class="kt">integer</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">11</span><span class="w">  </span><span class="c1">! 指定の天体番号（初期値： 11（太陽））</span><span class="w">
+  </span><span class="kt">real</span><span class="p">(</span><span class="n">DP</span><span class="p">)</span><span class="w">    </span><span class="p">::</span><span class="w"> </span><span class="n">jd</span><span class="w">      </span><span class="c1">! 指定のJulian Day</span><span class="w">
+  </span><span class="k">type</span><span class="p">(</span><span class="n">t_bin</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">bin</span><span class="w">
+  </span><span class="kt">integer</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w">
+  </span><span class="kt">real</span><span class="p">(</span><span class="n">DP</span><span class="p">)</span><span class="w">    </span><span class="p">::</span><span class="w"> </span><span class="n">jds</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w">
+  </span><span class="c1">! 対象係数配列</span><span class="w">
+  </span><span class="kt">real</span><span class="p">(</span><span class="n">DP</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">coeff_a</span><span class="p">(:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:)</span><span class="w">
+
+  </span><span class="c1">! コマンドライン引数(天体番号、JD)取得</span><span class="w">
+  </span><span class="k">call</span><span class="w"> </span><span class="n">get_arg</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">jd</span><span class="p">)</span><span class="w">
+
+  </span><span class="c1">! バイナリデータ取得</span><span class="w">
+  </span><span class="c1">! * 1レコード目:     ttl - numde</span><span class="w">
+  </span><span class="c1">! * 2レコード目:     cval</span><span class="w">
+  </span><span class="c1">! * 3レコード目以降: 係数</span><span class="w">
+  </span><span class="k">call</span><span class="w"> </span><span class="n">get_bin</span><span class="p">(</span><span class="n">jd</span><span class="p">,</span><span class="w"> </span><span class="n">bin</span><span class="p">)</span><span class="w">
+
+  </span><span class="c1">! 対象インデックスの開始／終了 JD</span><span class="w">
+  </span><span class="n">jds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bin</span><span class="o">%</span><span class="n">coeff</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span><span class="w">
+
+  </span><span class="c1">! 対象係数配列のアロケート</span><span class="w">
+  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">12</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+    </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w">
+  </span><span class="k">else</span><span class="w">
+    </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w">
+  </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+  </span><span class="k">allocate</span><span class="p">(</span><span class="n">coeff_a</span><span class="p">(</span><span class="n">bin</span><span class="o">%</span><span class="n">ipt</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">),</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">bin</span><span class="o">%</span><span class="n">ipt</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">)))</span><span class="w">
+
+  </span><span class="c1">! 対象係数配列</span><span class="w">
+  </span><span class="n">coeff_a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">reshape</span><span class="p">(</span><span class="w"> </span><span class="p">&amp;</span><span class="w">
+    </span><span class="p">&amp;</span><span class="w"> </span><span class="n">bin</span><span class="o">%</span><span class="n">coeff</span><span class="p">(</span><span class="n">bin</span><span class="o">%</span><span class="n">ipt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">):</span><span class="w"> </span><span class="p">&amp;</span><span class="w">
+    </span><span class="p">&amp;</span><span class="w">   </span><span class="p">(</span><span class="n">bin</span><span class="o">%</span><span class="n">ipt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="o">+</span><span class="n">bin</span><span class="o">%</span><span class="n">ipt</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="o">*</span><span class="n">n</span><span class="o">*</span><span class="n">bin</span><span class="o">%</span><span class="n">ipt</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span><span class="w">
+    </span><span class="p">&amp;</span><span class="w"> </span><span class="p">),</span><span class="w"> </span><span class="nb">shape</span><span class="p">(</span><span class="n">coeff_a</span><span class="p">))</span><span class="w">
+
+  </span><span class="c1">! 結果出力</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("  Astro No: ", I2)'</span><span class="p">,</span><span class="w">     </span><span class="n">a</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("Julian Day: ", F18.10)'</span><span class="p">,</span><span class="w"> </span><span class="n">jd</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(/A/)'</span><span class="p">,</span><span class="w"> </span><span class="s2">"*** Header data ***"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">"TTL:"</span><span class="w">
+  </span><span class="k">do</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w">
+    </span><span class="k">print</span><span class="w"> </span><span class="s1">'(2XA)'</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">bin</span><span class="o">%</span><span class="n">ttl</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="w">
+  </span><span class="k">end</span><span class="w"> </span><span class="k">do</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">"CNAM:"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(8(A8))'</span><span class="p">,</span><span class="w"> </span><span class="n">bin</span><span class="o">%</span><span class="n">cnam</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">bin</span><span class="o">%</span><span class="n">ncon</span><span class="p">)</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">"SS:"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(3(F11.1))'</span><span class="p">,</span><span class="w"> </span><span class="n">bin</span><span class="o">%</span><span class="n">ss</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">"NCON:"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(I5)'</span><span class="p">,</span><span class="w"> </span><span class="n">bin</span><span class="o">%</span><span class="n">ncon</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">"AU:"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">bin</span><span class="o">%</span><span class="n">au</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">"EMRAT:"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">bin</span><span class="o">%</span><span class="n">emrat</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">"IPT:"</span><span class="w">
+  </span><span class="k">do</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">13</span><span class="w">
+    </span><span class="k">print</span><span class="w"> </span><span class="s1">'(3(I6))'</span><span class="p">,</span><span class="w"> </span><span class="n">bin</span><span class="o">%</span><span class="n">ipt</span><span class="p">(:,</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w">
+  </span><span class="k">end</span><span class="w"> </span><span class="k">do</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">"NUMDE:"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">bin</span><span class="o">%</span><span class="n">numde</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">"NCON:"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(3E24.16)'</span><span class="p">,</span><span class="w"> </span><span class="n">bin</span><span class="o">%</span><span class="n">cval</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">bin</span><span class="o">%</span><span class="n">ncon</span><span class="p">)</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(/A)'</span><span class="p">,</span><span class="w"> </span><span class="s2">"*** Coefficients ***"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'("jds: ", F18.10XF18.10)'</span><span class="p">,</span><span class="w"> </span><span class="n">jds</span><span class="w">
+  </span><span class="k">do</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">bin</span><span class="o">%</span><span class="n">ipt</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="w">
+    </span><span class="k">do</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w">
+      </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">""</span><span class="w">
+      </span><span class="k">print</span><span class="w"> </span><span class="s1">'(3E24.16)'</span><span class="p">,</span><span class="w"> </span><span class="n">coeff_a</span><span class="p">(:,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w">
+    </span><span class="k">end</span><span class="w"> </span><span class="k">do</span><span class="w">
+  </span><span class="k">end</span><span class="w"> </span><span class="k">do</span><span class="w">
+
+  </span><span class="c1">! 対象係数配列のデアロケート</span><span class="w">
+  </span><span class="k">deallocate</span><span class="p">(</span><span class="n">coeff_a</span><span class="p">)</span><span class="w">
+
+  </span><span class="k">stop</span><span class="w">
+</span><span class="k">contains</span><span class="w">
+  </span><span class="c1">! コマンドライン引数(天体番号、JD)取得</span><span class="w">
+  </span><span class="c1">! * 天体番号: 1 〜 13</span><span class="w">
+  </span><span class="c1">! * JD: 実数形式（整合性チェックは行わない）</span><span class="w">
+  </span><span class="c1">!</span><span class="w">
+  </span><span class="c1">! :param(inout) integer  a</span><span class="w">
+  </span><span class="c1">! :param(inout) real(8) jd</span><span class="w">
+  </span><span class="k">subroutine</span><span class="w"> </span><span class="n">get_arg</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">jd</span><span class="p">)</span><span class="w">
+    </span><span class="k">implicit</span><span class="w"> </span><span class="k">none</span><span class="w">
+    </span><span class="kt">integer</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="k">inout</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">a</span><span class="w">
+    </span><span class="kt">real</span><span class="p">(</span><span class="n">DP</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="k">inout</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">jd</span><span class="w">
+    </span><span class="kt">character</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">arg_j</span><span class="w">
+    </span><span class="k">type</span><span class="p">(</span><span class="n">t_time</span><span class="p">)</span><span class="w">  </span><span class="p">::</span><span class="w"> </span><span class="n">utc</span><span class="w">
+    </span><span class="kt">character</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w">  </span><span class="p">::</span><span class="w"> </span><span class="n">arg_a</span><span class="w">
+    </span><span class="kt">integer</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span><span class="w">   </span><span class="p">::</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="w">
+
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iargc</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+      </span><span class="k">call</span><span class="w"> </span><span class="nb">date_and_time</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span><span class="w">
+      </span><span class="n">utc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">t_time</span><span class="p">(</span><span class="n">dt</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">7</span><span class="p">),</span><span class="w"> </span><span class="n">dt</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span><span class="w">
+      </span><span class="k">call</span><span class="w"> </span><span class="n">gc2jd</span><span class="p">(</span><span class="n">utc</span><span class="p">,</span><span class="w"> </span><span class="n">jd</span><span class="p">)</span><span class="w">
+    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iargc</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+      </span><span class="k">call</span><span class="w"> </span><span class="n">getarg</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">arg_a</span><span class="p">)</span><span class="w">
+      </span><span class="k">read</span><span class="w"> </span><span class="p">(</span><span class="n">arg_a</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">a</span><span class="w">
+    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iargc</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+      </span><span class="k">call</span><span class="w"> </span><span class="n">getarg</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">arg_j</span><span class="p">)</span><span class="w">
+      </span><span class="k">read</span><span class="w"> </span><span class="p">(</span><span class="n">arg_j</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">jd</span><span class="w">
+    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+  </span><span class="k">end</span><span class="w"> </span><span class="k">subroutine</span><span class="w"> </span><span class="n">get_arg</span><span class="w">
+</span><span class="k">end</span><span class="w"> </span><span class="k">program</span><span class="w"> </span><span class="n">jpl_read_430</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>モジュールを含めた全てのファイルは GitHub にアップしている。（当然ながら、モジュール部分の方が計算の本質となっている）</p>
+
+<ul>
+  <li><a href="https://github.com/komasaru/CalendarF95/tree/master/jpl_read_430" title="CalendarF95/jpl_read_430 at master · komasaru/CalendarF95">CalendarF95/jpl_read_430 at master · komasaru/CalendarF95</a></li>
+</ul>
+
+<h3 id="3-ソースコードのビルド">3. ソースコードのビルド</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ make
+</code></pre></div></div>
+
+<ul>
+  <li>やり直す場合は、 <code class="language-plaintext highlighter-rouge">make clean</code> してから。</li>
+</ul>
+
+<h3 id="4-準備">4. 準備</h3>
+
+<ul>
+  <li>JPL 天文暦バイナリデータ <code class="language-plaintext highlighter-rouge">JPLEPH</code> を実行ファイルと同じディレクトリ内に配置。<br />
+（参照「<a href="https://www.mk-mode.com/octopress/2016/04/18/merging-jpl-data/" title="JPL 天文暦データのバイナリ化！">JPL 天文暦データのバイナリ化！</a>」）</li>
+</ul>
+
+<h3 id="5-実行方法">5. 実行方法</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./jpl_read_430 [A [JD]]
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">A</code> は天体番号。(<code class="language-plaintext highlighter-rouge">1</code>〜<code class="language-plaintext highlighter-rouge">13</code>; 省略可）<br />
+（省略時は <code class="language-plaintext highlighter-rouge">11</code> とみなす)
+    <ol>
+      <li>水星            (Mercury)</li>
+      <li>金星            (Venus)</li>
+      <li>地球 - 月の重心 (Earth-Moon barycenter)</li>
+      <li>火星            (Mars)</li>
+      <li>木星            (Jupiter)</li>
+      <li>土星            (Saturn)</li>
+      <li>天王星          (Uranus)</li>
+      <li>海王星          (Neptune)</li>
+      <li>冥王星          (Pluto)</li>
+      <li>月（地心）      (Moon (geocentric))</li>
+      <li>太陽            (Sun)</li>
+      <li>地球の章動(1980年IAUモデル) (Earth Nutations in longitude and obliquity(IAU 1980 model))</li>
+      <li>月の秤動        (Lunar mantle libration)</li>
+    </ol>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">JD</code> はユリウス日(Julian Day)。（省略可）<br />
+（省略時はシステム時刻を UTC とみなしたユリウス日）</li>
+</ul>
+
+<p>以下、実行例。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./jpl_read_430 11 2458493
+  Astro No: 11
+Julian Day: 2458493.0000000000
+
+*** Header data ***
+
+ TTL:
+  JPL Planetary Ephemeris DE430/LE430
+  Start Epoch: JED=  2287184.5 1549-DEC-21 00:00:00
+  Final Epoch: JED=  2688976.5 2650-JAN-25 00:00:00
+ CNAM:
+  DENUM   LENUM   TDATEF  TDATEB  JDEPOC  CENTER  CLIGHT  BETA
+  GAMMA   AU      EMRAT   GM1     GM2     GMB     GM4     GM5
+  GM6     GM7     GM8     GM9     GMS     XS      YS      ZS
+  XDS     YDS     ZDS     X1      Y1      Z1      XD1     YD1
+  ZD1     X2      Y2      Z2      XD2     YD2     ZD2     XB
+  YB      ZB      XDB     YDB     ZDB     X4      Y4      Z4
+  XD4     YD4     ZD4     X5      Y5      Z5      XD5     YD5
+  ZD5     X6      Y6      Z6      XD6     YD6     ZD6     X7
+  Y7      Z7      XD7     YD7     ZD7     X8      Y8      Z8
+  XD8     YD8     ZD8     X9      Y9      Z9      XD9     YD9
+  ZD9     XM      YM      ZM      XDM     YDM     ZDM     XC
+  YC      ZC      XDC     YDC     ZDC     PHI     THT     PSI
+  OMEGAX  OMEGAY  OMEGAZ  PHIC    THTC    PSIC    OMGCX   OMGCY
+  OMGCZ   ASUN    J2SUN   J3SUN   J4SUN   RE      J2E     J3E
+  J4E     J5E     J2EDOT  K2E0    K2E1    K2E2    TAUE0   TAUE1
+  TAUE2   TAUER1  TAUER2  ROTEX   ROTEY   DROTEX  DROTEY  AM
+  K2M     TAUM    LBET    LGAM    IFAC    COBLAT  KVC     PSIDOT
+  J2M     C22M    J3M     C31M    S31M    C32M    S32M    C33M
+  S33M    J4M     C41M    S41M    C42M    S42M    C43M    S43M
+  C44M    S44M    J5M     C51M    S51M    C52M    S52M    C53M
+  S53M    C54M    S54M    C55M    S55M    J6M     C61M    S61M
+  C62M    S62M    C63M    S63M    C64M    S64M    C65M    S65M
+  C66M    S66M    J7M     J8M     J9M     C71M    S71M    C72M
+  S72M    C73M    S73M    C74M    S74M    C75M    S75M    C76M
+  S76M    C77M    S77M    C81M    S81M    C82M    S82M    C83M
+  S83M    C84M    S84M    C85M    S85M    C86M    S86M    C87M
+  S87M    C88M    S88M    C91M    S91M    C92M    S92M    C93M
+  S93M    C94M    S94M    C95M    S95M    C96M    S96M    C97M
+  S97M    C98M    S98M    C99M    S99M    MA0001  MA0002  MA0003
+  MA0004  MA0005  MA0006  MA0007  MA0008  MA0009  MA0010  MA0011
+  MA0012  MA0013  MA0014  MA0015  MA0016  MA0017  MA0018  MA0019
+
+                         ===&lt; 中略 &gt;===
+
+  MA0780  MA0784  MA0786  MA0788  MA0790  MA0791  MA0804  MA0814
+  MA0849  MA0895  MA0909  MA0914  MA0980  MA1015  MA1021  MA1036
+  MA1093  MA1107  MA1171  MA1467
+ SS:
+  2396752.5  2506352.5       32.0
+ NCON:
+  572
+ AU:
+   149597870.69999999
+ EMRAT:
+   81.300569074190619
+ IPT:
+     3    14     4
+   171    10     2
+   231    13     2
+   309    11     1
+   342     8     1
+   366     7     1
+   387     6     1
+   405     6     1
+   423     6     1
+   441    13     8
+   753    11     2
+   819    10     4
+   899    10     4
+ NUMDE:
+         430
+ NCON:
+  0.4300000000000000E+03  0.4300000000000000E+03  0.2013032920043800E+14
+  0.2013032919100700E+14  0.2440400500000000E+07  0.0000000000000000E+00
+  0.2997924580000000E+06  0.1000000000000000E+01  0.1000000000000000E+01
+  0.1495978707000000E+09  0.8130056907419062E+02  0.4912480450364760E-10
+  0.7243452332644120E-09  0.8997011390199871E-09  0.9549548695550771E-10
+  0.2825345840833870E-06  0.8459706073245031E-07  0.1292024825782960E-07
+  0.1524357347885110E-07  0.2178441051974180E-11  0.2959122082855911E-03
+  0.4502508784640554E-02  0.7670764270910071E-03  0.2660579177669776E-03
+ -0.3517495360755232E-06  0.5177626409833405E-05  0.2229102178912029E-05
+  0.3617627165602820E+00 -0.9078197215676601E-01 -0.8571497256275117E-01
+
+                         ===&lt; 中略 &gt;===
+
+  0.2267103341459905E-15  0.4555959566377237E-15  0.1035497250152759E-15
+  0.3786475033089484E-15  0.3362975492761039E-15  0.4117268268399542E-16
+  0.1535297888556620E-15  0.1258376592645005E-15  0.7617140987284265E-16
+  0.6467767213237461E-16  0.2871640482670196E-15  0.9549128215887647E-16
+  0.6248568708463761E-16  0.1115280133034817E-15
+
+*** Coefficients ***
+jds: 2458480.5000000000 2458512.5000000000
+
+ -0.1177986012389841E+06 -0.9430794319120352E+04 -0.1236365613634352E+02
+ -0.4724680593816627E-01  0.2990757809890035E-02  0.9950084248609360E-04
+  0.2499812803471349E-05 -0.4470399183813857E-06  0.4997540692957418E-07
+ -0.4197206836554665E-08  0.2579924434695465E-09
+
+  0.1024060918107703E+07  0.2041212735430680E+04 -0.1858802195146995E+02
+ -0.1389053329215789E+00 -0.1408257089104788E-02 -0.1298400943581497E-04
+  0.8938336294255079E-05 -0.3410927132222797E-06  0.1830373846378631E-07
+  0.9413342843760557E-09 -0.1650189762338264E-09
+
+  0.4347619365798723E+06  0.1148040381729479E+04 -0.7523394428141031E+01
+ -0.6309040075177956E-01 -0.6838489071172099E-03 -0.1988654753299750E-04
+  0.4363433839780426E-05 -0.1345486877521627E-06  0.4657414521404225E-08
+  0.9380387045868675E-09 -0.1181839454085240E-09
+
+ -0.1367602149889538E+06 -0.9530998082077735E+04 -0.1257396535540276E+02
+  0.1748132890254096E-01  0.5081848857958471E-02  0.9488804346779973E-04
+ -0.2400900652003507E-05 -0.3559516282088078E-06 -0.4988323833105262E-07
+ -0.5568931362110481E-08 -0.4381078377720741E-09
+
+  0.1027989118759424E+07  0.1885503462315278E+04 -0.2036646668091816E+02
+ -0.1537233130638352E+00  0.1071537491935919E-03  0.1669951591113572E-03
+  0.9766197364092997E-05  0.4741131851164967E-06  0.3260542618358565E-07
+ -0.4517257042438716E-10 -0.1419224414094673E-09
+
+  0.4369953021675221E+06  0.1084641346610625E+04 -0.8343063184833706E+01
+ -0.7226446996323115E-01 -0.1763141594316544E-03  0.7370996486217237E-04
+  0.5369685930442202E-05  0.2924780982769289E-06  0.2267154252734439E-07
+  0.5642299154312489E-09 -0.3496620019513923E-10
+</code></pre></div></div>
+
+<hr />
+
+<p>以上、</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/fortran" class="page__taxonomy-item" rel="tag">Fortran</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">カレンダー</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%9A%A6-%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">暦・カレンダー</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-01-09T00:20:00+09:00">2019-01-09 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Fortran+-+JPL+%E5%A4%A9%E6%96%87%E6%9A%A6%E3%83%90%E3%82%A4%E3%83%8A%E3%83%AA%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%81%BF%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2019%2F01%2F09%2Ffortran95-jpl-ephemeris-binary-reading%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2019%2F01%2F09%2Ffortran95-jpl-ephemeris-binary-reading%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2019%2F01%2F09%2Ffortran95-jpl-ephemeris-binary-reading%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2019/01/06/fortran95-greenwich-time/" class="pagination--pager" title="Fortran - グリニッジ恒星時の計算（IAU2006 理論）！
+">Previous</a>
+    
+    
+      <a href="/2019/01/12/fortran95-jpl-ephemeris-icrs-coordinate/" class="pagination--pager" title="Fortran - JPL 天文暦データから ICRS 座標を計算！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2019/01/09/fortran95-jpl-ephemeris-binary-reading/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2019/01/09/fortran95-jpl-ephemeris-binary-reading"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

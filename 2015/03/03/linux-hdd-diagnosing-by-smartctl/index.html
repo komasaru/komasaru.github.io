@@ -1,0 +1,1077 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Linux - smartctl で HDD 診断！ - mk-mode BLOG</title>
+<meta name="description" content="こんにちは。Linux でハードディスクの状態をある程度診断できる smartctl コマンドについての備忘録です。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Linux - smartctl で HDD 診断！">
+<meta property="og:url" content="https://komasaru.github.io/2015/03/03/linux-hdd-diagnosing-by-smartctl/">
+
+
+  <meta property="og:description" content="こんにちは。Linux でハードディスクの状態をある程度診断できる smartctl コマンドについての備忘録です。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Linux - smartctl で HDD 診断！">
+  <meta name="twitter:description" content="こんにちは。Linux でハードディスクの状態をある程度診断できる smartctl コマンドについての備忘録です。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2015/03/03/linux-hdd-diagnosing-by-smartctl/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2015-03-03T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2015/03/03/linux-hdd-diagnosing-by-smartctl/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Linux - smartctl で HDD 診断！">
+    <meta itemprop="description" content="こんにちは。Linux でハードディスクの状態をある程度診断できる smartctl コマンドについての備忘録です。">
+    <meta itemprop="datePublished" content="March 03, 2015">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Linux - smartctl で HDD 診断！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-03-03T00:20:00+09:00">2015-03-03 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>こんにちは。</p>
+
+<p>Linux でハードディスクの状態をある程度診断できる <code class="language-plaintext highlighter-rouge">smartctl</code> コマンドについての備忘録です。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Debian GNU Linux 7.8.0, CentOS 6.6, Linux Mint 17.1 での作業を想定。</li>
+  <li><code class="language-plaintext highlighter-rouge">smartctl</code> コマンドが利用可能である。<br />
+（RedHat 系ではデフォルトでインストールされているが、 Debian 系ではデフォルトでインストールされていないので、 <code class="language-plaintext highlighter-rouge">apt-get install smartmontools</code> 等でインストールしておく）</li>
+  <li>以下では root ユーザになって作業を行なっている。</li>
+</ul>
+
+<h3 id="1-smartctl-コマンド実行エラーありのケース">1. smartctl コマンド実行（エラーありのケース）</h3>
+
+<p><code class="language-plaintext highlighter-rouge">-a</code> or <code class="language-plaintext highlighter-rouge">--all</code> オプションで SMART 情報全てを表示してみる。（この項の最後に簡単な説明あり）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># smartctl -a /dev/sda
+smartctl 5.41 2011-06-09 r3365 [x86_64-linux-3.2.0-4-amd64] (local build)
+Copyright (C) 2002-11 by Bruce Allen, http://smartmontools.sourceforge.net
+
+=== START OF INFORMATION SECTION ===
+Model Family:     Maxtor DiamondMax 10 (SATA/300)
+Device Model:     Maxtor 6V250F0
+Serial Number:    V501XATG
+LU WWN Device Id: 0 150500 7b27f269a
+Firmware Version: VA111630
+User Capacity:    251,000,193,024 bytes [251 GB]
+Sector Size:      512 bytes logical/physical
+Device is:        In smartctl database [for details use: -P show]
+ATA Version is:   7
+ATA Standard is:  ATA/ATAPI-7 T13 1532D revision 0
+Local Time is:    Sun Feb 15 13:31:35 2015 JST
+SMART support is: Available - device has SMART capability.
+SMART support is: Enabled
+
+=== START OF READ SMART DATA SECTION ===
+SMART overall-health self-assessment test result: PASSED
+
+General SMART Values:
+Offline data collection status:  (0x82) Offline data collection activity
+                                        was completed without error.
+                                        Auto Offline Data Collection: Enabled.
+Self-test execution status:      (  21) The self-test routine was aborted by
+                                        the host.
+Total time to complete Offline
+data collection:                ( 2102) seconds.
+Offline data collection
+capabilities:                    (0x5b) SMART execute Offline immediate.
+                                        Auto Offline data collection on/off support.
+                                        Suspend Offline collection upon new
+                                        command.
+                                        Offline surface scan supported.
+                                        Self-test supported.
+                                        No Conveyance Self-test supported.
+                                        Selective Self-test supported.
+SMART capabilities:            (0x0003) Saves SMART data before entering
+                                        power-saving mode.
+                                        Supports SMART auto save timer.
+Error logging capability:        (0x01) Error logging supported.
+                                        General Purpose Logging supported.
+Short self-test routine
+recommended polling time:        (   2) minutes.
+Extended self-test routine
+recommended polling time:        ( 114) minutes.
+SCT capabilities:              (0x0021) SCT Status supported.
+                                        SCT Data Table supported.
+
+SMART Attributes Data Structure revision number: 32
+Vendor Specific SMART Attributes with Thresholds:
+ID# ATTRIBUTE_NAME          FLAG     VALUE WORST THRESH TYPE      UPDATED  WHEN_FAILED RAW_VALUE
+  3 Spin_Up_Time            0x0027   186   185   063    Pre-fail  Always       -       20281
+  4 Start_Stop_Count        0x0032   253   253   000    Old_age   Always       -       1477
+  5 Reallocated_Sector_Ct   0x0033   253   253   063    Pre-fail  Always       -       0
+  7 Seek_Error_Rate         0x000a   253   252   000    Old_age   Always       -       0
+  8 Seek_Time_Performance   0x0027   247   241   187    Pre-fail  Always       -       65480
+  9 Power_On_Hours          0x0032   185   185   000    Old_age   Always       -       23563
+ 10 Spin_Retry_Count        0x002b   253   252   157    Pre-fail  Always       -       0
+ 11 Calibration_Retry_Count 0x002b   253   252   223    Pre-fail  Always       -       0
+ 12 Power_Cycle_Count       0x0032   250   250   000    Old_age   Always       -       1212
+189 High_Fly_Writes         0x003a   100   100   000    Old_age   Always       -       0
+190 Airflow_Temperature_Cel 0x0022   066   039   000    Old_age   Always       -       34 (Min/Max 32/34)
+192 Power-Off_Retract_Count 0x0032   253   253   000    Old_age   Always       -       0
+193 Load_Cycle_Count        0x0032   253   253   000    Old_age   Always       -       0
+194 Temperature_Celsius     0x0032   039   253   000    Old_age   Always       -       34
+195 Hardware_ECC_Recovered  0x000a   253   240   000    Old_age   Always       -       764
+196 Reallocated_Event_Count 0x0008   253   253   000    Old_age   Offline      -       0
+197 Current_Pending_Sector  0x0008   253   253   000    Old_age   Offline      -       0
+198 Offline_Uncorrectable   0x0008   253   253   000    Old_age   Offline      -       0
+199 UDMA_CRC_Error_Count    0x0008   001   001   000    Old_age   Offline      -       10909
+200 Multi_Zone_Error_Rate   0x000a   253   252   000    Old_age   Always       -       0
+201 Soft_Read_Error_Rate    0x000a   253   252   000    Old_age   Always       -       0
+202 Data_Address_Mark_Errs  0x000a   253   250   000    Old_age   Always       -       0
+203 Run_Out_Cancel          0x000b   253   252   180    Pre-fail  Always       -       0
+204 Soft_ECC_Correction     0x000a   253   252   000    Old_age   Always       -       0
+205 Thermal_Asperity_Rate   0x000a   253   252   000    Old_age   Always       -       0
+207 Spin_High_Current       0x002a   253   252   000    Old_age   Always       -       0
+208 Spin_Buzz               0x002a   253   252   000    Old_age   Always       -       0
+210 Unknown_Attribute       0x0032   253   252   000    Old_age   Always       -       0
+211 Unknown_Attribute       0x0032   253   252   000    Old_age   Always       -       0
+212 Unknown_Attribute       0x0032   253   001   000    Old_age   Always       -       0
+
+SMART Error Log Version: 1
+ATA Error Count: 7 (device log contains only the most recent five errors)
+        CR = Command Register [HEX]
+        FR = Features Register [HEX]
+        SC = Sector Count Register [HEX]
+        SN = Sector Number Register [HEX]
+        CL = Cylinder Low Register [HEX]
+        CH = Cylinder High Register [HEX]
+        DH = Device/Head Register [HEX]
+        DC = Device Command Register [HEX]
+        ER = Error register [HEX]
+        ST = Status register [HEX]
+Powered_Up_Time is measured from power on, and printed as
+DDd+hh:mm:SS.sss where DD=days, hh=hours, mm=minutes,
+SS=sec, and sss=millisec. It "wraps" after 49.710 days.
+
+Error 7 occurred at disk power-on lifetime: 18365 hours (765 days + 5 hours)
+  When the command that caused the error occurred, the device was in an unknown state.
+
+  After command completion occurred, registers were:
+  ER ST SC SN CL CH DH
+  -- -- -- -- -- -- --
+  84 51 01 02 68 16 e8  Error: ABRT
+
+  Commands leading to the command that caused the error were:
+  CR FR SC SN CL CH DH DC   Powered_Up_Time  Command/Feature_Name
+  -- -- -- -- -- -- -- --  ----------------  --------------------
+  00 00 01 02 68 16 e8 00      01:53:24.279  NOP [Abort queued commands]
+  ca 00 01 02 68 16 e8 00      01:53:24.269  WRITE DMA
+  c8 00 20 18 67 4d e9 00      01:53:24.261  READ DMA
+  c8 00 20 38 3c 4f e9 00      01:53:24.259  READ DMA
+  c8 00 20 18 66 4d e9 00      01:53:24.253  READ DMA
+
+Error 6 occurred at disk power-on lifetime: 18325 hours (763 days + 13 hours)
+  When the command that caused the error occurred, the device was in an unknown state.
+
+  After command completion occurred, registers were:
+  ER ST SC SN CL CH DH
+  -- -- -- -- -- -- --
+  84 51 10 78 72 8c e8  Error: ICRC, ABRT at LBA = 0x088c7278 = 143422072
+
+  Commands leading to the command that caused the error were:
+  CR FR SC SN CL CH DH DC   Powered_Up_Time  Command/Feature_Name
+  -- -- -- -- -- -- -- --  ----------------  --------------------
+  ca 00 10 78 72 8c e8 00      00:47:50.442  WRITE DMA
+  25 00 20 60 9b d5 e0 00      00:47:50.431  READ DMA EXT
+  c8 00 08 80 72 8c e8 00      00:47:50.409  READ DMA
+  25 00 20 e0 58 d5 e0 00      00:47:50.400  READ DMA EXT
+  25 00 20 20 d2 d5 e0 00      00:47:50.395  READ DMA EXT
+
+SMART Self-test log structure revision number 1
+Num  Test_Description    Status                  Remaining  LifeTime(hours)  LBA_of_first_error
+# 1  Extended offline    Aborted by host               50%     22989         -
+
+SMART Selective self-test log data structure revision number 1
+ SPAN  MIN_LBA  MAX_LBA  CURRENT_TEST_STATUS
+    1        0        0  Not_testing
+    2        0        0  Not_testing
+    3        0        0  Not_testing
+    4        0        0  Not_testing
+    5        0        0  Not_testing
+Selective self-test flags (0x0):
+  After scanning selected spans, do NOT read-scan remainder of disk.
+If Selective self-test is pending on power-up, resume after 0 minute delay.
+
+</code></pre></div></div>
+
+<p>以下、簡単な説明。</p>
+
+<ul>
+  <li>存在する HDD デバイスを確認するだけなら <code class="language-plaintext highlighter-rouge">--scan</code> オプション。</li>
+  <li>ディスクの情報のみ出力するなら <code class="language-plaintext highlighter-rouge">-i</code> or <code class="language-plaintext highlighter-rouge">--info</code> オプション。</li>
+  <li>ベンダー固有の属性のみを出力するなら <code class="language-plaintext highlighter-rouge">-A</code> or <code class="language-plaintext highlighter-rouge">--attributes</code> オプション。</li>
+  <li>対応可能な自己診断を確認するなら <code class="language-plaintext highlighter-rouge">-c</code> or <code class="language-plaintext highlighter-rouge">--capabilities</code> オプション。</li>
+  <li>自己診断(short)するなら <code class="language-plaintext highlighter-rouge">-t short</code> オプション。（<code class="language-plaintext highlighter-rouge">short</code> 以外に <code class="language-plaintext highlighter-rouge">long</code> 等もあり）</li>
+  <li>エラーログのみを出力するなら <code class="language-plaintext highlighter-rouge">-l error</code> or <code class="language-plaintext highlighter-rouge">--log=error</code> オプション。</li>
+  <li>その他のオプション、使用方法の詳細は <code class="language-plaintext highlighter-rouge">-h</code> or <code class="language-plaintext highlighter-rouge">--help</code> オプションを使用するか、 <code class="language-plaintext highlighter-rouge">man smartctl</code> で確認可。</li>
+  <li><code class="language-plaintext highlighter-rouge">SMART support is: Available ...</code> と SMART 対応にも関わらず次の行で <code class="language-plaintext highlighter-rouge">Enabled</code> になっていなければ、 SMART 機能が有効になっていない。<br />
+<code class="language-plaintext highlighter-rouge">smartctl -s on /dev/sda</code> で有効にする。</li>
+  <li><code class="language-plaintext highlighter-rouge">Short self-test routine recommended polling time</code>, <code class="language-plaintext highlighter-rouge">Extended self-test routine recommended polling time</code> の数字はセルフテストに要する時間。</li>
+  <li>ベンダー固有属性（<code class="language-plaintext highlighter-rouge">Vendor Specific SMART Attributes with Thresholds</code>）で閾値未満の項目がある場合、 <code class="language-plaintext highlighter-rouge">WHEN_FAILED</code> 列に <code class="language-plaintext highlighter-rouge">-</code> 以外（<code class="language-plaintext highlighter-rouge">FAILING_NOW</code> 等）が出力される。</li>
+  <li>SMART エラーがあれば <code class="language-plaintext highlighter-rouge">SMART Error Log Version: 1</code> 以下に（最大で直近５つ分）出力される。（上記の例では７つあるはずだが直近２つしか出力されていない。なぜか）<br />
+上記の例での <code class="language-plaintext highlighter-rouge">ABRT</code> は “Command ABoRTed” で、 <code class="language-plaintext highlighter-rouge">ICRC</code> “Interface Cyclic Redundancy Code (CRC) error” のことである。（※今後の懸案事項）</li>
+</ul>
+
+<h3 id="2-smartctl-コマンド実行エラーなしのケース">2. smartctl コマンド実行（エラーなしのケース）</h3>
+
+<p>上記は SMART エラーの存在する HDD であったが、エラーの存在しない HDD の場合は、以下のように出力される。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># smartctl -a /dev/sda
+smartctl 5.43 2012-06-30 r3573 [i686-linux-2.6.32-504.3.3.el6.i686] (local build)
+Copyright (C) 2002-12 by Bruce Allen, http://smartmontools.sourceforge.net
+
+=== START OF INFORMATION SECTION ===
+Model Family:     Hitachi Travelstar 7K320
+Device Model:     Hitachi HTS723232L9A360
+Serial Number:    100108FC1420NEJKPD8G
+LU WWN Device Id: 5 000cca 582e439a2
+Firmware Version: FC4OC30F
+User Capacity:    320,072,933,376 bytes [320 GB]
+Sector Size:      512 bytes logical/physical
+Device is:        In smartctl database [for details use: -P show]
+ATA Version is:   8
+ATA Standard is:  ATA-8-ACS revision 3f
+Local Time is:    Sun Feb 15 13:58:28 2015 JST
+SMART support is: Available - device has SMART capability.
+SMART support is: Enabled
+
+=== START OF READ SMART DATA SECTION ===
+SMART overall-health self-assessment test result: PASSED
+
+General SMART Values:
+Offline data collection status:  (0x00) Offline data collection activity
+                                        was never started.
+                                        Auto Offline Data Collection: Disabled.
+Self-test execution status:      (   0) The previous self-test routine completed
+                                        without error or no self-test has ever
+                                        been run.
+Total time to complete Offline
+data collection:                (  645) seconds.
+Offline data collection
+capabilities:                    (0x5b) SMART execute Offline immediate.
+                                        Auto Offline data collection on/off support.
+                                        Suspend Offline collection upon new
+                                        command.
+                                        Offline surface scan supported.
+                                        Self-test supported.
+                                        No Conveyance Self-test supported.
+                                        Selective Self-test supported.
+SMART capabilities:            (0x0003) Saves SMART data before entering
+                                        power-saving mode.
+                                        Supports SMART auto save timer.
+Error logging capability:        (0x01) Error logging supported.
+                                        General Purpose Logging supported.
+Short self-test routine
+recommended polling time:        (   2) minutes.
+Extended self-test routine
+recommended polling time:        (  96) minutes.
+SCT capabilities:              (0x003d) SCT Status supported.
+                                        SCT Error Recovery Control supported.
+                                        SCT Feature Control supported.
+                                        SCT Data Table supported.
+
+SMART Attributes Data Structure revision number: 16
+Vendor Specific SMART Attributes with Thresholds:
+ID# ATTRIBUTE_NAME          FLAG     VALUE WORST THRESH TYPE      UPDATED  WHEN_FAILED RAW_VALUE
+  1 Raw_Read_Error_Rate     0x000b   100   100   062    Pre-fail  Always       -       0
+  2 Throughput_Performance  0x0005   100   100   040    Pre-fail  Offline      -       0
+  3 Spin_Up_Time            0x0007   253   253   033    Pre-fail  Always       -       0
+  4 Start_Stop_Count        0x0012   100   100   000    Old_age   Always       -       74
+  5 Reallocated_Sector_Ct   0x0033   100   100   005    Pre-fail  Always       -       0
+  7 Seek_Error_Rate         0x000b   100   100   067    Pre-fail  Always       -       0
+  8 Seek_Time_Performance   0x0005   100   100   040    Pre-fail  Offline      -       0
+  9 Power_On_Hours          0x0012   001   001   000    Old_age   Always       -       43878
+ 10 Spin_Retry_Count        0x0013   100   100   060    Pre-fail  Always       -       0
+ 12 Power_Cycle_Count       0x0032   100   100   000    Old_age   Always       -       62
+191 G-Sense_Error_Rate      0x000a   100   100   000    Old_age   Always       -       0
+192 Power-Off_Retract_Count 0x0032   100   100   000    Old_age   Always       -       6
+193 Load_Cycle_Count        0x0012   024   024   000    Old_age   Always       -       764531
+194 Temperature_Celsius     0x0002   220   220   000    Old_age   Always       -       25 (Min/Max 16/47)
+196 Reallocated_Event_Count 0x0032   100   100   000    Old_age   Always       -       0
+197 Current_Pending_Sector  0x0022   100   100   000    Old_age   Always       -       0
+198 Offline_Uncorrectable   0x0008   100   100   000    Old_age   Offline      -       0
+199 UDMA_CRC_Error_Count    0x000a   200   200   000    Old_age   Always       -       1294
+223 Load_Retry_Count        0x000a   100   100   000    Old_age   Always       -       0
+
+SMART Error Log Version: 1
+No Errors Logged
+
+SMART Self-test log structure revision number 1
+No self-tests have been logged.  [To run self-tests, use: smartctl -t]
+
+SMART Selective self-test log data structure revision number 1
+ SPAN  MIN_LBA  MAX_LBA  CURRENT_TEST_STATUS
+    1        0        0  Not_testing
+    2        0        0  Not_testing
+    3        0        0  Not_testing
+    4        0        0  Not_testing
+    5        0        0  Not_testing
+Selective self-test flags (0x0):
+  After scanning selected spans, do NOT read-scan remainder of disk.
+If Selective self-test is pending on power-up, resume after 0 minute delay.
+
+</code></pre></div></div>
+
+<h3 id="3-セルフテストショート">3. セルフテスト（ショート）</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># smartctl -t short /dev/sda
+smartctl 5.41 2011-06-09 r3365 [x86_64-linux-3.2.0-4-amd64] (local build)
+Copyright (C) 2002-11 by Bruce Allen, http://smartmontools.sourceforge.net
+
+=== START OF OFFLINE IMMEDIATE AND SELF-TEST SECTION ===
+Sending command: "Execute SMART Short self-test routine immediately in off-line mode".
+Drive command "Execute SMART Short self-test routine immediately in off-line mode" successful.
+Testing has begun.
+Please wait 2 minutes for test to complete.
+Test will complete after Sun Feb 15 16:44:42 2015
+
+Use smartctl -X to abort test.
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">smartctl -a</code> で <code class="language-plaintext highlighter-rouge">Short self-test routine recommended polling time</code> に <code class="language-plaintext highlighter-rouge">2</code>(minutes) と記載されていたとおり、２分ほどかかる。<br />
+（テストを中止したい場合は <code class="language-plaintext highlighter-rouge">smartctl -X /dev/sda</code> とする）</p>
+
+<p>２分以上したら、以下のようにログを確認してみる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># smartctl -l selftest /dev/sda
+smartctl 5.41 2011-06-09 r3365 [x86_64-linux-3.2.0-4-amd64] (local build)
+Copyright (C) 2002-11 by Bruce Allen, http://smartmontools.sourceforge.net
+
+=== START OF READ SMART DATA SECTION ===
+SMART Self-test log structure revision number 1
+Num  Test_Description    Status                  Remaining  LifeTime(hours)  LBA_of_first_error
+# 1  Short offline       Completed without error       00%     23567         -
+
+</code></pre></div></div>
+
+<p>ちなみに、セルフテスト（ロング）を行うなら <code class="language-plaintext highlighter-rouge">-t long</code> オプションを使用すればよい。</p>
+
+<h3 id="4-健康状態チェック">4. 健康状態チェック</h3>
+
+<p>各種テスト結果から収集した全体の健康状態を見るには以下のように実行する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># smartctl -H /dev/sda
+smartctl 5.41 2011-06-09 r3365 [x86_64-linux-3.2.0-4-amd64] (local build)
+Copyright (C) 2002-11 by Bruce Allen, http://smartmontools.sourceforge.net
+
+=== START OF READ SMART DATA SECTION ===
+SMART overall-health self-assessment test result: PASSED
+</code></pre></div></div>
+
+<p>今回の例のように多少のエラーであれば、 <code class="language-plaintext highlighter-rouge">PASSED</code> となるようだ。</p>
+
+<h3 id="5-参考サイト">5. 参考サイト</h3>
+
+<ul>
+  <li><a href="http://www.smartmontools.org/" title="smartmontools">smartmontools</a></li>
+</ul>
+
+<hr />
+
+<p>詳しいことはもっと勉強しないといけませんが、ある程度の診断は可能です。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/pc-tips" class="page__taxonomy-item" rel="tag">PC_Tips</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-03-03T00:20:00+09:00">2015-03-03 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Linux+-+smartctl+%E3%81%A7+HDD+%E8%A8%BA%E6%96%AD%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2015%2F03%2F03%2Flinux-hdd-diagnosing-by-smartctl%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2015%2F03%2F03%2Flinux-hdd-diagnosing-by-smartctl%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2015%2F03%2F03%2Flinux-hdd-diagnosing-by-smartctl%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2015/03/01/blog-access/" class="pagination--pager" title="2015年2月 - OS・ブラウザ別アクセス状況！【自動集計】
+">Previous</a>
+    
+    
+      <a href="/2015/03/06/linux-hdd-checking-by-badblocks/" class="pagination--pager" title="Linux - badblocks コマンドで HDD 不良ブロックのチェック！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2015/03/03/linux-hdd-diagnosing-by-smartctl/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2015/03/03/linux-hdd-diagnosing-by-smartctl"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

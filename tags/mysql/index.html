@@ -1,0 +1,4992 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>MySQL - mk-mode BLOG</title>
+<meta name="description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+
+
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="MySQL">
+<meta property="og:url" content="https://komasaru.github.io/tags/mysql/">
+
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="MySQL">
+  <meta name="twitter:description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+  <meta name="twitter:url" content="https://komasaru.github.io/tags/mysql/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/tags/mysql/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--archive-taxonomy wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      <div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <div class="archive">
+    <h1 class="page__title">MySQL</h1>
+    <div id="google-ad-1"></div>
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/01/02/tweet-summary-2020/" rel="permalink">2020年 - ツイート集計！
+</a>
+        &nbsp;<small>(2021-01-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">改めまして、旧年中はお世話になりました。 本年もどうぞよろしくお願いします。
+
+2020年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。（前回から投稿元別のツイート数も集計しております）
+
+当方は、ツイートは全て自宅サーバ(Debian GNU/Li...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/02/tweet-summary-2019/" rel="permalink">2019年 - ツイート集計！
+</a>
+        &nbsp;<small>(2020-01-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">改めまして、旧年明けまして、新年おめでとうございます。
+
+2019年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。（今回から投稿元別のツイート数も集計しております）
+
+当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベー...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/07/11/ruby-rails-jma-xml-oame-kikendo/" rel="permalink">気象庁防災情報 XML - 大雨危険度通知！
+</a>
+        &nbsp;<small>(2019-07-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">7月10日から気象庁防災情報 XML で運用が開始された「大雨危険度通知」の配信内容を一覧で確認するためのページを作成しました。（既に公開済みの他の情報と同様に）
+
+（ちなみに、当方、気象庁防災情報 XML のデータは Ruby + Rails + MariaDB(MySQL) 等で自作したシステムで受信＆管理し...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/07/08/ruby-rails-jma-xml-sokitenko/" rel="permalink">気象庁防災情報 XML - 早期天候情報！
+</a>
+        &nbsp;<small>(2019-07-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">6月27日から気象庁防災情報 XML でも運用が開始された「早期天候情報」（「異常天候早期警戒情報」の後継）の配信内容を一覧で確認するためのページを作成しました。（既に公開済みの他の情報と同様に）
+
+（ちなみに、当方、気象庁防災情報 XML のデータは Ruby + Rails + MariaDB(MySQL) ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/07/05/ruby-rails-jma-xml-yoho-temp-2w/" rel="permalink">気象庁防災情報 XML - ２週間気温予報！
+</a>
+        &nbsp;<small>(2019-07-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">6月27日から気象庁防災情報 XML でも運用が開始された「全般季節予報（２週間気温予報）」、「地方季節予報（２週間気温予報）」の配信内容を一覧で確認するためのページを作成しました。（既に公開済みの他の情報と同様に）
+
+（ちなみに、当方、気象庁防災情報 XML のデータは Ruby + Rails + Maria...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/01/02/tweet-summary-2018/" rel="permalink">2018年 - ツイート集計！
+</a>
+        &nbsp;<small>(2019-01-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">改めまして、旧年明けまして、新年おめでとうございます。
+
+2018年の Twitter でのツイート（メインで使用しているアカウントのみ）を Ruby で集計してみました。
+
+当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Rub...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2018/09/20/mysql-distance-with-geometry/" rel="permalink">MaryaDB(MySQL) - geometry 型を利用して2地点間の距離を計算！
+</a>
+        &nbsp;<small>(2018-09-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+MariaDB(MySQL) の geometry 型を利用して2地点間の距離を計算する方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2018/09/17/mysql-import-mlit-isj-v2/" rel="permalink">MariaDB(MySQL) - 国土交通省・位置参照情報をデータベース化（その２）！
+</a>
+        &nbsp;<small>(2018-09-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+国土交通省が公開している「位置参照情報」についてです。
+
+「位置参照情報」には「街区レベル」と「大字・町丁目レベル」の２種類あります。要約すると、「街区レベル」は街区とその代表点座標を、「大字・町丁目レベル」は大字・町丁目とその代表点座標を対応付けた情報のことです。
+
+以下は、「位置参照情報」を ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2018/01/02/tweet-summary-2017/" rel="permalink">2017年 - ツイート集計！
+</a>
+        &nbsp;<small>(2018-01-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">改めまして、旧年明けまして、新年おめでとうございます。
+
+2017年の Twitter でのツイート（メインで使用しているアカウントのみ）を Ruby で集計してみました。
+
+当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Rub...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/05/26/ruby-rails-jma-xml-keiho-h27/" rel="permalink">気象庁防災情報 XML - 気象警報・注意報（Ｈ２７）、警報級の可能性！
+</a>
+        &nbsp;<small>(2017-05-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">5月17日から運用が開始された気象庁防災情報 XML の「気象警報・注意報（Ｈ２７）」、「警報級の可能性（明日まで）」、「警報級の可能性（明後日まで）」の配信内容を一覧で確認するためのページを作成しました。（既に公開済みの他の情報と同様に）
+
+（ちなみに、当方、気象庁防災情報 XML のデータは Ruby + R...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/05/18/linux-mariadb-mysql-backup-script/" rel="permalink">Linux - MariaDB バックアップ用 Bash スクリプト！
+</a>
+        &nbsp;<small>(2017-05-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方が Debian GNU/Linux 8.6 サーバ上のデータベース MariaDB(MySQL) をバックアップするのに使用している Bash スクリプトの紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/01/18/mariadb-mysql-composite-primary-key-list/" rel="permalink">MariaDB, MySQL - 複合プライマリキーを持つテーブル一覧！
+</a>
+        &nbsp;<small>(2017-01-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MariaDB や MySQL 等の RDB で、プライマリキー（主キー）を複数のカラムに設定することはよくあります。
+
+しかし、複合プライマリキーをサポートしていないアプリもあったりします。（自分の知る限りでは、 Rails  の ActiveRecord がそう）
+
+以下、複合プライマリキーが設定されているテ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/01/02/summary-tweet-2016/" rel="permalink">2016年 - ツイート集計！
+</a>
+        &nbsp;<small>(2017-01-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">改めまして、旧年明けまして、新年おめでとうございます。
+
+2016年の Twitter でのツイート（メインで使用しているアカウントのみ）を Ruby で集計してみました。
+
+当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Rub...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/10/02/mysql-mroonga-memory-mapping-error/" rel="permalink">MySQL - Mroonga でメモリマッピングエラー！
+</a>
+        &nbsp;<small>(2016-10-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Mroonga は、全文検索エンジン Groonga をベースとした MySQL のストレージエンジンです。
+
+Mroonga を利用した自作ツールを実行した際に、メモリマッピングに関するエラーが発生するようになったので、その対処方法について記録しておきます。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/02/26/mysql-insecure-warning-on-commandline/" rel="permalink">MySQL - コマンドラインでパスワード指定した場合の警告出力を抑止！
+</a>
+        &nbsp;<small>(2016-02-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">最近の MySQL (5.6, 5.7)では、コマンドラインからの実行時にパスワードを指定すると、以下のような警告メッセージが出力されます。
+cron で実行した場合は、この警告メッセージがメール送信されてしまったります。
+
+mysql: [Warning] Using a password on the com...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/02/02/linuxmint-mroonga-installation-by-src/" rel="permalink">Linux Mint - Mroonga インストール（by ソースビルド）！
+</a>
+        &nbsp;<small>(2016-02-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux Mint 上の MySQL 5.7 に全文検索エンジン Groonga の機能を実現するストレージエンジン Mroonga をソースをビルドしてインストールする方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/01/28/linuxmint-mysql-57-installation-by-src/" rel="permalink">Linux Mint - MySQL 5.7 インストール（by ソースビルド）！
+</a>
+        &nbsp;<small>(2016-01-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL 5.7 系の最新版をソースをビルドして Linux Mint 17.2 にインストールする方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/01/08/centos-mroonga-installation-by-src/" rel="permalink">CentOS - Mroonga インストール（by ソースビルド）！
+</a>
+        &nbsp;<small>(2016-01-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL 5.7 に全文検索エンジン Groonga の機能を実現するストレージエンジン Mroonga をソースをビルドしてインストールする方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/01/02/summary-tweet-2015/" rel="permalink">2015年 - ツイート集計！
+</a>
+        &nbsp;<small>(2016-01-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">2015年の Twitter でのツイート（メインで使用しているアカウントのみ）を Ruby で集計してみました。
+
+当方は、ツイートは全て自宅サーバ(CentOS)上のデータベース(MySQL)に保存しています。
+（実際には Ruby + Twitter API で本家からデータを取得して保存）
+
+ほとんど S...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/12/28/centos-mroonga-installation-on-mysql-56-by-yum/" rel="permalink">CentOS 6.7 - 全文検索ストレージエンジン Mroonga 導入（公式リポジトリ使用）！
+</a>
+        &nbsp;<small>(2015-12-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Mroonga は、全文検索エンジン Groonga をベースとした MySQL のストレージエンジンです。
+
+インストール済みの MySQL（5.6 系）に Mroonga ストレージエンジンを追加する方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/12/20/centos-mysql-57-installation-by-src/" rel="permalink">CentOS - MySQL 5.7 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2015-12-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL 5.7 系の最新版をソースをビルドして CentOS 6.7 にインストールする方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/12/16/centos-mysql-57-installation-by-yum/" rel="permalink">CentOS 7.1 - DB サーバ MySQL 5.7 構築（公式リポジトリ使用）！
+</a>
+        &nbsp;<small>(2015-12-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL 5.7 系の最新版を公式リポジトリを使用して CentOS 7.1 にインストールする方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/12/03/mariadb-rollforward-recovery/" rel="permalink">MariaDB(MySQL) - ロールフォワード（ポイント・イン・タイム）リカバリ！
+</a>
+        &nbsp;<small>(2015-12-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MariaDB(MySQL) で障害発生時に、定期的に取得していたダンプファイルでリストアするだけでは、当然タイミングによっては古い状態になってしまいます。
+
+以下は、定期的に取得していたダンプファイルとそれより後のログファイルで障害発生直前の状態までリカバリする方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/11/10/mariadb-speedup-shutdown/" rel="permalink">MariaDB(MySQL) - シャットダウン時間の短縮！
+</a>
+        &nbsp;<small>(2015-11-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MariaDB や MySQL をシャットダウン（or 再起動）する際に時間がかかりすぎることがあります。
+
+バッファの内容をディスクに書き込むのに時間がかかっているからです。
+
+今回は、そのイライラを軽減するための対処についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/10/26/mariadb-dump-only-data-by-split/" rel="permalink">MariaDB(MySQL) - データのみを指定件数ずつ分割ダンプ出力！
+</a>
+        &nbsp;<small>(2015-10-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MariaDB(MySQL) の指定したデータベースを、テーブル別にデータのみを指定件数ずつ分割してダンプ出力する方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/09/12/mariadb-table-definition-from-xmldump-to-html/" rel="permalink">MariaDB(MySQL) - XML ダンプ出力から HTML テーブル定義書生成！
+</a>
+        &nbsp;<small>(2015-09-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MariaDB(MySQL) のテーブル定義書を HTML で生成する方法についての記録です。
+
+実際には、スキーマ（テーブル定義）を XML 出力し、それに XSL テンプレートを適用します。
+
+（テーブル定義を行なってからテーブルを作成するのが本来の手順でしょうが）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/09/03/mariadb-index-list/" rel="permalink">MariaDB(MySQL) - インデックス名一覧取得！
+</a>
+        &nbsp;<small>(2015-09-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MariaDB(MySQL) で作成済みのインデックスの名称を確認したい場合、 SHOW INDEX FROM table_name を使用することが多いと思います。
+
+しかし、一度に多数のテーブルについて確認したい場合に、テーブル単位で SHOW INDEX FROM table_name を実行するのは大変面...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/07/15/mariadb-innodb-file-format-changing-to-barracuda/" rel="permalink">MariaDB(MySQL) - 既存 InnoDB ファイルフォーマットを Antelope から Barracuda に変換！
+</a>
+        &nbsp;<small>(2015-07-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MariaDB(MySQL) の既存 InnoDB ファイルフォーマットを Antelope から Barracuda に変換する方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/04/27/mariadb-mysql-error-on-logrotation/" rel="permalink">MariaDB(MySQL) - ログローテート時のエラー！
+</a>
+        &nbsp;<small>(2015-04-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+Linux サーバでのログローテート時に MariaDB(MySQL) ログ部分でエラーが発生することがあります。
+
+以下、当方が以前体験した事案についての現象・原因・対策の記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/03/27/mysql-import-mlit-isj/" rel="permalink">MySQL(MariaDB) - 国土交通省・位置参照情報をデータベース化！
+</a>
+        &nbsp;<small>(2015-03-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+国土交通省が公開している「位置参照情報」についてです。
+
+「位置参照情報」には「街区レベル」と「大字・町丁目レベル」の２種類あります。要約すると、「街区レベル」は街区とその代表点座標を、「大字・町丁目レベル」は大字・町丁目とその代表点座標を対応付けた情報のことです。
+
+以下は、「位置参照情報」を ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/03/24/mysql-execute-multiple-sqls-on-bash/" rel="permalink">MariaDB(MySQL) - シェル(Bash)スクリプトで複数 SQL 実行！
+</a>
+        &nbsp;<small>(2015-03-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+シェルスクリプト（今回は Bash）内で MariaDB(MySQL) の SQL を実行する際、 -e or --execute オプションを使用することが多いと思います。
+
+しかし、複数の SQL（特にトランザクション処理）を実行する際、このオプションではワンライナーにするしかありません。
+
+...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/03/18/mysql-calculate-query-cache-hit-ratio/" rel="permalink">MariaDB(MySQL) - クエリキャッシュヒット率の計算！
+</a>
+        &nbsp;<small>(2015-03-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+MariaDB(MySQL) サーバをチューニングする際によく使用する計算式についてに備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/03/09/mysql-innodb-ibd-file-migration/" rel="permalink">MariaDB(MySQL) - ibd ファイルの移行！
+</a>
+        &nbsp;<small>(2015-03-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+MariaDB(MySQL) でテーブルデータを別のサーバへ移行する際に、大抵の場合は移行元でダンプエクスポートしてから移行先でダンプインポートすると思います。（当然、高速化のためにログやキャッシュ等の設定を一時的に変更して）
+
+しかし、ダンプファイルが数GBもあったり、数千万レコード以上あったり...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/02/26/mysql-innodb-table-stats-not-found/" rel="permalink">MariaDB(MySQL) - innodb_table_stats not found!
+</a>
+        &nbsp;<small>(2015-02-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+MariaDB 10.0 系や MySQL 5.6 系サーバ起動時に innodb_table_stats が見当たらない旨のエラーが出力されることがあります。
+
+以下、現象・原因・対策についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/02/23/mysql-diagnosing-by-mysqltuner/" rel="permalink">MySQL(MariaDB) - MySQLTuner でチューニング診断！
+</a>
+        &nbsp;<small>(2015-02-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+MySQL や MariaDB のチューニングを診断する MySQLTuner の導入についてです。
+
+当方よく使用するツールですが、記事にしたことがなかった（記録を取っていなかった）ので、今回記録しておいた次第です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/02/20/mysql-automatic-defragment-of-query-cache/" rel="permalink">MariaDB(MySQL) - クエリキャッシュの自動デフラグメント！
+</a>
+        &nbsp;<small>(2015-02-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+MariaDB(MySQL) で、自動でクエリキャッシュのメモリ領域をデフラグメントして使用効率を向上させる方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/02/14/mysql-error-when-datadir-changed-on-debian/" rel="permalink">MySQL - datadir 変更時のエラー対策(on Debian)！
+</a>
+        &nbsp;<small>(2015-02-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux Mint などの Debian GNU/Linux 系のディストリビューション上に Apt で MySQL サーバをインストール後に datadir を変更すると、エラーで起動しなく状況に陥るようです。
+（ちなみに、 Debian Wheezy 上の MariaDB では今回のような現象は発生しない（...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/02/08/mysql-innotop-installation-on-linuxmint/" rel="permalink">MySQL(MariaDB) - innotop コマンド導入(on Linux Mint)！
+</a>
+        &nbsp;<small>(2015-02-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+MySQL の各種状態を top コマンド風に表示して確認できるツール “innotop” コマンドをインストールします。
+
+名称どおり対象のストレージエンジンは “InnoDB” ですが、当然 MariaDB にも対応しています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/02/02/mariadb-mysql-processlist-on-console/" rel="permalink">MariaDB(MySQL) - Server Status をコンソールでリアルタイムに監視！
+</a>
+        &nbsp;<small>(2015-02-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+MariaDB(MySQL) の Server Status をコンソールでリアルタイムに監視する方法についての備忘録です。
+
+とは言っても、今は MySQL Workbench で監視したり、ターミナル上で innotop コマンドを使用することが多いですが。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/01/29/debian-7-8-mariadb-10-0-installation-by-apt/" rel="permalink">Debian 7.8.0 - DB サーバ MariaDB 10.0 系インストール（Apt 使用）！
+</a>
+        &nbsp;<small>(2015-01-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、MariaDB 5.5 系を Linux Mint に MariaDB 公式リポジトリからインストールしたり、Debian GNU/Linux にソースをビルドしてインストールしたりしました。
+
+
+  MariaDB - Linux Mint にインストール（apt 使用）！
+  Debian 7 Whee...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/01/10/mysql-installation-on-linux-mint-by-apt/" rel="permalink">MySQL 5.6 - APT リポジトリからインストール(on Linux Mint 17.1)！
+</a>
+        &nbsp;<small>(2015-01-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/01/02/summary-tweet-2014/" rel="permalink">2014年 - ツイート集計！
+</a>
+        &nbsp;<small>(2015-01-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">2014年の Twitter でのツイート（メインで使用しているアカウントのみ）を Ruby で集計してみました。（今日気付きましたが、2013 年分の公開は失念していました）
+
+当方は、ツイートは全て自宅サーバ(CentOS)上のデータベース(MariaDB(MySQL))に保存しています。
+（実際には１時間に...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/26/cpp-connecting-to-mysql/" rel="permalink">C++ - MariaDB(MySQL) への接続！
+</a>
+        &nbsp;<small>(2014-09-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">C++ から MariaDB(MySQL) へ接続する方法についての記録です。
+
+（C++ にそれほど精通している訳でもありません。ご承知おきください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/07/mariadb-mysql-partitioning/" rel="permalink">MariaDB(MySQL) - パーティショニング！
+</a>
+        &nbsp;<small>(2014-09-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL 5.1 から導入されたテーブルのパーティショニング（１テーブルの分割管理）についての備忘録です。
+
+パーティショニングすることにより主に以下のようなメリットがあると考えられます。
+
+
+  対象のパーティションのみ参照するようになるため、高速化が見込まれる。
+  パーティションごと削除が可能であるため、...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/07/22/mysql-virtual-view-sequential-number/" rel="permalink">MySQL(MariaDB) - 連番の仮想表作成！
+</a>
+        &nbsp;<small>(2014-07-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MariaDB(MySQL) で自然数の連番だけのテーブル（表）が必要なことがあります。
+
+以下、作成例と応用例についての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/07/07/mysql-renumber-auto-increment/" rel="permalink">MySQL(MariaDB) - AUTO INCREMENT のリナンバリング！
+</a>
+        &nbsp;<small>(2014-07-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL(MariaDB) で AUTO INCREMENT のカラムを設定している場合、レコードの削除を行なうと当然ながら番号が歯抜けになります。
+
+それほど問題に感じることでもありませんが、気にならないこともないです。
+
+以下、リナンバリング（再採番）する方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/07/05/mysql-check-analyze-optimize-repair/" rel="permalink">MySQL(MariaDB) - テーブルの検査・分析・最適化・修復！
+</a>
+        &nbsp;<small>(2014-07-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL もしくは MariaDB でのテーブルの検査・分析・最適化・修復についての備忘録です。
+
+それほど日常的な作業でもなく忘れやすいので、その時のための個人的記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/07/03/jmaxml-count-kazan/" rel="permalink">気象庁防災情報 XML - 火山噴火警報・予報、火山噴火観測報集計！
+</a>
+        &nbsp;<small>(2014-07-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">これまで「気象庁防災情報 XML」で発表された情報を（一覧や検索で）確認するためのページを当方サイト上で公開してきました。（以下のページ等）
+
+
+  mk-mode SITE : 気象庁防災情報XML
+
+
+今回は、「火山噴火警報・予報」、「火山噴火観測報」の発表回数を集計したページを作成・公開しました。
+（ちなみ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/30/jmaxml-count-tsunami-keiho/" rel="permalink">気象庁防災情報 XML - 津波警報・注意報・予報集計！
+</a>
+        &nbsp;<small>(2014-06-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">これまで「気象庁防災情報 XML」で発表された情報を（一覧や検索で）確認するためのページを当方サイト上で公開してきました。（以下のページ等）
+
+
+  mk-mode SITE : 気象庁防災情報XML
+
+
+今回は、「津波警報・注意報・予報」の発表回数を（警報・注意報・予報別、津波予報区別に）集計したページを作成・...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/28/jmaxml-count-jishin/" rel="permalink">気象庁防災情報 XML - 地震情報集計！
+</a>
+        &nbsp;<small>(2014-06-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">これまで「気象庁防災情報 XML」で発表された情報を（一覧や検索で）確認するためのページを当方サイト上で公開してきました。（以下のページ等）
+
+
+  mk-mode SITE : 気象庁防災情報XML
+
+
+今回は、「地震情報」の発表回数を（震央地別、震源深さ別、地震規模別、最大震度別に）集計したページを作成・公開...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/26/jmaxml-count-tokushu/" rel="permalink">気象庁防災情報 XML - 特殊気象報（各種現象、風、気圧）集計！
+</a>
+        &nbsp;<small>(2014-06-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">これまで「気象庁防災情報 XML」で発表された情報を（一覧や検索で）確認するためのページを当方サイト上で公開してきました。（以下のページ等）
+
+
+  mk-mode SITE : 気象庁防災情報XML
+
+
+今回は、「特殊気象報（各種現象）」「特殊気象報（風）」、「特殊気象報（気圧）」の発表回数を集計したページを作...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/25/jmaxml-count-umi-keiho-area/" rel="permalink">気象庁防災情報 XML - 地方海上警報集計！
+</a>
+        &nbsp;<small>(2014-06-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">これまで「気象庁防災情報 XML」で発表された情報を（一覧や検索で）確認するためのページを当方サイト上で公開してきました。（以下のページ等）
+
+
+  mk-mode SITE : 気象庁防災情報XML
+
+
+今回は、「地方海上警報」の発表回数を集計したページを作成・公開しました。
+
+（興味がなければ、無視して下さい...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/21/jmaxml-count-kohon-ijotenko/" rel="permalink">気象庁防災情報 XML - 高温注意情報、異常天候早期警戒情報集計！
+</a>
+        &nbsp;<small>(2014-06-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">これまで「気象庁防災情報 XML」で発表された情報を（一覧や検索で）確認するためのページを当方サイト上で公開してきました。（以下のページ等）
+
+
+  mk-mode SITE : 気象庁防災情報XML
+
+
+今回は、「高温注意情報」、「異常天候早期警戒情報」の発表回数を集計したページを作成・公開しました。
+
+（興味...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/19/jmaxml-count-tatsumaki-dosha-kirokuame/" rel="permalink">気象庁防災情報 XML - 竜巻注意情報、土砂災害警戒情報、記録的短時間大雨情報集計！
+</a>
+        &nbsp;<small>(2014-06-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">これまで「気象庁防災情報 XML」で発表された情報を（一覧や検索で）確認するためのページを当方サイト上で公開してきました。（以下のページ等）
+
+
+  mk-mode SITE : 気象庁防災情報XML
+
+
+今回は、「竜巻注意情報」、「土砂災害警戒情報」、「記録的短時間大雨情報」の発表回数を集計したページを作成・公...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/17/jmaxml-count-keiho/" rel="permalink">気象庁防災情報 XML - 気象警報・注意報集計！
+</a>
+        &nbsp;<small>(2014-06-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">これまで「気象庁防災情報 XML」で発表された情報を（一覧や検索で）確認するためのページを当方サイト上で公開してきました。（以下のページ等）
+
+
+  mk-mode SITE : 気象庁防災情報XML
+
+
+今回は、「気象警報・注意報」の発表回数（2013年1月1日以降）を集計したページを作成・公開しました。
+
+（...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/15/mysql-dump-only-schema-data-stored/" rel="permalink">MySQL(MariaDB) - スキーマのみ、データのみ、ストアド・トリガーのみのダンプ！
+</a>
+        &nbsp;<small>(2014-06-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL や MariaDB でダンプする際、場合によっては、スキーマ（テーブル作成情報等）のみ、データのみ、ストアド（プロシージャ、ファンクション）・トリガーのみをダンプしたいことがあります。（当方はよくあります）
+
+以下、それぞれをダンプする方法についての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/13/jmaxml-list-keiho-umikeiho-2/" rel="permalink">気象庁防災情報 XML - 気象警報・注意報発表中の区市町村一覧、地方海上警報発表中の海域一覧！
+</a>
+        &nbsp;<small>(2014-06-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、「気象庁防災情報 XML」で発表されたデータのうち、「気象警報・注意報」や「地方海上警報」の最新のデータを一覧で確認できるようなページを紹介しました。
+
+
+  mk-mode SITE : 一覧 - 気象警報・注意報（気象庁防災情報XML）
+  mk-mode SITE : 一覧 - 地方海上警報（気象庁防...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/06/jmaxml-list-shigaisen/" rel="permalink">気象庁防災情報 XML - 紫外線観測一覧！
+</a>
+        &nbsp;<small>(2014-06-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 紫外線観測（気象庁防災情報XML）
+
+
+今までは受信し...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/05/jmaxml-list-tokushu/" rel="permalink">気象庁防災情報 XML - 特殊気象報（各種現象、風、気圧）一覧！
+</a>
+        &nbsp;<small>(2014-06-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 特殊気象報（各種現象）（気象庁防災情報XML）
+  m...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/04/jmaxml-list-seibutsu/" rel="permalink">気象庁防災情報 XML - 生物季節観測一覧！
+</a>
+        &nbsp;<small>(2014-06-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 生物季節観測（気象庁防災情報XML）
+
+
+今までは受信...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/03/jmaxml-list-kisetsu/" rel="permalink">気象庁防災情報 XML - 季節観測一覧！
+</a>
+        &nbsp;<small>(2014-06-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 季節観測（気象庁防災情報XML）
+
+
+今までは受信した...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/02/jmaxml-list-kazan-kansoku-kaisetsu/" rel="permalink">気象庁防災情報 XML - 火山噴火観測報一覧、火山状況解説情報一覧！
+</a>
+        &nbsp;<small>(2014-06-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 火山噴火観測報（気象庁防災情報XML）
+  mk-mo...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/30/jmaxml-list-kazan-funka-kaijo-keiho/" rel="permalink">気象庁防災情報 XML - 火山噴火警報・予報一覧、火山海上警報・予報一覧！
+</a>
+        &nbsp;<small>(2014-05-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 火山噴火警報・予報（気象庁防災情報XML）
+  mk-...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/28/jmaxml-list-tsunami/" rel="permalink">気象庁防災情報 XML - 津波警報・注意報・予報一覧、津波情報一覧！
+</a>
+        &nbsp;<small>(2014-05-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 津波警報・注意報・予報（気象庁防災情報XML）
+  m...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/27/jmaxml-list-jishin/" rel="permalink">気象庁防災情報 XML - 地震情報一覧！
+</a>
+        &nbsp;<small>(2014-05-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 地震情報（気象庁防災情報XML）
+
+
+今までは受信した...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/26/jmaxml-list-ijotenko/" rel="permalink">気象庁防災情報 XML - 異常天候早期警戒情報一覧！
+</a>
+        &nbsp;<small>(2014-05-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 異常天候早期警戒情報（気象庁防災情報XML）
+
+
+今ま...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/25/jmaxml-list-typhoon-analyze/" rel="permalink">気象庁防災情報 XML - 台風解析情報一覧！
+</a>
+        &nbsp;<small>(2014-05-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 台風解析・予報（気象庁防災情報XML）
+
+
+今までは受...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/24/jmaxml-list-tenko-kisetsuyoho/" rel="permalink">気象庁防災情報 XML - 天候情報一覧、季節予報一覧！
+</a>
+        &nbsp;<small>(2014-05-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 天候情報（気象庁防災情報XML）
+  mk-mode ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/23/jmaxml-list-typhoon/" rel="permalink">気象庁防災情報 XML - 台風情報一覧！
+</a>
+        &nbsp;<small>(2014-05-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 台風情報（気象庁防災情報XML）
+
+
+今までは受信した...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/22/jmaxml-list-choi-kaihyo/" rel="permalink">気象庁防災情報 XML - 潮位情報一覧、海氷予報一覧！
+</a>
+        &nbsp;<small>(2014-05-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 潮位情報（気象庁防災情報XML）
+  mk-mode ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/21/jmaxml-list-kozui/" rel="permalink">気象庁防災情報 XML - 指定河川洪水予報一覧！
+</a>
+        &nbsp;<small>(2014-05-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 指定河川洪水予報（気象庁防災情報XML）
+
+
+今までは...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/20/jmaxml-list-umi-keiho-yoho-area/" rel="permalink">気象庁防災情報 XML - 地方海上警報一覧、地方海上予報一覧！
+</a>
+        &nbsp;<small>(2014-05-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 地方海上警報（気象庁防災情報XML）
+  mk-mod...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/19/jmaxml-list-kohon/" rel="permalink">気象庁防災情報 XML - 高温注意情報一覧！
+</a>
+        &nbsp;<small>(2014-05-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 高温注意情報（気象庁防災情報XML）
+
+
+今までは受信...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/17/jmaxml-list-kisho/" rel="permalink">気象庁防災情報 XML - 気象情報一覧！
+</a>
+        &nbsp;<small>(2014-05-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 気象情報（気象庁防災情報XML）
+
+
+今までは受信した...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/15/jmaxml-list-dosha-kirokuame/" rel="permalink">気象庁防災情報 XML - 土砂災害警戒情報一覧、記録的短時間大雨情報一覧！
+</a>
+        &nbsp;<small>(2014-05-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 土砂災害警戒情報（気象庁防災情報XML）
+  mk-m...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/13/jmaxml-list-tatsumaki-smog/" rel="permalink">気象庁防災情報 XML - 竜巻注意情報一覧、スモッグ気象情報一覧！
+</a>
+        &nbsp;<small>(2014-05-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 竜巻注意情報（気象庁防災情報XML）
+  mk-mod...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/12/jmaxml-list-gaikyo/" rel="permalink">気象庁防災情報 XML - 天気概況一覧！
+</a>
+        &nbsp;<small>(2014-05-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 天気概況（気象庁防災情報XML）
+
+
+今までは受信した...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/10/jmaxml-list-keiho/" rel="permalink">気象庁防災情報 XML - 気象警報・注意報一覧！
+</a>
+        &nbsp;<small>(2014-05-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 気象警報・注意報（気象庁防災情報XML）
+
+
+今までは...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/08/jmaxml-list-shukan/" rel="permalink">気象庁防災情報 XML - 週間天気予報（府県、全般・地方）一覧！
+</a>
+        &nbsp;<small>(2014-05-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 週間天気予報（気象庁防災情報XML）
+  mk-mod...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/06/jmaxml-list-yoho/" rel="permalink">気象庁防災情報 XML - 天気予報一覧、時系列予報一覧！
+</a>
+        &nbsp;<small>(2014-05-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、「気象庁防災情報 XML」のデータを受信後、データベース MySQL に保存し、さらにホームページ上で公開しています。
+
+
+  mk-mode SITE : XML Feed 受信履歴（気象庁防災情報XML）
+  mk-mode SITE : DB - 天気予報（気象庁防災情報XML）
+
+
+今までは受信した...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/04/mysql-binlog_format-error/" rel="permalink">MySQL - BINLOG_FORMAT 関連のエラーログ！
+</a>
+        &nbsp;<small>(2014-05-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL のエラーログを眺めていてあるエラーを発見しました。
+
+以下、その現象についての調査・作業記録です。（乱文ご容赦ください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/05/02/mysql-acceleration-of-getting-count/" rel="permalink">MySQL(MariaDB) - InnoDB レコード件数取得高速化！
+</a>
+        &nbsp;<small>(2014-05-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL や MariaDB で件数を取得する際に COUNT(*) をよく使用すると思いますが、件数が多くなると取得にも時間がかかるようになります。
+
+以下、高速化する方法についての備忘録です。（乱筆・乱文ご容赦ください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/03/23/mysql-getting-row-counts/" rel="permalink">MySQL - InnoDB 全テーブルのレコード数取得！
+</a>
+        &nbsp;<small>(2014-03-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">よくある “information schema” からレコード数を取得する方法は、ストレージエンジン MyISAM では正確にレコード数が取得できるが、ストレージエンジン InnoDB では概算値となり正確に取得できない。
+
+以下、コンソールから概算のレコード数を取得する方法と、正確なレコード数を取得するシェル...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/02/04/mysql-type-of-integer/" rel="permalink">MySQL(MariaDB) - 整数型の範囲！
+</a>
+        &nbsp;<small>(2014-02-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">データベースサーバ MySQL(MariaDB) の整数型の範囲について、よく参照するのでメモとして残しておきます。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/16/centos-6-5-munin-setting-of-mariadb-mysql/" rel="permalink">CentOS 6.5 - サーバ監視ツール（munin）で MariaDB(MySQL) を監視！
+</a>
+        &nbsp;<small>(2014-01-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上のサーバ監視ツール munin で CPU 温度・電圧・ファン回転数監視の設定を行いました。
+今回はサーバ監視ツール munin で MariaDB(MySQL) の監視設定を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/06/centos-6-5-mariadb-installation-by-src/" rel="permalink">CentOS 6.5 - DB サーバ MariaDB 構築（ソースインストール）！
+</a>
+        &nbsp;<small>(2014-01-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに Web サーバ Nginx の構築（ソースをビルドしてインストール）を行いました。
+今回は DB サーバ MariaDB の構築（ソースインストール）を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/09/07/mysql-fizzbuzz-by-stored-procedure/" rel="permalink">MySQL - ストアドプロシージャで FizzBuzz！
+</a>
+        &nbsp;<small>(2013-09-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL のストアドプロシージャを使用して FizzBuzz を出力することを試行してみました。
+ふと思い付いて試してみた次第です。
+
+以下、２種類のストアドプロシージャを紹介します。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/08/03/mysql-innodb-optimization/" rel="permalink">MySQL - InnoDB データファイル ibdata1 の最適化！
+</a>
+        &nbsp;<small>(2013-08-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL のストレージエンジン InnoDB は、デフォルトでは ibdata1 というファイルにデータを保存・蓄積しています。
+そして、この ibdata1 ファイルは、データ領域が不足すると自動で拡張されるようになっています。（設定により初期サイズと拡張サイズは異なる）
+
+ibdata1 ファイルのサイズは...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/06/27/git-display-japanese-filename/" rel="permalink">Git - 日本語ファイル名表示！
+</a>
+        &nbsp;<small>(2013-06-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">例えば、「git日本語テスト」というファイル名を作成後に git status すると、日本語部分がエンコードされて表示されます。
+これだと、ステージング（git add）ができません。
+
+以下、対策方法についての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/06/25/mysql-check-db-size/" rel="permalink">MySQL - データベースサイズ確認！
+</a>
+        &nbsp;<small>(2013-06-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL でデータベースのサイズを確認したいことが時々あります。
+
+MySQL では SHOW TABLE STATUS; でテーブルの各種状態を確認できますが、このコマンドではカラムを選択したり、SUM を取ったりすることができない。
+
+以下、SQL でデータベースのサイズ確認する方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/06/08/mysql-import-from-csv/" rel="permalink">MySQL - CSV データインポート！
+</a>
+        &nbsp;<small>(2013-06-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">過去には、テーブルデータを CSV 出力する方法を記事にしていました。
+
+
+  * MySQL - SELECT結果をCSV出力！
+
+
+今回は、MySQL データベースのテーブルへ CSV ファイルからデータをインポートする方法についてです。
+
+普段頻繁に利用しない方法なので、備忘録として残しておきます。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/06/03/mysql-config-file-read-order/" rel="permalink">MySQL - 設定ファイル my.cnf 読み込み順序！
+</a>
+        &nbsp;<small>(2013-06-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL の設定ファイル “my.cnf” を配置できる場所は複数あり、あらかじめ決められた順序に従って読み込まれます。
+
+以下、備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/06/02/mysql-5-6-mysqldump-set-option-error/" rel="permalink">MySQL - 5.6 系で mysqldump すると SET OPTION エラー！
+</a>
+        &nbsp;<small>(2013-06-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL 5.6 系サーバに対して mysqldump コマンドを使用すると、場合によっては（以下の前提条件の場合）エラーになります。
+
+以下、現象、原因、対策についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/05/31/mysql-5-6-timestamp-default-warning/" rel="permalink">MySQL - 5.6 系で TIMESTAMP 型デフォルト値警告！
+</a>
+        &nbsp;<small>(2013-05-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL サーバ 5.6 系でサービス起動時等に以下のような警告メッセージがログに出力されます。
+
+[Warning] TIMESTAMP with implicit DEFAULT value is deprecated. 
+Please use --explicit_defaults_for_timesta...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/05/30/mysql-5-6-install-by-src-build-to-mint/" rel="permalink">MySQL - 5.6.11 ソースビルドでインストール(on Linux Mint)！
+</a>
+        &nbsp;<small>(2013-05-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、MySQL 5.5 系を CentOS(Redhat 系ディストリビューション) にソールビルドでインストールはしていました。
+
+
+  * Linux - MySQL 5.5.23 をソースからインストール！
+
+
+今回は、MySQL の最新安定版 5.6.11 （当記事執筆時点）を Linux Mint 1...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/05/28/mysql-innodb-tablespace-for-a-table/" rel="permalink">MySQL - InnoDB データファイルをテーブル単位に変更！
+</a>
+        &nbsp;<small>(2013-05-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL でストレージエンジンに InnoDB を指定していると、データファイル・ログファイルが作成されます。
+デフォルトでは、データファイル（ibdata1）はデータベースが複数あっても１つのファイルとして作成されます。
+
+これだと、データベースが複数あったりサイズが膨大になったりすると、パフォーマンスが悪く...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/05/27/mysql-innodb-chuning/" rel="permalink">MySQL - InnoDB チューニング！
+</a>
+        &nbsp;<small>(2013-05-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、今まで MySQL での膨大なデータ量のデータベース管理では、高速化重視でストレージエンジンを MyISAM に設定して運用していました。
+しかし、更新処理が多いデータベースでしたので、考え方を安全・整合性重視の InnoDB に戻しました。
+
+当然ながら、InnoDB は安全性重視のためデフォルトの設定で...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/05/25/mysql-output-dump/" rel="permalink">MySQL - テーブル定義/データのみダンプ出力！
+</a>
+        &nbsp;<small>(2013-05-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL のダンプ出力に関しては、以前以下のような内容を記事にしました。
+
+
+  * MySQL - テーブル単位でダンプファイル出力！
+  * MySQL - 圧縮しながらダンプ出力！
+
+
+今回は、ダンプ出力時にテーブル定義のみを出力したり、テーブルデータのみを出力したりする方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/02/27/mariadb-centos-by-yum/" rel="permalink">MariaDB - CentOS にインストール（yum 使用）！
+</a>
+        &nbsp;<small>(2013-02-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL から派生したオープンソースな RDBMS（リレーショナルDB管理システム）の MariaDB を CentOS にインストールしてみました。
+
+インストール方法は色々ありますが、今回は yum を使用する方法でインストールしてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/02/25/mariadb-linuxmint-by-apt/" rel="permalink">MariaDB - Linux Mint にインストール（apt 使用）！
+</a>
+        &nbsp;<small>(2013-02-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL から派生したオープンソースな RDBMS（リレーショナルDB管理システム）の MariaDB を Linux Mint にインストールしてみました。
+元々オープンソースだった MySQL も Sun や Oracle に次々と買収され、そう遠くない将来にはオープンではなくなりそう（クローズドになりそう...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/21/nginx-phpmyadmin/" rel="permalink">Nginx - phpMyAdmin を使用する！
+</a>
+        &nbsp;<small>(2013-01-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">軽量 Web サーバ Nginx で phpMyAdmin（MySQLサーバーをウェブブラウザで管理するためのデータベース接続クライアントツール）を使用する方法についてです。
+
+既にインストールされている phpMyAdmin を Nginx で利用する方法についてです。PHP, phpMyAdmin, MySQ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/02/summary-tweet-2012/" rel="permalink">2012年 - ツイート集計！
+</a>
+        &nbsp;<small>(2013-01-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">2012年の Twitter でのツイートを Ruby で集計してみました。
+
+当方は、ツイートは全て自宅サーバ(CentOS)上のデータベース(MySQL)に保存しています。
+（実際には１時間に１回 Ruby + Twitter API で本家からデータを取得して保存）
+
+ほとんど SQL で集計可能でした。
+...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/10/28/28002051/" rel="permalink">WordPress(MySQL) - ‘TYPE=MyISAM’ エラー！
+</a>
+        &nbsp;<small>(2012-10-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">久々に、WordPress のプラグインを調整していたら、有効化した際にブラウザに以下のようなエラーメッセージが表示されるようになりました。
+
+You have an error in your SQL syntax;
+ check the manual that corresponds to your MySQ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/09/30/30002013/" rel="permalink">Scientific Linux - MySQL Workbench インストール！
+</a>
+        &nbsp;<small>(2012-09-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Linux のデスクトップ環境 GNOME に MySQL GUI ツールの MySQL Workbench をインストールする方法についてです。
+
+簡単な作業ですが、後学のために記録しておく。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/08/11/11002038/" rel="permalink">Ruby - undefined method `connect’ for Mysql:Class！
+</a>
+        &nbsp;<small>(2012-08-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby に Gem パッケージ mysql をインストール済みなのに、connect 時に以下のようなエラーが発生します。
+
+undefined method `connect' for Mysql:Class
+
+
+環境によって、発生したり発生しなかったりします。
+
+以下、対策方法メモです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/06/26/26002036/" rel="permalink">MySQL - InnoDB エンジンが起動しない場合！
+</a>
+        &nbsp;<small>(2012-06-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL はデフォルトでは InnoDB エンジンが有効化されます。
+個人で使用するには InnoDB エンジンでも不便はありませんが、より高速に処理させたい場合などに MyISAM エンジンに変更したりします。
+デフォルトで MyISAM エンジンが有効になるように設定ファイル(my.cnf or my.in...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/06/16/16002013/" rel="permalink">MySQL - 圧縮しながらダンプ出力！
+</a>
+        &nbsp;<small>(2012-06-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL ユーザならバックアップの際に誰でも使うであろう mysqldump コマンド。
+通常、mysqldump コマンド実行後にできたダンプファイルのサイズが大きければ圧縮すると思います。
+
+しかし、データベースの容量が大きくなると、ダンプを取ってその後圧縮する方法だと時間がかかりすぎます。
+しかし、圧縮し...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/25/25002014/" rel="permalink">MySQL - データディレクトリの移動！
+</a>
+        &nbsp;<small>(2012-05-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">通常、MySQL を一旦インストールしたらデータディレクトリはそう変更しないと思います。
+
+Linux の場合、インストール時に指定しなければ “/var” ディレクトリ配下にデータディレクトリが作成されます。
+
+Webサイトやブログ等の運用で使用するくらいなら、デフォルトのデータディレクトリで全く（殆ど）問題あ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/23/23002009/" rel="permalink">MySQL - バイナリログ肥大化！
+</a>
+        &nbsp;<small>(2012-05-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">DB サーバ MySQL を使用していて、突然ディスク容量不足になって MySQL に接続できなくなる事があります。（以下は実際は１行で出力されます）
+
+ERROR 20 (HY000) at line 989: 
+ Disk is full writing './mysql-bin.000022' (Errco...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/12/12002031/" rel="permalink">MySQL - テーブル単位でダンプファイル出力！
+</a>
+        &nbsp;<small>(2012-05-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">通常、データベース MySQL でダンプファイルを出力する場合、”mysqldump” コマンドを使ってデータベース単位に行うことが多いと思います。
+当方のサーバでも普段はその方法を取り入れています。
+※実際には、ダンプ出力の他に “mysqlhotcopy” も併用していますが。。。
+
+ただ、このダンプファイル...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/10/10002031/" rel="permalink">株価 - バックテスト（ADXギャッパー）！
+</a>
+        &nbsp;<small>(2012-05-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（ADXギャッパー）！
+
+
+今回は、「ADXギャッパー」での計算で...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/09/09002029/" rel="permalink">株価 - バックテスト（アンチ）！
+</a>
+        &nbsp;<small>(2012-05-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（アンチ）！
+
+
+今回は、「アンチ」での計算で発生した売買サインデ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/08/08002044/" rel="permalink">株価 - バックテスト（３本足の高値安値版）！
+</a>
+        &nbsp;<small>(2012-05-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（３本足の高値安値版）！
+
+
+今回は、「３本足の高値安値」での計算...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/04/04002034/" rel="permalink">株価 - 売買サインチェック（ADXギャッパー）！
+</a>
+        &nbsp;<small>(2012-05-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+前回は「アンチ」という手法で売買サインの発生状況を検証してみましたが、今回は「ADXギャッパー」という手法で検証してみました。
+
+※個人的な記録ですので、興...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/03/03002051/" rel="permalink">株価 - 売買サインチェック（アンチ）！
+</a>
+        &nbsp;<small>(2012-05-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+前回は「３本足の高値安値」という手法で売買サインの発生状況を検証してみましたが、今回は「アンチ」という手法で検証してみました。
+
+※個人的な記録ですので、興...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/02/02002016/" rel="permalink">株価 - 売買サインチェック（３本足の高値安値版）！
+</a>
+        &nbsp;<small>(2012-05-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+最近の株価の検証ではバックテストを行っていましたが、今回はまた、少し前にも検証していた売買サインの発生チェックを行ってみました。
+今回の手法は、「３本足の高...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/26/26002002/" rel="permalink">Linux - MySQL 5.5.23 をソースからインストール！
+</a>
+        &nbsp;<small>(2012-04-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">現在の Scientific Linux 6.2 や CentOS 6.2 ではリポジトリの関係上、パッケージでインストールできる MySQL は 5.1.52 とかです。（今回は RedHat(RPM) 系 Linux での話です。）
+
+MySQL では現在既に 5.5 系がリリースされていますので、今回は最新...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/21/21002004/" rel="permalink">株価 - バックテスト（ボリンジャーバンド版）！
+</a>
+        &nbsp;<small>(2012-04-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（ボリンジャーバンド版）！
+
+
+今回は、「ボリンジャーバンド」での...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/20/20002045/" rel="permalink">株価 - バックテスト（HLバンド版）！
+</a>
+        &nbsp;<small>(2012-04-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（HLバンド版）！
+
+
+今回は、「HLバンド（ハイローバンド）」で...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/19/19002047/" rel="permalink">株価 - バックテスト（DMI/ADX版）！
+</a>
+        &nbsp;<small>(2012-04-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（DMI/ADX版）その１！
+  株価 - 売買サインチェック（D...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/18/18002037/" rel="permalink">株価 - バックテスト（ストキャスティクス版）！
+</a>
+        &nbsp;<small>(2012-04-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（ストキャスティクス版）！
+
+
+今回は、「MACD（移動平均・収束...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/17/17002041/" rel="permalink">株価 - バックテスト（MACDシグナル版）！
+</a>
+        &nbsp;<small>(2012-04-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（MACDシグナル版）！
+
+
+今回は、「MACD（移動平均・収束・...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/16/16002003/" rel="permalink">株価 - バックテスト（RCI・ゴールデン/デッドクロス版）！
+</a>
+        &nbsp;<small>(2012-04-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（RCI・ゴールデンクロス/デッドクロス版）！
+
+
+今回は、短期と...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/12/12002039/" rel="permalink">株価 - バックテスト（RCI版）！
+</a>
+        &nbsp;<small>(2012-04-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（RCI版）！
+
+
+今回は、「RCI（順位相関指数）」での計算で発...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/11/11002030/" rel="permalink">株価 - バックテスト（RSI版）！
+</a>
+        &nbsp;<small>(2012-04-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（RSI版）！
+
+
+今回は、「RSI（相対力指数）」での計算で発生...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/05/05002021/" rel="permalink">株価 - バックテスト(指数移動平均・ゴールデン/デッドクロス版)！
+</a>
+        &nbsp;<small>(2012-04-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（指数移動平均・ゴールデンクロス/デッドクロス版）！
+
+
+今回は、...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/04/04002034/" rel="permalink">株価 - バックテスト(単純移動平均・ゴールデン/デッドクロス版)！
+</a>
+        &nbsp;<small>(2012-04-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（単純移動平均・ゴールデンクロス/デッドクロス版）！
+
+
+今回は、...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/02/02002030/" rel="permalink">株価 - バックテスト（指数移動平均版）！
+</a>
+        &nbsp;<small>(2012-04-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（指数移動平均版）！
+
+
+今回は、「指数移動平均」での計算で発生し...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/03/31/31002036/" rel="permalink">株価 - バックテスト（単純移動平均版）！
+</a>
+        &nbsp;<small>(2012-03-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の1983年からの全取引データを取得しています。
+
+以前は、売買サイン発生後の株価の挙動を集計しました。
+
+
+  株価 - 売買サインチェック（単純移動平均版）！
+
+
+今回は、「単純移動平均」での計算で発生し...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/03/29/29002045/" rel="permalink">株価 - JASDAQ の始値に注意！
+</a>
+        &nbsp;<small>(2012-03-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">
+  【はじめに】
+Yahoo!ファイナンス掲載情報の自動取得（スクレイピング）は禁止されています。（参照）
+以下の記事を参考にすることもお勧めしません。
+
+
+こんばんは。
+
+JASDAQ とは大阪証券取引所の扱う日本発のベンチャー（新興）企業向けの市場のことです。
+
+表題の「始値に注意！」とは、Yahoo!ファ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/03/25/25002021/" rel="permalink">日経平均株価の計算方法！
+</a>
+        &nbsp;<small>(2012-03-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">日経平均株価とは、東京証券取引所一部上場の銘柄から選定された225銘柄の株価をダウ式計算ルールに則って算出した価格平均指数です。
+
+そうです。単純に225銘柄の株価の平均を算出している訳ではないんです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/03/23/23002043/" rel="permalink">Ruby - Twitter ツイートを形態素解析！
+</a>
+        &nbsp;<small>(2012-03-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、自宅サーバにて、Ruby + MySQL + Twitter API で Twitter の自分のツイートをアカウント取得（2011年7月7日）以来全て保存しております。
+
+形態素解析の勉強もかねて Ruby で解析してみました。
+
+以下の過去記事もご参照ください。
+
+
+  Cygwin - 形態素解析 M...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/03/21/21002051/" rel="permalink">株式分割情報を集計！
+</a>
+        &nbsp;<small>(2012-03-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">
+  【はじめに】
+Yahoo!ファイナンス掲載情報の自動取得（スクレイピング）は禁止されています。（参照）
+以下の記事を参考にすることもお勧めしません。
+
+
+こんばんは。
+
+Yahoo!ファイナンスから Ruby + MySQL で Web スクレイピングして取得している各種データの内、株式分割情報を集計してみ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/03/17/17002035/" rel="permalink">株価 - 売買サインチェック（ボリンジャーバンド版）！
+</a>
+        &nbsp;<small>(2012-03-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。
+
+これまで、色々な指数を利用して売買サインを検証してきました。
+今回は、「ボリンジャーバンド」というものを利用して同様の検証を行いました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/03/13/13002019/" rel="permalink">株価 - 売買サインチェック（HLバンド版）！
+</a>
+        &nbsp;<small>(2012-03-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。
+
+これまで、色々な指数を利用して売買サインを検証してきました。
+今回は、「HLバンド」というものを利用して同様の検証を行いました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/03/09/09002050/" rel="permalink">株価 - 売買サインチェック（RCI・ゴールデンクロス/デッドクロス版）！
+</a>
+        &nbsp;<small>(2012-03-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。
+
+前回は、「RCI」というものを利用して同様の検証を行いました。
+
+
+  株価 - 売買サインチェック（RCI版）！
+
+
+今回は、複数の異なる日数で計算した ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/03/08/08002048/" rel="permalink">株価 - 売買サインチェック（RCI版）！
+</a>
+        &nbsp;<small>(2012-03-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。
+
+これまで、色々な指数を利用して売買サインを検証してきました。
+今回は、「RCI」というものを利用して同様の検証を行いました。
+少し前に検証した「RSI」とは...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/03/04/04002027/" rel="permalink">株価 - 売買サインチェック（DMI/ADX版）その２！
+</a>
+        &nbsp;<small>(2012-03-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。
+
+前回は、ＤＭＩ・ＡＤＸの概要、売買サインの判定基準について説明しました。
+
+
+  株価 - 売買サインチェック（ＤＭＩ・ＡＤＸ版）その１！
+
+
+今回は、定義...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/03/03/03002038/" rel="permalink">株価 - 売買サインチェック（DMI/ADX版）その１！
+</a>
+        &nbsp;<small>(2012-03-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。
+
+これまで、色々な指数を利用して売買サインを検証してきました。
+今回は、「DMI」と「ADX」というものを利用して同様の検証を行いました。
+
+検証の前に、まず...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/29/29002048/" rel="permalink">株価 - 売買サインチェック（ストキャスティクス版）！
+</a>
+        &nbsp;<small>(2012-02-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。
+
+これまで、色々な指数を利用して売買サインを検証してきました。
+今回は、「ストキャスティクス」というものを利用して同様の検証を行いました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/27/27002028/" rel="permalink">株価 - 売買サインチェック（RSI版）！
+</a>
+        &nbsp;<small>(2012-02-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。
+
+これまで、色々な指数を利用して売買サインを検証してきました。
+今回は、「RSI」というものを利用して同様の検証を行いました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/25/25002022/" rel="permalink">株価 - 売買サインチェック（MACDシグナル版）！
+</a>
+        &nbsp;<small>(2012-02-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。
+
+これまで、単純移動平均（= SMA）や指数移動平均線（= EMA）、またそれらのゴールデンクロス・デッドクロスを利用してを買いサイン・売りサインの動向を検証...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/19/19002009/" rel="permalink">株価 - 売買サインチェック（指数移動平均・ゴールデンクロス/デッドクロス版）！
+</a>
+        &nbsp;<small>(2012-02-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。
+
+前回は単純移動平均（= SMA）でゴールデンクロス・デッドクロスを検証してみましたが、今回は指数移動平均線（= EMA）のゴールデンクロス・デッドクロスを買...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/18/18002045/" rel="permalink">株価 - 売買サインチェック（単純移動平均・ゴールデンクロス/デッドクロス版）！
+</a>
+        &nbsp;<small>(2012-02-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。
+
+今回は、単純移動平均線（= SMA）のゴールデンクロス・デッドクロスを買いサイン・売りサインとした場合のその後の株価の変動を検証してみました。
+※全体的にど...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/14/14002049/" rel="permalink">株価 - 売買サインチェック（指数移動平均版）！
+</a>
+        &nbsp;<small>(2012-02-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。
+
+前回は、単純移動平均値を上回った場合・下回った場合を買いサイン・売りサインと定義して検証してみました。
+
+
+  株価 - 売買サインチェック（単純移動平均版...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/13/13002046/" rel="permalink">株価 - 売買サインチェック（単純移動平均版）！
+</a>
+        &nbsp;<small>(2012-02-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で自作した株価取得のシステム。
+全市場（東京・大阪・名古屋・札幌・福岡）の全銘柄の2000年からの全取引データを取得しています。
+
+今日は、取得している株価データを利用して、買いサイン・売りサインが発生した場合のその後の株価の変動を検証してみました。
+全体的にどんな傾向があるのかを把握す...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/11/11002034/" rel="permalink">Cygwin - Windows の MySQL へ TCP 接続！
+</a>
+        &nbsp;<small>(2012-02-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、Cygwin から Windows ネイティブの MySQL へ接続することに関する話をしました。
+
+
+  Cygwin - MySQLクライアントインストール！
+  Cygwin - Ruby on Rails で MySQL ソケットエラー！
+
+
+今回も関連したメモ的な話です。
+それは、Cygwin の...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/10/10002040/" rel="permalink">MySQL - 一般ユーザにSUPER権限を付与！
+</a>
+        &nbsp;<small>(2012-02-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL で ストアドやトリガを使用する際 root ユーザなら問題ないのですが、一般ユーザの場合、SUPER 権限が付与されていないため実行できません。
+
+簡単なことですが、滅多に行わない作業なのでメモっておきます。
+SQL 文を発行して行う方法です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/04/04002048/" rel="permalink">MySQL - UPDATE/DELETE 時の Error:1175！
+</a>
+        &nbsp;<small>(2012-02-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL を GUI で管理・操作できるツール MySQL Workbench でのエラーについての対処メモです。
+※MySQL 自体の設定の問題なので、MySQL Workbench に限った話でもありませんが。
+
+MySQL Workbench 上で UPDATE や DELETE の SQL 文を実行する...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/02/02002042/" rel="permalink">MySQL - 5.5.20 アップデート時エラー！
+</a>
+        &nbsp;<small>(2012-02-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">ローカルテスト用にと Windows マシンに MySQL をインストールしているのですが、ふとエラーログを見てみると ERROR が出力されていました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/12/12003036/" rel="permalink">Cygwin - Ruby on Rails で MySQL ソケットエラー！
+</a>
+        &nbsp;<small>(2012-01-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方の Cygwin 環境に Ruby を導入したことだし、Linux サーバで運用中の Ruby on Rails アプリを Cygwin 上で動かしてみようと考えました。
+
+Ruby、RubyGems、MySQL は導入済みなので、後は Gem で Rails をインストールしてソースを用意すればよいだけです...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/12/31/31002033/" rel="permalink">Cygwin - MySQL2 Gemパッケージインストール！
+</a>
+        &nbsp;<small>(2011-12-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby で MySQL を使用する際には MySQL アダプタの Gem パッケージが必要です。
+
+そこで、当方の Cygwin 環境に MySQL アダプタの新しいバージョン MySQL2 の Gem パッケージをインストールしました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/12/30/30002055/" rel="permalink">Cygwin - MySQLクライアントインストール！
+</a>
+        &nbsp;<small>(2011-12-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、Cygwin にインストールした Ruby で MySQL を操作する目的で、 MySQL のクライアントをインストールしました。
+
+サーバは既に Windows 側にインストールされているのでそれを使用します。
+ライブラリのみが必要だったためにクライアントのみのインストールとしました。
+※libmysq...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/12/06/06002042/" rel="permalink">Ruby on Rails - 郵便番号検索システム修正！
+</a>
+        &nbsp;<small>(2011-12-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、日本郵便提供の郵便番号データ（CSVデータ）を使って以下の作業をしました。
+
+
+  Ruby + MySQL で郵便番号データ取り込み！
+  Ruby on Rails - 郵便番号検索システム作成！
+
+
+しかし、日本郵便提供の郵便番号データ（CSVデータ）は仕様上非常に危険なデータとなっています。
+日本郵...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/11/22/22002044/" rel="permalink">Ruby - UNIX MBOX データをMySQLへ保存！
+</a>
+        &nbsp;<small>(2011-11-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">最近、よく記事にしていた UNIX BOX メールデータの検証を一旦終了し、いよいよ UNIX MBOX データを MySQL へ登録する作業を試行しました。
+※データ登録作業には Ruby を使用していますが、スクリプトは掲載していません。
+
+後述のとおり、２種類の方法を試行しました。
+結局、第１の方法がしっく...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/11/18/18002049/" rel="permalink">Ruby - UNIX MBOX 一意性検証！
+</a>
+        &nbsp;<small>(2011-11-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、UNIX MBOX メールデータを DB（MySQL） へ登録しようと考えた場合、そのメールが登録済みかどうかをチェックしなければなりません。
+
+そのチェックをどうするかを考えた場合、メールサーバで一意に付けられる Message-ID をチェックする方法が考えられます。
+しかし、転送メール等の場合は M...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/11/14/14002045/" rel="permalink">MySQL - Out of memory 対策！？
+</a>
+        &nbsp;<small>(2011-11-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">WindowsXP + Ruby + MySQL で大量（あるテーブルでは数千万件）のデータを処理していると、以下のようなエラーが発生しました。
+
+Out of memory (Needed 8164 bytes)
+
+
+MySQL 側の問題と思い、MySQL のログを確認してみると同じようなエラーを出力していまし...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/11/12/12002043/" rel="permalink">UNIX MBOX メールデータ用 DB設計！
+</a>
+        &nbsp;<small>(2011-11-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">UNIX MBOX (Thunderbird) メールデータを DB (MySQL) へ登録すべく、最近各種検証を行ってきました。
+本文・添付ファイル抽出・デコード部分はとりあえず考えず、DB登録（保存）することだけを考えています。
+※使用する言語は Ruby を想定。
+
+まずは、DB (MySQL) を設計しな...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/11/09/09002027/" rel="permalink">Ruby - UNIX MBOX ヘッダ検証！
+</a>
+        &nbsp;<small>(2011-11-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">（最近、ブログタイトルが似たようなものになっていますが、微妙に内容が異なっていますのであしからず）
+
+さて、今日は UNIX MBOX メールデータのヘッダの検証を行ってみました。
+（検証には Ruby を使用していますが、ソースまでは公開していませんのであしからず）
+
+今までも、何度かヘッダのフィールド毎に検証...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/10/14/14002049/" rel="permalink">Ruby - UNIX MBOX メールヘッダ「Date」検証！
+</a>
+        &nbsp;<small>(2011-10-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">先日は、Ruby でメールの UNIX MBOX データの読み込みを試してみました。
+
+
+  Ruby - UNIX MBOXデータ読み込み！
+
+
+今後、この読み込んだデータを MySQL に保存することを考えていますが、何万件とあるデータを一気に取り込もうとすると少なからず不正なデータ存在します。
+
+そこで、少...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/10/12/12002046/" rel="permalink">Ruby - UNIX MBOXデータ読み込み！
+</a>
+        &nbsp;<small>(2011-10-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Windows でメールを扱う場合、メールの保存形式は UNIX MBOX 形式にすることがあると思います。
+当方も Thunderbird で UNIX MBOX 形式を使用しています。
+
+この UNIX MBOX形式のデータを MySQL に保存してみたくて、まずは Rubyで 読み込んでみようと考えました。...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/10/07/07002004/" rel="permalink">Ruby on Rails - Windowsイベントログ閲覧！
+</a>
+        &nbsp;<small>(2011-10-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">先日は、RubyでWindowsイベントログの取得を試みました。
+
+
+  Ruby - Windowsイベントログ取得！
+
+
+さらに、バッチファイルで毎日MySQLサーバへバックアップするようにしました。
+
+そして、今回は Ruby on Rails で閲覧できるようにしました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/10/01/01002027/" rel="permalink">2011年9月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2011-10-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">10月になったので、先月9月分の当ブログアクセス状況を公開します。
+
+一発でMySQLを集計してHTMLタグを付けるRubyスクリプトを作成したので、今回からは簡単に記事にできるようになりました。
+月が変わって20分後の10月1日0時20分（いつも投稿は0時20分に予約投稿してるので）の投稿に間に合いました。
+（...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/09/06/06002033/" rel="permalink">Ruby on Rails - 地方公共団体一覧作成！
+</a>
+        &nbsp;<small>(2011-09-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で 「 財団法人地方自治情報センター 」 から全国の地方公共団体（都道府県・区市町村）のコード・住所等の一覧を取得し、当方の Ruby on Rails で構築している Webサイト に表示させてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/09/02/02002014/" rel="permalink">2011年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2011-09-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当WordPressブログではアクセス解析に「CounterizeiII」を一部カスタマイズして使用していますが、月ごとのOS（バージョン別）・ブラウザ（バージョン別）の集計ができません。
+
+そこで、月ごとのOS（バージョン別）・ブラウザ（バージョン別）の集計を行うSQLを作成しました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/08/31/31002049/" rel="permalink">MySQL - SELECT結果をCSV出力！
+</a>
+        &nbsp;<small>(2011-08-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、MySQLでSELECT文を発行した際の結果をCSVファイルに出力する方法についてです。
+
+と言っても、SQL文を作成する際に、少しばかし記述を追加するだけです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/08/29/29002026/" rel="permalink">Ruby on Rails - 郵便番号検索システム作成！
+</a>
+        &nbsp;<small>(2011-08-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">昨日は、Ruby + MySQL で日本郵便提供の郵便番号CSVデータを取り込む作業を行いました。（参照 → Ruby + MySQL で郵便番号データ取り込み！）
+
+今回は、MySQL に取り込んだデータを Ruby on Rails で検索できるようにしてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/08/28/28002011/" rel="permalink">Ruby + MySQL で郵便番号データ取り込み！
+</a>
+        &nbsp;<small>(2011-08-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby on Rails 上で郵便番号を検索できるシステムを作成することを思いつき、まずは日本郵便のサイトからダウンロードしたCSVファイルを Ruby + MySQL で取り込むことを考えてみました。
+
+※日本郵便のサイトによると、郵便番号データは「郵便事業株式会社は著作権を主張しません。自由に配布していただ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/08/15/15002017/" rel="permalink">Ruby - PrawnでTweetリストPDF作成！
+</a>
+        &nbsp;<small>(2011-08-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">少し前に「Ruby - PrawnでPDF作成！」で公開したとおり、Rubyで「Pwarn」Gemパッケージを使用してPDFを作成する方法を紹介しました。
+
+今回はPDF作成処理を実用化してみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/08/14/14002020/" rel="permalink">MySQL - オーバーヘッドの最適化！
+</a>
+        &nbsp;<small>(2011-08-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">WordPressをしばらく使用していると、時々MySQLが原因で動作が重くなることがあります。
+その主な原因は、DBへのINSERTやDELETEが頻繁に行われることによるフラグメンテーションの増加です。
+今日はその解決方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/08/07/07002046/" rel="permalink">MySQL - 最大クエリサイズの確認・設定方法！
+</a>
+        &nbsp;<small>(2011-08-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、MySQLで一度に発行できるクエリのサイズ確認・設定方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/08/06/06002000/" rel="permalink">MySQL - 最大接続数の確認・設定方法
+</a>
+        &nbsp;<small>(2011-08-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、MySQLでの同時に接続可能な最大コネクション数の確認と設定方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/07/28/28002008/" rel="permalink">Ruby - Twitter MentionsをOAuth認証で取得！
+</a>
+        &nbsp;<small>(2011-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">少し前に、「Ruby – TwitterタイムラインをOAuth認証で取得！」のとおり、Ruby + TwitterAPI + OAuth認証+ MySQL で自分のTwitterタイムラインを取得してバックアップするようにしました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/05/08/08002001/" rel="permalink">旧暦カレンダー - CSV データ！
+</a>
+        &nbsp;<small>(2011-05-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">先日 Ruby + MySQL で作成した旧暦カレンダーを公開しましたが、CSV データも用意しております。
+
+ぜひご活用ください。
+
+こちら → mk-mode SITE : カレンダーCSVデータダウンロード
+
+以上。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/04/15/15002052/" rel="permalink">カレンダー作成！
+</a>
+        &nbsp;<small>(2011-04-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">六曜ってご存知ですか？
+「先勝、友引、先負、仏滅、大安、赤口」というやつです。
+
+これらを表示できるカレンダーを自分で作成してみました。
+
+単に数字を並べるだけのカレンダーは簡単に作成できるのですが、六曜が絡むと非常に面倒です。
+
+なぜなら、旧暦（日本なら、天保暦という暦）を計算しないとからです。
+
+調査してみる...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/02/23/23002046/" rel="permalink">MySQL － オーバーヘッドの削除！
+</a>
+        &nbsp;<small>(2011-02-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">また、ＭｙＳＱＬの話です。
+
+「ｐｈｐＭｙＡｄｍｉｎ」でＭｙＳＱＬのＤＢを眺めていたら、あるテーブルだけ「オーバーヘッド」の欄に数字が表示されていて気になったので調べてみました。
+
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/02/19/19002009/" rel="permalink">MySQL － 「Can’t connect to MySQL server on ‘localhost’ (10048)」エラー！
+</a>
+        &nbsp;<small>(2011-02-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">最近、ＷｉｎｄｏｗｓＸＰマシンで「Ｒｕｂｙ ｏｎ Ｒａｉｌｓ」＋「ＭｙＳＱＬ」のアプリを作成していると以下のようなエラーが発生するようになりました。
+
+Can’t connect to MySQL server on 'localhost' (10048)
+
+
+
+調べてみると、どうやらＷｉｎｄｏｗｓだけの問題らし...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/02/08/08002035/" rel="permalink">phpMyAdmin － リンクテーブルを処理するための追加機能が無効になっています。。。
+</a>
+        &nbsp;<small>(2011-02-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今回も前回に引き続き、「 ｐｈｐＭｙＡｄｍｉｎ 」についてです。
+
+「 ｐｈｐＭｙＡｄｍｉｎ 」にログインした際にページの下部の方に以下のような警告が表示されることがあると思います。
+
+リンクテーブルを処理するための追加機能が無効になっています。
+理由についてはこちらをご覧ください
+
+
+これは、追加機能についての...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/02/05/05002056/" rel="permalink">phpMyAdmin － タイムアウト時間の変更！
+</a>
+        &nbsp;<small>(2011-02-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">最近、Ｗｉｎｄｏｗｓマシンでもデータベースに「 ＳＱＬＳｅｒｖｅｒ 」ではなく「 ＭｙＳＱＬ 」を使用することが多くなったため、ＧＵＩツールの「 ｐｈｐＭｙＡｄｍｉｎ 」をよく使用します。
+
+しかし、コーディングを３０分くらいして、ＤＢの内容を「 ｐｈｐＭｙＡｄｍｉｎ 」で確認しようとすると、セッションが切れてて...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/01/25/25002005/" rel="permalink">MySQL － クラッシュしたテーブルの修復！
+</a>
+        &nbsp;<small>(2011-01-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日自分のブログ（ＣｅｎｔＯＳ＋ＭｙＳＱＬ＋ＷｏｒｄＰｒｅｓｓ）を見ていたら、アクセスカウンターがおかしい（ゼロになっている）ことに気づきました。
+
+いろいろログを見てみると、
+「 /var/log/mysqld.log 」に以下のような記述がありました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/10/20/20002031/" rel="permalink">ＭｙＳＱＬ - クエリ結果のキャッシュで高速化！
+</a>
+        &nbsp;<small>(2010-10-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">ＷｏｒｄＰｒｅｓｓなどで使用しているデータベース「ＭｙＳＱＬ」はデフォルトではクエリ結果のキャッシュを行っていません。
+クエリ結果をキャッシュしてやることで高速化が期待できます。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/09/30/30002010/" rel="permalink">ホームページで自分のブログ記事一覧表示！
+</a>
+        &nbsp;<small>(2010-09-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">少し前の「ホームページにブログ更新履歴を表示！」でも報告したとおり、当方のホームページのトップページにこのブログの更新情報を表示させるようにしています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/09/25/25002035/" rel="permalink">ＷｉｎｄｏｗｓでのＭｙＳＱＬの大文字・小文字区別！
+</a>
+        &nbsp;<small>(2010-09-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方のサーバはＣｅｎｔＯＳで稼動させているのですが、
+何かとテストを行うのはＷｉｎｄｏｗｓマシンを使用しています。
+
+そこで、データベースＭｙＳＱＬをいじっている時に気付いたのですが、
+Ｗｉｎｄｏｗｓ版のＭｙＳＱＬは、デフォルトでテーブル名等が強制的に小文字にされてしまいます。
+たとえば「abCDef」としたいの...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/09/20/20002055/" rel="permalink">ホームページにブログ更新履歴を表示！
+</a>
+        &nbsp;<small>(2010-09-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、このブログとは別に公開しているＷｅｂサイト「ｍｋ−ｍｏｄｅ ＳＩＴＥ」のトップページにブログの更新履歴を表示させてみました。
+
+少しググってみると、
+
+
+  ＲＳＳフィードをJavaScriptを使用して取得する方法
+  ＲＳＳフィードを取得するブログパーツを使用する方法
+
+
+などを見かけました。
+
+当方...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2009/02/24/24001012/" rel="permalink">ＰＨＰ＋ＭｙＳＱＬでアクセスカウンタ！
+</a>
+        &nbsp;<small>(2009-02-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、
+この間自分の ホームページ にテキストファイルを使った簡単なアクセスカウンタをＰＨＰで作って稼働させてましたが、
+やっぱりちゃんとしたもの、つまり、同じＩＰからのアクセスはある程度制限かけたり、データベースを使って動かしたり、ということがしてみたくなり、いろいろ調べながらやってみました。
+
+導入にあたり...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2009/02/14/14003921/" rel="permalink">WindowsXPにMySQL＋phpMyAdmin！
+</a>
+        &nbsp;<small>(2009-02-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">昨夜ＭｙＳＱＬをＷｉｎｄｏｗｓマシンにインストールしたんだけど、
+そういえば、
+ＭｙＳＱＬ入れたらこれも入れておかないといけいない。
+ってことを忘れてた。
+
+そう、
+ｐｈｐＭｙＡｄｍｉｎ
+というＭｙＳＱＬ管理用のツール。
+
+ということで、入れてみました。
+
+※あくまでも、ＷｉｎｄｏｗｓＸＰ（ＳＰ３）にＷｅｂサーバ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2009/02/13/13013058/" rel="permalink">WindowsXPにMySQL！
+</a>
+        &nbsp;<small>(2009-02-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今夜は、ふと、Apache2＋PHPの導入ができたうちのメインマシン（WindowsXP）にデータベース MySQLを入れたくなったんで、入れてみました。
+（実はいずれブログ WordPress を Windows でも使えるようにしたくて）
+
+導入記録
+
+１．アーカイブファイルのダウンロード
+
+MySQLサイト...</p>
+  </article>
+</div>
+
+    
+    <div id="google-ad-3"></div>
+    <div id="google-ad-2"></div>
+  </div>
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+
+  </body>
+</html>

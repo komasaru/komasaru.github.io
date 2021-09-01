@@ -1,0 +1,1017 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby - NOAA（アメリカ海洋大気庁）気象観測所一覧！ - mk-mode BLOG</title>
+<meta name="description" content="NOAA - National Oceanic and Atmospheric Administration（アメリカ海洋大気庁）の所有する世界中の気象観測所一覧についてです。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby - NOAA（アメリカ海洋大気庁）気象観測所一覧！">
+<meta property="og:url" content="https://komasaru.github.io/2014/03/27/ruby-noaa-weather-stations/">
+
+
+  <meta property="og:description" content="NOAA - National Oceanic and Atmospheric Administration（アメリカ海洋大気庁）の所有する世界中の気象観測所一覧についてです。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby - NOAA（アメリカ海洋大気庁）気象観測所一覧！">
+  <meta name="twitter:description" content="NOAA - National Oceanic and Atmospheric Administration（アメリカ海洋大気庁）の所有する世界中の気象観測所一覧についてです。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2014/03/27/ruby-noaa-weather-stations/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2014-03-27T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2014/03/27/ruby-noaa-weather-stations/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby - NOAA（アメリカ海洋大気庁）気象観測所一覧！">
+    <meta itemprop="description" content="NOAA - National Oceanic and Atmospheric Administration（アメリカ海洋大気庁）の所有する世界中の気象観測所一覧についてです。">
+    <meta itemprop="datePublished" content="March 27, 2014">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby - NOAA（アメリカ海洋大気庁）気象観測所一覧！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-03-27T00:20:00+09:00">2014-03-27 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p><a href="http://www.noaa.gov/" title="NOAA - National Oceanic and Atmospheric Administration">NOAA - National Oceanic and Atmospheric Administration</a>（アメリカ海洋大気庁）の所有する世界中の気象観測所一覧についてです。</p>
+
+<!--more-->
+
+<h3 id="0-noaa-気象観測所一覧等について概要">0. NOAA 気象観測所一覧等について（概要）</h3>
+
+<ul>
+  <li>NOAA が気象観測・予報等を行うのに使用している気象観測所の一覧(“A list of weather stations”)のことである。</li>
+  <li>アメリカは日本とは比べ物にならないくらい航空交通が盛んなため、気象観測所のほとんどが空港・飛行場に設置されている。<br />
+ゆえに、一覧内にある日本の観測所も空港・飛行場ばかり。</li>
+  <li>METAR（定時航空実況気象通報式）対応の観測所は、気象データも公開されている。<br />
+（日本の場合は、航空業務で使用するもので、気象庁のデータとは異なる。）</li>
+  <li>METAR による気象情報は、Linux OS 等の時計（天気）アプレットで表示する気象情報に使用されている。（METAR による気象情報は、一般公開されている）</li>
+</ul>
+
+<h3 id="1-気象観測所一覧の取得">1. 気象観測所一覧の取得</h3>
+
+<p>NOAA の気象観測所一覧は以下のサイトで公開されている。<br />
+ページ内の “<a href="http://www.aviationweather.gov/docs/metar/stations.txt" title="stations.txt">ADDS Station Table(stations.txt)</a>” リンクがそれである。</p>
+
+<ul>
+  <li><a href="http://www.aviationweather.gov/adds/metars/" title="ADDS - METARs">ADDS - METARs</a></li>
+</ul>
+
+<h3 id="2-気象観測所一覧の項目説明">2. 気象観測所一覧の項目説明</h3>
+
+<p>気象観測所一覧の各項目は以下のようになっている。</p>
+
+<table class="common">
+  <tr>
+    <th>項目名</th>
+    <th>説明</th>
+  </tr>
+  <tr>
+    <td>CD</td>
+    <td>州短縮コード</td>
+  </tr>
+  <tr>
+    <td>STATION</td>
+    <td>測候所名（16文字以内）</td>
+  </tr>
+  <tr>
+    <td>ICAO</td>
+    <td>国際民間航空機関コード（4文字）</td>
+  </tr>
+  <tr>
+    <td>IATA</td>
+    <td>国際航空運送協会（3文字）</td>
+  </tr>
+  <tr>
+    <td>SYNOP</td>
+    <td>地上実況気象通報式番号（5桁）</td>
+  </tr>
+  <tr>
+    <td>LAT</td>
+    <td>緯度（度 分）</td>
+  </tr>
+  <tr>
+    <td>LON</td>
+    <td>経度（度 分）</td>
+  </tr>
+  <tr>
+    <td>ELEV</td>
+    <td>標高（m）</td>
+  </tr>
+  <tr>
+    <td>M</td>
+    <td>METAR 発表測候所<br />
+      - X: 該当<br />
+      - Z: 廃止</td>
+  </tr>
+  <tr>
+    <td>N</td>
+    <td>NEXRAD (WSR-88D) レーダーサイト<br />
+      - X: 該当</td>
+  </tr>
+  <tr>
+    <td>V</td>
+    <td>航空種別
+      - V: AIRMET（天気現象に関する注意報）/SIGMET（空域悪天情報）<br />
+      - A: ARTCC（航空路交通管制センター）<br />
+      - T: TAF（運航用飛行場予報気象通報式）<br />
+      - U: T + V</td>
+  </tr>
+  <tr>
+    <td>U</td>
+    <td>高層大気観測種別<br />
+      - X: レーウィンゾンデ<br />
+      - W: ウィンドプロファイラ</td>
+  </tr>
+  <tr>
+    <td>A</td>
+    <td>自動化種別
+      - A: ASOS（自動地上気象観測システム）<br />
+      - W: AWOS（自動気象観測システム）<br />
+      - M: Meso（メソ気象学）<br />
+      - H: Human（人間）<br />
+      - G: Augmented（拡張）</td>
+  </tr>
+  <tr>
+    <td>C</td>
+    <td>センター・オフィス種別<br />
+      - F: WFO（気象予報事務所）<br />
+      - R: RFC（河川予報センター）<br />
+      - C: NCEP（国立環境予測センター）</td>
+  </tr>
+  <tr>
+    <td>9（最後から２番目の列）</td>
+    <td>優先度（区画、作図）？</td>
+  </tr>
+  <tr>
+    <td>XX（最後の列）</td>
+    <td>国コード（ISO 3166 準拠）</td>
+  </tr>
+</table>
+
+<h3 id="3-日本の-icao-空港コードについて">3. 日本の ICAO 空港コードについて</h3>
+
+<p>ICAO（国際民間航空機関）制定の日本の空港コードは、以下のようになっている。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">RJ</code> で始まる４文字の英数字。（”J” は “Japan” の “J”）<br />
+沖縄県内の施設と鹿児島県の与論空港以外の日本国内の施設。</li>
+  <li><code class="language-plaintext highlighter-rouge">RO</code> で始まる４文字の英数字。（”O” は “Okinawa” の “O”）<br />
+沖縄県内の施設と鹿児島県の与論空港。</li>
+</ul>
+
+<h3 id="4-国別の観測所数一覧">4. 国別の観測所数一覧</h3>
+
+<p>参考までに、観測所一覧を読み込んで国別に集計してみた。（日本（”JP”）には “*” を付加している）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  US:3377  CA: 833  BR: 167  DE: 166  GB: 163  FR: 158  AU: 158  IT: 155 *JP: 136  RU: 129
+  ZA: 120  ID: 120  AF: 104  AR: 101  KR:  86  IN:  82  MX:  81  TR:  79  CN:  78  IR:  78
+  NO:  78  ES:  68  TH:  62  SE:  60  PH:  59  GR:  54  VE:  51  CO:  51  CL:  48  CD:  46
+  DZ:  43  IQ:  41  GL:  40  SA:  40  PE:  40  FI:  38  NA:  38  PL:  38  PK:  37  BE:  35
+  NL:  34  KE:  33  DK:  32  SD:  31  BO:  31  ZM:  30  MY:  30  PT:  30  EC:  29  MA:  29
+  CM:  28  TW:  28  ET:  28  KM:  27  CU:  26  YE:  24  TZ:  24  MM:  24  NZ:  22  NG:  22
+  WS:  22  CH:  21  KZ:  21  MZ:  21  EG:  20  CZ:  20  AT:  20  ML:  20  RO:  20  OM:  19
+  GH:  19  UA:  19  FJ:  19  PA:  18  HN:  18  TN:  17  CS:  17  VN:  16  BS:  16  SO:  16
+  IS:  16  ZW:  16  TD:  15  CI:  15  AO:  15  GT:  15  BW:  15  NE:  14  SZ:  14  UG:  14
+  UY:  14  HU:  14  CF:  14  GA:  14  LA:  14  TM:  14  SN:  13  CG:  13  MW:  13  GY:  13
+  AE:  13  HR:  12  DO:  12  BA:  12  BD:  12  MR:  12  BF:  11  UZ:  11  IE:  11  SK:  11
+  GN:  10  LY:  10  FM:  10  PG:  10  NC:   9  NP:   8  BG:   8  IL:   8  NI:   8  BY:   8
+  CR:   8  PY:   8  JO:   8  AZ:   7  SR:   7  CY:   7  VU:   7  VI:   7  TG:   7  SI:   7
+  KH:   6  LK:   6  BJ:   6  SV:   6  SY:   6  GE:   6  EE:   6  MD:   5  CV:   5  RW:   5
+  LV:   5  VC:   5  AQ:   5  AG:   4  HK:   4  LT:   4  TT:   4  SL:   4  DN:   4  AM:   4
+  SG:   4  KV:   4  DJ:   4  TP:   4  HT:   4  KW:   4  SB:   3  SC:   3  KY:   3  KG:   3
+  MU:   3  GW:   3  MV:   3  DM:   3  KN:   2  JM:   2  AL:   2  QA:   2  ST:   2  EH:   2
+  FK:   2  LC:   2  AN:   2  GD:   2  LR:   2  TJ:   2  LS:   2  BH:   2  MK:   2  GP:   2
+  GQ:   2  BB:   2  MT:   2  MS:   1  MQ:   1  MO:   1  AW:   1  GM:   1  LU:   1  BI:   1
+  GI:   1  BM:   1  BT:   1  LB:   1  CC:   1  AH:   1  BZ:   1  SH:   1
+Count of countries: 198
+</code></pre></div></div>
+
+<p><a href="http://www.mofa.go.jp/mofaj/area/world.html" title="世界と日本のデータを見る（世界の国の数，国連加盟国数，日本の大使館数など） ｜ 外務省">日本国（外務省）</a>が国として承認しているのは「195カ国」だが、<a href="http://www.iso.org/iso/country_codes" title="ISO 3166 - Country codes - ISO">ISO 3166</a>による分類で集計すると「198カ国」になるようだ。<br />
+それにしても、アメリカ・カナダの気象観測所（≒空港等）の数は多いですね。</p>
+
+<h3 id="5-使用した-ruby-スクリプト">5. 使用した Ruby スクリプト</h3>
+
+<p>参考までに、上記の一覧を取得するために作成した Ruby スクリプトは以下のとおり。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">noaa_stations.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+</pre></td><td class="code"><pre><span class="c1"># ***************************************</span>
+<span class="c1"># NOAA - 気象観測所一覧取得処理</span>
+<span class="c1"># ***************************************</span>
+<span class="nb">require</span> <span class="s1">'open-uri'</span>
+
+<span class="k">class</span> <span class="nc">NoaaStations</span>
+  <span class="no">FILE</span> <span class="o">=</span> <span class="s2">"http://www.aviationweather.gov/static/adds/metars/stations.txt"</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="vi">@hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="vi">@cnt_c</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">end</span>
+
+  <span class="c1"># メイン処理</span>
+  <span class="k">def</span> <span class="nf">exec_main</span>
+    <span class="c1"># ファイル読込＆集計</span>
+    <span class="n">compile</span>
+
+    <span class="c1"># 結果出力</span>
+    <span class="nb">display</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="nb">puts</span> <span class="s2">"[</span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">e</span><span class="p">.</span><span class="nf">backtrace</span><span class="p">.</span><span class="nf">each</span><span class="p">{</span><span class="o">|</span><span class="n">trace</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">"</span><span class="se">\t</span><span class="si">#{</span><span class="n">trace</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span>
+    <span class="nb">exit</span> <span class="mi">1</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="c1"># ファイル読込＆集計</span>
+  <span class="k">def</span> <span class="nf">compile</span>
+    <span class="nb">open</span><span class="p">(</span><span class="no">FILE</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+      <span class="k">while</span> <span class="n">l</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">gets</span>
+        <span class="n">l</span><span class="p">.</span><span class="nf">chomp!</span>
+        <span class="k">next</span> <span class="k">if</span> <span class="n">l</span> <span class="o">=~</span> <span class="sr">/^\!/</span>
+        <span class="k">next</span> <span class="k">if</span> <span class="n">l</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="sr">//</span><span class="p">).</span><span class="nf">size</span> <span class="o">&lt;</span> <span class="mi">80</span>
+        <span class="n">country_code</span> <span class="o">=</span> <span class="n">l</span><span class="p">[(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">..</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="vi">@hash</span><span class="p">[</span><span class="n">country_code</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1"># 結果出力</span>
+  <span class="k">def</span> <span class="nf">display</span>
+    <span class="vi">@hash</span><span class="p">.</span><span class="nf">sort_by</span><span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">|</span> <span class="n">k</span><span class="p">}.</span><span class="nf">sort_by</span><span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">|</span> <span class="o">-</span><span class="n">v</span><span class="p">}.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">|</span>
+      <span class="nb">print</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">"JP"</span> <span class="p">?</span> <span class="s2">" *"</span> <span class="p">:</span> <span class="s2">"  "</span>
+      <span class="nb">printf</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">k</span><span class="si">}</span><span class="s2">:%4d"</span><span class="p">,</span> <span class="n">v</span><span class="p">.</span><span class="nf">to_i</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="k">if</span> <span class="p">(</span><span class="vi">@cnt_c</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">end</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">Count of countries: </span><span class="si">#{</span><span class="vi">@cnt_c</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">NoaaStations</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">exec_main</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/9597192" title="Gist - Ruby script to calculate a summary of the list of NOAA's weather stations.">Gist - Ruby script to calculate a summary of the list of NOAA’s weather stations.</a></li>
+</ul>
+
+<hr />
+
+<p>何かの役に立つような気のする内容でした。（個人的に目論んでいることはある。実現可能か否かは不明だけど。）</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-03-27T00:20:00+09:00">2014-03-27 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+-+NOAA%EF%BC%88%E3%82%A2%E3%83%A1%E3%83%AA%E3%82%AB%E6%B5%B7%E6%B4%8B%E5%A4%A7%E6%B0%97%E5%BA%81%EF%BC%89%E6%B0%97%E8%B1%A1%E8%A6%B3%E6%B8%AC%E6%89%80%E4%B8%80%E8%A6%A7%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2014%2F03%2F27%2Fruby-noaa-weather-stations%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2014%2F03%2F27%2Fruby-noaa-weather-stations%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2014%2F03%2F27%2Fruby-noaa-weather-stations%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2014/03/25/linux-check-capasity-of-disk/" class="pagination--pager" title="Linux - ディスク使用量監視＆メール通知！
+">Previous</a>
+    
+    
+      <a href="/2014/03/28/bash-getting-a-weather-station-noaa/" class="pagination--pager" title="Bash - NOAA 気象観測所検索！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2014/03/27/ruby-noaa-weather-stations/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2014/03/27/ruby-noaa-weather-stations"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,1109 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby - PrawnでTweetリストPDF作成！ - mk-mode BLOG</title>
+<meta name="description" content="少し前に「Ruby - PrawnでPDF作成！」で公開したとおり、Rubyで「Pwarn」Gemパッケージを使用してPDFを作成する方法を紹介しました。今回はPDF作成処理を実用化してみました。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby - PrawnでTweetリストPDF作成！">
+<meta property="og:url" content="https://komasaru.github.io/2011/08/15/15002017/">
+
+
+  <meta property="og:description" content="少し前に「Ruby - PrawnでPDF作成！」で公開したとおり、Rubyで「Pwarn」Gemパッケージを使用してPDFを作成する方法を紹介しました。今回はPDF作成処理を実用化してみました。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby - PrawnでTweetリストPDF作成！">
+  <meta name="twitter:description" content="少し前に「Ruby - PrawnでPDF作成！」で公開したとおり、Rubyで「Pwarn」Gemパッケージを使用してPDFを作成する方法を紹介しました。今回はPDF作成処理を実用化してみました。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2011/08/15/15002017/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2011-08-15T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2011/08/15/15002017/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby - PrawnでTweetリストPDF作成！">
+    <meta itemprop="description" content="少し前に「Ruby - PrawnでPDF作成！」で公開したとおり、Rubyで「Pwarn」Gemパッケージを使用してPDFを作成する方法を紹介しました。今回はPDF作成処理を実用化してみました。">
+    <meta itemprop="datePublished" content="August 15, 2011">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby - PrawnでTweetリストPDF作成！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-08-15T00:20:00+09:00">2011-08-15 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>少し前に「<a href="/2011/08/11/11002006/" title="Ruby - PrawnでPDF作成！">Ruby - PrawnでPDF作成！</a>」で公開したとおり、Rubyで「Pwarn」Gemパッケージを使用してPDFを作成する方法を紹介しました。</p>
+
+<p>今回はPDF作成処理を実用化してみました。</p>
+
+<!--more-->
+
+<p>独学で習得したものなので、あまり綺麗ではありませんがソース(Linux版)を公開します。
+参考になれば幸いです。</p>
+
+<h4 id="前提条件">前提条件</h4>
+
+<ul>
+  <li>Linux（当方はScientificLinux6.0）を使用している。</li>
+  <li>LinuxにRuby（当方はRuby1.9.2-p290）がインストールされている。</li>
+  <li>LinuxにMySQLがインストールされていて、使用するテーブルが作成されている。</li>
+  <li>Ruby Gemパッケージ「mysql2」がインストールされている。</li>
+  <li>Ruby Gemパッケージ「sanitize」がインストールされている。
+（過去記事「<a href="/2011/08/13/13002005/" title="Ruby - Sanitize Gemパッケージのインストール！">Ruby - Sanitize Gemパッケージのインストール！</a>」も参照）</li>
+  <li>Ruby Gemパッケージ「prawn」がインストールされている。</li>
+</ul>
+
+<h4 id="rubyスクリプト">Rubyスクリプト</h4>
+
+<p>MySQLに保存している自分のTwitterのツイートを一覧にするPDF作成スクリプトです。
+Windows版でもほぼ同じですが、MySQLのGemパッケージは異なりますしコーディングも若干異なります。</p>
+
+<ul>
+  <li>「IPA P明朝」というフォントが必要です。</li>
+  <li>Rubyスクリプト、フォントファイルの配置場所は”/home/src”ディレクトリ配下です。</li>
+  <li>引数を指定せずに実行すると、前月１日から前月末日の1ヶ月分を取得します。</li>
+  <li>引数を２つ（ YYYYMMDD, YYYYMMMDD ）指定すると第１引数から第２引数までの期間のデータを取得します。</li>
+  <li>出来上がるPDFのファイル名は”TweetList_YYYYMMDD-YYYYMMDD.pdf”で保存先は”/home/src/twitter”です。</li>
+</ul>
+
+<p>ファイル名：twitter_make_pdf_tweet.rb</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#-------------------------------------</span>
+<span class="c1"># 引数 :  無し</span>
+<span class="c1">#           or</span>
+<span class="c1">#         第１：99999999(取得開始年月日(YYYYMMDD))</span>
+<span class="c1">#         第２：99999999(取得終了年月日(YYYYMMDD))</span>
+<span class="c1">#-------------------------------------</span>
+
+<span class="nb">require</span> <span class="s1">'mysql2'</span>
+<span class="nb">require</span> <span class="s1">'date'</span>
+<span class="nb">require</span> <span class="s1">'sanitize'</span>
+<span class="nb">require</span> <span class="s1">'kconv'</span>
+<span class="nb">require</span> <span class="s1">'prawn'</span>
+
+<span class="k">class</span> <span class="nc">TwitterMakePdfTweet</span>
+
+  <span class="c1"># DB(MySQL)接続情報</span>
+  <span class="vg">$DB</span>       <span class="o">=</span> <span class="s1">'hoge'</span>
+  <span class="vg">$HOST</span>     <span class="o">=</span> <span class="s1">'127.0.0.1'</span>
+  <span class="vg">$USER</span>     <span class="o">=</span> <span class="s1">'hoge'</span>
+  <span class="vg">$PASSWORD</span> <span class="o">=</span> <span class="s1">'hogehoge'</span>
+
+  <span class="c1"># [CLASS] 引数</span>
+  <span class="k">class</span> <span class="nc">Arg</span>
+
+    <span class="c1"># INITIALIZE</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">()</span>
+
+      <span class="c1"># 引数取得</span>
+      <span class="vi">@date_f</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">to_s</span>
+      <span class="vi">@date_t</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">to_s</span>
+
+    <span class="k">end</span>
+
+    <span class="c1"># 引数チェック</span>
+    <span class="k">def</span> <span class="nf">get_date</span><span class="p">()</span>
+
+      <span class="k">begin</span>
+
+        <span class="c1"># 引数が無い場合</span>
+        <span class="c1">#   取得開始年月日：前月１日</span>
+        <span class="c1">#   取得終了年月日：前月末日</span>
+        <span class="k">if</span> <span class="vi">@date_f</span> <span class="o">==</span> <span class="s2">""</span> <span class="o">&amp;&amp;</span> <span class="vi">@date_t</span> <span class="o">==</span> <span class="s2">""</span>
+
+          <span class="c1"># 今日日付取得</span>
+          <span class="n">date_today</span> <span class="o">=</span> <span class="no">Date</span><span class="p">.</span><span class="nf">today</span>
+
+          <span class="c1"># 今月１日取得</span>
+          <span class="n">date_this_month_first</span> <span class="o">=</span> <span class="no">Date</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">date_today</span><span class="p">.</span><span class="nf">year</span><span class="p">,</span> <span class="n">date_today</span><span class="p">.</span><span class="nf">month</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+          <span class="c1"># 前月１日取得</span>
+          <span class="n">date_last_month_first</span> <span class="o">=</span> <span class="n">date_this_month_first</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
+          <span class="n">date_f</span>                <span class="o">=</span> <span class="n">date_last_month_first</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span> <span class="s2">"%Y%m%d"</span> <span class="p">)</span>
+
+          <span class="c1"># 前月末日取得</span>
+          <span class="n">date_last_month_last</span>  <span class="o">=</span> <span class="n">date_this_month_first</span> <span class="o">-</span> <span class="mi">1</span>
+          <span class="n">date_t</span>                <span class="o">=</span> <span class="n">date_last_month_last</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span> <span class="s2">"%Y%m%d"</span> <span class="p">)</span>
+
+        <span class="c1"># 引数がある場合</span>
+        <span class="c1">#   第1引数[取得開始年月日]の妥当性チェック</span>
+        <span class="c1">#   第2引数[取得終了年月日]の存在チェック</span>
+        <span class="c1">#   第2引数[取得終了年月日]の妥当性チェック</span>
+        <span class="c1">#   (第3引数以降は無視)</span>
+        <span class="k">else</span>
+
+          <span class="c1"># 第1引数[取得開始年月日]が8桁の数字かチェック</span>
+          <span class="k">if</span> <span class="o">!</span><span class="p">(</span> <span class="vi">@date_f</span><span class="p">.</span><span class="nf">to_s</span> <span class="o">=~</span> <span class="sr">/^\d{8}$/</span> <span class="p">)</span>
+            
+            <span class="c1"># エラーメッセージ</span>
+            <span class="n">str_msg</span> <span class="o">=</span> <span class="s2">"引数[0]エラー[</span><span class="si">#{</span><span class="vi">@date_f</span><span class="p">.</span><span class="nf">to_s</span><span class="si">}</span><span class="s2">] : ８桁の数字を指定して下さい。"</span>
+            <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span><span class="p">(</span> <span class="n">str_msg</span> <span class="p">)</span>
+            <span class="nb">exit</span> <span class="mi">1</span>
+          
+          <span class="k">end</span>
+
+          <span class="c1"># 第1引数[取得開始年月日]が妥当な日付かチェック</span>
+          <span class="n">y</span> <span class="o">=</span> <span class="vi">@date_f</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">].</span><span class="nf">to_i</span>
+          <span class="n">m</span> <span class="o">=</span> <span class="vi">@date_f</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+          <span class="n">d</span> <span class="o">=</span> <span class="vi">@date_f</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+          <span class="k">if</span> <span class="o">!</span><span class="no">Date</span><span class="p">.</span><span class="nf">valid_date?</span><span class="p">(</span> <span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">d</span> <span class="p">)</span> <span class="c1"># 妥当な日付ならtrue、それ以外はnilが返ってくる</span>
+
+            <span class="c1"># エラーメッセージ</span>
+            <span class="n">str_msg</span> <span class="o">=</span> <span class="s2">"引数[0]エラー[</span><span class="si">#{</span><span class="vi">@date_f</span><span class="p">.</span><span class="nf">to_s</span><span class="si">}</span><span class="s2">] : ８桁で妥当な日付を指定して下さい。"</span>
+            <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span><span class="p">(</span> <span class="n">str_msg</span> <span class="p">)</span>
+            <span class="nb">exit</span> <span class="mi">1</span>
+
+          <span class="k">end</span>
+
+          <span class="n">date_f</span> <span class="o">=</span> <span class="vi">@date_f</span>
+
+          <span class="c1"># 第2引数[取得終了年月日]の存在チェック</span>
+          <span class="c1"># 第2引数[取得終了年月日]が8桁の数字かチェック</span>
+          <span class="k">if</span> <span class="vi">@date_t</span> <span class="o">==</span> <span class="s2">""</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span> <span class="vi">@date_t</span><span class="p">.</span><span class="nf">to_s</span> <span class="o">=~</span> <span class="sr">/^\d{8}$/</span> <span class="p">)</span>
+
+            <span class="c1"># エラーメッセージ</span>
+            <span class="n">str_msg</span> <span class="o">=</span>  <span class="s2">"引数[0] : [</span><span class="si">#{</span><span class="vi">@date_f</span><span class="p">.</span><span class="nf">to_s</span><span class="si">}</span><span class="s2">] OK!</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">str_msg</span> <span class="o">&lt;&lt;</span> <span class="s2">"引数[1]エラー[</span><span class="si">#{</span><span class="vi">@date_t</span><span class="p">.</span><span class="nf">to_s</span><span class="si">}</span><span class="s2">] : ８桁の数字を指定して下さい。"</span>
+            <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span><span class="p">(</span> <span class="n">str_msg</span> <span class="p">)</span>
+            <span class="nb">exit</span> <span class="mi">1</span>
+
+          <span class="k">end</span>
+
+          <span class="c1"># 第2引数[取得終了年月日]が妥当な日付かチェック</span>
+          <span class="n">y</span> <span class="o">=</span> <span class="vi">@date_t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">].</span><span class="nf">to_i</span>
+          <span class="n">m</span> <span class="o">=</span> <span class="vi">@date_t</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+          <span class="n">d</span> <span class="o">=</span> <span class="vi">@date_t</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+          <span class="k">if</span> <span class="o">!</span><span class="no">Date</span><span class="p">.</span><span class="nf">valid_date?</span><span class="p">(</span> <span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">d</span> <span class="p">)</span> <span class="c1"># 妥当な日付ならtrue、それ以外はnilが返ってくる</span>
+
+            <span class="c1"># エラーメッセージ</span>
+            <span class="n">str_msg</span> <span class="o">=</span>  <span class="s2">"引数[0] : [</span><span class="si">#{</span><span class="vi">@date_f</span><span class="p">.</span><span class="nf">to_s</span><span class="si">}</span><span class="s2">] OK!</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">str_msg</span> <span class="o">&lt;&lt;</span> <span class="s2">"引数[1]エラー[</span><span class="si">#{</span><span class="vi">@date_t</span><span class="p">.</span><span class="nf">to_s</span><span class="si">}</span><span class="s2">] : ８桁で妥当な日付を指定して下さい。"</span>
+            <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span><span class="p">(</span> <span class="n">str_msg</span> <span class="p">)</span>
+            <span class="nb">exit</span> <span class="mi">1</span>
+
+          <span class="k">end</span>
+
+          <span class="n">date_t</span> <span class="o">=</span> <span class="vi">@date_t</span>
+
+        <span class="k">end</span>
+
+        <span class="c1"># 大小チェック</span>
+        <span class="c1">#   第1引数[取得開始年月日] &gt; 第2引数[取得終了年月日] はエラー</span>
+        <span class="k">if</span> <span class="vi">@date_f</span><span class="p">.</span><span class="nf">to_i</span> <span class="o">&gt;</span> <span class="vi">@date_t</span><span class="p">.</span><span class="nf">to_i</span>
+
+            <span class="c1"># エラーメッセージ</span>
+            <span class="n">str_msg</span> <span class="o">=</span>  <span class="s2">"引数[0] : [</span><span class="si">#{</span><span class="vi">@date_f</span><span class="p">.</span><span class="nf">to_s</span><span class="si">}</span><span class="s2">], 引数[1] : [</span><span class="si">#{</span><span class="vi">@date_t</span><span class="p">.</span><span class="nf">to_s</span><span class="si">}</span><span class="s2">]</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">str_msg</span> <span class="o">&lt;&lt;</span> <span class="s2">"引数[0] ≦ 引数[1] としてください。"</span>
+            <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span><span class="p">(</span> <span class="n">str_msg</span> <span class="p">)</span>
+            <span class="nb">exit</span> <span class="mi">1</span>
+
+        <span class="k">end</span>
+
+        <span class="k">return</span> <span class="p">{</span> <span class="ss">:date_f</span> <span class="o">=&gt;</span> <span class="n">date_f</span><span class="p">,</span>
+                 <span class="ss">:date_t</span> <span class="o">=&gt;</span> <span class="n">date_t</span>  <span class="p">}</span>
+
+      <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+
+        <span class="c1"># エラーメッセージ</span>
+        <span class="n">str_msg</span> <span class="o">=</span> <span class="s2">"[例外発生]["</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">name</span> <span class="o">+</span> <span class="s2">".get_date()] "</span> <span class="o">+</span> <span class="n">e</span><span class="p">.</span><span class="nf">to_s</span>
+        <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span><span class="p">(</span> <span class="n">str_msg</span> <span class="p">)</span>
+        <span class="nb">exit</span> <span class="mi">1</span>
+
+      <span class="k">end</span>
+
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="c1"># [CLASS] twitter_timelineテーブル</span>
+  <span class="k">class</span> <span class="nc">TwitterTimeline</span>
+
+    <span class="c1"># INITIALIZE</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span> <span class="nb">hash</span> <span class="o">=</span> <span class="p">{}</span> <span class="p">)</span>
+
+      <span class="vi">@date_f</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:date_f</span><span class="p">]</span>
+      <span class="vi">@date_t</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:date_t</span><span class="p">]</span>
+
+    <span class="k">end</span>
+
+    <span class="c1"># データ取得</span>
+    <span class="k">def</span> <span class="nf">read_data</span><span class="p">()</span>
+
+      <span class="k">begin</span>
+
+        <span class="c1"># データ取得開始・終了年月日</span>
+        <span class="n">date_f</span> <span class="o">=</span> <span class="s2">"</span><span class="si">#{</span><span class="vi">@date_f</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="vi">@date_f</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="vi">@date_f</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> 00:00:00"</span>
+        <span class="n">date_t</span> <span class="o">=</span> <span class="s2">"</span><span class="si">#{</span><span class="vi">@date_t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="vi">@date_t</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="vi">@date_t</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> 23:59:59"</span>
+
+        <span class="c1"># MySQL 接続</span>
+        <span class="n">my</span> <span class="o">=</span> <span class="no">Mysql2</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span> <span class="ss">:host</span>     <span class="o">=&gt;</span> <span class="vg">$HOST</span><span class="p">,</span>
+                                 <span class="ss">:username</span> <span class="o">=&gt;</span> <span class="vg">$USER</span><span class="p">,</span>
+                                 <span class="ss">:password</span> <span class="o">=&gt;</span> <span class="vg">$PASSWORD</span><span class="p">,</span>
+                                 <span class="ss">:database</span> <span class="o">=&gt;</span> <span class="vg">$DB</span>        <span class="p">)</span>
+
+        <span class="c1"># SQL クエリ実行 ( SELECT )</span>
+        <span class="n">sql</span> <span class="o">=</span>  <span class="s2">"SELECT tweet_id, "</span>
+        <span class="n">sql</span> <span class="o">&lt;&lt;</span> <span class="s2">"       text, "</span>
+        <span class="n">sql</span> <span class="o">&lt;&lt;</span> <span class="s2">"       created_at, "</span>
+        <span class="n">sql</span> <span class="o">&lt;&lt;</span> <span class="s2">"       source "</span>
+        <span class="n">sql</span> <span class="o">&lt;&lt;</span> <span class="s2">"  FROM twitter_timelines "</span>
+        <span class="n">sql</span> <span class="o">&lt;&lt;</span> <span class="s2">" WHERE created_at between '"</span> <span class="o">+</span> <span class="n">date_f</span> <span class="o">+</span> <span class="s2">"' AND '"</span> <span class="o">+</span> <span class="n">date_t</span> <span class="o">+</span> <span class="s2">"' "</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">my</span><span class="p">.</span><span class="nf">query</span><span class="p">(</span> <span class="n">sql</span><span class="p">,</span> <span class="ss">:as</span> <span class="o">=&gt;</span> <span class="ss">:array</span> <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span>
+
+      <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+
+        <span class="c1"># エラーメッセージ</span>
+        <span class="n">str_msg</span> <span class="o">=</span> <span class="s2">"[例外発生]["</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">name</span> <span class="o">+</span> <span class="s2">".read_date()] "</span> <span class="o">+</span> <span class="n">e</span><span class="p">.</span><span class="nf">to_s</span>
+        <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span><span class="p">(</span> <span class="n">str_msg</span> <span class="p">)</span>
+        <span class="nb">exit</span> <span class="mi">1</span>
+
+      <span class="k">end</span>
+
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="c1">#################</span>
+  <span class="c1">#### メイン処理 ####</span>
+  <span class="c1">#################</span>
+  <span class="k">begin</span>
+
+    <span class="nb">puts</span><span class="p">(</span> <span class="s2">"STARTED!!"</span> <span class="p">)</span>
+
+    <span class="c1"># 引数取得・チェック</span>
+    <span class="n">obj_arg</span> <span class="o">=</span> <span class="no">Arg</span><span class="p">.</span><span class="nf">new</span><span class="p">()</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">obj_arg</span><span class="p">.</span><span class="nf">get_date</span><span class="p">()</span>
+    <span class="c1"># 計算対象年月日[From, To]</span>
+    <span class="n">date_f</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="ss">:date_f</span><span class="p">]</span>
+    <span class="n">date_t</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="ss">:date_t</span><span class="p">]</span>
+    <span class="nb">puts</span><span class="p">(</span> <span class="s2">"[DATE_FROM] </span><span class="si">#{</span><span class="n">date_f</span><span class="si">}</span><span class="s2">"</span> <span class="p">)</span>
+    <span class="nb">puts</span><span class="p">(</span> <span class="s2">"[DATE_TO  ] </span><span class="si">#{</span><span class="n">date_t</span><span class="si">}</span><span class="s2">"</span> <span class="p">)</span>
+
+    <span class="c1"># twitter_timelineテーブル</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">:date_f</span> <span class="o">=&gt;</span> <span class="n">date_f</span><span class="p">,</span>
+             <span class="ss">:date_t</span> <span class="o">=&gt;</span> <span class="n">date_t</span> <span class="p">}</span>
+    <span class="n">tbl_twitter_timeline</span> <span class="o">=</span> <span class="no">TwitterTimeline</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span> <span class="nb">hash</span> <span class="p">)</span>
+
+    <span class="c1"># タイムラインデータ取得</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">tbl_twitter_timeline</span><span class="p">.</span><span class="nf">read_data</span><span class="p">()</span>
+
+    <span class="c1"># 取得データ０件の場合は終了</span>
+    <span class="k">if</span> <span class="n">res</span><span class="p">.</span><span class="nf">count</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="nb">puts</span><span class="p">(</span> <span class="s2">"Data Count = 0"</span> <span class="p">)</span>
+      <span class="nb">puts</span><span class="p">(</span> <span class="s2">"FINISHED!"</span><span class="p">)</span>
+      <span class="nb">exit</span>
+    <span class="k">end</span>
+
+    <span class="c1">#### [START] PDF作成処理 ####</span>
+
+    <span class="c1"># フォントファイル設定(IPA P明朝)</span>
+    <span class="no">FONT_FILE</span> <span class="o">=</span> <span class="s1">'ipamp.ttf'</span> <span class="c1"># Windows</span>
+    <span class="c1"># FONT_FILE = '/home/src/ipamp.ttf' # Linux</span>
+    <span class="c1"># 作成するPDFファイル名</span>
+    <span class="no">PDF_FILE</span>  <span class="o">=</span> <span class="s1">'TweetList_'</span> <span class="o">+</span> <span class="n">date_f</span> <span class="o">+</span> <span class="s2">"-"</span> <span class="o">+</span> <span class="n">date_t</span> <span class="o">+</span> <span class="s1">'.pdf'</span> <span class="c1"># Windows</span>
+    <span class="c1"># PDF_FILE  = '/home/src/twitter/TweetList_' + date_f + "-" + date_t + '.pdf' # Linux</span>
+
+    <span class="c1"># pdfオブジェクトを生成</span>
+    <span class="n">pdf</span> <span class="o">=</span> <span class="no">Prawn</span><span class="o">::</span><span class="no">Document</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+      <span class="ss">:page_size</span>       <span class="o">=&gt;</span> <span class="s2">"A4"</span><span class="p">,</span>      <span class="c1"># 用紙サイズ</span>
+      <span class="ss">:page_layout</span>     <span class="o">=&gt;</span> <span class="ss">:portrait</span><span class="p">,</span> <span class="c1"># 用紙向き ( 縦:portrait、横:landscape )</span>
+      <span class="ss">:top_margin</span>      <span class="o">=&gt;</span> <span class="mi">60</span><span class="p">,</span>        <span class="c1"># 余白（上）</span>
+      <span class="ss">:left_margin</span>     <span class="o">=&gt;</span> <span class="mi">40</span><span class="p">,</span>        <span class="c1"># 余白（左）</span>
+      <span class="ss">:right_margin</span>    <span class="o">=&gt;</span> <span class="mi">30</span>         <span class="c1"># 余白（右）</span>
+    <span class="p">)</span>
+
+    <span class="c1"># フォント指定</span>
+    <span class="n">pdf</span><span class="p">.</span><span class="nf">font</span> <span class="no">FONT_FILE</span>
+
+    <span class="c1"># 取得データ分ループ</span>
+    <span class="n">res</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">row</span><span class="o">|</span>
+
+      <span class="n">tweet_time</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nf">to_s</span> <span class="p">).</span><span class="nf">strftime</span><span class="p">(</span> <span class="s2">"%Y/%m/%d %H:%M:%S"</span> <span class="p">)</span> <span class="c1"># Linux対応</span>
+      <span class="n">pdf</span><span class="p">.</span><span class="nf">text</span> <span class="s2">"</span><span class="si">#{</span> <span class="n">tweet_time</span><span class="si">}</span><span class="s2">        ID[ </span><span class="si">#{</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">to_s</span><span class="si">}</span><span class="s2"> ]        Source[ </span><span class="si">#{</span><span class="no">Sanitize</span><span class="p">.</span><span class="nf">clean</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">].</span><span class="nf">to_s</span><span class="p">)</span><span class="si">}</span><span class="s2"> ]"</span>
+      <span class="n">pdf</span><span class="p">.</span><span class="nf">pad</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span> <span class="n">pdf</span><span class="p">.</span><span class="nf">text</span> <span class="s2">"</span><span class="si">#{</span><span class="no">Kconv</span><span class="p">.</span><span class="nf">tosjis</span><span class="p">(</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">to_s</span> <span class="p">)</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+
+      <span class="c1"># 下へ5px移動</span>
+      <span class="n">pdf</span><span class="p">.</span><span class="nf">move_down</span> <span class="mi">5</span>
+
+      <span class="c1"># 罫線</span>
+      <span class="n">pdf</span><span class="p">.</span><span class="nf">stroke_horizontal_rule</span>
+
+      <span class="c1"># 下へ5px移動</span>
+      <span class="n">pdf</span><span class="p">.</span><span class="nf">move_down</span> <span class="mi">5</span>
+
+    <span class="k">end</span>
+
+    <span class="c1"># ページヘッダ</span>
+    <span class="n">pdf</span><span class="p">.</span><span class="nf">page_count</span><span class="p">.</span><span class="nf">times</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+
+      <span class="n">pdf</span><span class="p">.</span><span class="nf">go_to_page</span><span class="p">(</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">)</span>
+
+      <span class="c1"># ページタイトル</span>
+      <span class="n">pdf</span><span class="p">.</span><span class="nf">bounding_box</span><span class="p">(</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">780</span> <span class="p">],</span> <span class="ss">:width</span> <span class="o">=&gt;</span> <span class="mi">215</span><span class="p">,</span> <span class="ss">:height</span> <span class="o">=&gt;</span> <span class="mi">15</span> <span class="p">)</span> <span class="k">do</span>
+        <span class="n">pdf</span><span class="p">.</span><span class="nf">text</span> <span class="s2">"Tweet一覧 [ </span><span class="si">#{</span> <span class="n">date_f</span><span class="p">.</span><span class="nf">to_s</span> <span class="si">}</span><span class="s2"> - </span><span class="si">#{</span> <span class="n">date_t</span><span class="p">.</span><span class="nf">to_s</span> <span class="si">}</span><span class="s2"> ]"</span><span class="p">,</span>
+          <span class="ss">:align</span> <span class="o">=&gt;</span> <span class="ss">:left</span>
+        <span class="n">pdf</span><span class="p">.</span><span class="nf">stroke</span> <span class="k">do</span>
+          <span class="n">pdf</span><span class="p">.</span><span class="nf">line</span> <span class="n">pdf</span><span class="p">.</span><span class="nf">bounds</span><span class="p">.</span><span class="nf">bottom_left</span><span class="p">,</span> <span class="n">pdf</span><span class="p">.</span><span class="nf">bounds</span><span class="p">.</span><span class="nf">bottom_right</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="c1"># ページ番号</span>
+      <span class="n">pdf</span><span class="p">.</span><span class="nf">number_pages</span> <span class="s2">"&lt;page&gt; / &lt;total&gt;"</span><span class="p">,</span>
+        <span class="ss">:at</span>          <span class="o">=&gt;</span> <span class="p">[</span><span class="n">pdf</span><span class="p">.</span><span class="nf">bounds</span><span class="p">.</span><span class="nf">right</span> <span class="o">-</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">780</span><span class="p">],</span>
+        <span class="ss">:width</span>       <span class="o">=&gt;</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="ss">:align</span>       <span class="o">=&gt;</span> <span class="ss">:right</span><span class="p">,</span>
+        <span class="ss">:page_filter</span> <span class="o">=&gt;</span> <span class="ss">:all</span>
+
+    <span class="k">end</span>
+
+    <span class="n">pdf</span><span class="p">.</span><span class="nf">render_file</span><span class="p">(</span> <span class="no">PDF_FILE</span> <span class="p">)</span>
+
+    <span class="c1">#### [E N D] PDF作成処理 ####</span>
+
+    <span class="nb">puts</span><span class="p">(</span> <span class="s2">"FINISHED!"</span><span class="p">)</span>
+
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+
+    <span class="c1"># エラーメッセージ</span>
+    <span class="n">str_msg</span> <span class="o">=</span> <span class="s2">"[例外発生]"</span> <span class="o">+</span> <span class="n">e</span><span class="p">.</span><span class="nf">to_s</span>
+    <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span><span class="p">(</span> <span class="n">str_msg</span> <span class="p">)</span>
+    <span class="nb">exit</span> <span class="mi">1</span>
+
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>出来栄えサンプルは<a href="/images/2011/08/TweetList_20110701-20110731.pdf">TweetList_20110701-20110731</a>。
+PDF作成について、もっと細かな設定も可能ですが、今のところこれで十分だと思っています。</p>
+
+<p>普段はこのRubyスクリプトをLinuxサーバ上でcron登録し、毎月１日午前0:10に引数無しで起動するようにしています。
+これにより毎月自動で前月分のTweet一覧PDFが作成されます。
+cron設定(/etc/cron.d/twitter)</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>10 0 1 * * root /usr/local/bin/ruby /home/src/twitter_make_pdf_tweet.rb &gt; /dev/null &lt;/code&gt;&lt;/pre&gt;
+</code></pre></div></div>
+
+<p>個別に出力する必要が生じた場合には、引数を指定して実行させれば対応可能です。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/mysql" class="page__taxonomy-item" rel="tag">MySQL</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/scientificlinux" class="page__taxonomy-item" rel="tag">ScientificLinux</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/twitter" class="page__taxonomy-item" rel="tag">Twitter</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/sns" class="page__taxonomy-item" rel="tag">SNS</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-08-15T00:20:00+09:00">2011-08-15 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+-+Prawn%E3%81%A7Tweet%E3%83%AA%E3%82%B9%E3%83%88PDF%E4%BD%9C%E6%88%90%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2011%2F08%2F15%2F15002017%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2011%2F08%2F15%2F15002017%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2011%2F08%2F15%2F15002017%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2011/08/14/14002020/" class="pagination--pager" title="MySQL - オーバーヘッドの最適化！
+">Previous</a>
+    
+    
+      <a href="/2011/08/16/16002055/" class="pagination--pager" title="JavaScript - ブラウザ別にCSSを読み込む！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2011/08/15/15002017/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2011/08/15/15002017"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

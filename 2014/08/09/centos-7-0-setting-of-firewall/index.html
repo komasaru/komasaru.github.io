@@ -1,0 +1,1182 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>CentOS 7.0 - ファイアウォール設定！ - mk-mode BLOG</title>
+<meta name="description" content="「CentOS 7.0 - ファイアウォール設定」についての記録です。（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="CentOS 7.0 - ファイアウォール設定！">
+<meta property="og:url" content="https://komasaru.github.io/2014/08/09/centos-7-0-setting-of-firewall/">
+
+
+  <meta property="og:description" content="「CentOS 7.0 - ファイアウォール設定」についての記録です。（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="CentOS 7.0 - ファイアウォール設定！">
+  <meta name="twitter:description" content="「CentOS 7.0 - ファイアウォール設定」についての記録です。（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2014/08/09/centos-7-0-setting-of-firewall/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2014-08-09T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2014/08/09/centos-7-0-setting-of-firewall/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="CentOS 7.0 - ファイアウォール設定！">
+    <meta itemprop="description" content="「CentOS 7.0 - ファイアウォール設定」についての記録です。（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）">
+    <meta itemprop="datePublished" content="August 09, 2014">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">CentOS 7.0 - ファイアウォール設定！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-08-09T00:20:00+09:00">2014-08-09 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>「CentOS 7.0 - ファイアウォール設定」についての記録です。</p>
+
+<p>（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>CentOS 7.0-1406(x86_64) を NetInstall で最小限インストールしている。</li>
+  <li>サーバ用途なので、作業は基本的に全て一般ユーザから root になって行う。</li>
+  <li>主に「<a href="https://fedoraproject.org/wiki/FirewallD/jp" title="FirewallD/jp - FedoraProject">FirewallD/jp - FedoraProject</a>」を参照。</li>
+</ul>
+
+<h3 id="1-firewalld-概要">1. FirewallD 概要</h3>
+
+<ul>
+  <li>iptables の設定をフィルタリング機能で管理する。</li>
+  <li>iptables の存在を意識する必要がない。</li>
+  <li>NIC ポートごとに仮想的なファイアウォールを設置して、それぞれについて受信を許可するポートを指定する形式である。</li>
+  <li>予め用意されているゾーンの中から１つを選択して NIC ポートに適用する。<br />
+予め用意はされているが設定変更は可能である。</li>
+  <li>予め用意されているゾーンは以下の９つ
+    <ul>
+      <li><strong>drop</strong>（設定変更してはならない）<br />
+外部からのあらゆるパケットを破棄し、返信もしない。外部への接続は可能。</li>
+      <li><strong>block</strong>（設定変更してはならない）<br />
+外部からのあらゆる接続を拒否し、ICMP Prohibited メッセージを返す。内部から開始した接続は可能。</li>
+      <li><strong>public</strong><br />
+デフォルトのゾーン。指定した外部から接続のみアクセス可能。<br />
+デフォルト：dhcpv6-client, ssh</li>
+      <li><strong>external</strong><br />
+外部用。指定した外部から接続のみアクセス可能。IP マスカレードが有効。<br />
+デフォルト：ssh</li>
+      <li><strong>dmz</strong><br />
+非武装セグメント用。指定した外部から接続のみアクセス可能。<br />
+デフォルト：ssh</li>
+      <li><strong>work</strong><br />
+作業用。指定した外部から接続のみアクセス可能。<br />
+デフォルト：dhcpv6-client, ipp-client, ssh</li>
+      <li><strong>home</strong><br />
+ホーム用。指定した外部から接続のみアクセス可能。<br />
+デフォルト：dhcpv6-client, ipp-client, mdns, samba-client, ssh</li>
+      <li><strong>internal</strong><br />
+内部用。指定した外部から接続のみアクセス可能。<br />
+デフォルト：dhcpv6-client, ipp-client, mdns, samba-client, ssh</li>
+      <li><strong>trusted</strong>（設定変更してはならない）<br />
+全ての接続が許可される。</li>
+    </ul>
+  </li>
+  <li>バックエンドで iptables を使用しているとは言っても、サービスとして FirewallD との併用は不可。</li>
+</ul>
+
+<h3 id="1-iptables-停止無効化">1. iptables 停止・無効化</h3>
+
+<p>FirewallD と iptables は（サービスとしては）併用できないので、起動している場合は停止する。そして、起動できないように無効化する。<br />
+（自動起動しない <code class="language-plaintext highlighter-rouge">disable</code> より起動自体できないようにする <code class="language-plaintext highlighter-rouge">mask</code> を使用）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl stop iptables
+# systemctl stop ip6tables
+# systemctl stop ebtables
+
+# systemctl mask iptables
+ln -s '/dev/null' '/etc/systemd/system/iptables.service'
+# systemctl mask ip6tables
+ln -s '/dev/null' '/etc/systemd/system/ip6tables.service'
+# systemctl mask ebtables
+ln -s '/dev/null' '/etc/systemd/system/ebtables.service'
+
+# systemctl list-unit-files -t service | grep iptables
+iptables.service                            masked   # &lt;= masked であることを確認
+# systemctl list-unit-files -t service | grep ip6tables
+ip6tables.service                           masked   # &lt;= masked であることを確認
+# systemctl list-unit-files -t service | grep ebtables
+ebtables.service                            masked   # &lt;= masked であることを確認
+</code></pre></div></div>
+
+<h3 id="2-firewalld-起動">2. FirewallD 起動</h3>
+
+<p>FirewallD が起動していない場合は起動し、マシン起動時に自動起動する設定も行う。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl start firewalld
+
+# systemctl enable firewalld
+ln -s '/usr/lib/systemd/system/firewalld.service' '/etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service'
+ln -s '/usr/lib/systemd/system/firewalld.service' '/etc/systemd/system/basic.target.wants/firewalld.service'
+
+# systemctl list-unit-files -t service | grep firewalld
+firewalld.service                           enabled  # &lt;= enabled であることを確認
+</code></pre></div></div>
+
+<h3 id="3-firewalld-稼働状況確認">3. FirewallD 稼働状況確認</h3>
+
+<p><code class="language-plaintext highlighter-rouge">Loaded: loaded</code>, <code class="language-plaintext highlighter-rouge">Active: active (running)</code> であることを確認する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl status firewalld
+firewalld.service - firewalld - dynamic firewall daemon
+   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled)
+   Active: active (running) since 火 2014-07-29 21:36:33 JST; 19min ago
+ Main PID: 558 (firewalld)
+   CGroup: /system.slice/firewalld.service
+           └─558 /usr/bin/python -Es /usr/sbin/firewalld --nofork -...
+
+ 7月 29 21:36:19 vbox.mk-mode.com systemd[1]: Starting firewalld -...
+ 7月 29 21:36:33 vbox.mk-mode.com systemd[1]: Started firewalld - ...
+Hint: Some lines were ellipsized, use -l to show in full.
+</code></pre></div></div>
+
+<p>以下のコマンドでも確認可能。この場合は <code class="language-plaintext highlighter-rouge">running</code> であることを確認する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># firewall-cmd --state
+running
+</code></pre></div></div>
+
+<h3 id="4-ゾーン設定確認">4. ゾーン設定確認</h3>
+
+<p>ゾーンごとの設定を一覧で確認する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># firewall-cmd --list-all-zones
+block
+  interfaces:
+  sources:
+  services:
+  ports:
+  masquerade: no
+  forward-ports:
+  icmp-blocks:
+  rich rules:
+
+dmz
+  interfaces:
+  sources:
+  services: ssh
+  ports:
+  masquerade: no
+  forward-ports:
+  icmp-blocks:
+  rich rules:
+
+drop
+  interfaces:
+  sources:
+  services:
+  ports:
+  masquerade: no
+  forward-ports:
+  icmp-blocks:
+  rich rules:
+
+external
+  interfaces:
+  sources:
+  services: ssh
+  ports:
+  masquerade: yes
+  forward-ports:
+  icmp-blocks:
+  rich rules:
+
+home
+  interfaces:
+  sources:
+  services: dhcpv6-client ipp-client mdns samba-client ssh
+  ports:
+  masquerade: no
+  forward-ports:
+  icmp-blocks:
+  rich rules:
+
+internal
+  interfaces:
+  sources:
+  services: dhcpv6-client ipp-client mdns samba-client ssh
+  ports:
+  masquerade: no
+  forward-ports:
+  icmp-blocks:
+  rich rules:
+
+public (default)
+  interfaces:
+  sources:
+  services: dhcpv6-client ssh
+  ports:
+  masquerade: no
+  forward-ports:
+  icmp-blocks:
+  rich rules:
+
+trusted (active)
+  interfaces: enp0s3
+  sources:
+  services:
+  ports:
+  masquerade: no
+  forward-ports:
+  icmp-blocks:
+  rich rules:
+
+work
+  interfaces:
+  sources:
+  services: dhcpv6-client ipp-client ssh
+  ports:
+  masquerade: no
+  forward-ports:
+  icmp-blocks:
+  rich rules:
+
+</code></pre></div></div>
+
+<h3 id="5-定義済みサービス名確認">5. 定義済みサービス名確認</h3>
+
+<p>定義済みのサービス名を確認する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># firewall-cmd --get-services
+amanda-client bacula bacula-client dhcp dhcpv6 dhcpv6-client dns ftp
+high-availability http https imaps ipp ipp-client ipsec kerberos kpasswd
+ldap ldaps libvirt libvirt-tls mdns mountd ms-wbt mysql nfs ntp openvpn
+pmcd pmproxy pmwebapi pmwebapis pop3s postgresql proxy-dhcp radius
+rpc-bind samba samba-client smtp ssh telnet tftp tftp-client
+transmission-client vnc-server wbem-https
+</code></pre></div></div>
+
+<p>定義を追加・編集したい場合は “/usr/lib/firewalld/services/” 内の XML ファイルを編集する。（詳細は割愛）</p>
+
+<h3 id="6-定義済み-icmp-確認">6. 定義済み ICMP 確認</h3>
+
+<p>定義済みの ICMP（インターネット制御通知プロトコル）を確認する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># firewall-cmd --get-icmptypes
+destination-unreachable echo-reply echo-request parameter-problem
+redirect router-advertisement router-solicitation source-quench time-exceeded
+</code></pre></div></div>
+
+<p>定義を追加・編集したい場合は “/usr/lib/firewalld/icmptypes/” 内の XML ファイルを編集する。（詳細は割愛）</p>
+
+<h3 id="7-デフォルトゾーンの確認変更">7. デフォルトゾーンの確認・変更</h3>
+
+<p>明示的に指定しない場合は、デフォルトゾーンが自動適用される。<br />
+デフォルトゾーンを確認するには以下のようにする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># firewall-cmd --get-default-zone
+public
+</code></pre></div></div>
+
+<p>デフォルトゾーンを変更するには以下のようにする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># firewall-cmd --set-default-zone=trusted
+success
+</code></pre></div></div>
+
+<p>ちなみに、アクティブなゾーンの確認は以下のようにする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># firewall-cmd --get-active-zone
+public
+  interfaces: enp3s0
+</code></pre></div></div>
+
+<h3 id="8-ゾーンの明示的な指定">8. ゾーンの明示的な指定</h3>
+
+<p>デフォルトゾーン以外を明示的に指定するには以下のようなコマンドを使用する。<br />
+（以下は一時的な設定。恒久的に設定するには <code class="language-plaintext highlighter-rouge">--permanent</code> オプションを使用する。）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ** eth1 に適用されているゾーンを除去する場合
+# firewall-cmd --remove-interface=eth1
+success
+
+# ** eth1 に trusted ゾーンを適用する場合
+# firewall-cmd --zone=trusted --add-interface=eth1
+success
+
+# ** eth1 に public ゾーンを変更する場合
+# firewall-cmd --zone=public --change-interface=eth1
+success
+
+# ** eth1 に trusted ゾーンが適用されているか確認する場合
+# firewall-cmd --zone=trusted --query-interface=eth1
+yes
+
+# ** eth1 に適用されているゾーンを確認する場合
+# firewall-cmd --get-zone-of-interface=eth1
+eth1
+
+# ** trusted ゾーンが適用されている NIC を確認する場合
+# firewall-cmd --zone=trusted --list-interfaces
+eth1
+</code></pre></div></div>
+
+<p>さらに、サブネットを指定して適用することも可能である。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ** 192.168.11.0/24 に適用されているゾーンを除去する場合
+# firewall-cmd --remove-source=192.168.11.0/24
+success
+
+# ** 192.168.11.0/24 に trusted ゾーンを適用する場合
+# firewall-cmd --zone=trusted --add-source=192.168.11.0/24
+success
+
+# ** 192.168.11.0/24 に public ゾーンを変更する場合
+# firewall-cmd --zone=public --change-source=192.168.11.0/24
+success
+
+# ** 192.168.11.0/24 に trusted ゾーンが適用されているか確認する場合
+# firewall-cmd --zone=trusted --query-source=192.168.11.0/24
+yes
+
+# ** 192.168.11.0/24 に適用されているゾーンを確認する場合
+# firewall-cmd --get-zone-of-source=192.168.11.0/24
+eth1
+
+# ** trusted ゾーンが適用されているサブネットを確認する場合
+# firewall-cmd --zone=trusted --list-sources
+eth1
+</code></pre></div></div>
+
+<h3 id="9-サービスの許可">9. サービスの許可</h3>
+
+<p>以下は一時的な設定。恒久的に設定するには <code class="language-plaintext highlighter-rouge">--permanent</code> オプションを使用する。<br />
+また、ゾーンを明示的に指定しなければデフォルトゾーンとなる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ** public ゾーンで許可されているサービスの一覧を確認する場合
+# firewall-cmd --zone=public --list-services
+
+# ** public ゾーンに ftp サービスの許可を追加する場合
+# firewall-cmd --zone=public --add-service=ftp
+
+# ** public ゾーンで ftp サービスが許可されているか確認する場合
+# firewall-cmd --zone=public --query-service=ftp
+
+# ** public ゾーンから ftp サービスの許可を削除する場合
+# firewall-cmd --zone=public --remove-service=ftp
+
+</code></pre></div></div>
+
+<h3 id="10-ポートの許可">10. ポートの許可</h3>
+
+<p>以下は一時的な設定。恒久的に設定するには <code class="language-plaintext highlighter-rouge">--permanent</code> オプションを使用する。<br />
+また、ゾーンを明示的に指定しなければデフォルトゾーンとなる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ** public ゾーンで許可されているサービスの一覧を確認する場合
+# firewall-cmd --zone=public --list-ports
+
+# ** public ゾーンにポート TCP:4000 の許可を追加する場合
+# firewall-cmd --zone=public --add-port=4000/tcp
+success
+
+# ** public ゾーンにポート TCP:4000 〜 4005 の許可を追加する場合
+# firewall-cmd --zone=public --add-port=4000-4005/tcp
+success
+
+# ** public ゾーンでポート TCP:4000  が許可されているか確認する場合
+# firewall-cmd --zone=public --query-port=4000/tcp
+yes
+
+# ** public ゾーンからポート TCP:4000 の許可を削除する場合
+# firewall-cmd --zone=public --remove-port=4000/tcp
+success
+</code></pre></div></div>
+
+<h3 id="11-icmp-の禁止">11. ICMP の禁止</h3>
+
+<p>以下は一時的な設定。恒久的に設定するには <code class="language-plaintext highlighter-rouge">--permanent</code> オプションを使用する。<br />
+また、ゾーンを明示的に指定しなければデフォルトゾーンとなる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ** public ゾーンで禁止されている ICMP の一覧を確認する場合
+# firewall-cmd --zone=public --list-icmp-blocks
+
+# ** public ゾーンに echo-request の禁止を追加する場合
+# firewall-cmd --zone=public --add-icmp-block=echo-request
+
+# ** public ゾーンで echo-request が禁止されているか確認する場合
+# firewall-cmd --zone=public --query-icmp-block=echo-request
+
+# ** public ゾーンから echo-request の禁止を削除する場合
+# firewall-cmd --zone=public --remove-icmp-block=echo-request
+
+</code></pre></div></div>
+
+<h3 id="12-ip-マスカレードの設定">12. IP マスカレードの設定</h3>
+
+<p>以下は一時的な設定。恒久的に設定するには <code class="language-plaintext highlighter-rouge">--permanent</code> オプションを使用する。<br />
+また、ゾーンを明示的に指定しなければデフォルトゾーンとなる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ** public ゾーンでの IP マスカレードの設定を確認する場合
+# firewall-cmd --zone=public --list-icmp-blocks
+
+# ** public ゾーンで IP マスカレードを有効にする場合
+# firewall-cmd --zone=public --add-masquerade
+
+# ** public ゾーンで IP マスカレードを無効にする場合
+# firewall-cmd --zone=public --remove-masquerade
+
+</code></pre></div></div>
+
+<h3 id="13-ポートフォワードの設定">13. ポートフォワードの設定</h3>
+
+<p>以下は一時的な設定。恒久的に設定するには <code class="language-plaintext highlighter-rouge">--permanent</code> オプションを使用する。<br />
+また、ゾーンを明示的に指定しなければデフォルトゾーンとなる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ** public ゾーンでのポートフォワードの設定を確認する場合
+# firewall-cmd --zone=public --list-forward-ports
+
+# ** public ゾーンで TCP:99 宛のパケットを TCP:8888 宛に変更する設定を追加する場合
+# firewall-cmd --zone=public --add-forward-port=port=22:proto=tcp:toport=8888
+
+# ** public ゾーンに TCP:99 宛のパケットを TCP:8888 宛に変更する設定が適用されているか確認する場合
+# firewall-cmd --zone=public --query-forward-port=port=22:proto=tcp:toport=8888
+
+# ** public ゾーンで TCP:99 宛のパケットを TCP:8888 宛に変更する設定を削除する場合
+# firewall-cmd --zone=public --remove-forward-port=port=22:proto=tcp:toport=8888
+
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">toport=8888</code> の部分は <code class="language-plaintext highlighter-rouge">toaddr=AAA.BBB.CCC.DDD</code> のように IP アドレスで指定することも可能。</p>
+
+<h3 id="14-その他">14. その他</h3>
+
+<p>起動時の設定を再読み込みする場合は以下のようにする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ** コネクショントラッキングのステート情報は初期化しない場合
+# firewall-cmd --reload
+
+# ** コネクショントラッキングのステート情報も初期化する場合
+# firewall-cmd --complete-reload
+</code></pre></div></div>
+
+<p>FirewallD の設定を一定時間だけ適用させる場合は以下のようなオプションを使用する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--timeout=&lt;seconds&gt;
+</code></pre></div></div>
+
+<p>全てのネットワーク通信を遮断するパニックモードの有効・無効化は以下のようにする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ** パニックモード有効化
+# firewall-cmd --panic-on
+
+# ** パニックモード無効化
+# firewall-cmd --panic-off
+
+</code></pre></div></div>
+
+<hr />
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/centos" class="page__taxonomy-item" rel="tag">CentOS</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/%E3%83%95%E3%82%A1%E3%82%A4%E3%82%A2%E3%82%A6%E3%82%A9%E3%83%BC%E3%83%AB" class="page__taxonomy-item" rel="tag">ファイアウォール</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-08-09T00:20:00+09:00">2014-08-09 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=CentOS+7.0+-+%E3%83%95%E3%82%A1%E3%82%A4%E3%82%A2%E3%82%A6%E3%82%A9%E3%83%BC%E3%83%AB%E8%A8%AD%E5%AE%9A%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2014%2F08%2F09%2Fcentos-7-0-setting-of-firewall%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2014%2F08%2F09%2Fcentos-7-0-setting-of-firewall%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2014%2F08%2F09%2Fcentos-7-0-setting-of-firewall%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2014/08/08/centos-7-0-installation-of-clam-anti-virus/" class="pagination--pager" title="CentOS 7.0 - アンチウイルスソフト Clam AntiVirus 導入！
+">Previous</a>
+    
+    
+      <a href="/2014/08/10/cpp-getting-html/" class="pagination--pager" title="C++ - HTML 取得！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2014/08/09/centos-7-0-setting-of-firewall/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2014/08/09/centos-7-0-setting-of-firewall"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

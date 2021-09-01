@@ -1,0 +1,4488 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Debian - mk-mode BLOG</title>
+<meta name="description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+
+
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Debian">
+<meta property="og:url" content="https://komasaru.github.io/tags/debian/">
+
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Debian">
+  <meta name="twitter:description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+  <meta name="twitter:url" content="https://komasaru.github.io/tags/debian/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/tags/debian/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--archive-taxonomy wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      <div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <div class="archive">
+    <h1 class="page__title">Debian</h1>
+    <div id="google-ad-1"></div>
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/04/14/debian-installation-newest-gcc-by-src/" rel="permalink">Debian 10 (buster) - GCC 10.2.0 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2021-04-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10.9.0 へ最新版 GCC をソースビルドでインストールする方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/02/debian-10-virtualbox-installation/" rel="permalink">Debian 10 (buster) - 仮想化ソフト VirtualBox のインストール！
+</a>
+        &nbsp;<small>(2020-02-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に仮想化ソフト VirtualBox をインストールする方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/29/debian-10-gmt-installation/" rel="permalink">Debian 10 (buster) - 地図描画ツール GMT インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2020-01-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に地図描画ツール GMT(Generic Mapping Tool) をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/26/debian-10-monit-installation/" rel="permalink">Debian 10 (buster) - Monit でプロセス監視（ソースビルド）！
+</a>
+        &nbsp;<small>(2020-01-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) にプロセス監視ツール monit をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/23/debian-10-munin-additional-setting/" rel="permalink">Debian 10 (buster) - munin 各種監視追加！
+</a>
+        &nbsp;<small>(2020-01-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) にインストールしたサーバ監視ツール munin に各種監視を追加する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーして...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/20/debian-10-munin-installation/" rel="permalink">Debian 10 (buster) - サーバ監視ツール munin 導入！
+</a>
+        &nbsp;<small>(2020-01-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) にサーバ監視ツール munin をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/17/debian-10-php-installation-by-src-with-nginx-cooperation/" rel="permalink">Debian 10 (buster) - PHP インストール（Nginx と連携）！
+</a>
+        &nbsp;<small>(2020-01-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に PHP をソースをビルドしてインストールし、 Web／リバースプロキシサーバ Nginx と連携する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/14/debian-10-git-installation-by-src/" rel="permalink">Debian 10 (buster) - Git インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2020-01-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に Git サーバをソースをビルドしてインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/11/debian-10-automatic-backup-setting/" rel="permalink">Debian 10 (buster) - 自動バックアップ運用！
+</a>
+        &nbsp;<small>(2020-01-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) で自動バックアップ運用する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/08/debian-10-logwatch-installation/" rel="permalink">Debian 10 (buster) - ログ解析ツール logwatch インストール！
+</a>
+        &nbsp;<small>(2020-01-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) にログ監視ツール LogWatch をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/05/debian-10-python-3-7-installation-by-src/" rel="permalink">Debian 10 (buster) - Python 3.7 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2020-01-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に Python 3.7 をソースをビルドしてインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてくださ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/12/29/debian-10-ruby-2-6-installation-by-src/" rel="permalink">Debian 10 (buster) - Ruby 2.6 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2019-12-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に Ruby 2.6 をソースをビルドしてインストール方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/12/26/debian-10-nginx-ssl-by-lets-encrypt/" rel="permalink">Debian 10 (buster) - Let’s Encrypt で常時 SSL 化(with Nginx)！
+</a>
+        &nbsp;<small>(2019-12-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。
+
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/12/23/debian-10-nginx-ssl-connection-setting/" rel="permalink">Debian 10 (buster) - Web サーバ Nginx で SSL 接続！
+</a>
+        &nbsp;<small>(2019-12-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてく...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/12/20/debian-10-nginx-installation-by-official-apt/" rel="permalink">Debian 10 (buster) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！
+</a>
+        &nbsp;<small>(2019-12-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に Web サーバ Nginx を Nginx 公式リポジトリを使用して導入する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなけれ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/12/17/debian-10-mroonga-installation-by-src/" rel="permalink">Debian 10 (buster) - Mroonga インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2019-12-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) 上に全文検索エンジン Mroonga をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/12/14/debian-10-mariadb-installation-by-src/" rel="permalink">Debian 10 (buster) - MariaDB 10.4 サーバ構築（ソースビルド）！
+</a>
+        &nbsp;<small>(2019-12-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) 上に DB サーバ MariaDB（10.4系）を構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/12/11/debian-10-groonga-installation-by-official-apt/" rel="permalink">Debian 10 (buster) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！
+</a>
+        &nbsp;<small>(2019-12-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) にカラムストア機能付き全文検索エンジン Groonga を Groonga の公式リポジトリを使用して導入する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/12/08/debian-10-postfix-log-analysis/" rel="permalink">Debian 10 (buster) - Postfix ログ解析！
+</a>
+        &nbsp;<small>(2019-12-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に導入した SMTP サーバ Postfix のログを解析する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてくださ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/12/05/debian-10-postfix-anti-virus-with-clamav-spamassassin/" rel="permalink">Debian 10 (buster) - Postfix ウィルス・スパム対策(ClamAV + SpamAssassin)！
+</a>
+        &nbsp;<small>(2019-12-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) にアンチウイルスソフト ClamAV とスパム対策ソフト SpamAssassin をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/12/01/debian-10-mail-ssl-setting/" rel="permalink">Debian 10 (buster) - メールサーバ SSL 設定！
+</a>
+        &nbsp;<small>(2019-12-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に導入したメールサーバを SSL 設定する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/11/28/debian-10-dovecot-installation/" rel="permalink">Debian 10 (buster) - POP/IMAP サーバ Dovecot 構築！
+</a>
+        &nbsp;<small>(2019-11-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/11/25/debian-10-postfix-installation/" rel="permalink">Debian 10 (buster) - SMTP サーバ Postfix 構築！
+</a>
+        &nbsp;<small>(2019-11-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に SMTP サーバ Postfix を構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/11/22/debian-10-nfs-port-fixing/" rel="permalink">Debian 10 (buster) - NFS サーバのポート固定！
+</a>
+        &nbsp;<small>(2019-11-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に NFS サーバで使用するポートを固定化する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/11/19/debian-10-nfs-installation/" rel="permalink">Debian 10 (buster) - NFS サーバ構築！
+</a>
+        &nbsp;<small>(2019-11-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に NFS サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/11/16/debian-10-ftp-installation/" rel="permalink">Debian 10 (buster) - FTP サーバ構築！
+</a>
+        &nbsp;<small>(2019-11-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に FTP サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/11/13/debian-10-bind9-chroot/" rel="permalink">Debian 10 (buster) - DNS サーバ BIND9 の chroot 化！
+</a>
+        &nbsp;<small>(2019-11-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に構築した DNS サーバを chroot 化する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/11/10/debian-10-bind9-installation/" rel="permalink">Debian 10 (buster) - DNS サーバ BIND9 構築！
+</a>
+        &nbsp;<small>(2019-11-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に DNS サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/10/29/debian-10-service-management/" rel="permalink">Debian 10 (buster) - サービスの管理！
+</a>
+        &nbsp;<small>(2019-10-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) でのサービスの管理についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/10/26/debian-10-firewall-setting/" rel="permalink">Debian 10 (buster) - ファイアウォール設定！
+</a>
+        &nbsp;<small>(2019-10-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) でファイアウォールを設定する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/10/23/debian-10-systemd-timesyncd/" rel="permalink">Debian 10 (buster) - 時刻同期設定(systemd-timesyncd)！
+</a>
+        &nbsp;<small>(2019-10-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/10/20/debian-10-anti-virus-installation/" rel="permalink">Debian 10 (buster) - アンチウィルスソフト導入！
+</a>
+        &nbsp;<small>(2019-10-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/10/17/debian-10-chrootkit-installation/" rel="permalink">Debian 10 (buster) - rootkit 検出ツール chkrootkit インストール！
+</a>
+        &nbsp;<small>(2019-10-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルー...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/10/14/debian-10-automation-security-update/" rel="permalink">Debian 10 (buster) - セキュリティ・アップデートの自動化！
+</a>
+        &nbsp;<small>(2019-10-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) のセキュリティ・アップデートを自動化する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/10/11/debian-10-ssh-installation/" rel="permalink">Debian 10 (buster) - SSH サーバ構築！
+</a>
+        &nbsp;<small>(2019-10-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) 上に SSH サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/10/08/debian-10-initial-setting/" rel="permalink">Debian 10 (buster) - サーバ初期設定！
+</a>
+        &nbsp;<small>(2019-10-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) インストール後の初期設定についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/10/05/debian-10-installation-for-small-server/" rel="permalink">Debian 10 (buster) - インストール（サーバ用途・最小構成）！
+</a>
+        &nbsp;<small>(2019-10-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) をサーバ用途・最小構成でインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/09/08/image-magick-write-watermark/" rel="permalink">Image Magick - 画像に透かし文字(watermark)を追加
+</a>
+        &nbsp;<small>(2019-09-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">過去に Image Magick で既存画像に文字を追加する方法を紹介しました。
+
+
+  Bash - Image Magick で既存の画像に文字を追加！ 
+
+
+今回は、少し異なった方法で透かし文字(watermark)を追加する方法を紹介します。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/09/05/linux-check-hardware-info/" rel="permalink">Linux - ハードウェア情報の確認！
+</a>
+        &nbsp;<small>(2019-09-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux でハードウェア情報を確認する方法についての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/04/20/linux-file-monitor-with-inotify-tools/" rel="permalink">Linux - inotify-tools でファイル監視！
+</a>
+        &nbsp;<small>(2019-04-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux で指定のディレクトリ内にファイルが作成された際に、そのファイル名を取得して何らかの処理を行う方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2018/12/08/debian-9-mariadb-installation-by-src/" rel="permalink">Debian 9 (Stretch) - MariaDB 10.3 サーバ構築（ソースビルド）！
+</a>
+        &nbsp;<small>(2018-12-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) 上に DB サーバ MariaDB（10.3系）を構築する方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2018/12/05/debian-9-systemd-timesyncd/" rel="permalink">Debian 9 (Stretch) - 時刻同期設定(systemd-timesyncd)！
+</a>
+        &nbsp;<small>(2018-12-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/12/21/debian-9-python-3-6-installation-by-src/" rel="permalink">Debian 9 Stretch - Python 3.6 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2017-12-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 Stretch に Python 3.6 をソースをビルドしてインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/10/26/linux-rate-limiting-by-tc/" rel="permalink">Linux - tc コマンドで帯域制限！
+</a>
+        &nbsp;<small>(2017-10-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux でアウトバウンド（送信）についての帯域制限を行う方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/10/06/debian-9-monit-monitoring/" rel="permalink">Debian 9 (Stretch) - Monit でプロセス監視！
+</a>
+        &nbsp;<small>(2017-10-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) にプロセスを監視するツール Monit をインストール方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/10/04/debian-9-munin-additional-setting/" rel="permalink">Debian 9 (Stretch) - munin 各種監視追加！
+</a>
+        &nbsp;<small>(2017-10-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) にインストールしたサーバ監視ツール munin に各種監視を追加する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーして...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/10/02/debian-9-munin-installation/" rel="permalink">Debian 9 (Stretch) - サーバ監視ツール munin 導入！
+</a>
+        &nbsp;<small>(2017-10-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) にサーバ監視ツール munin をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/28/debian-9-php-installation-by-src-with-nginx-cooperation/" rel="permalink">Debian 9 (Stretch) - PHP インストール（Nginx と連携）！
+</a>
+        &nbsp;<small>(2017-09-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に PHP をソースをビルドしてインストールし、 Web／リバースプロキシサーバ Nginx と連携する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/26/debian-9-git-installation-by-src/" rel="permalink">Debian 9 (Stretch) - Git インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2017-09-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に Git サーバをソースをビルドしてインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/24/debian-9-automatic-backup-setting/" rel="permalink">Debian 9 (Stretch) - 自動バックアップ運用！
+</a>
+        &nbsp;<small>(2017-09-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) で自動バックアップ運用する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/22/debian-9-logwatch-installation/" rel="permalink">Debian 9 (Stretch) - ログ解析ツール logwatch インストール！
+</a>
+        &nbsp;<small>(2017-09-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) にログ監視ツール LogWatch をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/20/debian-9-nginx-ssl-by-lets-encrypt/" rel="permalink">Debian 9 (Stretch) - Let’s Encrypt で常時 SSL 化(with Nginx)！
+</a>
+        &nbsp;<small>(2017-09-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。
+
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/18/debian-9-nginx-ssl-connection-setting/" rel="permalink">Debian 9 (Stretch) - Web サーバ Nginx で SSL 接続！
+</a>
+        &nbsp;<small>(2017-09-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてく...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/16/debian-9-nginx-installation-by-official-apt/" rel="permalink">Debian 9 (Stretch) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！
+</a>
+        &nbsp;<small>(2017-09-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に Web サーバ Nginx を Nginx 公式リポジトリを使用して導入する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなけれ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/14/debian-9-ruby-2-4-installation-by-src/" rel="permalink">Debian 9 (Stretch) - Ruby 2.4 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2017-09-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に Ruby 2.4 をソースをビルドしてインストール方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/12/debian-9-mariadb-mroonga-installation-by-official-apt/" rel="permalink">Debian 9 (Stretch) - DB サーバ MariaDB &amp; 全文検索エンジン Mroonga 構築（by Mroonga 公式リポジトリ）！
+</a>
+        &nbsp;<small>(2017-09-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に DB サーバ MariaDB と全文検索エンジン Mroonga を Mroonga の公式リポジトリを使用して導入する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/10/debian-9-groonga-installation-by-official-apt/" rel="permalink">Debian 9 (Stretch) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！
+</a>
+        &nbsp;<small>(2017-09-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) にカラムストア機能付き全文検索エンジン Groonga を Groonga の公式リポジトリを使用して導入する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/08/debian-9-postfix-log-analysis/" rel="permalink">Debian 9 (Stretch) - Postfix ログ解析！
+</a>
+        &nbsp;<small>(2017-09-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に導入した SMTP サーバ Postfix のログを解析する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてくださ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/06/debian-9-postfix-anti-virus-with-clamav-spamassassin/" rel="permalink">Debian 9 (Stretch) - Postfix ウィルス・スパム対策(ClamAV + SpamAssassin)！
+</a>
+        &nbsp;<small>(2017-09-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) にアンチウイルスソフト ClamAV とスパム対策ソフト SpamAssassin をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/04/debian-9-mail-ssl-setting/" rel="permalink">Debian 9 (Stretch) - メールサーバ SSL 設定！
+</a>
+        &nbsp;<small>(2017-09-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に導入したメールサーバを SSL 設定する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/02/debian-9-dovecot-installation/" rel="permalink">Debian 9 (Stretch) - POP/IMAP サーバ Dovecot 構築！
+</a>
+        &nbsp;<small>(2017-09-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/30/debian-9-postfix-installation/" rel="permalink">Debian 9 (Stretch) - SMTP サーバ Postfix 構築！
+</a>
+        &nbsp;<small>(2017-08-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に SMTP サーバ Postfix を構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/28/debian-9-nfs-port-fixing/" rel="permalink">Debian 9 (Stretch) - NFS サーバのポート固定！
+</a>
+        &nbsp;<small>(2017-08-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に NFS サーバで使用するポートを固定化する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/26/debian-9-nfs-installation/" rel="permalink">Debian 9 (Stretch) - NFS サーバ構築！
+</a>
+        &nbsp;<small>(2017-08-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に NFS サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/24/debian-9-ftp-installation/" rel="permalink">Debian 9 (Stretch) - FTP サーバ構築！
+</a>
+        &nbsp;<small>(2017-08-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に FTP サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/22/debian-9-bind9-chroot/" rel="permalink">Debian 9 (Stretch) - DNS サーバ BIND9 の chroot 化！
+</a>
+        &nbsp;<small>(2017-08-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に構築した DNS サーバを chroot 化する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/20/debian-9-bind9-installation/" rel="permalink">Debian 9 (Stretch) - DNS サーバ BIND9 構築！
+</a>
+        &nbsp;<small>(2017-08-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に DNS サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/18/debian-9-service-management/" rel="permalink">Debian 9 (Stretch) - サービスの管理！
+</a>
+        &nbsp;<small>(2017-08-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) でのサービスの管理についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/16/debian-9-firewall-setting/" rel="permalink">Debian 9 (Stretch) - ファイアウォール設定！
+</a>
+        &nbsp;<small>(2017-08-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) でファイアウォールを設定する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/14/debian-9-ntp-chrony-installation/" rel="permalink">Debian 9 (Stretch) - NTP サーバ Chrony 構築！
+</a>
+        &nbsp;<small>(2017-08-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に NTP サーバ Chrony を構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/12/debian-9-anti-virus-installation/" rel="permalink">Debian 9 (Stretch) - アンチウィルスソフト導入！
+</a>
+        &nbsp;<small>(2017-08-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/10/debian-9-chrootkit-installation/" rel="permalink">Debian 9 (Stretch) - rootkit 検出ツール chkrootkit インストール！
+</a>
+        &nbsp;<small>(2017-08-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルー...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/08/debian-9-automation-security-update/" rel="permalink">Debian 9 (Stretch) - セキュリティ・アップデートの自動化！
+</a>
+        &nbsp;<small>(2017-08-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) のセキュリティ・アップデートを自動化する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/06/debian-9-ssh-installation/" rel="permalink">Debian 9 (Stretch) - SSH サーバ構築！
+</a>
+        &nbsp;<small>(2017-08-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) 上に SSH サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/04/debian-9-initial-setting/" rel="permalink">Debian 9 (Stretch) - サーバ初期設定！
+</a>
+        &nbsp;<small>(2017-08-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) インストール後の初期設定についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/08/02/debian-9-installation-for-small-server/" rel="permalink">Debian 9 (Stretch) - インストール（サーバ用途・最小構成）！
+</a>
+        &nbsp;<small>(2017-08-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) をサーバ用途・最小構成でインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/07/26/debian-changing-nic-card/" rel="permalink">Debian - LANカード(NIC)の増設＆変更！
+</a>
+        &nbsp;<small>(2017-07-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 系がインストールされたマシンに LAN カード (NIC) を増設し、これまで使用していたオンボードの LAN カードから変更する方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/07/18/linux-check-network-traffic-by-iftop/" rel="permalink">Linux - iftop コマンドでネットワークトラフィックの監視！
+</a>
+        &nbsp;<small>(2017-07-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux でネットワークトラフィックを監視ツールはたくさんありますが、今回は代表格(?)の iftop コマンドで監視する方法について記録します。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/07/10/linux-check-hdd-uuid/" rel="permalink">Linux - HDD の UUID を確認！
+</a>
+        &nbsp;<small>(2017-07-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux で、 HDD を追加接続した際に fstab でのマウントを既存のパーティションと同様に UUID で行いたいということがあります。
+
+以下、 Linux で HDD の UUID を確認する方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/05/18/linux-mariadb-mysql-backup-script/" rel="permalink">Linux - MariaDB バックアップ用 Bash スクリプト！
+</a>
+        &nbsp;<small>(2017-05-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方が Debian GNU/Linux 8.6 サーバ上のデータベース MariaDB(MySQL) をバックアップするのに使用している Bash スクリプトの紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/03/23/linux-cron-one-line-limit/" rel="permalink">Linux - cron １行の長さ制限について！
+</a>
+        &nbsp;<small>(2017-03-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux の cron(crontab) で処理を定時実行しようとした際に、コマンドが長すぎる旨のエラーとなることがあります。
+
+以下、現象・原因・対策についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/02/23/debian-8-unsolicied-bulk-mail/" rel="permalink">Debian 8 (Jessie) - Postfix &amp; Amavisd での “UNSOLICITED BULK EMAIL” 対策！
+</a>
+        &nbsp;<small>(2017-02-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8(Jessie) 上のメールサーバ（メール転送エージェント） Postfix に amavisd-new でウィルス対策を施した後に、 “Considered UNSOLICITED BULK EMAIL, apparently from you” というタイトルのメールが届く...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/02/03/debian-8-clamav-installation/" rel="permalink">Debian 8 (Jessie) - アンチウイルスソフト導入（改訂）！
+</a>
+        &nbsp;<small>(2017-02-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、 Debian GNU/Linux 8 (Jessie) でのアンチウイルスソフトの導入について記事にしました。
+
+
+  Debian 8 (Jessie) - アンチウイルスソフト導入！
+
+
+しかし、clamscan コマンドの代替として clamdscan を使用することについて詳細に説明していなかった...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/01/30/debian-monit-monitoring/" rel="permalink">Debian 8 (Jessie) - Monit でプロセス監視！
+</a>
+        &nbsp;<small>(2017-01-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">プロセスを監視するツール Monit を Debian 8 (Jessie) に導入する方法についての簡単な記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/01/22/debian-mroonga-installation-by-src/" rel="permalink">Debian 8 (Jessie) - Mroonga インストール（by ソースビルド）！
+</a>
+        &nbsp;<small>(2017-01-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian 8 (Jessie) GNU/Linux 上の MariaDB 10.1.19 に全文検索エンジン Groonga の機能を実現するストレージエンジン Mroonga をソースをビルドしてインストールする方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/07/27/debian-8-amavis-error/" rel="permalink">AMaViS - エラー(on Debian 8 Jessie)！
+</a>
+        &nbsp;<small>(2015-07-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 Jessie で Postfix と AMaViS を連携してメールのウイルスチェックを行うようにしているのですが、メールログにエラーメッセージが出力されていたので、調査して対策を施しました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/07/06/debian-8-roundcube-mail-installation/" rel="permalink">Debian 8 (Jessie) - Web メールシステム Roundcube Webmail インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2015-07-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に Web メールソフト RoundcubeMail をソースをビルドしてインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/07/04/debian-8-munin-additional-setting/" rel="permalink">Debian 8 (Jessie) - munin 各種監視追加！
+</a>
+        &nbsp;<small>(2015-07-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) にインストールしたサーバ監視ツール munin に各種監視を追加する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてく...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/07/03/debian-8-munin-installation/" rel="permalink">Debian 8 (Jessie) - サーバ監視ツール munin 導入！
+</a>
+        &nbsp;<small>(2015-07-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) にサーバ監視ツール munin をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/30/debian-8-php-cooperation-with-nginx/" rel="permalink">Debian 8 (Jessie) - PHP と Nginx の連携！
+</a>
+        &nbsp;<small>(2015-06-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) にインストールした PHP を Web サーバ Nginx と連携する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーして...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/29/debian-8-php-installation-by-src/" rel="permalink">Debian 8 (Jessie) - PHP インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2015-06-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に PHP をソースをビルドしてインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/28/debian-8-git-installation-by-src/" rel="permalink">Debian 8 (Jessie) - Git インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2015-06-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に Git サーバをソースをビルドしてインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/27/debian-8-automatic-backup-setting/" rel="permalink">Debian 8 (Jessie) - 自動バックアップ運用！
+</a>
+        &nbsp;<small>(2015-06-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) で自動バックアップ運用する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/26/debian-8-logwatch-installation/" rel="permalink">Debian 8 (Jessie) - ログ解析ツール logwatch インストール！
+</a>
+        &nbsp;<small>(2015-06-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) にログ監視ツール LogWatch をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/25/debian-8-rsync-dir-synchronizing-by-xinetd/" rel="permalink">Debian 8 (Jessie) - Rsync でディレクトリ同期（xinetd 使用）！
+</a>
+        &nbsp;<small>(2015-06-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) の Rsync サーバでクライアントとディレクトリ同期（xinetd 使用）する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/23/debian-8-python-3-4-installation-by-src/" rel="permalink">Debian 8 (Jessie) - Python 3.4 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2015-06-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に Python 3.4 をソースをビルドしてインストール方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/22/debian-8-ruby-2-2-installation-by-src/" rel="permalink">Debian 8 (Jessie) - Ruby 2.2 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2015-06-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に Ruby 2.2 をソースをビルドしてインストール方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/20/debian-8-nginx-ssl-connection-setting/" rel="permalink">Debian 8 (Jessie) - Web サーバ Nginx で SSL 接続！
+</a>
+        &nbsp;<small>(2015-06-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてくだ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/19/debian-8-nginx-installation-by-official-apt/" rel="permalink">Debian 8 (Jessie) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！
+</a>
+        &nbsp;<small>(2015-06-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に Web サーバ Nginx を導入する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/18/debian-8-mariadb-installation/" rel="permalink">Debian 8 (Jessie) - DB サーバ MariaDB 構築！
+</a>
+        &nbsp;<small>(2015-06-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に DB サーバ MariaDB を導入する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/16/debian-8-postfix-log-analysis/" rel="permalink">Debian 8 (Jessie) - Postfix ログ解析！
+</a>
+        &nbsp;<small>(2015-06-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に導入した SMTP サーバ Postfix のログを解析する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/15/debian-8-postfix-cooperation-with-clamav/" rel="permalink">Debian 8 (Jessie) - Postfix と ClamAV の連携！
+</a>
+        &nbsp;<small>(2015-06-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に導入した SMTP サーバ Postfix を アンチウイルスソフト ClamAV と連携する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/14/debian-8-mail-ssl-setting/" rel="permalink">Debian 8 (Jessie) - メールサーバ SSL 設定！
+</a>
+        &nbsp;<small>(2015-06-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に導入したメールサーバを SSL 設定する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/13/debian-8-dovecot-installation/" rel="permalink">Debian 8 (Jessie) - POP/IMAP サーバ Dovecot 構築！
+</a>
+        &nbsp;<small>(2015-06-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/12/debian-8-postfix-installation/" rel="permalink">Debian 8 (Jessie) - SMTP サーバ Postfix 構築！
+</a>
+        &nbsp;<small>(2015-06-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に SMTP サーバ Postfix を構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/10/debian-8-samba-installation/" rel="permalink">Debian 8 (Jessie) - Samba サーバ構築！
+</a>
+        &nbsp;<small>(2015-06-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に Samba サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/09/debian-8-nfs-port-fixing/" rel="permalink">Debian 8 (Jessie) - NFS サーバのポート固定！
+</a>
+        &nbsp;<small>(2015-06-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に NFS サーバで使用するポートを固定化する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/08/debian-8-nfs-installation/" rel="permalink">Debian 8 (Jessie) - NFS サーバ構築！
+</a>
+        &nbsp;<small>(2015-06-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に NFS サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/06/debian-8-ftp-installation/" rel="permalink">Debian 8 (Jessie) - FTP サーバ構築！
+</a>
+        &nbsp;<small>(2015-06-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に FTP サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/05/debian-8-bind-chroot/" rel="permalink">Debian 8 (Jessie) - BIND の chroot 化！
+</a>
+        &nbsp;<small>(2015-06-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に構築した DNS サーバを chroot 化する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/04/debian-8-bind-installation/" rel="permalink">Debian 8 (Jessie) - DNS サーバ構築！
+</a>
+        &nbsp;<small>(2015-06-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に DNS サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/03/debian-8-service-management/" rel="permalink">Debian 8 (Jessie) - サービスの管理！
+</a>
+        &nbsp;<small>(2015-06-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) でのサービスの管理についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/05/31/debian-8-ntp-chrony-installation/" rel="permalink">Debian 8 (Jessie) - NTP サーバ Chrony 構築！
+</a>
+        &nbsp;<small>(2015-05-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に NTP サーバ Chrony を構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/05/30/debian-8-firewall-setting/" rel="permalink">Debian 8 (Jessie) - ファイアウォール設定！
+</a>
+        &nbsp;<small>(2015-05-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) でファイアウォールを設定する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/05/29/debian-8-anti-virus-installation/" rel="permalink">Debian 8 (Jessie) - アンチウイルスソフト導入！
+</a>
+        &nbsp;<small>(2015-05-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/05/27/debian-8-chrootkit-installation/" rel="permalink">Debian 8 (Jessie) - rootkit 検出ツール chkrootkit インストール！
+</a>
+        &nbsp;<small>(2015-05-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーし...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/05/25/debian-8-automation-security-update/" rel="permalink">Debian 8 (Jessie) - セキュリティ・アップデートの自動化！
+</a>
+        &nbsp;<small>(2015-05-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) のセキュリティ・アップデートを自動化する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/05/24/debian-8-ssh-installation/" rel="permalink">Debian 8 (Jessie) - SSH サーバ構築！
+</a>
+        &nbsp;<small>(2015-05-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) 上に SSH サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/05/23/debian-8-initial-setting/" rel="permalink">Debian 8 (Jessie) - サーバ初期設定！
+</a>
+        &nbsp;<small>(2015-05-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) インストール後の初期設定についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/05/22/debian-8-installation-for-small-server/" rel="permalink">Debian 8 (Jessie) - インストール（サーバ用途・最小構成）！
+</a>
+        &nbsp;<small>(2015-05-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) をサーバ用途・最小構成でインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/03/21/debian-wheezy-logging-when-wrong-root-password/" rel="permalink">Debian Wheezy - su(root) パスワード誤入力時のログ！
+</a>
+        &nbsp;<small>(2015-03-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+Debian GNU/Linux Wheezy 7.8.0 で、su - コマンドで root のパスワードを誤入力した場合についての単なる備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/02/14/mysql-error-when-datadir-changed-on-debian/" rel="permalink">MySQL - datadir 変更時のエラー対策(on Debian)！
+</a>
+        &nbsp;<small>(2015-02-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux Mint などの Debian GNU/Linux 系のディストリビューション上に Apt で MySQL サーバをインストール後に datadir を変更すると、エラーで起動しなく状況に陥るようです。
+（ちなみに、 Debian Wheezy 上の MariaDB では今回のような現象は発生しない（...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/02/11/debian-7-8-security-update-automatically/" rel="permalink">Debian 7 Wheezy - セキュリティ・アップデートの自動化！
+</a>
+        &nbsp;<small>(2015-02-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">cron-apt でもパッケージアップデートの自動化は可能であるが、今回は unattended-upgrades でセキュリティ・アップデートの自動化を行う。
+
+ちなみに、インストール済みの各種パッケージを自動アップデートするのは（依存パッケージの整合性等の問題があるため）危険であり、当方はセキュリティ・アップ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/02/05/debian-7-8-disappearance-of-root-password/" rel="permalink">Debian GNU/Linux Wheezy - root のパスワードが消えた！
+</a>
+        &nbsp;<small>(2015-02-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux Wheezy (7.8.0) での作業中に root のパスワードが消滅し root ユーザになれなくなったため、原因の調査を行い対策を施しました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/01/29/debian-7-8-mariadb-10-0-installation-by-apt/" rel="permalink">Debian 7.8.0 - DB サーバ MariaDB 10.0 系インストール（Apt 使用）！
+</a>
+        &nbsp;<small>(2015-01-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、MariaDB 5.5 系を Linux Mint に MariaDB 公式リポジトリからインストールしたり、Debian GNU/Linux にソースをビルドしてインストールしたりしました。
+
+
+  MariaDB - Linux Mint にインストール（apt 使用）！
+  Debian 7 Whee...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/01/26/debian-7-8-nginx-installation-by-apt/" rel="permalink">Debian 7.8 - Web サーバ Nginx インストール（Apt 使用）！
+</a>
+        &nbsp;<small>(2015-01-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前 Debian GNU/Linux Wheezy 7.1.0 サーバで Web・プロキシサーバ Nginx をソースビルドでインストールする方法について紹介しました。
+
+
+  Debian 7 Wheezy - Web サーバ Nginx をインストール（ソースビルド）！
+
+
+今回は Nginx 公式の Ap...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/01/20/vsftpd-ssl-error-on-filezilla/" rel="permalink">vsftpd - Over SSL/TLS 設定すると FileZilla でエラー！
+</a>
+        &nbsp;<small>(2015-01-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+普段は自宅サーバ上でのファイルのアップロード・ダウンロードは FileZilla で SSH(SFTP) 接続で行なっているため、 FTP サーバを使用することはありませんが、一時的に FTP サーバ(+SSL)で使用したい事案が発生した場合にそなえて準備だけはしておきたいと考えています。
+
+しか...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/01/17/debian-7-8-ufw-installation/" rel="permalink">Debian 7.8 - ファイアウォール ufw 導入！
+</a>
+        &nbsp;<small>(2015-01-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前 Debian GNU/Linux 7.1.0 サーバでファイアウォール iptables を設定する方法について紹介しました。
+
+
+  Debian 7 Wheezy - ファイアウォール設定！
+
+
+今回は iptables のフロントエンドツール ufw(= “Uncomplicated Firewall...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/07/20/linux-bash-setting-files-debian/" rel="permalink">Linux - bash 設定ファイル（Debian 系）！
+</a>
+        &nbsp;<small>(2014-07-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は Redhat 系 Linux ディストリビューション上の bash(Bourne Shell) の読み込み順について簡単に説明しました。
+
+
+  Linux - bash 設定ファイル！
+
+
+その中で Debian 系は若干異なると記載しました。
+今回は Debian 系での bash 設定ファイル読み込...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/24/debian-7-pcspkr-error/" rel="permalink">Debian 7 Wheezy - 起動時に pcspkr ドライバのエラー！
+</a>
+        &nbsp;<small>(2013-11-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 Wheezy 起動時に dmesg に pcspkr ドライバ（スピーカー用ドライバ）関連のエラーが出力されることがあります。
+
+以下、現象と原因、対策についての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/22/debian-7-charset-on-console/" rel="permalink">Debian 7 Wheezy - コンソールでの日本語表示！
+</a>
+        &nbsp;<small>(2013-11-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 をインストール後、コンソールで日本語が文字化けする場合の対処法についてです。
+
+SSH 接続できれば文字化けは起こらないでしょうが、インストール後 SSH 接続するまでの間の応急処置についての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/16/debian-7-munin-optional-setting/" rel="permalink">Debian 7 Wheezy - munin 各種監視追加！
+</a>
+        &nbsp;<small>(2013-11-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバ上に構築したサーバ監視ツール munin に監視項目を追加する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/14/debian-7-install-munin/" rel="permalink">Debian 7 Wheezy - サーバ監視ツール munin 導入！
+</a>
+        &nbsp;<small>(2013-11-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバ上にサーバ監視ツール munin をインストール・設定する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/13/debian-7-squirrelmail-by-nginx/" rel="permalink">Debian 7 Wheezy - SquirrelMail を Nginx で！
+</a>
+        &nbsp;<small>(2013-11-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバ上の Web メールシステム SquirrelMail を Web サーバ Nginx で運用する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/12/debian-7-install-squirrelmail/" rel="permalink">Debian 7 Wheezy - Web メールシステム SquirrelMail インストール！
+</a>
+        &nbsp;<small>(2013-11-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバに Web メールシステム SquirrelMail をインストール・設定する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/10/debian-7-apache2-ssl/" rel="permalink">Debian 7 Wheezy - Apache2 の SSL 化！
+</a>
+        &nbsp;<small>(2013-11-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバ上の Web サーバ Apache2 を SSL 化する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/09/debian-7-install-php5/" rel="permalink">Debian 7 Wheezy - PHP インストール！
+</a>
+        &nbsp;<small>(2013-11-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバに PHP5 をインストール・設定する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/08/debian-7-install-apache2/" rel="permalink">Debian 7 Wheezy - Web サーバ Apache2 インストール！
+</a>
+        &nbsp;<small>(2013-11-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバに Web サーバ Apache2 を構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/06/debian-7-setting-auto-backup/" rel="permalink">Debian 7 Wheezy - 自動バックアップ運用！
+</a>
+        &nbsp;<small>(2013-11-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバに自動バックアップ運用を行う方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/04/debian-7-install-logwatch/" rel="permalink">Debian 7 Wheezy - ログ解析ツール logwatch インストール！
+</a>
+        &nbsp;<small>(2013-11-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバにログ解析ツール logwatch を導入する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/02/debian-7-sync-directory-by-rsync/" rel="permalink">Debian 7 Wheezy - Rsync でディレクトリ同期（xined 使用）！
+</a>
+        &nbsp;<small>(2013-11-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバに Rsync を導入して、クライアント側のディレクトリと同期させる方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/31/debian-7-install-ruby-by-src/" rel="permalink">Debian 7 Wheezy - Ruby 2.0 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2013-10-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバにプログラミング言語 Ruby をソースをビルドしてインストールする方法についての記録です。
+
+何てことない、いつものよくある方法ですが。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/30/debian-7-install-mariadb-by-src/" rel="permalink">Debian 7 Wheezy - DB サーバ MariaDB をインストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2013-10-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバに DB サーバ MariaDB をソースをビルドしてインストールする方法についての記録です。
+
+当然、MySQL と同様な方法でインストールできます。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/28/debian-7-install-nginx-by-src/" rel="permalink">Debian 7 Wheezy - Web サーバ Nginx をインストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2013-10-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバに Web サーバ Nginx をソースをビルドしてインストールする方法についての記録です。
+
+ちなみに以前、Linux Mint にソースビルドでインストールする方法を紹介しています。（当然、似たような内容となっています）
+
+
+  Nginx - Lin...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/27/debian-7-anlyze-postfix-log/" rel="permalink">Debian 7 Wheezy - Postfix ログ解析！
+</a>
+        &nbsp;<small>(2013-10-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバに構築したメールサーバ Postfix のログを pflogsumm で解析する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/26/debian-7-cooperate-postfix-clamav/" rel="permalink">Debian 7 Wheezy - Postfix と ClamAV の連携！
+</a>
+        &nbsp;<small>(2013-10-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバに構築したメールサーバ Postfix をアンチウイルスソフト ClamAV と連携させる方法（スパムフィルタも導入）についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/25/debian-7-setting-mail-ssl/" rel="permalink">Debian 7 Wheezy - メールサーバ SSL 設定！
+</a>
+        &nbsp;<small>(2013-10-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバに構築したメールサーバ Postfix, Dovecot で SSL 通信を可能にする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/24/debian-7-install-dovecot/" rel="permalink">Debian 7 Wheezy - POP/IMAP サーバ Dovecot 構築！
+</a>
+        &nbsp;<small>(2013-10-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバに POP/IMAP サーバ Dovecot を構築する方法についての記録です。
+
+POP は Post Office Protocol の略、IMAP は Internet Message Access Protocol の略で電子メール受信プロトコルのことで...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/23/debian-7-install-postfix/" rel="permalink">Debian 7 Wheezy - SMTP サーバ Postfix 構築！
+</a>
+        &nbsp;<small>(2013-10-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバに SMTP サーバ Postfix を構築する方法についての記録です。
+
+SMTP サーバは Simple Mail Transfer Protocol の略で、現在最も普及している電子メール送信プロトコルに対応したサーバのことです。
+
+以前古いバージョンでの...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/22/debian-7-install-samba/" rel="permalink">Debian 7 Wheezy - Samba サーバ構築！
+</a>
+        &nbsp;<small>(2013-10-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバにファイルサーバ Samba を構築する方法についての記録です。
+
+Samba サーバは、Windows クライアントでも（もちろん Unix/Linux クライアントでも）使用できるファイルサーバです。
+
+以前古いバージョンでの作業時に残していた記録を参考に作...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/21/debian-7-fix-nfs-port/" rel="permalink">Debian 7 Wheezy - NFS サーバのポート固定！
+</a>
+        &nbsp;<small>(2013-10-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバに構築した NFS サーバのポートを固定する方法についての記録です。
+
+NFS サーバは接続の都度ポート番号が変わる仕様になっており、ファイアウォールを運用している場合に都合が悪いからです。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/20/debian-7-install-nfs/" rel="permalink">Debian 7 Wheezy - NFS サーバ構築！
+</a>
+        &nbsp;<small>(2013-10-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバにファイルサーバ NFS を構築する方法についての記録です。
+NFS サーバは、クライアントが Unix/Linux である場合のファイルサーバです。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容とな...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/19/debian-7-install-vsftp/" rel="permalink">Debian 7 Wheezy - FTP サーバ構築！
+</a>
+        &nbsp;<small>(2013-10-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバに FTP サーバ vsftpd を構築する方法についての記録です。
+FTP サーバは世の中に pro-FTPD, pure-FTPd 等色々とありますが、使い慣れた vsftpd で FTP サーバを構築します。
+
+以前古いバージョンでの作業時に残していた記録...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/18/debian-7-dns-chroot/" rel="permalink">Debian 7 Wheezy - BIND の chroot 化！
+</a>
+        &nbsp;<small>(2013-10-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 に 構築した DNS サーバ BIND を chroot 化する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+ちなみに、「BIND の chroot 化」とは、仮...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/17/debian-7-install-dns/" rel="permalink">Debian 7 Wheezy - DNS サーバ構築！
+</a>
+        &nbsp;<small>(2013-10-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 に DNS サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/16/debian-7-manage-service/" rel="permalink">Debian 7 Wheezy - サービスの管理！
+</a>
+        &nbsp;<small>(2013-10-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバでのサービスを管理する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/15/debian-7-setting-iptables/" rel="permalink">Debian 7 Wheezy - ファイアウォール設定！
+</a>
+        &nbsp;<small>(2013-10-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバでファイアウォール iptables を設定する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/14/debian-7-install-ssh/" rel="permalink">Debian 7 Wheezy - SSH サーバ構築！
+</a>
+        &nbsp;<small>(2013-10-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 に SSH サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/13/debian-7-install-ntp/" rel="permalink">Debian 7 Wheezy - NTP サーバ構築！
+</a>
+        &nbsp;<small>(2013-10-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 に NTP サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/12/debian-7-install-clamav/" rel="permalink">Debian 7 Wheezy - アンチウイルスソフト導入！
+</a>
+        &nbsp;<small>(2013-10-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバにアンチウイルスソフト ClamAV を導入する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/11/debian-7-install-chkrootkit/" rel="permalink">Debian 7 Wheezy - rootkit 検出ツール chkrootkit インストール！
+</a>
+        &nbsp;<small>(2013-10-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 サーバに rootkit 検知ツール chkrootkit をインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/10/debian-7-setting/" rel="permalink">Debian 7 Wheezy - サーバ初期設定！
+</a>
+        &nbsp;<small>(2013-10-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 をサーバ用途・最小構成でインストールした後の初期設定についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/09/debian-7-install-for-small-server/" rel="permalink">Debian 7 Wheezy - インストール（サーバ用途・最小構成）！
+</a>
+        &nbsp;<small>(2013-10-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7.1.0 をサーバ用途・最小構成でインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+そして、今後しばらく Debian サーバ構築関連の記事が続きます。ご了承くだ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/12/debian-service-autostart/" rel="permalink">Debian 系 Linux - サービス自動起動設定！
+</a>
+        &nbsp;<small>(2013-01-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">CentOS や Scientific Linux 等の Redhat 系 Linux では、CUI モードでのサービス自動起動設定は chkconfig コマンドを使用します。
+一方、Ubuntu や Linux Mint 等の Debian 系 Linux では、update-rc.d コマンドを使用します。...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/11/16/16002013/" rel="permalink">玄箱HG - 電源ボタンで正規シャットダウン！
+</a>
+        &nbsp;<small>(2012-11-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian 6.0(squeeze) 化した「玄箱/HG」のシャットダウンを電源ボタン長押しで行う方法についてのメモです。
+
+Telnet や SSH 接続しなくても、電源ボタンの長押しで正規の shutdown コマンドでシャットダウンしたのと同じことする、ということです。
+単純に電源ボタンを長押ししただけで...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/11/15/15002004/" rel="permalink">玄箱HG - Debian 6.0(squeeze) 化！
+</a>
+        &nbsp;<small>(2012-11-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は、「玄箱/HG」を Debian 5.0(lenny) 化しました。
+
+Debian lenny はセキュリティアップデートの提供が終了していることもあり、今回 Debian 6.0(squeeze) 化しました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/11/14/14002031/" rel="permalink">玄箱HG - Debian 5.0(lenny) 化！
+</a>
+        &nbsp;<small>(2012-11-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">過去にも、何度か記事にしたことのある「玄箱/HG」についてです。
+
+Debian 3.0(woody) 化、Debian 3.1(sarge) 化、Debian 4.0(etch) 化、Fedora 7 化 〜 Fedora 12 化したりしてきました。
+
+今回は、今さらながら Debian 5.0(lenny)...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/04/12/12002049/" rel="permalink">玄箱ＨＧ - ＤｅｂｉａｎをＬｅｎｎｙ化！
+</a>
+        &nbsp;<small>(2010-04-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回うちの玄箱HGをU-Boot化したので、今日は玄箱HGにインストール済みのDebian 4.0(etch)を5.0(lenny)にアップグレードしてみました。
+
+【2012.11.03 追記】
+※以下の内容は古いです。
+ ※実際は、玄箱の Debian 5.0(lenny) 化は、Kernel バージョンの違...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2009/12/22/22002031/" rel="permalink">玄箱ＨＧ － Ｄｅｂｉａｎにファイルサーバ！
+</a>
+        &nbsp;<small>(2009-12-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は玄箱ＨＧのＤｅｂｉａｎ（ｅｔｃｈ）に、
+ファイルサーバ（ｓａｍｂａ）を導入しました。
+
+以下が作業手順です。
+あくまでも自分の記録用です。
+理解できないような点があれば、ネット等で調べてみてください。
+
+作業記録
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2009/12/21/21002046/" rel="permalink">玄箱ＨＧ － ＤｅｂｉａｎにＮＴＰサーバ！
+</a>
+        &nbsp;<small>(2009-12-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、
+うちの玄箱ＨＧのＤｅｂｉａｎを「ｅｔｃｈ」化しました。
+
+今日は玄箱ＨＧの時刻管理のために、
+ＮＴＰサーバを導入しました。
+
+以下が作業手順です。
+あくまでも自分の記録用です。
+理解できないような点があれば、ネット等で調べてみてください。
+
+作業記録
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2009/12/20/20002049/" rel="permalink">玄箱ＨＧ － Ｄｅｂｉａｎをｅｔｃｈ化！
+</a>
+        &nbsp;<small>(2009-12-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、
+うちの玄箱ＨＧにＤｅｂｉａｎ（ｓａｒｇｅ）を
+インストールしました。
+
+なので次は「ｅｔｃｈ」化です。
+
+以下が作業手順です。
+あくまでも自分の記録用です。
+理解できないような点があれば、ネット等で調べてみてください。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2009/12/19/19002043/" rel="permalink">玄箱ＨＧ － Ｄｅｂｉａｎ（ｓａｒｇｅ）導入！
+</a>
+        &nbsp;<small>(2009-12-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は玄箱ＨＧにＤｅｂｉａｎ（ｓａｒｇｅ）を導入してみました。
+この間、この玄箱ＨＧにＦｅｄｏｒａ１２を導入したばかりですが、
+ちょっと試してみたいこともあったんで。。。
+（実は以前、何回かＤｅｂｉａｎを導入したこともあります）
+※いずれは、「ｅｔｃｈ」化、「ｌｅｎｎｙ」化していくかもれません。
+
+</p>
+  </article>
+</div>
+
+    
+    <div id="google-ad-3"></div>
+    <div id="google-ad-2"></div>
+  </div>
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,1426 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>C++ - 多桁乗算（Karatsuba 法）！ - mk-mode BLOG</title>
+<meta name="description" content="先日、「標準（筆算）法」による多桁同士の乗算アルゴリズムを C++ に実装してみました。  C++ - 多桁乗算（標準（筆算）法）！今回は、「標準（筆算）法」より高速に乗算が可能な「Karatsuba 法」アルゴリズムを C++ で実装してみました。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="C++ - 多桁乗算（Karatsuba 法）！">
+<meta property="og:url" content="https://komasaru.github.io/2013/04/25/cpp-big-multiply-karatsuba/">
+
+
+  <meta property="og:description" content="先日、「標準（筆算）法」による多桁同士の乗算アルゴリズムを C++ に実装してみました。  C++ - 多桁乗算（標準（筆算）法）！今回は、「標準（筆算）法」より高速に乗算が可能な「Karatsuba 法」アルゴリズムを C++ で実装してみました。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="C++ - 多桁乗算（Karatsuba 法）！">
+  <meta name="twitter:description" content="先日、「標準（筆算）法」による多桁同士の乗算アルゴリズムを C++ に実装してみました。  C++ - 多桁乗算（標準（筆算）法）！今回は、「標準（筆算）法」より高速に乗算が可能な「Karatsuba 法」アルゴリズムを C++ で実装してみました。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/04/25/cpp-big-multiply-karatsuba/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-04-25T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/04/25/cpp-big-multiply-karatsuba/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="C++ - 多桁乗算（Karatsuba 法）！">
+    <meta itemprop="description" content="先日、「標準（筆算）法」による多桁同士の乗算アルゴリズムを C++ に実装してみました。  C++ - 多桁乗算（標準（筆算）法）！今回は、「標準（筆算）法」より高速に乗算が可能な「Karatsuba 法」アルゴリズムを C++ で実装してみました。">
+    <meta itemprop="datePublished" content="April 25, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">C++ - 多桁乗算（Karatsuba 法）！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-04-25T00:20:00+09:00">2013-04-25 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>先日、「標準（筆算）法」による多桁同士の乗算アルゴリズムを C++ に実装してみました。</p>
+
+<ul>
+  <li><a href="/2013/04/22/cpp-big-multiply-normal/" title="C++ - 多桁乗算（標準（筆算）法）！">C++ - 多桁乗算（標準（筆算）法）！</a></li>
+</ul>
+
+<p>今回は、「標準（筆算）法」より高速に乗算が可能な「Karatsuba 法」アルゴリズムを C++ で実装してみました。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Linux Mint 14 Nadia (64bit) での作業を想定。</li>
+  <li>g++ (Ubuntu/Linaro 4.7.2-2ubuntu1) 4.7.2</li>
+</ul>
+
+<p>また、当方の環境で扱える int 型の範囲は以下のとおり。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">int</code> : -2,147,483,648 〜 2,147,483,647</li>
+</ul>
+
+<h3 id="1-karatsuba-法について">1. Karatsuba 法について</h3>
+
+<p>「Karatsuba 法」とは、ロシア人が考案した乗算アルゴリズムで、”Karatsuba” は日本語のように思えるが考案者の名前を英語化したものである。<br />
+そして、「Karatsuba 法」の概要は以下のとおり。（数式が多いので\(\TeX\)で記載）</p>
+
+<p><img src="/images/2013/04/25/KARATSUBA.png" alt="KARATSUBA" title="KARATSUBA" /></p>
+
+<h3 id="2-c-ソース作成">2. C++ ソース作成</h3>
+
+<p>例として、以下のようにソースを作成した。概要は以下のとおり。</p>
+
+<ul>
+  <li>１個の配列で１桁を扱う。</li>
+  <li>計算可能な桁数は 2 のべき乗桁としている。<br />
+（2 のべき乗以外の桁数にすると、ロジックが複雑になるため）</li>
+  <li>繰り上がり処理は、最後にまとめて行う（但し、非常に大きい乗算桁数では桁あふれを起こすので注意）</li>
+  <li>配列数が４個（桁数が４桁）になったら、標準（筆算）法による乗算を行う。<br />
+（４個でなくてもよい。桁溢れしない程度で設定する）</li>
+  <li>計算に使用する被乗数・乗数は、手入力は困難なため、乱数を使用している。</li>
+  <li>冒頭の <code class="language-plaintext highlighter-rouge">// #define TEST</code> は、乗算回数をカウントしたり、処理時間を計測するテストを行うため。<br />
+テストを行うならコメントを解除する。<br />
+（テストの処理時間計測では <code class="language-plaintext highlighter-rouge">clock</code> 関数を使用しているため、あまり精度はよくない）</li>
+</ul>
+
+<p>File: <code class="language-plaintext highlighter-rouge">multiply_karatsuba.cpp</code></p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+</pre></td><td class="code"><pre><span class="cm">/*********************************************
+ * 多倍長乗算 ( by Karatsuba 法 )
+ *   - 多倍長 * 多倍長
+ *   - 最下位の桁を配列の先頭とする考え方
+ *********************************************/</span>
+<span class="cp">#include &lt;cstdlib&gt;   // for rand()
+#include &lt;iostream&gt;  // for cout
+#include &lt;math.h&gt;    // for pow()
+#include &lt;stdio.h&gt;   // for printf()
+</span>
+<span class="c1">//#define TEST       // テスト ( 乗算回数・処理時間 ) するならコメント解除</span>
+<span class="cp">#define D_MAX 1024   // 計算可能な最大桁数 ( 2のべき乗 )
+#define D     1024   // 実際に計算する桁数 ( D_MAX 以下の 4 の倍数 )
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="cm">/*
+ * 計算クラス
+ */</span>
+<span class="k">class</span> <span class="nc">Calc</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">A</span><span class="p">[</span><span class="n">D</span><span class="p">];</span>  <span class="c1">// 被乗数配列</span>
+    <span class="kt">int</span> <span class="n">B</span><span class="p">[</span><span class="n">D</span><span class="p">];</span>  <span class="c1">// 乗数配列</span>
+<span class="cp">#ifdef TEST
+</span>    <span class="kt">int</span> <span class="n">cnt_mul</span><span class="p">;</span>       <span class="c1">// 乗算回数</span>
+    <span class="kt">clock_t</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">;</span>    <span class="c1">// 計算開始CPU時刻、計算終了CPU時刻</span>
+    <span class="kt">double</span> <span class="n">tt</span><span class="p">;</span>         <span class="c1">// 計算時間</span>
+<span class="cp">#endif
+</span>
+    <span class="nl">public:</span>
+        <span class="n">Calc</span><span class="p">();</span>                                            <span class="c1">// コンストラクタ</span>
+        <span class="kt">void</span> <span class="n">calcKaratsuba</span><span class="p">();</span>                              <span class="c1">// 計算 ( Karatsuba 法 )</span>
+
+    <span class="nl">private:</span>
+        <span class="kt">void</span> <span class="n">multiplyNormal</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="p">);</span>     <span class="c1">// 乗算 ( 標準(筆算)法 )</span>
+        <span class="kt">void</span> <span class="n">multiplyKaratsuba</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="p">,</span><span class="kt">int</span> <span class="o">*</span><span class="p">);</span>  <span class="c1">// 乗算 ( Karatsuba 法 )</span>
+        <span class="kt">void</span> <span class="n">doCarry</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>                          <span class="c1">// 繰り上がり・借り処理</span>
+        <span class="kt">void</span> <span class="n">display</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="p">);</span>                 <span class="c1">// 結果出力</span>
+<span class="p">};</span>
+
+<span class="cm">/*
+ * コンストラクタ
+ */</span>
+<span class="n">Calc</span><span class="o">::</span><span class="n">Calc</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="cm">/* ====================================== *
+     * テストなので、被乗数・乗数は乱数を使用 *
+     * ====================================== */</span>
+
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>  <span class="c1">// LOOP インデックス</span>
+
+    <span class="c1">// 被乗数・乗数桁数設定</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">D</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">10</span><span class="p">;</span>
+        <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * 計算 ( Karatsuba 法 )
+ */</span>
+<span class="kt">void</span> <span class="n">Calc</span><span class="o">::</span><span class="n">calcKaratsuba</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">D_MAX</span><span class="p">];</span>      <span class="c1">// 被乗数配列</span>
+    <span class="kt">int</span> <span class="n">b</span><span class="p">[</span><span class="n">D_MAX</span><span class="p">];</span>      <span class="c1">// 乗数配列</span>
+    <span class="kt">int</span> <span class="n">z</span><span class="p">[</span><span class="n">D_MAX</span> <span class="o">*</span> <span class="mi">6</span><span class="p">];</span>  <span class="c1">// 計算結果用配列</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>             <span class="c1">// LOOPインデックス</span>
+
+<span class="cp">#ifdef TEST
+</span>    <span class="n">t1</span> <span class="o">=</span> <span class="n">clock</span><span class="p">();</span>  <span class="c1">// 計算開始時刻</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="n">l</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cnt_mul</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 乗算回数リセット</span>
+<span class="cp">#endif
+</span>    <span class="c1">// 配列初期設定 ( コンストラクタで設定した配列を設定 )</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">D</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 最大桁に満たない部分は 0 を設定</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">D</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">D_MAX</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 乗算 ( Karatsuba 法 )</span>
+    <span class="n">multiplyKaratsuba</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">D_MAX</span><span class="p">,</span> <span class="n">z</span><span class="p">);</span>
+
+    <span class="c1">// 繰り上がり・借り処理</span>
+    <span class="n">doCarry</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">D_MAX</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+<span class="cp">#ifdef TEST
+</span>    <span class="p">}</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">clock</span><span class="p">();</span>  <span class="c1">// 計算終了時刻</span>
+    <span class="n">tt</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)(</span><span class="n">t2</span> <span class="o">-</span> <span class="n">t1</span><span class="p">)</span> <span class="o">/</span> <span class="n">CLOCKS_PER_SEC</span><span class="p">;</span>  <span class="c1">// ==== 計算時間</span>
+<span class="cp">#endif
+</span>
+    <span class="c1">// 結果出力</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">z</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * 乗算 ( 標準(筆算)法 )
+ */</span>
+<span class="kt">void</span> <span class="n">Calc</span><span class="o">::</span><span class="n">multiplyNormal</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="kt">int</span> <span class="n">tLen</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">z</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">;</span>  <span class="c1">// ループインデックス</span>
+
+    <span class="c1">// 計算結果初期化</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">tLen</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="c1">// 各配列を各桁とみなして乗算</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">tLen</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">tLen</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">z</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+<span class="cp">#ifdef TEST
+</span>            <span class="n">cnt_mul</span><span class="o">++</span><span class="p">;</span>  <span class="c1">// 乗算カウント</span>
+<span class="cp">#endif
+</span>        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * 乗算 ( Karatsuba 法 )
+ */</span>
+<span class="kt">void</span> <span class="n">Calc</span><span class="o">::</span><span class="n">multiplyKaratsuba</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="kt">int</span> <span class="n">tLen</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">z</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// ==== 変数宣言</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">a0</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>                    <span class="c1">// 被乗数/右側配列ポインタ</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">a1</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="n">tLen</span> <span class="o">/</span> <span class="mi">2</span><span class="p">];</span>             <span class="c1">// 被乗数/左側配列ポインタ</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">b0</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>                    <span class="c1">// 乗数  /右側配列ポインタ</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">b1</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="n">tLen</span> <span class="o">/</span> <span class="mi">2</span><span class="p">];</span>             <span class="c1">// 乗数  /左側配列ポインタ</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">v</span>  <span class="o">=</span> <span class="o">&amp;</span><span class="n">z</span><span class="p">[</span><span class="n">tLen</span> <span class="o">*</span> <span class="mi">5</span><span class="p">];</span>             <span class="c1">// v  (= a1 + a0) 用配列ポインタ</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">w</span>  <span class="o">=</span> <span class="o">&amp;</span><span class="n">z</span><span class="p">[</span><span class="n">tLen</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">+</span> <span class="n">tLen</span> <span class="o">/</span> <span class="mi">2</span><span class="p">];</span>  <span class="c1">// w  (= b1 + b0) 用配列ポインタ</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">x1</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">z</span><span class="p">[</span><span class="n">tLen</span> <span class="o">*</span> <span class="mi">0</span><span class="p">];</span>             <span class="c1">// x1 (= a0 * b0) 用配列ポインタ</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">x2</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">z</span><span class="p">[</span><span class="n">tLen</span> <span class="o">*</span> <span class="mi">1</span><span class="p">];</span>             <span class="c1">// x2 (= a1 * b1) 用配列ポインタ</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">x3</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">z</span><span class="p">[</span><span class="n">tLen</span> <span class="o">*</span> <span class="mi">2</span><span class="p">];</span>             <span class="c1">// x3 (= v * w)   用配列ポインタ</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>                              <span class="c1">// LOOPインデックス</span>
+
+    <span class="c1">// ==== 配列が４個になった場合は標準乗算</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">tLen</span> <span class="o">&lt;=</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">multiplyNormal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">tLen</span><span class="p">,</span> <span class="n">z</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// ==== v = a1 + a0, w = b1 + b0</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">tLen</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">a0</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b0</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="c1">// ==== x1 = a0 * b0</span>
+    <span class="n">multiplyKaratsuba</span><span class="p">(</span><span class="n">a0</span><span class="p">,</span> <span class="n">b0</span><span class="p">,</span> <span class="n">tLen</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">x1</span><span class="p">);</span>
+
+    <span class="c1">// ==== x2 = a1 * b1</span>
+    <span class="n">multiplyKaratsuba</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">tLen</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">x2</span><span class="p">);</span>
+
+    <span class="c1">// ==== x3 = (a1 + a0) * (b1 + b0)</span>
+    <span class="n">multiplyKaratsuba</span><span class="p">(</span><span class="n">v</span><span class="p">,</span>  <span class="n">w</span><span class="p">,</span>  <span class="n">tLen</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">x3</span><span class="p">);</span>
+
+    <span class="c1">// ==== x3 = x3 - x1 - x2</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">tLen</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">x3</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">x1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">x2</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+    <span class="c1">// ==== z = x2 * R^2 + (x3 - x2 - x1) * R + x1</span>
+    <span class="c1">//      ( x1, x2 は既に所定の位置にセットされているので、x3 のみ加算 )</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">tLen</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">tLen</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">x3</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * 繰り上がり・借り処理
+ */</span>
+<span class="kt">void</span> <span class="n">Calc</span><span class="o">::</span><span class="n">doCarry</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">tLen</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">cr</span><span class="p">;</span>  <span class="c1">// 繰り上がり</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>   <span class="c1">// ループインデックス</span>
+
+    <span class="n">cr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">tLen</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">cr</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">cr</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">cr</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">cr</span> <span class="o">*</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// オーバーフロー時</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">cr</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">printf</span><span class="p">(</span><span class="s">"[ OVERFLOW!! ] %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">cr</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * 結果出力
+ */</span>
+<span class="kt">void</span> <span class="n">Calc</span><span class="o">::</span><span class="n">display</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">z</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>  <span class="c1">// LOOPインデックス</span>
+
+    <span class="c1">// 上位桁の不要な 0 を削除するために、配列サイズを取得</span>
+    <span class="kt">int</span> <span class="n">aLen</span> <span class="o">=</span> <span class="n">D_MAX</span><span class="p">,</span> <span class="n">bLen</span> <span class="o">=</span> <span class="n">D_MAX</span><span class="p">,</span> <span class="n">zLen</span> <span class="o">=</span> <span class="n">D_MAX</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">aLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">aLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">aLen</span><span class="o">--</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">bLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">bLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">bLen</span><span class="o">--</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">zLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">zLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">zLen</span><span class="o">--</span><span class="p">;</span>
+
+    <span class="c1">// a 値</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"a =</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">aLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">aLen</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">printf</span><span class="p">(</span><span class="s">" "</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">aLen</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+
+    <span class="c1">// b 値</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"b =</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">bLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">bLen</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">printf</span><span class="p">(</span><span class="s">" "</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">bLen</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+
+    <span class="c1">// z 値</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"z =</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">zLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">zLen</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">printf</span><span class="p">(</span><span class="s">" "</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">zLen</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n\n</span><span class="s">"</span><span class="p">);</span>
+
+<span class="cp">#ifdef TEST
+</span>    <span class="n">printf</span><span class="p">(</span><span class="s">"Counts of multiply / 1 loop = %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">cnt_mul</span><span class="p">);</span>     <span class="c1">// 乗算回数</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"Total time of all loops     = %f seconds</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">tt</span><span class="p">);</span>  <span class="c1">// 処理時間</span>
+<span class="cp">#endif
+</span><span class="p">}</span>
+
+<span class="cm">/*
+ * メイン処理
+ */</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">try</span>
+    <span class="p">{</span>
+        <span class="c1">// 計算クラスインスタンス化</span>
+        <span class="n">Calc</span> <span class="n">objCalc</span><span class="p">;</span>
+
+        <span class="c1">// 乗算 ( Karatsuba 法 )</span>
+        <span class="n">objCalc</span><span class="p">.</span><span class="n">calcKaratsuba</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="p">(...)</span> <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"例外発生！"</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 正常終了</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/8ee3d88ecf4c7392467591519686c926" title="Gist - C++ source code to multiply big-digit values with Karatsuba method.">Gist - C++ source code to multiply big-digit values with Karatsuba method.</a></li>
+</ul>
+
+<h3 id="3-c-ソースコンパイル">3. C++ ソースコンパイル</h3>
+
+<p>（<code class="language-plaintext highlighter-rouge">-Wall</code> は警告出力、<code class="language-plaintext highlighter-rouge">-O2</code> 最適化のオプション）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ g++ -Wall -O2 -o multiply_karatsuba multiply_karatsuba.cpp
+</code></pre></div></div>
+
+<p>何も出力されなければ成功です。</p>
+
+<h3 id="4-実行">4. 実行</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./multiply_karatsuba
+a =
+5541050205 0676367860 0766496541 6816500114 2004376325 
+9767889290 6255254084 0240121540 8107405889 9787092091 
+5419878423 0874067594 2003014938 3144522637 4398888312 
+7310798560 7723593059 2397340736 1413730264 5938118523 
+4930451302 5419027365 4464726284 4804570926 7856292055 
+6998051538 5419752372 6773282553 8808373348 1147925911 
+4359623467 7539209376 4653165686 1586483987 2549340871 
+3021915969 1733401776 8399208132 2374597797 5435289449 
+3231696299 4733994450 9183503889 6019289550 6163237384 
+1227614331 9992503157 1308593784 1932936594 0929424801 
+1950071971 0154922124 5193227045 8846648127 7190389019 
+7738758027 8658264055 2312943257 6472467201 4300012776 
+8190966928 1447873191 5142312908 4227930383 4209210656 
+3795585493 1003705337 6408294366 3725395154 3867977667 
+2088616184 7174172213 2970374580 1779335759 6608705902 
+2427117686 6025440760 1301612932 7987359459 5970899460 
+8046752633 3980870333 6828242461 4139003942 9948802522 
+0620475091 9136269879 5660460399 9031389202 4282408151 
+0692857294 5420047984 6336838598 4572973744 3149168608 
+0328966779 1710456127 7745469624 3867344243 6645626135 
+8419139297 2271203029 6373
+b =
+1396721814 7429756767 9697316781 5799720913 8264945924 
+4078224610 6827742845 2280304370 0503322098 7712258675 
+0868106360 9153608487 2203105281 1296790491 3736052352 
+3603808771 3400665829 7092057744 8109671179 4731531344 
+3030270662 8830811711 2659042336 9560268360 3635996665 
+4439774037 4364813709 6286856908 2604898197 3917156409 
+3643090100 1850620740 4921392254 2053171203 9180636269 
+2516952585 7247460426 4661757895 1691002203 5994933942 
+3774155041 9930026893 1701001730 3020409083 4387572767 
+2892156396 8494440010 8636358355 3901596440 6681549762 
+3712160872 3463720621 7944173552 7388558576 9726708891 
+6702305518 3009506306 1062776798 5121255133 1714952137 
+9438940915 6880693386 7752483286 3454240702 0741628501 
+7609630135 1485681831 5729573433 4022884541 9500149345 
+9210492650 0111751027 4399813889 9483783897 0746831499 
+0567300092 4668876475 9172290045 8910594972 4181323728 
+7410986527 3076964838 8889816294 3754256945 6100329502 
+4194808714 9521709228 6724065836 1340110964 7865665010 
+2838147426 9059336788 0834918375 1781651644 0088515395 
+8991435367 5179991062 2180962809 1488047557 9575103060 
+4793267825 3098666971 2556
+z =
+7739305698 0040071707 2189003016 6876576420 6222934577 
+2023571781 7526420167 7391080311 4489897836 5606748456 
+8717128396 3330797577 7919515520 8809157391 6002244534 
+7621606312 5432389533 8866984447 8836029874 7409726049 
+4007356506 3340487227 9506520886 5423598238 9290074291 
+2974566830 6442700798 4333021269 4431263626 6374539628 
+6851995363 4864882970 5572176762 3085210352 4275581437 
+0897142486 7452815352 0137113684 7907862599 4876133849 
+0555712981 8780385401 5355569540 8154357653 2471295504 
+9948804529 3912328019 6503502489 7665018794 4772954562 
+9490632556 4789219622 8100182409 9768422449 2193203215 
+2014712520 6011177626 0750743785 4179584096 4152952580 
+0306309481 6426383088 4574821896 2120453447 6352845378 
+1951677793 9159184937 5572755307 5303031964 7543670100 
+5278150467 3261231786 8254099723 7458674159 9839559097 
+0426560067 4606133160 9122200444 2711896648 1817977034 
+5524752649 8581262782 1602383986 9796468261 1996639974 
+2576401764 9436438874 1313980272 5810664985 4229675065 
+8756237666 5532150529 3593433033 9405077272 1609682116 
+1412446780 1520707085 6922581219 2890317519 6136848317 
+5503977733 8847761461 5785599640 3027734783 2267048714 
+4548525727 8351825512 2431118909 0134095266 6304941694 
+5445017714 0685438098 2538356667 9630620121 3564506833 
+4791511337 3608870632 1523183163 7757254037 7900758746 
+7454636070 9231962770 4771204380 7741285769 9964102181 
+0886535087 9117351045 4341821086 0872546443 4774459105 
+1523897188 5238232263 9284079260 9689690063 7880596067 
+0489076973 1329053634 9696312126 8798891537 2027232304 
+0211601447 5986863179 6199396248 7964245496 2337368324 
+3233702362 0325033738 4242202489 2049900204 5559372819 
+3157276326 8950937657 0461483163 3231712199 0249152697 
+0627420697 7960887162 9208245972 1570702376 5711273790 
+4233182037 3921249831 5354876969 9937253686 0092967148 
+0764175165 1517752657 8361489911 0434806183 4354010504 
+0070277791 9744702000 8959936173 5978939803 1722903884 
+7001691849 0262982850 8638795795 0315838055 3558236720 
+1363881352 6338316728 0294918962 7054187105 8431713068 
+4930188748 7096773537 8631442377 9673526455 0412143942 
+3297377182 0841986843 4612914627 7539475285 2246449343 
+4643618733 2015199866 9194241922 3316370313 5694752406 
+0784066772 8685693975 1607530824 8097551139 9359388
+</code></pre></div></div>
+
+<p>標準（筆算）法で計算した結果と同じ結果になった。</p>
+
+<h3 id="5-検証">5. 検証</h3>
+
+<p>上記のコードを利用して、乗算回数が何回になるか、計算にどれくらい時間がかかるかを検証してみた。<br />
+比較のため標準（筆算）法での乗算テスト結果も掲載しているが、標準（筆算）法による乗算より乗算回数は圧倒的に減り、計算に要する時間も圧倒的に短くなった。<br />
+ちなみに、再帰的に Karatsuba 法を適用しているので、計算量は単純に\(O(n ^{\log_{2}3})\)にはならない。</p>
+
+<p><img src="/images/2013/04/25/MULTIPLY_KARATSUBA_CPP.png" alt="MULTIPLY_KARATSUBA_CPP" title="MULTIPLY_KARATSUBA_CPP" /></p>
+
+<p>グラフにしてみると、Karatsuba 法が標準（筆算）法より優れているのがよく分かる。</p>
+
+<p><img src="/images/2013/04/25/BIG_MULTIPLY_TEST.png" alt="BIG_MULTIPLY_TEST" title="BIG_MULTIPLY_TEST" /></p>
+
+<hr />
+
+<p>期待通りの結果になり、大変満足です。<br />
+やはり、桁数が大きくなればなるほど効果を発揮します。</p>
+
+<p>今回は１桁を１個の配列で扱ったが、乗算する桁数があらかじめ分かっているのなら、1個の配列で4桁を扱ったりすると速度が向上する。（但し、桁あふれに注意）<br />
+また、今回は繰り上がり処理を最後にまとめて行なっているが、乗算の都度行うとさらに速度が向上する。（但し、繰り上がりにより配列の個数が変動するので厄介）</p>
+
+<p>このアルゴリズムをどこで使用できるかは、今のところ不明だが、知っておいて悪くないでしょう。<br />
+（ちなみに、少し前に当ブログでも紹介した Arctan 系公式を使用した円周率の計算でも、使用する場面は無い）</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/c%E8%A8%80%E8%AA%9E" class="page__taxonomy-item" rel="tag">C言語</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%95%B0%E5%AD%A6" class="page__taxonomy-item" rel="tag">数学</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-04-25T00:20:00+09:00">2013-04-25 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=C%2B%2B+-+%E5%A4%9A%E6%A1%81%E4%B9%97%E7%AE%97%EF%BC%88Karatsuba+%E6%B3%95%EF%BC%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F04%2F25%2Fcpp-big-multiply-karatsuba%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F04%2F25%2Fcpp-big-multiply-karatsuba%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F04%2F25%2Fcpp-big-multiply-karatsuba%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/04/23/ruby-big-multiply-normal/" class="pagination--pager" title="Ruby - 多桁乗算（標準（筆算）法）！
+">Previous</a>
+    
+    
+      <a href="/2013/04/26/ruby-big-multiply-karatsuba/" class="pagination--pager" title="Ruby - 多桁乗算（Karatsuba 法）！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/04/25/cpp-big-multiply-karatsuba/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/04/25/cpp-big-multiply-karatsuba"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,2343 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby - JPL 天文暦データから ICRS 座標を計算！ - mk-mode BLOG</title>
+<meta name="description" content="前回、NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している月・惑星の暦の最新版 DE430 のバイナリ形式のデータを Ruby で読み込みました。  Ruby - JPL 天文暦バイナリデータの読み込み！今回は、読み込んだデータから ICRS 座標を計算してみました。（読み込んだデータとは、 ICRS 座標の計算に必要なチェビシェフ多項式の係数データ）">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby - JPL 天文暦データから ICRS 座標を計算！">
+<meta property="og:url" content="https://komasaru.github.io/2016/04/30/ruby-calc-jpl-icrs-coordinate/">
+
+
+  <meta property="og:description" content="前回、NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している月・惑星の暦の最新版 DE430 のバイナリ形式のデータを Ruby で読み込みました。  Ruby - JPL 天文暦バイナリデータの読み込み！今回は、読み込んだデータから ICRS 座標を計算してみました。（読み込んだデータとは、 ICRS 座標の計算に必要なチェビシェフ多項式の係数データ）">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby - JPL 天文暦データから ICRS 座標を計算！">
+  <meta name="twitter:description" content="前回、NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している月・惑星の暦の最新版 DE430 のバイナリ形式のデータを Ruby で読み込みました。  Ruby - JPL 天文暦バイナリデータの読み込み！今回は、読み込んだデータから ICRS 座標を計算してみました。（読み込んだデータとは、 ICRS 座標の計算に必要なチェビシェフ多項式の係数データ）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2016/04/30/ruby-calc-jpl-icrs-coordinate/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2016-04-30T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2016/04/30/ruby-calc-jpl-icrs-coordinate/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby - JPL 天文暦データから ICRS 座標を計算！">
+    <meta itemprop="description" content="前回、NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している月・惑星の暦の最新版 DE430 のバイナリ形式のデータを Ruby で読み込みました。  Ruby - JPL 天文暦バイナリデータの読み込み！今回は、読み込んだデータから ICRS 座標を計算してみました。（読み込んだデータとは、 ICRS 座標の計算に必要なチェビシェフ多項式の係数データ）">
+    <meta itemprop="datePublished" content="April 30, 2016">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby - JPL 天文暦データから ICRS 座標を計算！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-04-30T00:20:00+09:00">2016-04-30 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>前回、NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している月・惑星の暦の最新版 DE430 のバイナリ形式のデータを Ruby で読み込みました。</p>
+
+<ul>
+  <li><a href="/2016/04/26/ruby-read-jpl-bin-data" title="Ruby - JPL 天文暦バイナリデータの読み込み！ - mk-mode BLOG">Ruby - JPL 天文暦バイナリデータの読み込み！</a></li>
+</ul>
+
+<p>今回は、読み込んだデータから ICRS 座標を計算してみました。（読み込んだデータとは、 ICRS 座標の計算に必要なチェビシェフ多項式の係数データ）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件注意事項">0. 前提条件、注意事項</h3>
+
+<ul>
+  <li>Ruby 2.3.0-p0 での作業を想定。</li>
+  <li>使用するバイナリ形式データは、テキスト形式データを「<a href="/2016/04/18/merging-jpl-data" title="JPL 天文暦データのバイナリ化！ - mk-mode BLOG">JPL 天文暦データのバイナリ化！</a>」の方法でバイナリ化したもの。（今回は DE430 用の “ascp1550.430” 〜 “ascp2550.430” 全てをバイナリ化。ファイル名は “JPLEPH” に変更）</li>
+  <li>あらかじめ用意されているバイナリデータを使用する場合は <code class="language-plaintext highlighter-rouge">KSIZE</code> 値が組み込まれていないので、別途テキスト形式のヘッダファイルを読み込む必要がある。</li>
+  <li>テキスト形式データの仕様については「<a href="/2016/04/14/about-jpl-de430" title="月・惑星の暦 JPL DE430 について！ - mk-mode BLOG">月・惑星の暦 JPL DE430 について！</a>」を参照。</li>
+  <li>バイナリ形式データの仕様については「<a href="/2016/04/22/about-jpl-binary-data" title="JPL 天文暦バイナリデータの仕様！ - mk-mode BLOG">JPL 天文暦バイナリデータの仕様！</a>」を参照。</li>
+</ul>
+
+<h3 id="1-ruby-スクリプトの作成">1. Ruby スクリプトの作成</h3>
+
+<p>（バイナリデータ読み込みには <code class="language-plaintext highlighter-rouge">IO.binread</code> メソッドを使用）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">jpl_calc_de430</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518
+519
+520
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553
+554
+555
+556
+557
+558
+559
+560
+561
+562
+563
+564
+565
+566
+567
+568
+569
+570
+571
+572
+573
+574
+575
+576
+577
+578
+579
+580
+581
+582
+583
+584
+585
+586
+587
+588
+589
+590
+591
+592
+593
+594
+595
+596
+597
+598
+599
+600
+601
+602
+603
+604
+605
+606
+607
+608
+609
+610
+611
+612
+613
+614
+615
+616
+617
+618
+619
+620
+621
+622
+623
+624
+625
+626
+627
+628
+629
+630
+631
+632
+633
+634
+635
+636
+637
+638
+639
+640
+641
+642
+643
+644
+645
+646
+647
+648
+649
+650
+651
+652
+653
+654
+655
+656
+657
+658
+659
+660
+661
+662
+663
+664
+665
+666
+667
+668
+669
+670
+671
+672
+673
+674
+675
+676
+677
+678
+679
+680
+681
+682
+683
+684
+685
+686
+687
+688
+689
+690
+691
+692
+693
+694
+695
+696
+697
+698
+699
+700
+701
+702
+703
+704
+705
+706
+707
+708
+709
+710
+711
+712
+713
+714
+715
+716
+717
+718
+719
+720
+721
+722
+723
+724
+725
+726
+727
+728
+729
+730
+731
+732
+733
+734
+735
+736
+737
+738
+739
+740
+741
+742
+743
+744
+745
+746
+747
+748
+749
+750
+751
+752
+753
+</pre></td><td class="code"><pre><span class="c1">#! /usr/local/bin/ruby</span>
+<span class="c1"># coding: utf-8</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1">#= JPLEPH(JPL の DE430 バイナリデータ)読み込み、座標（位置・速度）を計算する</span>
+<span class="c1">#</span>
+<span class="c1"># date          name            version</span>
+<span class="c1"># 2016.03.12    mk-mode.com     1.00 新規作成</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright(C) 2016 mk-mode.com All Rights Reserved.</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1"># 【引数】</span>
+<span class="c1">#   [第１] 対象天体番号（必須）</span>
+<span class="c1">#           1: 水星            (Mercury)</span>
+<span class="c1">#           2: 金星            (Venus)</span>
+<span class="c1">#           3: 地球            (Earth)</span>
+<span class="c1">#           4: 火星            (Mars)</span>
+<span class="c1">#           5: 木星            (Jupiter)</span>
+<span class="c1">#           6: 土星            (Saturn)</span>
+<span class="c1">#           7: 天王星          (Uranus)</span>
+<span class="c1">#           8: 海王星          (Neptune)</span>
+<span class="c1">#           9: 冥王星          (Pluto)</span>
+<span class="c1">#          10: 月              (Moon)</span>
+<span class="c1">#          11: 太陽            (Sun)</span>
+<span class="c1">#          12: 太陽系重心      (Solar system Barycenter)</span>
+<span class="c1">#          13: 地球 - 月の重心 (Earth-Moon Barycenter)</span>
+<span class="c1">#          14: 地球の章動      (Earth Nutations)</span>
+<span class="c1">#          15: 月の秤動        (Lunar mantle Librations)</span>
+<span class="c1">#   [第２] 基準天体番号（必須。 0, 1 - 13）</span>
+<span class="c1">#          （ 0 は、対象天体番号が 14, 15 のときのみ）</span>
+<span class="c1">#   [第３] ユリウス日（省略可。省略時は現在日時のユリウス日）</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1"># 【注意事項】</span>
+<span class="c1">#   * 求める座標は「赤道直角座標(ICRS)」</span>
+<span class="c1">#   * 天体番号は、係数データの番号（並び順）と若干異なるので注意する。</span>
+<span class="c1">#     （特に、天体番号 3, 10, と 12 以降）</span>
+<span class="c1">#     係数データの並び順：</span>
+<span class="c1">#       水星(1)、金星(2)、地球 - 月の重心(3)、火星(4)、木星(5)、土星(6)、</span>
+<span class="c1">#       天王星(7)、海王星(8)、冥王星(9)、月（地心）(10)、太陽(11)、</span>
+<span class="c1">#       地球の章動(12)、月の秤動(13)</span>
+<span class="c1">#   * 時刻系は「太陽系力学時(TDB)」である。（≒地球時(TT)）</span>
+<span class="c1">#   * 天体番号が 1 〜 13 の場合は、 x, y, z の位置・速度（6要素）、</span>
+<span class="c1">#     天体番号が 14 の場合は、黄経における章動 Δψ, 黄道傾斜における章動 Δε の</span>
+<span class="c1">#     角位置・角速度（4要素）、</span>
+<span class="c1">#     天体番号が 15 の場合は、 φ, θ, ψ の角位置・角速度（6要素）。</span>
+<span class="c1">#   * 対象天体番号 = 基準天体番号 は、無意味なので処理しない。</span>
+<span class="c1">#   * 天体番号が 12 の場合は、 x, y, z の位置・速度の値は全て 0.0 とする。</span>
+<span class="c1">#   * その他、JPL 提供の FORTRAN プログラム "testeph.f" を参考にした。</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1">#++</span>
+<span class="k">class</span> <span class="nc">JplCalcDe430</span>
+  <span class="no">USAGE</span> <span class="o">=</span> <span class="o">&lt;&lt;-</span><span class="no">"EOS"</span><span class="sh">
+【使用方法】 ./jpl_calc_de430.rb 対象天体番号 基準天体番号 [ユリウス日]
+【天体番号】（対象天体番号: 1 - 15, 基準天体番号: 0 - 13）
+   1: 水星,  2: 金星,  3: 地球,  4: 火星,  5: 木星,
+   6: 土星,  7: 天王星,  8: 海王星,  9: 冥王星, 10: 月,
+  11: 太陽,  12: 太陽系重心,  13: 地球 - 月の重心,
+  14: 地球の章動,  15: 月の秤動,
+   0: 対象天体番号 14, 15 の場合に指定
+  ※対象天体番号≠基準天体番号
+</span><span class="no">EOS</span>
+  <span class="no">FILE_BIN</span> <span class="o">=</span> <span class="s2">"JPLEPH"</span>
+  <span class="no">KSIZE</span> <span class="o">=</span> <span class="mi">2036</span>
+  <span class="no">RECL</span>  <span class="o">=</span> <span class="mi">4</span>
+  <span class="no">ASTRS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"Mercury"</span><span class="p">,</span> <span class="s2">"Venus"</span><span class="p">,</span> <span class="s2">"Earth"</span><span class="p">,</span> <span class="s2">"Mars"</span><span class="p">,</span> <span class="s2">"Jupiter"</span><span class="p">,</span> <span class="s2">"Saturn"</span><span class="p">,</span> <span class="s2">"Uranus"</span><span class="p">,</span>
+    <span class="s2">"Neptune"</span><span class="p">,</span> <span class="s2">"Pluto"</span><span class="p">,</span> <span class="s2">"Moon"</span><span class="p">,</span> <span class="s2">"Sun"</span><span class="p">,</span> <span class="s2">"Solar system Barycenter"</span><span class="p">,</span>
+    <span class="s2">"Earth-Moon barycenter"</span><span class="p">,</span> <span class="s2">"Earth Nutations"</span><span class="p">,</span> <span class="s2">"Lunar mantle Librations"</span>
+  <span class="p">]</span>
+  <span class="no">KIND</span> <span class="o">=</span> <span class="mi">2</span>      <span class="c1"># 計算区分（0: 計算しない、1: 位置のみ計算、2: 位置・速度を計算）</span>
+                <span class="c1"># （但し、現時点では 1 の場合の処理は実装していない）</span>
+  <span class="no">BARY</span> <span class="o">=</span> <span class="kp">true</span>   <span class="c1"># 基準フラグ（true: 太陽系重心が基準 false: 太陽が基準）</span>
+  <span class="no">KM</span>   <span class="o">=</span> <span class="kp">false</span>  <span class="c1"># 単位フラグ（true: km, km/sec, false: AU, AU/day）</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="n">get_args</span>                       <span class="c1"># コマンドライン引数取得</span>
+    <span class="vi">@pos</span>      <span class="o">=</span> <span class="mi">0</span>                  <span class="c1"># レコード位置</span>
+    <span class="vi">@list</span>     <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1"># 計算対象フラグ一覧配列</span>
+    <span class="vi">@ipts</span>     <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span>          <span class="c1"># 定数一覧配列</span>
+    <span class="vi">@coeffs</span>   <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span>          <span class="c1"># 係数一覧配列</span>
+    <span class="vi">@idx_subs</span> <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>      <span class="c1"># サブ区間のインデックス</span>
+    <span class="vi">@tcs</span>      <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>      <span class="c1"># サブ区間内の時間（チェビシェフ多項式用に正規化）</span>
+    <span class="vi">@pvs</span>      <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">11</span><span class="p">).</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="p">}</span>  <span class="c1"># 位置・角度データ配列</span>
+    <span class="vi">@pvs_2</span>    <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>      <span class="c1"># 位置・角度データ配列（対象天体と基準天体の差算出用）</span>
+    <span class="vi">@rrds</span>     <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># 算出データ（対象天体と基準天体の差）配列</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">exec</span>
+    <span class="k">begin</span>
+      <span class="c1"># === ヘッダ情報取得</span>
+      <span class="n">get_ttl</span>     <span class="c1"># TTL（タイトル）</span>
+      <span class="n">get_cnam</span>    <span class="c1"># CNAM（定数名）</span>
+      <span class="n">get_ss</span>      <span class="c1"># SS（ユリウス日（開始、終了）、分割日数）</span>
+      <span class="n">check_jd</span>    <span class="c1"># 引数のユリウス日をチェック</span>
+      <span class="n">get_ncon</span>    <span class="c1"># NCON（定数の数）</span>
+      <span class="n">get_au</span>      <span class="c1"># AU（天文単位）</span>
+      <span class="n">get_emrat</span>   <span class="c1"># EMRAT（地球と月の質量比）</span>
+      <span class="n">get_ipt</span>     <span class="c1"># IPT（オフセット、係数の数、サブ区間数）（水星〜地球の章動）</span>
+      <span class="n">get_numde</span>   <span class="c1"># NUMDE（DEバージョン番号）取得</span>
+      <span class="n">get_ipt_13</span>  <span class="c1"># IPT（オフセット、係数の数、サブ区間数）（月の秤動）</span>
+      <span class="n">get_cval</span>    <span class="c1"># CVAL（定数値）</span>
+      <span class="n">get_jdepoc</span>  <span class="c1"># JDEPOC（元期）</span>
+
+      <span class="c1"># === 各種計算</span>
+      <span class="n">get_list</span>    <span class="c1"># 計算対象フラグ一覧（係数データの並びに対応）取得</span>
+      <span class="n">get_coeff</span>   <span class="c1"># 係数取得（対象、基準天体のインデックス分を取得）</span>
+      <span class="c1">#p @ttl</span>
+      <span class="c1">#p @cnams</span>
+      <span class="c1">#p @sss</span>
+      <span class="c1">#p @ncon</span>
+      <span class="c1">#p @au</span>
+      <span class="c1">#p @emrat</span>
+      <span class="c1">#p @ver_de</span>
+      <span class="c1">#p @ipts</span>
+      <span class="c1">#p @cvals</span>
+      <span class="c1">#p @jdepoc</span>
+      <span class="c1">#p @list</span>
+      <span class="c1">#p @coeffs</span>
+      <span class="c1">#exit</span>
+
+      <span class="c1"># 補間（11:太陽）</span>
+      <span class="vi">@pv_sun</span> <span class="o">=</span> <span class="n">interpolate</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+      <span class="c1"># 補間（1:水星〜10:月）</span>
+      <span class="mi">0</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="k">next</span> <span class="k">if</span> <span class="vi">@list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="vi">@pvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">interpolate</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">next</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">8</span>
+        <span class="k">next</span> <span class="k">if</span> <span class="no">BARY</span>
+        <span class="vi">@pvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="vi">@pvs</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="nf">map</span><span class="p">.</span><span class="nf">with_index</span> <span class="k">do</span> <span class="o">|</span><span class="n">pv</span><span class="p">,</span> <span class="n">j</span><span class="o">|</span>
+          <span class="n">pv</span> <span class="o">-</span> <span class="vi">@pv_sun</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+      <span class="c1"># 補間（14:地球の章動）</span>
+      <span class="k">if</span> <span class="vi">@list</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="vi">@ipts</span><span class="p">[</span><span class="mi">11</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="vi">@p_nut</span> <span class="o">=</span> <span class="n">interpolate</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="c1"># 補間（15:月の秤動）</span>
+      <span class="k">if</span> <span class="vi">@list</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="vi">@ipts</span><span class="p">[</span><span class="mi">12</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="vi">@pvs</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="n">interpolate</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="c1"># 対象天体と基準天体の差</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="vi">@astrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">14</span>
+        <span class="vi">@rrds</span> <span class="o">=</span> <span class="vi">@p_nut</span> <span class="o">+</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span> <span class="k">if</span> <span class="vi">@ipts</span><span class="p">[</span><span class="mi">11</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+      <span class="k">when</span> <span class="vi">@astrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">15</span>
+        <span class="vi">@rrds</span> <span class="o">=</span> <span class="vi">@pvs</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="k">if</span> <span class="vi">@ipts</span><span class="p">[</span><span class="mi">12</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+      <span class="k">else</span>
+        <span class="mi">0</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="vi">@pvs_2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="vi">@pvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">}</span>
+        <span class="vi">@pvs_2</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="vi">@pv_sun</span>           <span class="k">if</span> <span class="vi">@astrs</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+        <span class="vi">@pvs_2</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="k">if</span> <span class="vi">@astrs</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+        <span class="vi">@pvs_2</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <span class="vi">@pvs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>           <span class="k">if</span> <span class="vi">@astrs</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>
+        <span class="k">if</span> <span class="vi">@astrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="vi">@astrs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">30</span> <span class="o">||</span> <span class="vi">@astrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="vi">@astrs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">13</span>
+          <span class="vi">@pvs_2</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">else</span>
+          <span class="vi">@pvs_2</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="vi">@pvs</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nf">map</span><span class="p">.</span><span class="nf">with_index</span> <span class="k">do</span> <span class="o">|</span><span class="n">pv</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span>
+            <span class="n">pv</span> <span class="o">-</span> <span class="vi">@pvs</span><span class="p">[</span><span class="mi">9</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="vi">@emrat</span><span class="p">)</span>
+          <span class="k">end</span> <span class="k">unless</span> <span class="vi">@list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+          <span class="vi">@pvs_2</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">=</span> <span class="vi">@pvs_2</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nf">map</span><span class="p">.</span><span class="nf">with_index</span> <span class="k">do</span> <span class="o">|</span><span class="n">pv</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span>
+            <span class="n">pv</span> <span class="o">+</span> <span class="vi">@pvs</span><span class="p">[</span><span class="mi">9</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+          <span class="k">end</span> <span class="k">unless</span> <span class="vi">@list</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">end</span>
+        <span class="mi">0</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+          <span class="vi">@rrds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="vi">@pvs_2</span><span class="p">[</span><span class="vi">@astrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="vi">@pvs_2</span><span class="p">[</span><span class="vi">@astrs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="c1"># === 結果出力</span>
+      <span class="nb">display</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"[</span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="s2">"</span>
+      <span class="n">e</span><span class="p">.</span><span class="nf">backtrace</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">tr</span><span class="o">|</span> <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"</span><span class="se">\t</span><span class="si">#{</span><span class="n">tr</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span>
+      <span class="nb">exit</span> <span class="mi">1</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># コマンドライン引数取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * 第１引数の値をインスタンス変数 @astrs[0] に設定する</span>
+  <span class="c1">#   * 第２引数の値をインスタンス変数 @astrs[1] に設定する</span>
+  <span class="c1">#   * 第３引数の値をインスタンス変数 @jd に設定する</span>
+  <span class="c1">#     （但し、第３引数が存在しない場合は現在日時を設定する）</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_args</span>
+    <span class="c1"># 対象、基準天体番号</span>
+    <span class="k">unless</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+      <span class="nb">puts</span> <span class="no">USAGE</span>
+      <span class="nb">exit</span> <span class="mi">0</span>
+    <span class="k">end</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="n">center</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">target</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">||</span> <span class="n">target</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">)</span> <span class="o">||</span>
+       <span class="p">(</span><span class="n">center</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">center</span> <span class="o">&gt;</span> <span class="mi">13</span><span class="p">)</span> <span class="o">||</span>
+        <span class="n">target</span> <span class="o">==</span> <span class="n">center</span> <span class="o">||</span>
+       <span class="p">(</span><span class="n">target</span> <span class="o">==</span> <span class="mi">14</span> <span class="o">&amp;&amp;</span> <span class="n">center</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">||</span>
+       <span class="p">(</span><span class="n">target</span> <span class="o">==</span> <span class="mi">15</span> <span class="o">&amp;&amp;</span> <span class="n">center</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">||</span>
+       <span class="p">(</span><span class="n">target</span> <span class="o">!=</span> <span class="mi">14</span> <span class="o">&amp;&amp;</span> <span class="n">target</span> <span class="o">!=</span> <span class="mi">15</span> <span class="o">&amp;&amp;</span> <span class="n">center</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="no">USAGE</span>
+      <span class="nb">exit</span> <span class="mi">0</span>
+    <span class="k">end</span>
+    <span class="vi">@astrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">target</span><span class="p">,</span> <span class="n">center</span><span class="p">]</span>
+
+    <span class="c1"># ユリウス日</span>
+    <span class="vi">@jd</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="vi">@jd</span> <span class="o">=</span> <span class="vi">@jd</span> <span class="p">?</span> <span class="vi">@jd</span><span class="p">.</span><span class="nf">to_f</span> <span class="p">:</span> <span class="n">gc_to_jd</span><span class="p">({</span>
+      <span class="ss">year:  </span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y"</span><span class="p">).</span><span class="nf">to_i</span><span class="p">,</span>
+      <span class="ss">month: </span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%m"</span><span class="p">).</span><span class="nf">to_i</span><span class="p">,</span>
+      <span class="ss">day:   </span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%d"</span><span class="p">).</span><span class="nf">to_i</span><span class="p">,</span>
+      <span class="ss">hour:  </span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%H"</span><span class="p">).</span><span class="nf">to_i</span><span class="p">,</span>
+      <span class="ss">min:   </span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%M"</span><span class="p">).</span><span class="nf">to_i</span><span class="p">,</span>
+      <span class="ss">sec:   </span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%S"</span><span class="p">).</span><span class="nf">to_i</span>
+    <span class="p">})</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 年月日(グレゴリオ暦)からユリウス日(JD)を計算する</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * フリーゲルの公式を使用する</span>
+  <span class="c1">#     JD = int(365.25 * year)</span>
+  <span class="c1">#        + int(year / 400)</span>
+  <span class="c1">#        - int(year / 100)</span>
+  <span class="c1">#        + int(30.59 (month - 2))</span>
+  <span class="c1">#        + day</span>
+  <span class="c1">#        + 1721088</span>
+  <span class="c1">#   * 上記の int(x) は厳密には、 x を超えない最大の整数</span>
+  <span class="c1">#   * 「ユリウス日」でなく「準ユリウス日」を求めるなら、</span>
+  <span class="c1">#     `+ 1721088` を `- 678912` とする。</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: hash = {</span>
+  <span class="c1">#              year(int), month(int), day(int), hour(int), min(int), sec(int)</span>
+  <span class="c1">#            }</span>
+  <span class="c1">#   @return: jd (ユリウス日)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">gc_to_jd</span><span class="p">(</span><span class="nb">hash</span><span class="p">)</span>
+    <span class="n">year</span>  <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:year</span><span class="p">]</span>
+    <span class="n">month</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:month</span><span class="p">]</span>
+    <span class="n">day</span>   <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:day</span><span class="p">]</span>
+    <span class="n">hour</span>  <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:hour</span><span class="p">]</span>
+    <span class="n">min</span>   <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:min</span><span class="p">]</span>
+    <span class="n">sec</span>   <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:sec</span><span class="p">]</span>
+
+    <span class="k">begin</span>
+      <span class="c1"># 1月,2月は前年の13月,14月とする</span>
+      <span class="k">if</span> <span class="n">month</span> <span class="o">&lt;</span> <span class="mi">3</span>
+        <span class="n">year</span>  <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">month</span> <span class="o">+=</span> <span class="mi">12</span>
+      <span class="k">end</span>
+
+      <span class="c1"># 日付(整数)部分計算</span>
+      <span class="n">jd</span>  <span class="o">=</span> <span class="p">(</span><span class="mf">365.25</span> <span class="o">*</span> <span class="n">year</span><span class="p">).</span><span class="nf">floor</span>
+      <span class="n">jd</span> <span class="o">+=</span> <span class="p">(</span><span class="n">year</span> <span class="o">/</span> <span class="mf">400.0</span><span class="p">).</span><span class="nf">floor</span>
+      <span class="n">jd</span> <span class="o">-=</span> <span class="p">(</span><span class="n">year</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">).</span><span class="nf">floor</span>
+      <span class="n">jd</span> <span class="o">+=</span> <span class="p">(</span><span class="mf">30.59</span> <span class="o">*</span> <span class="p">(</span><span class="n">month</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)).</span><span class="nf">floor</span>
+      <span class="n">jd</span> <span class="o">+=</span> <span class="n">day</span>
+      <span class="n">jd</span> <span class="o">+=</span> <span class="mi">1721088</span>
+
+      <span class="c1"># 時間(小数)部分計算</span>
+      <span class="n">t</span>  <span class="o">=</span> <span class="n">sec</span> <span class="o">/</span> <span class="mf">3600.0</span>
+      <span class="n">t</span> <span class="o">+=</span> <span class="n">min</span> <span class="o">/</span> <span class="mf">60.0</span>
+      <span class="n">t</span> <span class="o">+=</span> <span class="n">hour</span>
+      <span class="n">t</span> <span class="o">/=</span> <span class="mf">24.0</span>
+
+      <span class="k">return</span> <span class="n">jd</span> <span class="o">+</span> <span class="n">t</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 引数のユリウス日をチェック</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * @jd の値をヘッダ情報のユリウス日（開始、終了）と比較・チェックする</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">check_jd</span>
+    <span class="k">if</span> <span class="vi">@jd</span> <span class="o">&lt;</span> <span class="vi">@sss</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span> <span class="vi">@jd</span> <span class="o">&gt;=</span> <span class="vi">@sss</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+      <span class="nb">puts</span> <span class="s2">"Please input JD s.t. </span><span class="si">#{</span><span class="vi">@sss</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> &lt;= JD &lt; </span><span class="si">#{</span><span class="vi">@sss</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">."</span>
+      <span class="nb">exit</span> <span class="mi">0</span>
+    <span class="k">end</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># TTL 取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * タイトルをインスタンス変数 @ttl に設定する</span>
+  <span class="c1">#   * 84 byte * 3</span>
+  <span class="c1">#   * ASCII文字列(スペースを詰める/後続するnull文字やスペースを削除)</span>
+  <span class="c1">#   * 取得したバイト数だけレコード位置 @pos を進める</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_ttl</span>
+    <span class="n">recl</span> <span class="o">=</span> <span class="mi">84</span>
+
+    <span class="k">begin</span>
+      <span class="vi">@ttl</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">2</span><span class="p">).</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="no">File</span><span class="p">.</span><span class="nf">binread</span><span class="p">(</span><span class="no">FILE_BIN</span><span class="p">,</span> <span class="n">recl</span><span class="p">,</span> <span class="vi">@pos</span> <span class="o">+</span> <span class="n">recl</span> <span class="o">*</span> <span class="n">i</span><span class="p">).</span><span class="nf">unpack</span><span class="p">(</span><span class="s2">"A*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">end</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+      <span class="vi">@pos</span> <span class="o">+=</span> <span class="n">recl</span> <span class="o">*</span> <span class="mi">3</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># CNAM 取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * 定数名をインスタンス変数（配列） @cnams に設定する</span>
+  <span class="c1">#   * 6 byte * 400</span>
+  <span class="c1">#   * ASCII文字列(スペースを詰める/後続するnull文字やスペースを削除)</span>
+  <span class="c1">#   * 取得したバイト数だけレコード位置 @pos を進める</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_cnam</span>
+    <span class="n">recl</span> <span class="o">=</span> <span class="mi">6</span>
+
+    <span class="k">begin</span>
+      <span class="vi">@cnams</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">399</span><span class="p">).</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="no">File</span><span class="p">.</span><span class="nf">binread</span><span class="p">(</span><span class="no">FILE_BIN</span><span class="p">,</span> <span class="n">recl</span><span class="p">,</span> <span class="vi">@pos</span> <span class="o">+</span> <span class="n">recl</span> <span class="o">*</span> <span class="n">i</span><span class="p">).</span><span class="nf">unpack</span><span class="p">(</span><span class="s2">"A*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">end</span>
+      <span class="vi">@pos</span> <span class="o">+=</span> <span class="n">recl</span> <span class="o">*</span> <span class="mi">400</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># SS 取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * ユリウス日（開始、終了）、分割日数をインスタンス変数（配列） @sss に</span>
+  <span class="c1">#     設定する</span>
+  <span class="c1">#   * 8 byte * 3</span>
+  <span class="c1">#   * 倍精度浮動小数点数(機種依存)</span>
+  <span class="c1">#   * 取得したバイト数だけレコード位置 @pos を進める</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_ss</span>
+    <span class="n">recl</span> <span class="o">=</span> <span class="mi">8</span>
+
+    <span class="k">begin</span>
+      <span class="vi">@sss</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">2</span><span class="p">).</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="no">File</span><span class="p">.</span><span class="nf">binread</span><span class="p">(</span><span class="no">FILE_BIN</span><span class="p">,</span> <span class="n">recl</span><span class="p">,</span> <span class="vi">@pos</span> <span class="o">+</span> <span class="n">recl</span> <span class="o">*</span> <span class="n">i</span><span class="p">).</span><span class="nf">unpack</span><span class="p">(</span><span class="s2">"d*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">end</span>
+      <span class="vi">@pos</span> <span class="o">+=</span> <span class="n">recl</span> <span class="o">*</span> <span class="mi">3</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># NCON 取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * 定数の数をインスタンス変数 @ncon に設定する</span>
+  <span class="c1">#   * 4 byte * 1</span>
+  <span class="c1">#   * unsigned int (符号なし整数, エンディアンと int のサイズに依存)</span>
+  <span class="c1">#   * 取得したバイト数だけレコード位置 @pos を進める</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_ncon</span>
+    <span class="n">recl</span> <span class="o">=</span> <span class="mi">4</span>
+
+    <span class="k">begin</span>
+      <span class="vi">@ncon</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">binread</span><span class="p">(</span><span class="no">FILE_BIN</span><span class="p">,</span> <span class="n">recl</span><span class="p">,</span> <span class="vi">@pos</span><span class="p">).</span><span class="nf">unpack</span><span class="p">(</span><span class="s2">"I*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="vi">@pos</span> <span class="o">+=</span> <span class="n">recl</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># AU 取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * AU（天文単位）の値をインスタンス変数 @au に設定する</span>
+  <span class="c1">#   * 8 byte * 1</span>
+  <span class="c1">#   * 倍精度浮動小数点数(機種依存)</span>
+  <span class="c1">#   * 取得したバイト数だけレコード位置 @pos を進める</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_au</span>
+    <span class="n">recl</span> <span class="o">=</span> <span class="mi">8</span>
+
+    <span class="k">begin</span>
+      <span class="vi">@au</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">binread</span><span class="p">(</span><span class="no">FILE_BIN</span><span class="p">,</span> <span class="n">recl</span><span class="p">,</span> <span class="vi">@pos</span><span class="p">).</span><span class="nf">unpack</span><span class="p">(</span><span class="s2">"d*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="vi">@pos</span> <span class="o">+=</span> <span class="n">recl</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># EMRAT 取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * EMRAT（地球と月の質量比）の値をインスタンス変数 @emrat に設定する</span>
+  <span class="c1">#   * 8 byte * 1</span>
+  <span class="c1">#   * 倍精度浮動小数点数(機種依存)</span>
+  <span class="c1">#   * 取得したバイト数だけレコード位置 @pos を進める</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_emrat</span>
+    <span class="n">recl</span> <span class="o">=</span> <span class="mi">8</span>
+
+    <span class="k">begin</span>
+      <span class="vi">@emrat</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">binread</span><span class="p">(</span><span class="no">FILE_BIN</span><span class="p">,</span> <span class="n">recl</span><span class="p">,</span> <span class="vi">@pos</span><span class="p">).</span><span class="nf">unpack</span><span class="p">(</span><span class="s2">"d*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="vi">@pos</span> <span class="o">+=</span> <span class="n">recl</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># NUMDE 取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * DEバージョン番号(NUMDE)をインスタンス変数 @ver_de に設定する</span>
+  <span class="c1">#   * 4 byte * 1</span>
+  <span class="c1">#   * unsigned int (符号なし整数, エンディアンと int のサイズに依存)</span>
+  <span class="c1">#   * 取得したバイト数だけレコード位置 @pos を進める</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_numde</span>
+    <span class="n">recl</span> <span class="o">=</span> <span class="mi">4</span>
+
+    <span class="k">begin</span>
+      <span class="vi">@ver_de</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">binread</span><span class="p">(</span><span class="no">FILE_BIN</span><span class="p">,</span> <span class="n">recl</span><span class="p">,</span> <span class="vi">@pos</span><span class="p">).</span><span class="nf">unpack</span><span class="p">(</span><span class="s2">"I*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="vi">@pos</span> <span class="o">+=</span> <span class="n">recl</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># IPT 取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * IPT（オフセット、係数の数、サブ区間数）（水星〜地球の章動）の値をイ</span>
+  <span class="c1">#     ンスタンス変数（配列） @ipts に設定する</span>
+  <span class="c1">#   * 4 byte * 12 * 3</span>
+  <span class="c1">#   * unsigned int (符号なし整数, エンディアンと int のサイズに依存)</span>
+  <span class="c1">#   * 取得したバイト数だけレコード位置 @pos を進める</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_ipt</span>
+    <span class="n">recl</span> <span class="o">=</span> <span class="mi">4</span>
+
+    <span class="k">begin</span>
+      <span class="vi">@ipts</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">11</span><span class="p">).</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="n">ary</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">2</span><span class="p">).</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">j</span><span class="o">|</span>
+          <span class="no">File</span><span class="p">.</span><span class="nf">binread</span><span class="p">(</span><span class="no">FILE_BIN</span><span class="p">,</span> <span class="n">recl</span><span class="p">,</span> <span class="vi">@pos</span> <span class="o">+</span> <span class="n">recl</span> <span class="o">*</span> <span class="n">j</span><span class="p">).</span><span class="nf">unpack</span><span class="p">(</span><span class="s2">"I*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">end</span>
+        <span class="vi">@pos</span> <span class="o">+=</span> <span class="n">recl</span> <span class="o">*</span> <span class="mi">3</span>
+        <span class="n">ary</span>
+      <span class="k">end</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># IPT_13（月の秤動）</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * IPT（オフセット、係数の数、サブ区間数）（月の秤動）の値をインスタン</span>
+  <span class="c1">#     ス変数（配列） @ipts に設定する</span>
+  <span class="c1">#   * 4 byte * 1 * 3</span>
+  <span class="c1">#   * unsigned int (符号なし整数, エンディアンと int のサイズに依存)</span>
+  <span class="c1">#   * 取得したバイト数だけレコード位置 @pos を進める</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_ipt_13</span>
+    <span class="n">recl</span> <span class="o">=</span> <span class="mi">4</span>
+
+    <span class="k">begin</span>
+      <span class="vi">@ipts</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">2</span><span class="p">).</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="no">File</span><span class="p">.</span><span class="nf">binread</span><span class="p">(</span><span class="no">FILE_BIN</span><span class="p">,</span> <span class="n">recl</span><span class="p">,</span> <span class="vi">@pos</span> <span class="o">+</span> <span class="n">recl</span> <span class="o">*</span> <span class="n">i</span><span class="p">).</span><span class="nf">unpack</span><span class="p">(</span><span class="s2">"I*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">end</span>
+      <span class="vi">@pos</span> <span class="o">+=</span> <span class="n">recl</span> <span class="o">*</span> <span class="mi">3</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># CVAL 取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * レコード位置 @pos を2レコード目の先頭へ進める</span>
+  <span class="c1">#   * 定数の値をインスタンス変数（配列） @cvals に設定する</span>
+  <span class="c1">#   * 8 byte * @ncon</span>
+  <span class="c1">#   * 倍精度浮動小数点数(機種依存)</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_cval</span>
+    <span class="vi">@pos</span> <span class="o">=</span> <span class="no">KSIZE</span> <span class="o">*</span> <span class="no">RECL</span>
+    <span class="n">recl</span> <span class="o">=</span> <span class="mi">8</span>
+
+    <span class="k">begin</span>
+      <span class="vi">@cvals</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="vi">@ncon</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="no">File</span><span class="p">.</span><span class="nf">binread</span><span class="p">(</span><span class="no">FILE_BIN</span><span class="p">,</span> <span class="n">recl</span><span class="p">,</span> <span class="vi">@pos</span> <span class="o">+</span> <span class="n">recl</span> <span class="o">*</span> <span class="n">i</span><span class="p">).</span><span class="nf">unpack</span><span class="p">(</span><span class="s2">"d*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">end</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># JDEPOC 取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * @cvals（定数値配列）の中から「元期」をインスタンス変数 @jdepoc に設</span>
+  <span class="c1">#     定する</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_jdepoc</span>
+    <span class="vi">@jdepoc</span> <span class="o">=</span> <span class="vi">@cvals</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 計算対象フラグ一覧取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * チェビシェフ多項式による計算が必要な天体の一覧をインスタンス変数（配</span>
+  <span class="c1">#     列） @list に設定する</span>
+  <span class="c1">#   * 配列の並び順（係数データの並び順から「太陽」を除外した13個）</span>
+  <span class="c1">#     @list = [</span>
+  <span class="c1">#       水星, 金星, 地球 - 月の重心, 火星, 木星, 土星, 天王星, 海王星,</span>
+  <span class="c1">#       冥王星, 月（地心）, 地球の章動, 月の秤動</span>
+  <span class="c1">#     ]</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_list</span>
+    <span class="k">if</span> <span class="vi">@astrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">14</span>
+      <span class="vi">@list</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="no">KIND</span> <span class="k">if</span> <span class="vi">@ipts</span><span class="p">[</span><span class="mi">11</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+      <span class="k">return</span>
+    <span class="k">end</span>
+    <span class="k">if</span> <span class="vi">@astrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">15</span>
+      <span class="vi">@list</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">=</span> <span class="no">KIND</span> <span class="k">if</span> <span class="vi">@ipts</span><span class="p">[</span><span class="mi">12</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+      <span class="k">return</span>
+    <span class="k">end</span>
+    <span class="vi">@astrs</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">k</span><span class="o">|</span>
+      <span class="vi">@list</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="no">KIND</span> <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="mi">10</span>
+      <span class="vi">@list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>     <span class="o">=</span> <span class="no">KIND</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">10</span>
+      <span class="vi">@list</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>     <span class="o">=</span> <span class="no">KIND</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span>  <span class="mi">3</span>
+      <span class="vi">@list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>     <span class="o">=</span> <span class="no">KIND</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">13</span>
+    <span class="k">end</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># COEFF 取得</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * レコード位置 @pos を3レコード目の先頭へ進める</span>
+  <span class="c1">#   * 対象区間のユリウス日（開始、終了）をインスタンス変数（配列） @jds に</span>
+  <span class="c1">#     設定する</span>
+  <span class="c1">#   * 係数の値をインスタンス変数（配列） @coeffs に設定する</span>
+  <span class="c1">#     （x, y, z やサブ区間毎に分割して格納）</span>
+  <span class="c1">#   * 8 byte * ?</span>
+  <span class="c1">#   * 倍精度浮動小数点数(機種依存)</span>
+  <span class="c1">#   * @coeffs に対象のインデックスの全ての係数を格納</span>
+  <span class="c1">#   * 最初の2要素は当該データの開始・終了ユリウス日</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_coeff</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="p">((</span><span class="vi">@jd</span> <span class="o">-</span> <span class="vi">@sss</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="vi">@sss</span><span class="p">[</span><span class="mi">2</span><span class="p">]).</span><span class="nf">floor</span>  <span class="c1"># レコードインデックス</span>
+    <span class="vi">@pos</span> <span class="o">=</span> <span class="no">KSIZE</span> <span class="o">*</span> <span class="no">RECL</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="n">idx</span><span class="p">)</span>
+    <span class="n">recl</span> <span class="o">=</span> <span class="mi">8</span>
+
+    <span class="k">begin</span>
+      <span class="n">items</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="p">(</span><span class="no">KSIZE</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="no">File</span><span class="p">.</span><span class="nf">binread</span><span class="p">(</span><span class="no">FILE_BIN</span><span class="p">,</span> <span class="n">recl</span><span class="p">,</span> <span class="vi">@pos</span> <span class="o">+</span> <span class="n">recl</span> <span class="o">*</span> <span class="n">i</span><span class="p">).</span><span class="nf">unpack</span><span class="p">(</span><span class="s2">"d*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">end</span>
+      <span class="vi">@jds</span> <span class="o">=</span> <span class="p">[</span><span class="n">items</span><span class="p">.</span><span class="nf">shift</span><span class="p">,</span> <span class="n">items</span><span class="p">.</span><span class="nf">shift</span><span class="p">]</span>
+      <span class="vi">@ipts</span><span class="p">.</span><span class="nf">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="n">ipt</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">11</span> <span class="p">?</span> <span class="mi">2</span> <span class="p">:</span> <span class="mi">3</span>  <span class="c1"># 要素数</span>
+        <span class="n">ary_1</span> <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span>
+        <span class="n">ipt</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nf">times</span> <span class="k">do</span> <span class="o">|</span><span class="n">j</span><span class="o">|</span>
+          <span class="n">ary_0</span> <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span>
+          <span class="n">n</span><span class="p">.</span><span class="nf">times</span> <span class="k">do</span> <span class="o">|</span><span class="n">k</span><span class="o">|</span>
+            <span class="n">ary_0</span> <span class="o">&lt;&lt;</span> <span class="n">items</span><span class="p">.</span><span class="nf">shift</span><span class="p">(</span><span class="n">ipt</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+          <span class="k">end</span>
+          <span class="n">ary_1</span> <span class="o">&lt;&lt;</span> <span class="n">ary_0</span>
+        <span class="k">end</span>
+        <span class="vi">@coeffs</span> <span class="o">&lt;&lt;</span> <span class="n">ary_1</span>
+      <span class="k">end</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 補間</span>
+  <span class="c1">#</span>
+  <span class="c1">#   * 使用するチェビシェフ多項式の係数は、</span>
+  <span class="c1">#   * 天体番号が 1 〜 13 の場合は、 x, y, z の位置・速度（6要素）、</span>
+  <span class="c1">#     天体番号が 14 の場合は、 Δψ, Δε の角位置・角速度（4要素）、</span>
+  <span class="c1">#     天体番号が 15 の場合は、 φ, θ, ψ の角位置・角速度（6要素）。</span>
+  <span class="c1">#   * 天体番号が 12 の場合は、 x, y, z の位置・速度の値は全て 0.0 とする。</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: astr（天体番号）</span>
+  <span class="c1">#   @return: pvs = [</span>
+  <span class="c1">#     x 位置, y 位置, z 位置,</span>
+  <span class="c1">#     x 速度, y 速度, z 速度</span>
+  <span class="c1">#   ]</span>
+  <span class="c1">#     - 14（地球の章動）の場合は、</span>
+  <span class="c1">#         pvs = [</span>
+  <span class="c1">#           Δψ の角位置, Δε の角位置,</span>
+  <span class="c1">#           Δψ の角速度, Δε の角速度</span>
+  <span class="c1">#         ]</span>
+  <span class="c1">#     - 15（月の秤動）の場合は、</span>
+  <span class="c1">#         pvs = [</span>
+  <span class="c1">#           φ の角位置, θ の角位置, ψ の角位置,</span>
+  <span class="c1">#           φ の角速度, θ の角速度, ψ の角速度</span>
+  <span class="c1">#         ]</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="n">astr</span><span class="p">)</span>
+    <span class="n">pvs</span> <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span>
+
+    <span class="k">begin</span>
+      <span class="n">tc</span><span class="p">,</span> <span class="n">idx_sub</span> <span class="o">=</span> <span class="n">norm_time</span><span class="p">(</span><span class="n">astr</span><span class="p">)</span>
+      <span class="n">n_item</span> <span class="o">=</span> <span class="n">astr</span> <span class="o">==</span> <span class="mi">14</span> <span class="p">?</span> <span class="mi">2</span> <span class="p">:</span> <span class="mi">3</span>  <span class="c1"># 要素数</span>
+      <span class="n">i_ipt</span>  <span class="o">=</span> <span class="n">astr</span> <span class="o">&gt;</span> <span class="mi">13</span> <span class="p">?</span> <span class="n">astr</span> <span class="o">-</span> <span class="mi">3</span> <span class="p">:</span> <span class="n">astr</span> <span class="o">-</span> <span class="mi">1</span>
+      <span class="n">i_coef</span> <span class="o">=</span> <span class="n">astr</span> <span class="o">&gt;</span> <span class="mi">13</span> <span class="p">?</span> <span class="n">astr</span> <span class="o">-</span> <span class="mi">3</span> <span class="p">:</span> <span class="n">astr</span> <span class="o">-</span> <span class="mi">1</span>
+
+      <span class="c1"># 位置</span>
+      <span class="n">ary_p</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">tc</span><span class="p">]</span>
+      <span class="mi">2</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="vi">@ipts</span><span class="p">[</span><span class="n">i_ipt</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="n">ary_p</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">tc</span> <span class="o">*</span> <span class="n">ary_p</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ary_p</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+      <span class="k">end</span>  <span class="c1"># 各項</span>
+      <span class="mi">0</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="n">n_item</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="mi">0</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="vi">@ipts</span><span class="p">[</span><span class="n">i_ipt</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">j</span><span class="o">|</span>
+          <span class="n">val</span> <span class="o">+=</span> <span class="vi">@coeffs</span><span class="p">[</span><span class="n">i_coef</span><span class="p">][</span><span class="n">idx_sub</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">ary_p</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="k">end</span>
+        <span class="n">val</span> <span class="o">/=</span> <span class="vi">@au</span> <span class="k">if</span> <span class="o">!</span><span class="no">KM</span> <span class="o">&amp;&amp;</span> <span class="n">astr</span> <span class="o">&lt;</span> <span class="mi">14</span>
+        <span class="n">pvs</span> <span class="o">&lt;&lt;</span> <span class="n">val</span>
+      <span class="k">end</span>  <span class="c1"># 値</span>
+
+      <span class="c1"># 速度</span>
+      <span class="n">ary_v</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">tc</span><span class="p">]</span>
+      <span class="mi">3</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="vi">@ipts</span><span class="p">[</span><span class="n">i_ipt</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="n">ary_v</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">tc</span> <span class="o">*</span> <span class="n">ary_v</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ary_p</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ary_v</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+      <span class="k">end</span>  <span class="c1"># 各項</span>
+      <span class="mi">0</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="n">n_item</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="mi">0</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="vi">@ipts</span><span class="p">[</span><span class="n">i_ipt</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">j</span><span class="o">|</span>
+          <span class="n">val</span> <span class="o">+=</span> <span class="vi">@coeffs</span><span class="p">[</span><span class="n">i_coef</span><span class="p">][</span><span class="n">idx_sub</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">ary_v</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="vi">@ipts</span><span class="p">[</span><span class="n">i_ipt</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="vi">@sss</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nf">to_f</span>
+        <span class="k">end</span>
+        <span class="n">val</span> <span class="o">/=</span> <span class="no">KM</span> <span class="p">?</span> <span class="mf">86400.0</span> <span class="p">:</span> <span class="vi">@au</span> <span class="k">if</span> <span class="n">astr</span> <span class="o">&lt;</span> <span class="mi">14</span>
+        <span class="n">pvs</span> <span class="o">&lt;&lt;</span> <span class="n">val</span>
+      <span class="k">end</span>  <span class="c1"># 値</span>
+
+      <span class="k">return</span> <span class="n">pvs</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># チェビシェフ多項式用に時刻を正規化、サブ区間のインデックス算出</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: astr（天体番号）</span>
+  <span class="c1">#   @return: [チェビシェフ時間, サブ区間のインデックス]</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">norm_time</span><span class="p">(</span><span class="n">astr</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">astr</span> <span class="o">&gt;</span> <span class="mi">13</span> <span class="p">?</span> <span class="n">astr</span> <span class="o">-</span> <span class="mi">2</span> <span class="p">:</span> <span class="n">astr</span>
+    <span class="n">jd_start</span> <span class="o">=</span> <span class="vi">@jds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">tc</span> <span class="o">=</span> <span class="p">(</span><span class="vi">@jd</span> <span class="o">-</span> <span class="n">jd_start</span><span class="p">)</span> <span class="o">/</span> <span class="vi">@sss</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nf">to_f</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">tc</span> <span class="o">*</span> <span class="vi">@ipts</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">temp</span> <span class="o">-</span> <span class="n">tc</span><span class="p">.</span><span class="nf">floor</span><span class="p">).</span><span class="nf">floor</span>         <span class="c1"># サブ区間のインデックス</span>
+    <span class="n">tc</span> <span class="o">=</span> <span class="p">(</span><span class="n">temp</span> <span class="o">%</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">tc</span><span class="p">.</span><span class="nf">floor</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># チェビシェフ時間</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">tc</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 結果出力</span>
+  <span class="c1">#</span>
+  <span class="c1">#   @params: &lt;none&gt;</span>
+  <span class="c1">#   @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">display</span>
+    <span class="n">strs</span> <span class="o">=</span>  <span class="s2">"  Target: %2d"</span> <span class="o">%</span> <span class="vi">@astrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">" (</span><span class="si">#{</span><span class="no">ASTRS</span><span class="p">[</span><span class="vi">@astrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Center: %2d"</span> <span class="o">%</span> <span class="vi">@astrs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">" (</span><span class="si">#{</span><span class="no">ASTRS</span><span class="p">[</span><span class="vi">@astrs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">)"</span> <span class="k">unless</span> <span class="vi">@astrs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"      JD: %16.8f day</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="vi">@jd</span>
+    <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"     1AU: %11.1f km</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="vi">@au</span>
+    <span class="nb">puts</span> <span class="n">strs</span>
+
+    <span class="n">strs</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="k">case</span> <span class="vi">@astrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">when</span> <span class="mi">14</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Position(Δψ) = %32.20f rad</span><span class="se">\n</span><span class="s2">"</span>     <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Position(Δε) = %32.20f rad</span><span class="se">\n</span><span class="s2">"</span>     <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Velocity(Δψ) = %32.20f rad/day</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Velocity(Δε) = %32.20f rad/day</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">when</span> <span class="mi">15</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Position(φ) = %32.20f rad</span><span class="se">\n</span><span class="s2">"</span>     <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Position(θ) = %32.20f rad</span><span class="se">\n</span><span class="s2">"</span>     <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Position(ψ) = %32.20f rad</span><span class="se">\n</span><span class="s2">"</span>     <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Velocity(φ) = %32.20f rad/day</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Velocity(θ) = %32.20f rad/day</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Velocity(ψ) = %32.20f rad/day</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    <span class="k">else</span>
+      <span class="n">unit_0</span><span class="p">,</span> <span class="n">unit_1</span> <span class="o">=</span> <span class="no">KM</span> <span class="p">?</span> <span class="p">[</span><span class="s2">"km"</span><span class="p">,</span> <span class="s2">"sec"</span><span class="p">]</span> <span class="p">:</span> <span class="p">[</span><span class="s2">"AU"</span><span class="p">,</span> <span class="s2">"day"</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Position(x) = %32.20f </span><span class="si">#{</span><span class="n">unit_0</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>           <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Position(y) = %32.20f </span><span class="si">#{</span><span class="n">unit_0</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>           <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Position(z) = %32.20f </span><span class="si">#{</span><span class="n">unit_0</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>           <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Velocity(x) = %32.20f </span><span class="si">#{</span><span class="n">unit_0</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">unit_1</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Velocity(y) = %32.20f </span><span class="si">#{</span><span class="n">unit_0</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">unit_1</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+      <span class="n">strs</span> <span class="o">&lt;&lt;</span> <span class="s2">"  Velocity(z) = %32.20f </span><span class="si">#{</span><span class="n">unit_0</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">unit_1</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="vi">@rrds</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    <span class="k">end</span>
+    <span class="nb">puts</span> <span class="n">strs</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">JplCalcDe430</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">exec</span> <span class="k">if</span> <span class="kp">__FILE__</span> <span class="o">==</span> <span class="vg">$0</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/a80971ae71d38268bc75" title="Gist - Ruby script to calc ICRS coordinates with JPL binary data DE430.">Gist - Ruby script to calc ICRS coordinates with JPL binary data DE430.</a></li>
+</ul>
+
+<p>（ソーススクリプトがより実用に耐えられるものに洗練されれば、Gist でなくリポジトリとしても登録するつもり）</p>
+
+<h3 id="2-ruby-スクリプトの実行">2. Ruby スクリプトの実行</h3>
+
+<p>バイナリ形式データ “JPLEPH” を Ruby スクリプトと同じディレクトリに配置して以下のように実行する。（以下は、「2016年3月18日0時0分0秒」の「地球」を基準とした「太陽」の ICRS 座標を計算する例）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./jpl_calc_de430.rb 11 3 2457465.5
+  Target: 11 (Sun)
+  Center:  3 (Earth)
+      JD: 2457465.50000000 day
+     1AU: 149597870.7 km
+  Position(x) =         0.99443659220700997281 AU
+  Position(y) =        -0.03816291768957833647 AU
+  Position(z) =        -0.01655177670960058384 AU
+  Velocity(x) =         0.00099333756561238804 AU/day
+  Velocity(y) =         0.01582779844821733881 AU/day
+  Velocity(z) =         0.00686186627679565356 AU/day
+</code></pre></div></div>
+
+<h3 id="3-データの検証">3. データの検証</h3>
+
+<p>“testpo.430” のデータと突き合わせながら Ruby スクリプトを実行して検証してみる。</p>
+
+<p>実際には、”testpo.430” に記述されている任意の行に注目し、その行に記載の２つの天体の ICRS 座標を計算して差を求め、その値が <code class="language-plaintext highlighter-rouge">coordinates</code> の値と等しいかを確認する。（但し、”testpo.430” と天体番号が異なるものがあるため、適宜置き換えて考えること）</p>
+
+<p>例えば、 “testpo.430” の <code class="language-plaintext highlighter-rouge">2016.12.01</code> の行は、以下のようになっている。（ヘッダと当該行のみ抜粋）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">tespo.430</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="code"><pre>de#  -- date -- -- jed -- t# c# x# -- coordinate ---
+
+430  2016.12.01 2457723.5  8  5  2       -8.02225801549924900000
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>ユリウス日 <code class="language-plaintext highlighter-rouge">2457723.5</code> の天体番号 5（木星）を基準とした天体番号 8（海王星）の ICRS 座標を計算すると次のようになる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./jpl_calc_de430.rb 8 5 2457723.5
+  Target:  8 (Neptune)
+  Center:  5 (Jupiter)
+      JD: 2457723.50000000 day
+     1AU: 149597870.7 km
+  Position(x) =        33.70070119505614059108 AU
+  Position(y) =        -8.02225801549925066070 AU
+  Position(z) =        -4.10459769835983934172 AU
+  Velocity(x) =        -0.00000061831278598047 AU/Day
+  Velocity(y) =         0.00929863072586037051 AU/Day
+  Velocity(z) =         0.00393151443263963212 AU/Day
+</code></pre></div></div>
+
+<p>“testpo.430” のインデックス番号（<code class="language-plaintext highlighter-rouge">x#</code> 列の値）が <code class="language-plaintext highlighter-rouge">2</code> であるので、<code class="language-plaintext highlighter-rouge">coordinate</code> 列の値と算出結果の 2 番目の値（Position(y) の値）を比較してみる。<br />
+<code class="language-plaintext highlighter-rouge">-8.02225801549924900000</code> と <code class="language-plaintext highlighter-rouge">-8.02225801549925066070</code> であるので、かなりの精度で一致している。</p>
+
+<p>他についても同様に確認してみる。（特殊なパターンもあるので要注意。JPL から提供されている “testeph.f” や上記のソーススクリプトを熟知していれば分かるはず）</p>
+
+<p>“testpo.430” の仕様（ヘッダファイルやデータファイルと検証用ファイルでの天体番号の相違等）については「<a href="/2016/04/14/about-jpl-de430" title="月・惑星の暦 JPL DE430 について！">月・惑星の暦 JPL DE430 について！</a>」で説明しているので、そちらを参照のこと。</p>
+
+<p>当方、 “testpo.430” の任意の行について検証してみた結果、かなりの精度差異がないことを確認済み。（小数点以下約13桁の精度。それ以下の誤差は（丸め）誤差の範囲内という認識）</p>
+
+<p>また、地球を基準とした太陽の位置は DE430 データを使用している日本の国立天文台の計算結果とも一致しました。（「<a href="http://eco.mtk.nao.ac.jp/cgi-bin/koyomi/cande/sun_rect.cgi" title="太陽の赤道直角座標と黄経・黄緯">太陽の赤道直角座標と黄経・黄緯</a>」で計算）</p>
+
+<hr />
+
+<p>バイナリデータから目的の惑星・日付の「ICRS 座標系（国際天文基準座標系、原点が太陽系重心の座標系）」の座標が計算できるようになったので、次は「赤道座標（地球の自転軸によって定まる座標）」への変換や「黄道座標（地球の公転軌道によって定まる座標）」の計算にも挑戦してみたいです。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">カレンダー</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%9A%A6-%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">暦・カレンダー</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-04-30T00:20:00+09:00">2016-04-30 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+-+JPL+%E5%A4%A9%E6%96%87%E6%9A%A6%E3%83%87%E3%83%BC%E3%82%BF%E3%81%8B%E3%82%89+ICRS+%E5%BA%A7%E6%A8%99%E3%82%92%E8%A8%88%E7%AE%97%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2016%2F04%2F30%2Fruby-calc-jpl-icrs-coordinate%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2016%2F04%2F30%2Fruby-calc-jpl-icrs-coordinate%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2016%2F04%2F30%2Fruby-calc-jpl-icrs-coordinate%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2016/04/26/ruby-read-jpl-bin-data/" class="pagination--pager" title="Ruby - JPL 天文暦バイナリデータの読み込み！
+">Previous</a>
+    
+    
+      <a href="/2016/05/01/blog-access/" class="pagination--pager" title="2016年4月 - OS・ブラウザ別アクセス状況！【自動集計】
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2016/04/30/ruby-calc-jpl-icrs-coordinate/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2016/04/30/ruby-calc-jpl-icrs-coordinate"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

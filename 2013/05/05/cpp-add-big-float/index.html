@@ -1,0 +1,1509 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>C++ - 多倍長浮動小数点数の加減算！ - mk-mode BLOG</title>
+<meta name="description" content="これまで多倍長整数の演算については話をしていましたが、今回は多倍長の浮動小数点同士の加減算について考えてみました。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="C++ - 多倍長浮動小数点数の加減算！">
+<meta property="og:url" content="https://komasaru.github.io/2013/05/05/cpp-add-big-float/">
+
+
+  <meta property="og:description" content="これまで多倍長整数の演算については話をしていましたが、今回は多倍長の浮動小数点同士の加減算について考えてみました。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="C++ - 多倍長浮動小数点数の加減算！">
+  <meta name="twitter:description" content="これまで多倍長整数の演算については話をしていましたが、今回は多倍長の浮動小数点同士の加減算について考えてみました。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/05/05/cpp-add-big-float/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-05-05T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/05/05/cpp-add-big-float/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="C++ - 多倍長浮動小数点数の加減算！">
+    <meta itemprop="description" content="これまで多倍長整数の演算については話をしていましたが、今回は多倍長の浮動小数点同士の加減算について考えてみました。">
+    <meta itemprop="datePublished" content="May 05, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">C++ - 多倍長浮動小数点数の加減算！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-05-05T00:20:00+09:00">2013-05-05 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>これまで多倍長整数の演算については話をしていましたが、今回は多倍長の浮動小数点同士の加減算について考えてみました。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Linux Mint 14 Nadia (64bit) での作業を想定。</li>
+  <li>g++ (Ubuntu/Linaro 4.7.2-2ubuntu1) 4.7.2</li>
+</ul>
+
+<h3 id="1-考え方">1. 考え方</h3>
+
+<p>整数部を 0 とする A = 0.123456789E5, B = 0.123456789E3 という浮動小数点を以下のように考える。（１桁を１個の配列で扱う場合）</p>
+
+<p><img src="/images/2013/05/05/ADD_BIG_FLOAT_1.png" alt="ADD_BIG_FLOAT_1" title="ADD_BIG_FLOAT_1" /></p>
+
+<p>（べき指数部分を別の変数に持たせる考え方もある。その場合は、整数部を使用する考え方もできる）</p>
+
+<p>そして、計算結果格納用配列を Z[0], Z[1], …, Z[9] とする。</p>
+
+<p>加算の場合、べき指数の大きい方に合わせる。<br />
+減算の場合は、被減数の方が大きいこと。（計算結果が負にならないこと）<br />
+また、べき指数の小さい方の端数は処理しない。すなわち、切り捨てとする。（もう一方の数字が有効数字範囲外で不明のため、計算結果がどうなるか判別不能だから）</p>
+
+<p>以下は、加算の場合。（減算も同様）</p>
+
+<ol>
+  <li>べき指数の大きい方を結果配列に格納。<br />
+<img src="/images/2013/05/05/ADD_BIG_FLOAT_2.png" alt="ADD_BIG_FLOAT_2" title="ADD_BIG_FLOAT_2" /></li>
+  <li>２数のべき指数の差の部分を結果配列に格納。（直接加算処理を行わない部分）<br />
+<img src="/images/2013/05/05/ADD_BIG_FLOAT_3.png" alt="ADD_BIG_FLOAT_3" title="ADD_BIG_FLOAT_3" /></li>
+  <li>２数の加算すべき桁の加算結果を配列に格納。<br />
+<img src="/images/2013/05/05/ADD_BIG_FLOAT_4.png" alt="ADD_BIG_FLOAT_4" title="ADD_BIG_FLOAT_4" /></li>
+  <li>正規化（繰り上がり処理）を行う。<br />
+<img src="/images/2013/05/05/ADD_BIG_FLOAT_5.png" alt="ADD_BIG_FLOAT_5" title="ADD_BIG_FLOAT_5" /></li>
+  <li>正規化（浮動小数点位置調整）を行う。<br />
+（ 0.099999999E5 となった場合 0.999999990E4 とするということ。今回の例ではこの処理を行なっても変化は無い。<br />
+また、小数点以下第１位は「4. 正規化（繰り上がり処理）」で繰り上がり処理を行なっていないので、この部分もここで処理。）<br />
+<img src="/images/2013/05/05/ADD_BIG_FLOAT_6.png" alt="ADD_BIG_FLOAT_6" title="ADD_BIG_FLOAT_6" /></li>
+</ol>
+
+<h3 id="2-c-ソース作成">2. C++ ソース作成</h3>
+
+<ul>
+  <li>被加減数・加減数の桁数は合わせている。</li>
+  <li>テストなので、被加減数・加減数は適当な乱数で生成している。</li>
+  <li>今後汎用性を高めるための処置として、色々と部品化している。</li>
+  <li>ソースファイルは１つ。（もう少し大きくなるか複雑になれば、ファイルを分割するかもしれないが）</li>
+</ul>
+
+<p>File: <code class="language-plaintext highlighter-rouge">add_big_float.cpp</code></p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+</pre></td><td class="code"><pre><span class="cm">/*********************************************
+ * 浮動小数点数加減算
+ *********************************************/</span>
+<span class="cp">#include &lt;cstdlib&gt;   // for rand()
+#include &lt;iostream&gt;  // for cout
+#include &lt;math.h&gt;    // for pow()
+#include &lt;stdio.h&gt;   // for printf()
+#include &lt;time.h&gt;    // for time()
+</span>
+<span class="cp">#define D_MAX  11  // 有効桁数(小数点以下＋べき指数)
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="cm">/*
+ * 計算クラス
+ */</span>
+<span class="k">class</span> <span class="nc">Calc</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">A</span><span class="p">[</span><span class="n">D_MAX</span><span class="p">];</span>  <span class="c1">// 被加減数配列</span>
+    <span class="kt">int</span> <span class="n">B</span><span class="p">[</span><span class="n">D_MAX</span><span class="p">];</span>  <span class="c1">// 加数配列</span>
+    <span class="kt">int</span> <span class="n">C</span><span class="p">[</span><span class="n">D_MAX</span><span class="p">];</span>  <span class="c1">// 減数配列</span>
+
+    <span class="nl">public:</span>
+        <span class="n">Calc</span><span class="p">();</span>                                    <span class="c1">// コンストラクタ</span>
+        <span class="kt">void</span> <span class="n">calc</span><span class="p">();</span>                               <span class="c1">// 計算</span>
+    <span class="nl">private:</span>
+        <span class="kt">void</span> <span class="n">add</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>   <span class="c1">// 加減算   ( 固定長整数 )</span>
+        <span class="kt">void</span> <span class="n">fadd</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>  <span class="c1">// 加減算   ( 浮動小数点数 )</span>
+        <span class="kt">void</span> <span class="n">setv</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>                 <span class="c1">// 値セット ( 全配列に同じ整数をセット )</span>
+        <span class="kt">void</span> <span class="n">copy</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>               <span class="c1">// 値コピー ( 全配列をそのままコピー )</span>
+        <span class="kt">void</span> <span class="n">norm</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>                     <span class="c1">// 正規化   ( 固定長整数 )</span>
+        <span class="kt">void</span> <span class="n">fnorm</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>                    <span class="c1">// 正規化   ( 浮動小数点数 )</span>
+        <span class="kt">void</span> <span class="n">fdisp</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>                    <span class="c1">// 結果出力 ( 指数表示 )</span>
+<span class="p">};</span>
+
+<span class="cm">/*
+ * コンストラクタ
+ */</span>
+<span class="n">Calc</span><span class="o">::</span><span class="n">Calc</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// 使用する被加減数・加減数を設定（テストなので適当な乱数を使用）</span>
+    <span class="c1">//   ( A + B, A - C で A &gt; C となることが条件だが</span>
+    <span class="c1">//     稀に条件に合致しない値が生成されるかもしれない )</span>
+    <span class="n">srand</span><span class="p">((</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="p">)</span><span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">));</span>                     <span class="c1">// 乱数の種を初期化</span>
+    <span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="p">(</span><span class="n">D_MAX</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>                     <span class="c1">// Aのべき指数部</span>
+    <span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="p">(</span><span class="n">D_MAX</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>                     <span class="c1">// Bのべき指数部</span>
+    <span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>                     <span class="c1">// Cのべき指数部</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">D_MAX</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">10</span><span class="p">;</span>  <span class="c1">// Aの小数部</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">D_MAX</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">10</span><span class="p">;</span>  <span class="c1">// Bの小数部</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">D_MAX</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">10</span><span class="p">;</span>  <span class="c1">// Bの小数部</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * 計算
+ */</span>
+<span class="kt">void</span> <span class="n">Calc</span><span class="o">::</span><span class="n">calc</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// 各種宣言</span>
+    <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">D_MAX</span><span class="p">;</span>  <span class="c1">// 配列サイズ</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">size</span><span class="p">];</span>       <span class="c1">// 被加減数配列</span>
+    <span class="kt">int</span> <span class="n">b</span><span class="p">[</span><span class="n">size</span><span class="p">];</span>       <span class="c1">// 加数配列</span>
+    <span class="kt">int</span> <span class="n">c</span><span class="p">[</span><span class="n">size</span><span class="p">];</span>       <span class="c1">// 減数配列</span>
+    <span class="kt">int</span> <span class="n">z</span><span class="p">[</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>   <span class="c1">// 計算結果配列</span>
+
+    <span class="c1">// 初期設定</span>
+    <span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>  <span class="c1">// 被加減数配列</span>
+    <span class="n">copy</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>  <span class="c1">// 加数配列</span>
+    <span class="n">copy</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>  <span class="c1">// 減数配列</span>
+
+    <span class="c1">// 計算する被加減数・加数・減数を出力</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"A =</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span> <span class="n">fdisp</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"B =</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span> <span class="n">fdisp</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"C =</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span> <span class="n">fdisp</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+
+    <span class="c1">// 加算 ( Z = A + B )</span>
+    <span class="n">fadd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="c1">// 結果出力</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"A + B =</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span> <span class="n">fdisp</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+
+    <span class="c1">// 減算 ( Z = A - C )</span>
+    <span class="n">fadd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="c1">// 結果出力</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"A - C =</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span> <span class="n">fdisp</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * 加減算
+ * ( 固定長整数同士の加減算, 正規化含む )
+ *
+ *   a     [I ]  被加減数配列
+ *   b     [I ]  加減数配列
+ *   size  [I ]  配列数(A, B)
+ *   z     [ O]  出力データ配列(Z = A + B or Z = A - B)
+ *   id    [I ]  1: 加算(A + B(, -1: 減算(A - B)
+ */</span>
+<span class="kt">void</span> <span class="n">Calc</span><span class="o">::</span><span class="n">add</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">z</span><span class="p">,</span> <span class="kt">int</span> <span class="n">size</span><span class="p">,</span> <span class="kt">int</span> <span class="n">id</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>          <span class="c1">// LOOPインデックス</span>
+
+    <span class="c1">// 計算</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">id</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 加算</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>        <span class="c1">// 減算</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 正規化</span>
+    <span class="n">norm</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * 加減算
+ * ( 浮動小数点数同士の加減算, 正規化含む )
+ *
+ *   a     [I ]  被加減数配列
+ *   b     [I ]  加減数配列
+ *   size  [I ]  配列数(A, B)
+ *   z     [ O]  出力データ配列(Z = A + B or Z = A - B)
+ *   id    [I ]  1: 加算(A + B), -1: 減算(A - B)
+ */</span>
+<span class="kt">void</span> <span class="n">Calc</span><span class="o">::</span><span class="n">fadd</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">z</span><span class="p">,</span> <span class="kt">int</span> <span class="n">size</span><span class="p">,</span> <span class="kt">int</span> <span class="n">id</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">k</span><span class="p">;</span>  <span class="c1">// べき指数の差</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>  <span class="c1">// LOOPインデックス</span>
+
+    <span class="c1">// 計算</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>  <span class="c1">// A のべき指数 &gt;= B のべき指数</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="n">copy</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">add</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">z</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">size</span> <span class="o">-</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">id</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>             <span class="c1">// A のべき指数 &lt;  B のべき指数</span>
+        <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="c1">// 位の異なる部分</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">id</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>   <span class="c1">// 加算</span>
+            <span class="n">copy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>         <span class="c1">// 減算</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="c1">// 位の同じ部分の加減算</span>
+        <span class="n">add</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">z</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">size</span> <span class="o">-</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">id</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 正規化</span>
+    <span class="n">norm</span><span class="p">(</span><span class="o">&amp;</span><span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>  <span class="c1">// 固定長整数</span>
+    <span class="n">fnorm</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>         <span class="c1">// 浮動小数点数</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * 値セット
+ * ( 全配列に同じ整数をセット )
+ *
+ *   v     [I  ]  セットする整数
+ *   z     [  O]  セット先配列
+ *   size  [I  ]  配列サイズ
+ */</span>
+<span class="kt">void</span> <span class="n">Calc</span><span class="o">::</span><span class="n">setv</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">z</span><span class="p">,</span> <span class="kt">int</span> <span class="n">size</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>  <span class="c1">// LOOPインデックス</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * 値コピー
+ * ( 全配列をコピー )
+ *
+ *   a     [I  ]  コピー元配列
+ *   z     [  O]  コピー先配列
+ *   size  [I  ]  配列サイズ
+ */</span>
+<span class="kt">void</span> <span class="n">Calc</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">z</span><span class="p">,</span> <span class="kt">int</span> <span class="n">size</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>  <span class="c1">// LOOPインデックス</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * 正規化
+ * ( Fixed Normalize(A) by Base-Value )
+ *
+ *   a     [IO]  正規化前データ・正規化後データ配列
+ *   size  [I ]  配列数
+ */</span>
+<span class="kt">void</span> <span class="n">Calc</span><span class="o">::</span><span class="n">norm</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">size</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>       <span class="c1">// LOOPインデックス</span>
+    <span class="kt">int</span> <span class="n">cr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 繰り上がり</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cr</span>        <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">);</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>     <span class="o">-=</span> <span class="n">cr</span> <span class="o">*</span> <span class="mi">10</span><span class="p">;</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">cr</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>   <span class="o">+=</span> <span class="mi">10</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * 正規化
+ * ( Floating Normalize(A) )
+ *
+ *   a     [IO]  正規化前データ・正規化後データ配列
+ *   size  [I ]  配列数
+ */</span>
+<span class="kt">void</span> <span class="n">Calc</span><span class="o">::</span><span class="n">fnorm</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">size</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">exp</span><span class="p">;</span>     <span class="c1">// Exponent</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>       <span class="c1">// LOOPインデックス</span>
+    <span class="kt">int</span> <span class="n">k</span><span class="p">;</span>       <span class="c1">// 上位の 0 の個数</span>
+
+    <span class="c1">// 小数点以下第１位が桁あふれする場合、右に１桁シフト＆べき指数加算</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="mi">10</span><span class="p">;</span>
+        <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">;</span>
+        <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 正規化前のべき指数を退避</span>
+    <span class="n">exp</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+
+    <span class="c1">// 上位の 0 の個数をカウント</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>  <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// 上位の 0 の部分に以降の数字をシフト</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">size</span> <span class="o">-</span> <span class="n">k</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">];</span>
+    <span class="c1">// シフト後の下位に 0 をセット</span>
+    <span class="n">setv</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="n">size</span> <span class="o">-</span> <span class="n">k</span><span class="p">],</span> <span class="n">k</span><span class="p">);</span>
+
+    <span class="c1">// べき指数セット</span>
+    <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">exp</span> <span class="o">-</span> <span class="n">k</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * 結果出力 (指数表示)
+ *
+ *   s     [I ]  結果出力データ配列
+ *   size  [I ]  配列数
+ */</span>
+<span class="kt">void</span> <span class="n">Calc</span><span class="o">::</span><span class="n">fdisp</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">int</span> <span class="n">size</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+
+    <span class="n">printf</span><span class="p">(</span><span class="s">"0."</span><span class="p">);</span>
+
+    <span class="c1">// 1行に50桁出力</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">printf</span><span class="p">(</span><span class="s">" "</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">  "</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// べき指数</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">" * 10^(%d)</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">" * 10^%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/*
+ * メイン処理
+ */</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">try</span>
+    <span class="p">{</span>
+        <span class="c1">// 計算クラスインスタンス化</span>
+        <span class="n">Calc</span> <span class="n">objCalc</span><span class="p">;</span>
+
+        <span class="c1">// 計算</span>
+        <span class="n">objCalc</span><span class="p">.</span><span class="n">calc</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="p">(...)</span> <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"例外発生！"</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 正常終了</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/3106d62f54ebf16308d08812ec538db3" title="Gist - C++ source code to compute big-digit floats.">Gist - C++ source code to compute big-digit floats.</a></li>
+</ul>
+
+<h3 id="3-c-ソースコンパイル">3. C++ ソースコンパイル</h3>
+
+<p>（<code class="language-plaintext highlighter-rouge">-Wall</code> は警告出力、<code class="language-plaintext highlighter-rouge">-O2</code> 最適化のオプション）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ g++ -Wall -O2 -o add_big_float add_big_float.cpp
+</code></pre></div></div>
+
+<p>何も出力されなければ成功。</p>
+
+<h3 id="4-実行">4. 実行</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./add_big_float
+A =
+0.3166506397 5517322953 4455927857 1987757519 4847779964 
+  2009701407 3384179042 9825594691 0333535697 5305734848 
+  1583155516 8414767456 1213087473 5083511072 8760356093 
+  9260861528 8708350489 6665600522 8344642795 7927074012 
+  9017577542 9354938200 7911819312 7248098972 1679272395 
+  5846930083 3567689478 8166093444 9946739747 1949607766 
+  5572193647 2586159235 1666758625 2802231597 4352987012 
+  6402277132 8820043314 1578966667 1421949874 0522528069 
+  4963951540 5549635723 4406781589 7585091247 2928804406 
+  9421099378 2452951296 9173264624 4306406443 4899106236 
+  0298616278 8138870616 9750660503 1182164783 7850657611 
+  3288276226 8598904374 9424601462 5945982526 4035036685 
+  0724386443 8944764937 8791306165 6940589243 7551129633 
+  3302554161 8523573699 2849263128 4727992621 9181658920 
+  8683721043 8022731294 5873938022 0200773879 3895099410 
+  0697102906 4284562861 9298929860 1880590791 5553901100 
+  3924018926 2340510501 8564974295 2466060982 5070241212 
+  5073681212 9586284294 6545779810 2922400553 9499230979 
+  5540019122 3638888955 4725668677 6322326450 8962752767 
+  3045813691 6748091836 8374541947 7701484764 0214133418 
+   * 10^662
+
+B =
+0.2140616910 7899137835 2585011554 6960141832 0220145820 
+  6664385432 1137151554 9572708510 5783131887 2185802977 
+  5654825676 8538862262 9837519826 7932437106 7012920146 
+  5568231433 2127581293 9832244270 0278222365 6881641963 
+  2717062601 9366188326 1079355544 8811537920 3339947001 
+  8325470026 4247421315 3488593315 6080528840 4031893126 
+  6836685937 6094269043 1146445759 5370149654 5264893797 
+  3209843530 5952968044 7265844146 9701696161 3108626440 
+  8126933347 1362723359 4837891457 6411204558 4740114469 
+  5270179217 0031153738 5751882220 4053061214 9342679942 
+  7025123668 8083400521 9366723918 3005539196 1069301376 
+  6992596887 8188952883 4933095243 0121590290 1841637037 
+  6071370815 1185334574 6940025938 7104233325 0588311999 
+  3507700205 2763308632 3384137526 6616586728 4770201096 
+  3223856628 2844624599 3661681982 8372657212 1407099641 
+  5771051272 6753929860 0743762636 9858266503 7605017995 
+  9236522707 3060006656 1533034926 4389931422 1749761459 
+  0643268852 4164379631 0784863028 9265881878 1317046910 
+  1179857359 1649348627 6328224925 9398473401 3399233218 
+  1814868270 8859628160 2132177628 4388966893 0918890608 
+   * 10^891
+
+C =
+0.6311740612 4765751350 6619690871 8569654717 9747225470 
+  6688549847 9247214805 5121173611 6977943928 8302245627 
+  3718925488 7676371765 7617032626 5546358018 8976525811 
+  4897692074 6322977081 0607450943 2021703920 6838355255 
+  3543581705 0272644156 1155100727 4648199269 9738112620 
+  2439159344 2826936884 9712656018 2546551605 0254148726 
+  1155630263 2887454725 2498902997 7304068006 5343011485 
+  1393305715 4005503524 1777298359 8920272746 4964614968 
+  5954705731 6400627812 4633294903 7825297890 1561825738 
+  9964295908 2964486185 4922227902 8914665157 9777338176 
+  8383525425 6270836663 3820556393 2982254008 5604819478 
+  7269537178 6174329929 8980663530 3231405114 1758302294 
+  4964222575 8383423956 3658688920 5893235515 2982446943 
+  5910880892 0612055726 4774919623 1723923934 2305722325 
+  1649132015 5329624137 5525200552 2608511035 5089063497 
+  3447179144 5836609905 4554752011 7652691507 2855635726 
+  2738305639 9257436798 4161844327 1467219092 9956610291 
+  2549723175 0928660569 8705666607 9333425932 7639415674 
+  8718477059 0445987600 1784836515 9943082700 8043563223 
+  5325020882 3937437727 7303651904 5799292372 7230186850 
+   * 10^586
+
+A + B =
+0.2140616910 7899137835 2585011554 6960141832 0220145820 
+  6664385432 1137151554 9572708510 5783131887 2185802977 
+  5654825676 8538862262 9837519826 7932437106 7012920146 
+  5568231433 2127581293 9832244270 0278222365 6881641963 
+  2717062601 9366188326 1079355548 0476601895 8513176536 
+  2884748598 4124996510 1966392957 6177542913 7873683556 
+  5092632847 9429626018 4203794241 1201704822 9412568358 
+  5340718265 6788078773 4869405086 2310311450 0192131337 
+  4782938575 4809151317 4108631586 6586979987 8289496477 
+  4388372344 2512143460 2544606176 2522362048 5019574730 
+  8686058118 7550797993 8862801583 8727475668 6930893728 
+  3660183140 6211268857 8462965369 4144361619 0042070179 
+  1861037486 5404833315 2165306633 6743748730 6084669233 
+  7575516102 8614221105 2672181596 0827580510 9299714065 
+  4956502872 5908689034 2652744343 1358820000 2795805811 
+  3277656303 8575577697 9250338750 2741028772 3594061745 
+  3482537333 2519831920 1883401777 1633795861 1197410837 
+  8556330509 3570272068 6296159362 2291423496 6552783902 
+  9672488643 8929274846 8144814134 6235683839 3626546164 
+  0554248491 0867366954 1083171729 1359995957 3764519227 
+   * 10^891
+
+A - C =
+0.3166506397 5517322953 4455927857 1987757519 4847779964 
+  2009701407 3384179042 9825588379 2927410931 7792228228 
+  4674436947 1867587708 8958380784 9585031825 6612300972 
+  7524744550 9269062187 4209326803 9089755119 4209416395 
+  8691311996 5774749224 2653704415 0327352649 1908461788 
+  1337498061 6528482640 4613539901 4129689474 5508046611 
+  4564918999 0593459497 0540556186 1208788770 4984137299 
+  9842094586 3303993060 0091705511 5119316986 5975275570 
+  5933974236 4869570380 4291930196 4527937241 7893562629 
+  6437500457 9725486332 3023578669 7249090042 8620981602 
+  7349578453 5159969055 1493270538 8223081819 2988802689 
+  1009247312 1947324597 6042833079 0691726255 5668402864 
+  5160453461 6404679333 0596518896 1568803069 4251830652 
+  6667250930 4472431940 9826318164 2502234238 4942095262 
+  1794515150 5667578312 1404502111 1391853267 3337834635 
+  1500871182 5045220556 2075678211 0560435461 9312525575 
+  1918496317 7230155412 7930000848 0674615145 8971186657 
+  7553563560 2671211439 0188517071 9866001296 5131246817 
+  7096747655 1447958998 8622756127 9090575522 2357054061 
+  6379734358 2488764197 4217793229 2930894318 0338131634 
+   * 10^662
+</code></pre></div></div>
+
+<p>桁をずらして加減算してみると、正しく計算できていることが分かる。</p>
+
+<hr />
+
+<p>考え方としては難しいものではありませんが、一度実際に実装してみることでより理解が深まります。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/c%E8%A8%80%E8%AA%9E" class="page__taxonomy-item" rel="tag">C言語</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%95%B0%E5%AD%A6" class="page__taxonomy-item" rel="tag">数学</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-05-05T00:20:00+09:00">2013-05-05 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=C%2B%2B+-+%E5%A4%9A%E5%80%8D%E9%95%B7%E6%B5%AE%E5%8B%95%E5%B0%8F%E6%95%B0%E7%82%B9%E6%95%B0%E3%81%AE%E5%8A%A0%E6%B8%9B%E7%AE%97%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F05%2F05%2Fcpp-add-big-float%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F05%2F05%2Fcpp-add-big-float%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F05%2F05%2Fcpp-add-big-float%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/05/03/ruby-compare-big-digits/" class="pagination--pager" title="Ruby - 多倍長整数の大小比較！
+">Previous</a>
+    
+    
+      <a href="/2013/05/06/ruby-add-big-float/" class="pagination--pager" title="Ruby - 多倍長浮動小数点数の加減算！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/05/05/cpp-add-big-float/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/05/05/cpp-add-big-float"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,898 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>ＶＭｗａｒｅにＦｅｄｏｒａ１０！ - mk-mode BLOG</title>
+<meta name="description" content="うちのＦｅｄｏｒａ１０サーバを仮想マシンＶＭｗａｒｅでクローン化するための準備として、まずはフリーの ＶＭｗａｒｅＰｌａｙｅｒ にディスクイメージを作成するための Ｑｅｍｕ というソフトを使用してＦｅｄｏｒａ１０をインストールします。フリーの ＶＭｗａｒｅＰｌａｙｅｒ をはじめ、ＶＭｗａｒｅＷｏｒｋｓｔａｔｉｏｎ とかはシステム開発の現場とか、自宅サーバ構築の仮環境用として、非常にお世話になっているんで、感謝感謝です。自宅サーバで実際にＷｉｎｄｏｗｓＸＰ上にＦｅｄｏｒａを構築してサーバ運用していた時期もありました。（当時のマシンのメモリが貧弱だったんですぐにあきらめましたが・・・）昔、どっかのサイトを参考にして作成したＶＭｗａｒｅＰｌａｙｅｒ用のＶＭＸファイルをずっと流用しているんで、今回も流用しました。ＶＭｗａｒｅＰｌａｙｅｒ は「 2.5.1 build-126130 」とかにアップデートしてます。（たしか数ヶ月前）でも、一応今回は最初から導入しなおしてみようと思ってるんで、ＶＭｗａｒｅＰｌａｙｅｒ とか Ｑｅｍｕ とか、インストールするところから記録として残しておこうと思います。作業記録１．ＶＭｗａｒｅＰｌａｙｅｒのセットアップ当然これが必要です。下記からダウンロードしてインストールする。こちら → http://www.vmware.com/download/player/当記事執筆時点では、当方には最新バージョン（ 2.5.1 build-126130 ）がインストール済みでした。２．Ｑｅｍｕのダウンロード＆展開QEMU on Windows から最新版をダウンロードしＺＩＰファイルを展開する。。当記事執筆時点では、当方には最新バージョン（ qemu-0.9.0-windows.zip ）がダウンロード＆展開済みでした。３．ＶＭｗａｒｅディスクイメージの作成上記で展開されたフォルダ内の qemu-img.exe をＤＯＳコマンド画面で以下のように実行する。下記では「 qemu-img.exe 」のあるフォルダで実行しています。ディスクイメージの作成先は「 D:\VMware 」フォルダでファイル名は「 fedora.vmdk 」とし、ディスク領域は余裕を持って３０Ｇとっています。D:\70_Soft\qemu-0.9.0-windows&gt;qemu-img.exe create -f vmdk D:\VMware\Fedora\fedora.vmdk 30GFormating &#39;D:\VMware\Fedora\fedora.vmdk&#39;, fmt=vmdk, size=31457280 kBD:\70_Soft\qemu-0.9.0-windows&gt;４．ＶＭｗａｒｅＰｌａｙｅｒ用の設定ファイル作成以下のように設定ファイル（ＶＭＸファイル）を作成する。いつも使用しているものを流用しています。「 D:\VMware 」フォルダに、ファイル名[ fedora.vmx ]として保存しました。いつもこれを流用してＩＳＯファイルを使用しています。ご自分の環境にあわせて適宜変更してください。.encoding = &quot;Shift_JIS&quot;config.version = &quot;8&quot;virtualHW.version = &quot;3&quot;memsize = &quot;256&quot;　　　　　　　　　　　　　　　　　　　　←　物理メモリを圧縮しない程度にide0:0.present = &quot;TRUE&quot;ide0:0.fileName = &quot;fedora.vmdk&quot;　　　　　　　　　　　　←　作成されるディスクイメージide1:0.present = &quot;TRUE&quot;ide1:0.fileName = &quot;D:\70_Soft\Fedora-10-i386-DVD.ISO&quot;　←　ＩＳＯイメージを使用ide1:0.deviceType = &quot;cdrom-image&quot;ethernet0.present = &quot;TRUE&quot;ethernet0.connectionType = &quot;bridged&quot; 　　　　　　　　　←　ネットワークはブリッジ接続usb.present = &quot;TRUE&quot;sound.present = &quot;TRUE&quot;sound.virtualDev = &quot;es1371&quot;displayName = &quot;Fedora on VMware&quot; 　　　　　　　　　　　←　VMwarePlayerに表示する文字guestOS = &quot;other26xlinux&quot;　　　　　　　　　　　　　　　←　Ｆｅｄｏｒａ１０なのでnvram = &quot;fedora.nvram&quot; 　　　　　　　　　　　　　　　　←　ファイル名は統一したほうがよいのでscsi0:0.redo = &quot;&quot;ethernet0.addressType = &quot;generated&quot;uuid.location = &quot;56 4d 74 7e 54 a3 bb 35-a7 61 26 5e 50 43 f5 38&quot;uuid.bios = &quot;56 4d 74 7e 54 a3 bb 35-a7 61 26 5e 50 43 f5 38&quot;ide1:0.autodetect = &quot;TRUE&quot;ethernet0.generatedAddress = &quot;00:0c:29:43:f5:38&quot;ethernet0.generatedAddressOffset = &quot;0&quot;checkpoint.vmState = &quot;fedora.vmss&quot; 　　　　　　　　　　←　ファイル名は統一したほうがよいのでtools.remindInstall = &quot;FALSE&quot;ide0:0.redo = &quot;&quot;extendedConfigFile = &quot;fedora.vmxf&quot; 　　　　　　　　　　←　ファイル名は統一したほうがよいのでfloppy0.present = &quot;FALSE&quot;　　　　　　　　　　　　　　　←　フロッピドライブはないのでvirtualHW.productCompatibility = &quot;hosted&quot;tools.upgrade.policy = &quot;manual&quot;vmotion.checkpointFBSize = &quot;16777216&quot;ちなみにゲストＯＳのところの設定は以下のようにするみたいです。いろんなサイトに載っていますが・・・Guest OS の種類                            vmx の guestOSWindows 3.1                                win31Windows 95                                 win95Windows 98                                 win98Windows Me                                 winmeWindows NT                                 winntWindows 2000 Professional                  win2000proWindows 2000 Server                        win2000servWindows 2000 Advanced Server               win2000advservWindows XP Home Edition                    winxphomeWindows XP Professional                    winxpproWindows XP Professional x64 Edition        winxppro-64Windows Server 2003 Web Edition            winnetwebWindows Server 2003 Standard Edition       winnetstandardWindows Server 2003 Enterprise Edition     winnetenterpriseWindows Server 2003 Small Business         winnetbusinessWindows Server 2003 Standard x64 Edition   winnetstandard-64Windows Server 2003 Enterprise x64 Edition winnetenterprise-64Windows Vista                              winvistaWindows Vista x64 Edition                  winvista-64Red Hat Linux                              redhatRed Hat Enterprise Linux 2                 rhel2Red Hat Enterprise Linux 3                 rhel3Red Hat Enterprise Linux 3 64-bit          rhel3-64Red Hat Enterprise Linux 4                 rhel4Red Hat Enterprise Linux 4 64-bit          rhel4-64SUSE Linux                                 suseSUSE Linux 64-bit                          suse-64SUSE Linux Enterprise Server               slesSUSE Linux Enterprise Server 64-bit        sles-64Novell Linux Desktop 9                     nld9Sun Java Desktop System                    sjdsMandrake Linux                             mandrakeTurbolinux                                 turbolinuxUbuntu                                     ubuntuUbuntu 64-bit                              ubuntu-64Other Linux 2.4.x kernel                   other24xlinuxOther Linux 2.4.x kernel 64-bit            other24xlinux-64Other Linux 2.6.x kernel                   other26xlinuxOther Linux 2.6.x kernel 64-bit            other26xlinux-64Other Linux                                otherlinuxOther Linux 64-bit                         otherlinux-64Solaris 9                                  solaris9Solaris 10                                 solaris10Solaris 10 64-bit                          solaris10-64MS-DOS                                     dosFreeBSD                                    freebsdFreeBSD 64-bit                             freebsd-64Other                                      otherOther 64-bit                               other-64５．ＯＳのインストール上記で作成した設定ファイル fedora.vmx をダブルクリックする。ＯＳのインストールが始まります。今回は Fedoraで自宅サーバー構築 の Fedora 10インストール のとおりにインストールしました。（現在稼動中のＦｅｄｏｒａサーバもこのとおりにインストールしているんで）※ＶＭへのインストール時、ホスト名やその他ネットワークの設定なんかは実サーバとは異なるものにするなどしてます。また、さらに「 Ｐｏｄｅｒｏｓａ 」によるリモート接続を行い、初期設定までは済ませました。あと、時間が狂ってもいけないんで、ＮＴＰサーバもインストールしときました。それらも全て Fedoraで自宅サーバー構築 のとおりです。うまくいけば、再起動するとこんな感じで立ち上がるはず↓↓とりあえず、ＶＭｗａｒｅＰｌａｙｅｒ への Ｆｅｄｏｒａ１０ のインストールは以上です。次回は実サーバからミラーリングコピーすることに挑戦してみます。それでは、また。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="ＶＭｗａｒｅにＦｅｄｏｒａ１０！">
+<meta property="og:url" content="https://komasaru.github.io/2009/04/02/02002016/">
+
+
+  <meta property="og:description" content="うちのＦｅｄｏｒａ１０サーバを仮想マシンＶＭｗａｒｅでクローン化するための準備として、まずはフリーの ＶＭｗａｒｅＰｌａｙｅｒ にディスクイメージを作成するための Ｑｅｍｕ というソフトを使用してＦｅｄｏｒａ１０をインストールします。フリーの ＶＭｗａｒｅＰｌａｙｅｒ をはじめ、ＶＭｗａｒｅＷｏｒｋｓｔａｔｉｏｎ とかはシステム開発の現場とか、自宅サーバ構築の仮環境用として、非常にお世話になっているんで、感謝感謝です。自宅サーバで実際にＷｉｎｄｏｗｓＸＰ上にＦｅｄｏｒａを構築してサーバ運用していた時期もありました。（当時のマシンのメモリが貧弱だったんですぐにあきらめましたが・・・）昔、どっかのサイトを参考にして作成したＶＭｗａｒｅＰｌａｙｅｒ用のＶＭＸファイルをずっと流用しているんで、今回も流用しました。ＶＭｗａｒｅＰｌａｙｅｒ は「 2.5.1 build-126130 」とかにアップデートしてます。（たしか数ヶ月前）でも、一応今回は最初から導入しなおしてみようと思ってるんで、ＶＭｗａｒｅＰｌａｙｅｒ とか Ｑｅｍｕ とか、インストールするところから記録として残しておこうと思います。作業記録１．ＶＭｗａｒｅＰｌａｙｅｒのセットアップ当然これが必要です。下記からダウンロードしてインストールする。こちら → http://www.vmware.com/download/player/当記事執筆時点では、当方には最新バージョン（ 2.5.1 build-126130 ）がインストール済みでした。２．Ｑｅｍｕのダウンロード＆展開QEMU on Windows から最新版をダウンロードしＺＩＰファイルを展開する。。当記事執筆時点では、当方には最新バージョン（ qemu-0.9.0-windows.zip ）がダウンロード＆展開済みでした。３．ＶＭｗａｒｅディスクイメージの作成上記で展開されたフォルダ内の qemu-img.exe をＤＯＳコマンド画面で以下のように実行する。下記では「 qemu-img.exe 」のあるフォルダで実行しています。ディスクイメージの作成先は「 D:\VMware 」フォルダでファイル名は「 fedora.vmdk 」とし、ディスク領域は余裕を持って３０Ｇとっています。D:\70_Soft\qemu-0.9.0-windows&gt;qemu-img.exe create -f vmdk D:\VMware\Fedora\fedora.vmdk 30GFormating &#39;D:\VMware\Fedora\fedora.vmdk&#39;, fmt=vmdk, size=31457280 kBD:\70_Soft\qemu-0.9.0-windows&gt;４．ＶＭｗａｒｅＰｌａｙｅｒ用の設定ファイル作成以下のように設定ファイル（ＶＭＸファイル）を作成する。いつも使用しているものを流用しています。「 D:\VMware 」フォルダに、ファイル名[ fedora.vmx ]として保存しました。いつもこれを流用してＩＳＯファイルを使用しています。ご自分の環境にあわせて適宜変更してください。.encoding = &quot;Shift_JIS&quot;config.version = &quot;8&quot;virtualHW.version = &quot;3&quot;memsize = &quot;256&quot;　　　　　　　　　　　　　　　　　　　　←　物理メモリを圧縮しない程度にide0:0.present = &quot;TRUE&quot;ide0:0.fileName = &quot;fedora.vmdk&quot;　　　　　　　　　　　　←　作成されるディスクイメージide1:0.present = &quot;TRUE&quot;ide1:0.fileName = &quot;D:\70_Soft\Fedora-10-i386-DVD.ISO&quot;　←　ＩＳＯイメージを使用ide1:0.deviceType = &quot;cdrom-image&quot;ethernet0.present = &quot;TRUE&quot;ethernet0.connectionType = &quot;bridged&quot; 　　　　　　　　　←　ネットワークはブリッジ接続usb.present = &quot;TRUE&quot;sound.present = &quot;TRUE&quot;sound.virtualDev = &quot;es1371&quot;displayName = &quot;Fedora on VMware&quot; 　　　　　　　　　　　←　VMwarePlayerに表示する文字guestOS = &quot;other26xlinux&quot;　　　　　　　　　　　　　　　←　Ｆｅｄｏｒａ１０なのでnvram = &quot;fedora.nvram&quot; 　　　　　　　　　　　　　　　　←　ファイル名は統一したほうがよいのでscsi0:0.redo = &quot;&quot;ethernet0.addressType = &quot;generated&quot;uuid.location = &quot;56 4d 74 7e 54 a3 bb 35-a7 61 26 5e 50 43 f5 38&quot;uuid.bios = &quot;56 4d 74 7e 54 a3 bb 35-a7 61 26 5e 50 43 f5 38&quot;ide1:0.autodetect = &quot;TRUE&quot;ethernet0.generatedAddress = &quot;00:0c:29:43:f5:38&quot;ethernet0.generatedAddressOffset = &quot;0&quot;checkpoint.vmState = &quot;fedora.vmss&quot; 　　　　　　　　　　←　ファイル名は統一したほうがよいのでtools.remindInstall = &quot;FALSE&quot;ide0:0.redo = &quot;&quot;extendedConfigFile = &quot;fedora.vmxf&quot; 　　　　　　　　　　←　ファイル名は統一したほうがよいのでfloppy0.present = &quot;FALSE&quot;　　　　　　　　　　　　　　　←　フロッピドライブはないのでvirtualHW.productCompatibility = &quot;hosted&quot;tools.upgrade.policy = &quot;manual&quot;vmotion.checkpointFBSize = &quot;16777216&quot;ちなみにゲストＯＳのところの設定は以下のようにするみたいです。いろんなサイトに載っていますが・・・Guest OS の種類                            vmx の guestOSWindows 3.1                                win31Windows 95                                 win95Windows 98                                 win98Windows Me                                 winmeWindows NT                                 winntWindows 2000 Professional                  win2000proWindows 2000 Server                        win2000servWindows 2000 Advanced Server               win2000advservWindows XP Home Edition                    winxphomeWindows XP Professional                    winxpproWindows XP Professional x64 Edition        winxppro-64Windows Server 2003 Web Edition            winnetwebWindows Server 2003 Standard Edition       winnetstandardWindows Server 2003 Enterprise Edition     winnetenterpriseWindows Server 2003 Small Business         winnetbusinessWindows Server 2003 Standard x64 Edition   winnetstandard-64Windows Server 2003 Enterprise x64 Edition winnetenterprise-64Windows Vista                              winvistaWindows Vista x64 Edition                  winvista-64Red Hat Linux                              redhatRed Hat Enterprise Linux 2                 rhel2Red Hat Enterprise Linux 3                 rhel3Red Hat Enterprise Linux 3 64-bit          rhel3-64Red Hat Enterprise Linux 4                 rhel4Red Hat Enterprise Linux 4 64-bit          rhel4-64SUSE Linux                                 suseSUSE Linux 64-bit                          suse-64SUSE Linux Enterprise Server               slesSUSE Linux Enterprise Server 64-bit        sles-64Novell Linux Desktop 9                     nld9Sun Java Desktop System                    sjdsMandrake Linux                             mandrakeTurbolinux                                 turbolinuxUbuntu                                     ubuntuUbuntu 64-bit                              ubuntu-64Other Linux 2.4.x kernel                   other24xlinuxOther Linux 2.4.x kernel 64-bit            other24xlinux-64Other Linux 2.6.x kernel                   other26xlinuxOther Linux 2.6.x kernel 64-bit            other26xlinux-64Other Linux                                otherlinuxOther Linux 64-bit                         otherlinux-64Solaris 9                                  solaris9Solaris 10                                 solaris10Solaris 10 64-bit                          solaris10-64MS-DOS                                     dosFreeBSD                                    freebsdFreeBSD 64-bit                             freebsd-64Other                                      otherOther 64-bit                               other-64５．ＯＳのインストール上記で作成した設定ファイル fedora.vmx をダブルクリックする。ＯＳのインストールが始まります。今回は Fedoraで自宅サーバー構築 の Fedora 10インストール のとおりにインストールしました。（現在稼動中のＦｅｄｏｒａサーバもこのとおりにインストールしているんで）※ＶＭへのインストール時、ホスト名やその他ネットワークの設定なんかは実サーバとは異なるものにするなどしてます。また、さらに「 Ｐｏｄｅｒｏｓａ 」によるリモート接続を行い、初期設定までは済ませました。あと、時間が狂ってもいけないんで、ＮＴＰサーバもインストールしときました。それらも全て Fedoraで自宅サーバー構築 のとおりです。うまくいけば、再起動するとこんな感じで立ち上がるはず↓↓とりあえず、ＶＭｗａｒｅＰｌａｙｅｒ への Ｆｅｄｏｒａ１０ のインストールは以上です。次回は実サーバからミラーリングコピーすることに挑戦してみます。それでは、また。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="ＶＭｗａｒｅにＦｅｄｏｒａ１０！">
+  <meta name="twitter:description" content="うちのＦｅｄｏｒａ１０サーバを仮想マシンＶＭｗａｒｅでクローン化するための準備として、まずはフリーの ＶＭｗａｒｅＰｌａｙｅｒ にディスクイメージを作成するための Ｑｅｍｕ というソフトを使用してＦｅｄｏｒａ１０をインストールします。フリーの ＶＭｗａｒｅＰｌａｙｅｒ をはじめ、ＶＭｗａｒｅＷｏｒｋｓｔａｔｉｏｎ とかはシステム開発の現場とか、自宅サーバ構築の仮環境用として、非常にお世話になっているんで、感謝感謝です。自宅サーバで実際にＷｉｎｄｏｗｓＸＰ上にＦｅｄｏｒａを構築してサーバ運用していた時期もありました。（当時のマシンのメモリが貧弱だったんですぐにあきらめましたが・・・）昔、どっかのサイトを参考にして作成したＶＭｗａｒｅＰｌａｙｅｒ用のＶＭＸファイルをずっと流用しているんで、今回も流用しました。ＶＭｗａｒｅＰｌａｙｅｒ は「 2.5.1 build-126130 」とかにアップデートしてます。（たしか数ヶ月前）でも、一応今回は最初から導入しなおしてみようと思ってるんで、ＶＭｗａｒｅＰｌａｙｅｒ とか Ｑｅｍｕ とか、インストールするところから記録として残しておこうと思います。作業記録１．ＶＭｗａｒｅＰｌａｙｅｒのセットアップ当然これが必要です。下記からダウンロードしてインストールする。こちら → http://www.vmware.com/download/player/当記事執筆時点では、当方には最新バージョン（ 2.5.1 build-126130 ）がインストール済みでした。２．Ｑｅｍｕのダウンロード＆展開QEMU on Windows から最新版をダウンロードしＺＩＰファイルを展開する。。当記事執筆時点では、当方には最新バージョン（ qemu-0.9.0-windows.zip ）がダウンロード＆展開済みでした。３．ＶＭｗａｒｅディスクイメージの作成上記で展開されたフォルダ内の qemu-img.exe をＤＯＳコマンド画面で以下のように実行する。下記では「 qemu-img.exe 」のあるフォルダで実行しています。ディスクイメージの作成先は「 D:\VMware 」フォルダでファイル名は「 fedora.vmdk 」とし、ディスク領域は余裕を持って３０Ｇとっています。D:\70_Soft\qemu-0.9.0-windows&gt;qemu-img.exe create -f vmdk D:\VMware\Fedora\fedora.vmdk 30GFormating &#39;D:\VMware\Fedora\fedora.vmdk&#39;, fmt=vmdk, size=31457280 kBD:\70_Soft\qemu-0.9.0-windows&gt;４．ＶＭｗａｒｅＰｌａｙｅｒ用の設定ファイル作成以下のように設定ファイル（ＶＭＸファイル）を作成する。いつも使用しているものを流用しています。「 D:\VMware 」フォルダに、ファイル名[ fedora.vmx ]として保存しました。いつもこれを流用してＩＳＯファイルを使用しています。ご自分の環境にあわせて適宜変更してください。.encoding = &quot;Shift_JIS&quot;config.version = &quot;8&quot;virtualHW.version = &quot;3&quot;memsize = &quot;256&quot;　　　　　　　　　　　　　　　　　　　　←　物理メモリを圧縮しない程度にide0:0.present = &quot;TRUE&quot;ide0:0.fileName = &quot;fedora.vmdk&quot;　　　　　　　　　　　　←　作成されるディスクイメージide1:0.present = &quot;TRUE&quot;ide1:0.fileName = &quot;D:\70_Soft\Fedora-10-i386-DVD.ISO&quot;　←　ＩＳＯイメージを使用ide1:0.deviceType = &quot;cdrom-image&quot;ethernet0.present = &quot;TRUE&quot;ethernet0.connectionType = &quot;bridged&quot; 　　　　　　　　　←　ネットワークはブリッジ接続usb.present = &quot;TRUE&quot;sound.present = &quot;TRUE&quot;sound.virtualDev = &quot;es1371&quot;displayName = &quot;Fedora on VMware&quot; 　　　　　　　　　　　←　VMwarePlayerに表示する文字guestOS = &quot;other26xlinux&quot;　　　　　　　　　　　　　　　←　Ｆｅｄｏｒａ１０なのでnvram = &quot;fedora.nvram&quot; 　　　　　　　　　　　　　　　　←　ファイル名は統一したほうがよいのでscsi0:0.redo = &quot;&quot;ethernet0.addressType = &quot;generated&quot;uuid.location = &quot;56 4d 74 7e 54 a3 bb 35-a7 61 26 5e 50 43 f5 38&quot;uuid.bios = &quot;56 4d 74 7e 54 a3 bb 35-a7 61 26 5e 50 43 f5 38&quot;ide1:0.autodetect = &quot;TRUE&quot;ethernet0.generatedAddress = &quot;00:0c:29:43:f5:38&quot;ethernet0.generatedAddressOffset = &quot;0&quot;checkpoint.vmState = &quot;fedora.vmss&quot; 　　　　　　　　　　←　ファイル名は統一したほうがよいのでtools.remindInstall = &quot;FALSE&quot;ide0:0.redo = &quot;&quot;extendedConfigFile = &quot;fedora.vmxf&quot; 　　　　　　　　　　←　ファイル名は統一したほうがよいのでfloppy0.present = &quot;FALSE&quot;　　　　　　　　　　　　　　　←　フロッピドライブはないのでvirtualHW.productCompatibility = &quot;hosted&quot;tools.upgrade.policy = &quot;manual&quot;vmotion.checkpointFBSize = &quot;16777216&quot;ちなみにゲストＯＳのところの設定は以下のようにするみたいです。いろんなサイトに載っていますが・・・Guest OS の種類                            vmx の guestOSWindows 3.1                                win31Windows 95                                 win95Windows 98                                 win98Windows Me                                 winmeWindows NT                                 winntWindows 2000 Professional                  win2000proWindows 2000 Server                        win2000servWindows 2000 Advanced Server               win2000advservWindows XP Home Edition                    winxphomeWindows XP Professional                    winxpproWindows XP Professional x64 Edition        winxppro-64Windows Server 2003 Web Edition            winnetwebWindows Server 2003 Standard Edition       winnetstandardWindows Server 2003 Enterprise Edition     winnetenterpriseWindows Server 2003 Small Business         winnetbusinessWindows Server 2003 Standard x64 Edition   winnetstandard-64Windows Server 2003 Enterprise x64 Edition winnetenterprise-64Windows Vista                              winvistaWindows Vista x64 Edition                  winvista-64Red Hat Linux                              redhatRed Hat Enterprise Linux 2                 rhel2Red Hat Enterprise Linux 3                 rhel3Red Hat Enterprise Linux 3 64-bit          rhel3-64Red Hat Enterprise Linux 4                 rhel4Red Hat Enterprise Linux 4 64-bit          rhel4-64SUSE Linux                                 suseSUSE Linux 64-bit                          suse-64SUSE Linux Enterprise Server               slesSUSE Linux Enterprise Server 64-bit        sles-64Novell Linux Desktop 9                     nld9Sun Java Desktop System                    sjdsMandrake Linux                             mandrakeTurbolinux                                 turbolinuxUbuntu                                     ubuntuUbuntu 64-bit                              ubuntu-64Other Linux 2.4.x kernel                   other24xlinuxOther Linux 2.4.x kernel 64-bit            other24xlinux-64Other Linux 2.6.x kernel                   other26xlinuxOther Linux 2.6.x kernel 64-bit            other26xlinux-64Other Linux                                otherlinuxOther Linux 64-bit                         otherlinux-64Solaris 9                                  solaris9Solaris 10                                 solaris10Solaris 10 64-bit                          solaris10-64MS-DOS                                     dosFreeBSD                                    freebsdFreeBSD 64-bit                             freebsd-64Other                                      otherOther 64-bit                               other-64５．ＯＳのインストール上記で作成した設定ファイル fedora.vmx をダブルクリックする。ＯＳのインストールが始まります。今回は Fedoraで自宅サーバー構築 の Fedora 10インストール のとおりにインストールしました。（現在稼動中のＦｅｄｏｒａサーバもこのとおりにインストールしているんで）※ＶＭへのインストール時、ホスト名やその他ネットワークの設定なんかは実サーバとは異なるものにするなどしてます。また、さらに「 Ｐｏｄｅｒｏｓａ 」によるリモート接続を行い、初期設定までは済ませました。あと、時間が狂ってもいけないんで、ＮＴＰサーバもインストールしときました。それらも全て Fedoraで自宅サーバー構築 のとおりです。うまくいけば、再起動するとこんな感じで立ち上がるはず↓↓とりあえず、ＶＭｗａｒｅＰｌａｙｅｒ への Ｆｅｄｏｒａ１０ のインストールは以上です。次回は実サーバからミラーリングコピーすることに挑戦してみます。それでは、また。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/04/02/02002016/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2009-04-02T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2009/04/02/02002016/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="ＶＭｗａｒｅにＦｅｄｏｒａ１０！">
+    <meta itemprop="description" content="うちのＦｅｄｏｒａ１０サーバを仮想マシンＶＭｗａｒｅでクローン化するための準備として、まずはフリーの ＶＭｗａｒｅＰｌａｙｅｒ にディスクイメージを作成するための Ｑｅｍｕ というソフトを使用してＦｅｄｏｒａ１０をインストールします。フリーの ＶＭｗａｒｅＰｌａｙｅｒ をはじめ、ＶＭｗａｒｅＷｏｒｋｓｔａｔｉｏｎ とかはシステム開発の現場とか、自宅サーバ構築の仮環境用として、非常にお世話になっているんで、感謝感謝です。自宅サーバで実際にＷｉｎｄｏｗｓＸＰ上にＦｅｄｏｒａを構築してサーバ運用していた時期もありました。（当時のマシンのメモリが貧弱だったんですぐにあきらめましたが・・・）昔、どっかのサイトを参考にして作成したＶＭｗａｒｅＰｌａｙｅｒ用のＶＭＸファイルをずっと流用しているんで、今回も流用しました。ＶＭｗａｒｅＰｌａｙｅｒ は「 2.5.1 build-126130 」とかにアップデートしてます。（たしか数ヶ月前）でも、一応今回は最初から導入しなおしてみようと思ってるんで、ＶＭｗａｒｅＰｌａｙｅｒ とか Ｑｅｍｕ とか、インストールするところから記録として残しておこうと思います。作業記録１．ＶＭｗａｒｅＰｌａｙｅｒのセットアップ当然これが必要です。下記からダウンロードしてインストールする。こちら → http://www.vmware.com/download/player/当記事執筆時点では、当方には最新バージョン（ 2.5.1 build-126130 ）がインストール済みでした。２．Ｑｅｍｕのダウンロード＆展開QEMU on Windows から最新版をダウンロードしＺＩＰファイルを展開する。。当記事執筆時点では、当方には最新バージョン（ qemu-0.9.0-windows.zip ）がダウンロード＆展開済みでした。３．ＶＭｗａｒｅディスクイメージの作成上記で展開されたフォルダ内の qemu-img.exe をＤＯＳコマンド画面で以下のように実行する。下記では「 qemu-img.exe 」のあるフォルダで実行しています。ディスクイメージの作成先は「 D:\VMware 」フォルダでファイル名は「 fedora.vmdk 」とし、ディスク領域は余裕を持って３０Ｇとっています。D:\70_Soft\qemu-0.9.0-windows&gt;qemu-img.exe create -f vmdk D:\VMware\Fedora\fedora.vmdk 30GFormating &#39;D:\VMware\Fedora\fedora.vmdk&#39;, fmt=vmdk, size=31457280 kBD:\70_Soft\qemu-0.9.0-windows&gt;４．ＶＭｗａｒｅＰｌａｙｅｒ用の設定ファイル作成以下のように設定ファイル（ＶＭＸファイル）を作成する。いつも使用しているものを流用しています。「 D:\VMware 」フォルダに、ファイル名[ fedora.vmx ]として保存しました。いつもこれを流用してＩＳＯファイルを使用しています。ご自分の環境にあわせて適宜変更してください。.encoding = &quot;Shift_JIS&quot;config.version = &quot;8&quot;virtualHW.version = &quot;3&quot;memsize = &quot;256&quot;　　　　　　　　　　　　　　　　　　　　←　物理メモリを圧縮しない程度にide0:0.present = &quot;TRUE&quot;ide0:0.fileName = &quot;fedora.vmdk&quot;　　　　　　　　　　　　←　作成されるディスクイメージide1:0.present = &quot;TRUE&quot;ide1:0.fileName = &quot;D:\70_Soft\Fedora-10-i386-DVD.ISO&quot;　←　ＩＳＯイメージを使用ide1:0.deviceType = &quot;cdrom-image&quot;ethernet0.present = &quot;TRUE&quot;ethernet0.connectionType = &quot;bridged&quot; 　　　　　　　　　←　ネットワークはブリッジ接続usb.present = &quot;TRUE&quot;sound.present = &quot;TRUE&quot;sound.virtualDev = &quot;es1371&quot;displayName = &quot;Fedora on VMware&quot; 　　　　　　　　　　　←　VMwarePlayerに表示する文字guestOS = &quot;other26xlinux&quot;　　　　　　　　　　　　　　　←　Ｆｅｄｏｒａ１０なのでnvram = &quot;fedora.nvram&quot; 　　　　　　　　　　　　　　　　←　ファイル名は統一したほうがよいのでscsi0:0.redo = &quot;&quot;ethernet0.addressType = &quot;generated&quot;uuid.location = &quot;56 4d 74 7e 54 a3 bb 35-a7 61 26 5e 50 43 f5 38&quot;uuid.bios = &quot;56 4d 74 7e 54 a3 bb 35-a7 61 26 5e 50 43 f5 38&quot;ide1:0.autodetect = &quot;TRUE&quot;ethernet0.generatedAddress = &quot;00:0c:29:43:f5:38&quot;ethernet0.generatedAddressOffset = &quot;0&quot;checkpoint.vmState = &quot;fedora.vmss&quot; 　　　　　　　　　　←　ファイル名は統一したほうがよいのでtools.remindInstall = &quot;FALSE&quot;ide0:0.redo = &quot;&quot;extendedConfigFile = &quot;fedora.vmxf&quot; 　　　　　　　　　　←　ファイル名は統一したほうがよいのでfloppy0.present = &quot;FALSE&quot;　　　　　　　　　　　　　　　←　フロッピドライブはないのでvirtualHW.productCompatibility = &quot;hosted&quot;tools.upgrade.policy = &quot;manual&quot;vmotion.checkpointFBSize = &quot;16777216&quot;ちなみにゲストＯＳのところの設定は以下のようにするみたいです。いろんなサイトに載っていますが・・・Guest OS の種類                            vmx の guestOSWindows 3.1                                win31Windows 95                                 win95Windows 98                                 win98Windows Me                                 winmeWindows NT                                 winntWindows 2000 Professional                  win2000proWindows 2000 Server                        win2000servWindows 2000 Advanced Server               win2000advservWindows XP Home Edition                    winxphomeWindows XP Professional                    winxpproWindows XP Professional x64 Edition        winxppro-64Windows Server 2003 Web Edition            winnetwebWindows Server 2003 Standard Edition       winnetstandardWindows Server 2003 Enterprise Edition     winnetenterpriseWindows Server 2003 Small Business         winnetbusinessWindows Server 2003 Standard x64 Edition   winnetstandard-64Windows Server 2003 Enterprise x64 Edition winnetenterprise-64Windows Vista                              winvistaWindows Vista x64 Edition                  winvista-64Red Hat Linux                              redhatRed Hat Enterprise Linux 2                 rhel2Red Hat Enterprise Linux 3                 rhel3Red Hat Enterprise Linux 3 64-bit          rhel3-64Red Hat Enterprise Linux 4                 rhel4Red Hat Enterprise Linux 4 64-bit          rhel4-64SUSE Linux                                 suseSUSE Linux 64-bit                          suse-64SUSE Linux Enterprise Server               slesSUSE Linux Enterprise Server 64-bit        sles-64Novell Linux Desktop 9                     nld9Sun Java Desktop System                    sjdsMandrake Linux                             mandrakeTurbolinux                                 turbolinuxUbuntu                                     ubuntuUbuntu 64-bit                              ubuntu-64Other Linux 2.4.x kernel                   other24xlinuxOther Linux 2.4.x kernel 64-bit            other24xlinux-64Other Linux 2.6.x kernel                   other26xlinuxOther Linux 2.6.x kernel 64-bit            other26xlinux-64Other Linux                                otherlinuxOther Linux 64-bit                         otherlinux-64Solaris 9                                  solaris9Solaris 10                                 solaris10Solaris 10 64-bit                          solaris10-64MS-DOS                                     dosFreeBSD                                    freebsdFreeBSD 64-bit                             freebsd-64Other                                      otherOther 64-bit                               other-64５．ＯＳのインストール上記で作成した設定ファイル fedora.vmx をダブルクリックする。ＯＳのインストールが始まります。今回は Fedoraで自宅サーバー構築 の Fedora 10インストール のとおりにインストールしました。（現在稼動中のＦｅｄｏｒａサーバもこのとおりにインストールしているんで）※ＶＭへのインストール時、ホスト名やその他ネットワークの設定なんかは実サーバとは異なるものにするなどしてます。また、さらに「 Ｐｏｄｅｒｏｓａ 」によるリモート接続を行い、初期設定までは済ませました。あと、時間が狂ってもいけないんで、ＮＴＰサーバもインストールしときました。それらも全て Fedoraで自宅サーバー構築 のとおりです。うまくいけば、再起動するとこんな感じで立ち上がるはず↓↓とりあえず、ＶＭｗａｒｅＰｌａｙｅｒ への Ｆｅｄｏｒａ１０ のインストールは以上です。次回は実サーバからミラーリングコピーすることに挑戦してみます。それでは、また。">
+    <meta itemprop="datePublished" content="April 02, 2009">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">ＶＭｗａｒｅにＦｅｄｏｒａ１０！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2009-04-02T00:20:00+09:00">2009-04-02 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>うちのＦｅｄｏｒａ１０サーバを仮想マシンＶＭｗａｒｅでクローン化するための準備として、まずはフリーの ＶＭｗａｒｅＰｌａｙｅｒ にディスクイメージを作成するための Ｑｅｍｕ というソフトを使用してＦｅｄｏｒａ１０をインストールします。</p>
+
+<p>フリーの ＶＭｗａｒｅＰｌａｙｅｒ をはじめ、ＶＭｗａｒｅＷｏｒｋｓｔａｔｉｏｎ とかはシステム開発の現場とか、自宅サーバ構築の仮環境用として、非常にお世話になっているんで、感謝感謝です。</p>
+
+<p>自宅サーバで実際にＷｉｎｄｏｗｓＸＰ上にＦｅｄｏｒａを構築してサーバ運用していた時期もありました。
+（当時のマシンのメモリが貧弱だったんですぐにあきらめましたが・・・）</p>
+
+<p>昔、どっかのサイトを参考にして作成したＶＭｗａｒｅＰｌａｙｅｒ用のＶＭＸファイルをずっと流用しているんで、今回も流用しました。</p>
+
+<p>ＶＭｗａｒｅＰｌａｙｅｒ は「 2.5.1 build-126130 」とかにアップデートしてます。（たしか数ヶ月前）</p>
+
+<p>でも、一応今回は最初から導入しなおしてみようと思ってるんで、ＶＭｗａｒｅＰｌａｙｅｒ とか Ｑｅｍｕ とか、インストールするところから記録として残しておこうと思います。</p>
+
+<h3 id="作業記録">作業記録</h3>
+
+<h4 id="１ｖｍｗａｒｅｐｌａｙｅｒのセットアップ">１．ＶＭｗａｒｅＰｌａｙｅｒのセットアップ</h4>
+
+<p>当然これが必要です。下記からダウンロードしてインストールする。
+こちら → <a href="http://www.vmware.com/download/player/" title="http://www.vmware.com/download/player/">http://www.vmware.com/download/player/</a>
+当記事執筆時点では、当方には最新バージョン（ 2.5.1 build-126130 ）がインストール済みでした。</p>
+
+<h4 id="２ｑｅｍｕのダウンロード展開">２．Ｑｅｍｕのダウンロード＆展開</h4>
+
+<p><a href="http://www.h7.dion.ne.jp/~qemu-win/index-ja.html" title="QEMU on Windows">QEMU on Windows</a> から最新版をダウンロードしＺＩＰファイルを展開する。。
+当記事執筆時点では、当方には最新バージョン（ qemu-0.9.0-windows.zip ）がダウンロード＆展開済みでした。</p>
+
+<h4 id="３ｖｍｗａｒｅディスクイメージの作成">３．ＶＭｗａｒｅディスクイメージの作成</h4>
+
+<p>上記で展開されたフォルダ内の qemu-img.exe をＤＯＳコマンド画面で以下のように実行する。
+下記では「 qemu-img.exe 」のあるフォルダで実行しています。
+ディスクイメージの作成先は「 D:\VMware 」フォルダでファイル名は「 fedora.vmdk 」とし、ディスク領域は余裕を持って３０Ｇとっています。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>D:\70_Soft\qemu-0.9.0-windows&gt;qemu-img.exe create -f vmdk D:\VMware\Fedora\fedora.vmdk 30G
+Formating 'D:\VMware\Fedora\fedora.vmdk', fmt=vmdk, size=31457280 kB
+
+D:\70_Soft\qemu-0.9.0-windows&gt;
+</code></pre></div></div>
+
+<h4 id="４ｖｍｗａｒｅｐｌａｙｅｒ用の設定ファイル作成">４．ＶＭｗａｒｅＰｌａｙｅｒ用の設定ファイル作成</h4>
+
+<p>以下のように設定ファイル（ＶＭＸファイル）を作成する。
+いつも使用しているものを流用しています。
+「 D:\VMware 」フォルダに、ファイル名[ fedora.vmx ]として保存しました。
+いつもこれを流用してＩＳＯファイルを使用しています。
+ご自分の環境にあわせて適宜変更してください。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.encoding = "Shift_JIS"
+config.version = "8"
+virtualHW.version = "3"
+memsize = "256"　　　　　　　　　　　　　　　　　　　　←　物理メモリを圧縮しない程度に
+ide0:0.present = "TRUE"
+ide0:0.fileName = "fedora.vmdk"　　　　　　　　　　　　←　作成されるディスクイメージ
+
+ide1:0.present = "TRUE"
+ide1:0.fileName = "D:\70_Soft\Fedora-10-i386-DVD.ISO"　←　ＩＳＯイメージを使用
+ide1:0.deviceType = "cdrom-image"
+ethernet0.present = "TRUE"
+ethernet0.connectionType = "bridged" 　　　　　　　　　←　ネットワークはブリッジ接続
+usb.present = "TRUE"
+sound.present = "TRUE"
+sound.virtualDev = "es1371"
+displayName = "Fedora on VMware" 　　　　　　　　　　　←　VMwarePlayerに表示する文字
+guestOS = "other26xlinux"　　　　　　　　　　　　　　　←　Ｆｅｄｏｒａ１０なので
+nvram = "fedora.nvram" 　　　　　　　　　　　　　　　　←　ファイル名は統一したほうがよいので
+scsi0:0.redo = ""
+ethernet0.addressType = "generated"
+uuid.location = "56 4d 74 7e 54 a3 bb 35-a7 61 26 5e 50 43 f5 38"
+uuid.bios = "56 4d 74 7e 54 a3 bb 35-a7 61 26 5e 50 43 f5 38"
+ide1:0.autodetect = "TRUE"
+ethernet0.generatedAddress = "00:0c:29:43:f5:38"
+ethernet0.generatedAddressOffset = "0"
+checkpoint.vmState = "fedora.vmss" 　　　　　　　　　　←　ファイル名は統一したほうがよいので
+tools.remindInstall = "FALSE"
+ide0:0.redo = ""
+
+extendedConfigFile = "fedora.vmxf" 　　　　　　　　　　←　ファイル名は統一したほうがよいので
+
+floppy0.present = "FALSE"　　　　　　　　　　　　　　　←　フロッピドライブはないので
+virtualHW.productCompatibility = "hosted"
+tools.upgrade.policy = "manual"
+
+vmotion.checkpointFBSize = "16777216"
+</code></pre></div></div>
+
+<p>ちなみにゲストＯＳのところの設定は以下のようにするみたいです。
+いろんなサイトに載っていますが・・・</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Guest OS の種類                            vmx の guestOS
+Windows 3.1                                win31
+Windows 95                                 win95
+Windows 98                                 win98
+Windows Me                                 winme
+Windows NT                                 winnt
+Windows 2000 Professional                  win2000pro
+Windows 2000 Server                        win2000serv
+Windows 2000 Advanced Server               win2000advserv
+Windows XP Home Edition                    winxphome
+Windows XP Professional                    winxppro
+Windows XP Professional x64 Edition        winxppro-64
+Windows Server 2003 Web Edition            winnetweb
+Windows Server 2003 Standard Edition       winnetstandard
+Windows Server 2003 Enterprise Edition     winnetenterprise
+Windows Server 2003 Small Business         winnetbusiness
+Windows Server 2003 Standard x64 Edition   winnetstandard-64
+Windows Server 2003 Enterprise x64 Edition winnetenterprise-64
+Windows Vista                              winvista
+Windows Vista x64 Edition                  winvista-64
+Red Hat Linux                              redhat
+Red Hat Enterprise Linux 2                 rhel2
+Red Hat Enterprise Linux 3                 rhel3
+Red Hat Enterprise Linux 3 64-bit          rhel3-64
+Red Hat Enterprise Linux 4                 rhel4
+Red Hat Enterprise Linux 4 64-bit          rhel4-64
+SUSE Linux                                 suse
+SUSE Linux 64-bit                          suse-64
+SUSE Linux Enterprise Server               sles
+SUSE Linux Enterprise Server 64-bit        sles-64
+Novell Linux Desktop 9                     nld9
+Sun Java Desktop System                    sjds
+Mandrake Linux                             mandrake
+Turbolinux                                 turbolinux
+Ubuntu                                     ubuntu
+Ubuntu 64-bit                              ubuntu-64
+Other Linux 2.4.x kernel                   other24xlinux
+Other Linux 2.4.x kernel 64-bit            other24xlinux-64
+Other Linux 2.6.x kernel                   other26xlinux
+Other Linux 2.6.x kernel 64-bit            other26xlinux-64
+Other Linux                                otherlinux
+Other Linux 64-bit                         otherlinux-64
+Solaris 9                                  solaris9
+Solaris 10                                 solaris10
+Solaris 10 64-bit                          solaris10-64
+MS-DOS                                     dos
+FreeBSD                                    freebsd
+FreeBSD 64-bit                             freebsd-64
+Other                                      other
+Other 64-bit                               other-64
+
+</code></pre></div></div>
+
+<h4 id="５ｏｓのインストール">５．ＯＳのインストール</h4>
+
+<p>上記で作成した設定ファイル fedora.vmx をダブルクリックする。
+ＯＳのインストールが始まります。
+今回は <a href="http://fedorasrv.com/" title="Fedoraで自宅サーバー構築">Fedoraで自宅サーバー構築</a> の <a href="http://fedorasrv.com/fedora10.shtml" title="Fedora 10インストール">Fedora 10インストール</a> のとおりにインストールしました。
+（現在稼動中のＦｅｄｏｒａサーバもこのとおりにインストールしているんで）
+※ＶＭへのインストール時、ホスト名やその他ネットワークの設定なんかは実サーバとは異なるものにするなどしてます。</p>
+
+<p><img src="/images/2009/03/vm_fedora10_1.jpg" alt="vm_fedora10_1" title="vm_fedora10_1" /></p>
+
+<p>また、さらに「 Ｐｏｄｅｒｏｓａ 」によるリモート接続を行い、初期設定までは済ませました。
+あと、時間が狂ってもいけないんで、ＮＴＰサーバもインストールしときました。
+それらも全て <a href="http://fedorasrv.com/" title="Fedoraで自宅サーバー構築">Fedoraで自宅サーバー構築</a> のとおりです。</p>
+
+<p>うまくいけば、再起動するとこんな感じで立ち上がるはず↓↓</p>
+
+<p><img src="/images/2009/03/vm_fedora10_2.jpg" alt="vm_fedora10_2" title="vm_fedora10_2" /></p>
+
+<hr />
+
+<p>とりあえず、ＶＭｗａｒｅＰｌａｙｅｒ への Ｆｅｄｏｒａ１０ のインストールは以上です。</p>
+
+<p>次回は実サーバからミラーリングコピーすることに挑戦してみます。</p>
+
+<p>それでは、また。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/fedora" class="page__taxonomy-item" rel="tag">Fedora</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/vmware" class="page__taxonomy-item" rel="tag">VMware</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2009-04-02T00:20:00+09:00">2009-04-02 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%EF%BC%B6%EF%BC%AD%EF%BD%97%EF%BD%81%EF%BD%92%EF%BD%85%E3%81%AB%EF%BC%A6%EF%BD%85%EF%BD%84%EF%BD%8F%EF%BD%92%EF%BD%81%EF%BC%91%EF%BC%90%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F04%2F02%2F02002016%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F04%2F02%2F02002016%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F04%2F02%2F02002016%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2009/04/01/01002051/" class="pagination--pager" title="Ｆｅｄｏｒａサーバのクローン化のために！
+">Previous</a>
+    
+    
+      <a href="/2009/04/03/03014038/" class="pagination--pager" title="LOTO6 No.439
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2009/04/02/02002016/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2009/04/02/02002016"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

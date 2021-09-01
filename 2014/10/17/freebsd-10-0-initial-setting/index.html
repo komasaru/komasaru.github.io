@@ -1,0 +1,992 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>FreeBSD 10.0 - 初期設定！ - mk-mode BLOG</title>
+<meta name="description" content="「FreeBSD 10.0 - 初期設定」についての記録です。（旧バージョンでの個人の作業記録を更新しました。興味がなければスルーしてください）">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="FreeBSD 10.0 - 初期設定！">
+<meta property="og:url" content="https://komasaru.github.io/2014/10/17/freebsd-10-0-initial-setting/">
+
+
+  <meta property="og:description" content="「FreeBSD 10.0 - 初期設定」についての記録です。（旧バージョンでの個人の作業記録を更新しました。興味がなければスルーしてください）">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="FreeBSD 10.0 - 初期設定！">
+  <meta name="twitter:description" content="「FreeBSD 10.0 - 初期設定」についての記録です。（旧バージョンでの個人の作業記録を更新しました。興味がなければスルーしてください）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2014/10/17/freebsd-10-0-initial-setting/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2014-10-17T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2014/10/17/freebsd-10-0-initial-setting/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="FreeBSD 10.0 - 初期設定！">
+    <meta itemprop="description" content="「FreeBSD 10.0 - 初期設定」についての記録です。（旧バージョンでの個人の作業記録を更新しました。興味がなければスルーしてください）">
+    <meta itemprop="datePublished" content="October 17, 2014">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">FreeBSD 10.0 - 初期設定！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-10-17T00:20:00+09:00">2014-10-17 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>「FreeBSD 10.0 - 初期設定」についての記録です。</p>
+
+<p>（旧バージョンでの個人の作業記録を更新しました。興味がなければスルーしてください）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>インストール作業時に SSH サーバをインストールを行っている。</li>
+  <li>インストール作業に一般ユーザを作成している。(wheel グループ設定もしている）</li>
+  <li>以下の作業は、リモート接続して行う。（リモートから <code class="language-plaintext highlighter-rouge">ssh vbox</code> で接続）</li>
+  <li>リモート端末は、 Linux Mint 17 マシンを想定しているが、 Unix 系 OS なら同じ。</li>
+  <li>設定ファイル等のテキストファイルの編集には <code class="language-plaintext highlighter-rouge">vi</code> コマンドを使用。</li>
+  <li>作業はリモート接続で一般ユーザから root になって行う。</li>
+  <li>主に<a href="http://freebsd.server-manual.com/" title="FreeBSDサーバー構築マニュアル">FreeBSDサーバー構築マニュアル</a>を参照。</li>
+</ul>
+
+<h3 id="1-プロンプト表示変更">1. プロンプト表示変更</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">~/.cshrc</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="code"><pre>        <span class="c">#set prompt = "%N@%m:%~ %# "</span>
+        <span class="nb">set </span>prompt <span class="o">=</span> <span class="s2">"[%n@%m %c]# "</span>   <span class="c"># &lt;= 変更</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># source ~/.cshrc
+[root@vbox ~]#                        # &lt;= 変更されたことを確認
+</code></pre></div></div>
+
+<p>（以降、説明上プロンプトは <code class="language-plaintext highlighter-rouge">#</code> or <code class="language-plaintext highlighter-rouge">$</code> のみの簡略表示とする）</p>
+
+<h3 id="2-ports-ツリー更新">2. ports ツリー更新</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># portsnap fetch    # &lt;= ports ツリーの圧縮されたスナップショットを取得
+# portsnap extract  # &lt;= 抽出
+</code></pre></div></div>
+
+<p>crontab に登録して、自動で ports ツリー更新を行うようにする。（最終行に以下の記述を追記）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/crontab</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+</pre></td><td class="code"><pre>0       3       <span class="k">*</span>       <span class="k">*</span>       <span class="k">*</span>       root    /usr/sbin/portsnap cron <span class="o">&amp;&amp;</span> portsnap update <span class="o">&gt;</span> /dev/null
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="3-portupgrade-インストール">3. portupgrade インストール</h3>
+
+<p>インストールした ports のアップグレードを簡単に行なうためのユーティリティ portupgrade をインストールする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd /usr/ports/ports-mgmt/portupgrade/
+# make BATCH=yes install clean
+# rehash
+# cd
+</code></pre></div></div>
+
+<h3 id="4-portupgrade-設定">4. portupgrade 設定</h3>
+
+<p><code class="language-plaintext highlighter-rouge">make</code> 実行時に常時設定するパラメータを設定しておく。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># chmod 640 /usr/local/etc/pkgtools.conf
+</code></pre></div></div>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/usr/local/etc/pkgtools.conf</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre>  MAKE_ARGS <span class="o">=</span> <span class="o">{</span>
+    <span class="c"># ====[追加]===&gt;</span>
+    <span class="s1">'*'</span> <span class="o">=&gt;</span> <span class="o">[</span>
+      <span class="s1">'WITH_BDB_VER=53'</span>,
+      <span class="s1">'WITHOUT_IPV6=yes'</span>,
+      <span class="s1">'WITHOUT_X11=yes'</span>,
+      <span class="s1">'WITHOUT_GUI=yes'</span>,
+    <span class="o">]</span>,
+    <span class="c"># &lt;===[追加]====</span>
+  <span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">WITH_BDB_VER=53</code> は、 BerkeleyDB のバージョンを5.3に統一する設定。<br />
+（インストールされている BerkeleyDB のバージョンに合わせる。 <code class="language-plaintext highlighter-rouge">pkg info | grep db</code> 等で確認可）</li>
+  <li><code class="language-plaintext highlighter-rouge">WITHOUT_IPV6=yes</code> は、 IPv6 関連をインストールしない設定。</li>
+  <li><code class="language-plaintext highlighter-rouge">WITHOUT_X11=yes</code> は、 X11 関連をインストールしない設定。</li>
+  <li><code class="language-plaintext highlighter-rouge">WITHOUT_GUI=yes</code> は、 GUI 関連をインストールしない設定。</li>
+</ul>
+
+<h3 id="5-freebsd-update-セキュリティアップデート機能">5. FreeBSD Update (セキュリティアップデート機能)</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># freebsd-update fetch
+# freebsd-update install
+</code></pre></div></div>
+
+<p>crontab に登録して、自動で FreeBSD Update を行うようにする。（最終行に以下の記述を追記）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/crontab</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+</pre></td><td class="code"><pre>0       4       <span class="k">*</span>       <span class="k">*</span>       <span class="k">*</span>       root    /usr/sbin/freebsd-update cron
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="6-tcp-wrapper設定">6. TCP Wrapper設定</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mv /etc/hosts.allow /etc/hosts.allow.org  # &lt;= 念の為オリジナルファイルを退避
+</code></pre></div></div>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/hosts.allow</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+</pre></td><td class="code"><pre>sshd: ALL    <span class="c"># &lt;= 追加</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/hosts.deny</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+</pre></td><td class="code"><pre>ALL: ALL     <span class="c"># &lt;= 追加</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="7-ssh-設定ファイル編集">7. SSH 設定ファイル編集</h3>
+
+<p>今回は、取り急ぎパスワード認証による SSH 接続とする。（公開鍵認証による SSH 接続はあらためて行う）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/ssh/sshd_config</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="code"><pre>Port 9999                    <span class="c"># &lt;= コメント解除＆変更（セキュリティ上、デフォルトから任意の値に変更）</span>
+
+Protocol 2                   <span class="c"># &lt;= コメント解除（SSH version 2プロトコルを利用）</span>
+
+PermitRootLogin no           <span class="c"># &lt;= コメント解除（root でのログインを拒否）</span>
+
+PasswordAuthentication <span class="nb">yes</span>   <span class="c"># &lt;= コメント解除＆変更（パスワード認証でのログインを許可）</span>
+
+PermitEmptyPasswords no      <span class="c"># &lt;= コメント解除（空パスワードでのログインを拒否）</span>
+
+AllowUsers masaru            <span class="c"># &lt;= 追加（ログインを許可するユーザ）</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="8-ssh-サーバ再起動">8. SSH サーバ再起動</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># /etc/rc.d/sshd restart
+Performing sanity check on sshd configuration.
+Stopping sshd.
+Waiting for PIDS: 801.
+Performing sanity check on sshd configuration.
+Starting sshd.
+</code></pre></div></div>
+
+<h3 id="9-ssh-再接続">9. SSH 再接続</h3>
+
+<p>一旦リモート接続を切断し、再度リモート端末からポートを指定して SSH 接続する。<br />
+（最初は接続確認後にパスワード要求が行われるが、2回目以降は接続確認は省略される）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ssh vbox -p 9999
+Warning: the ECDSA host key for '[vbox.mk-mode.com]:9999' differs from the key for the IP address '[192.168.11.102]:9999'
+Offending key for IP in /home/masaru/.ssh/known_hosts:10
+Matching host key in /home/masaru/.ssh/known_hosts:18
+Are you sure you want to continue connecting (yes/no)? yes
+Password for masaru@vbox.mk-mode.com:
+Last login: Mon Sep 22 10:53:24 2014 from 192.168.11.13
+FreeBSD 10.0-RELEASE (GENERIC) #0 r260789: Thu Jan 16 22:34:59 UTC 2014
+
+Welcome to FreeBSD!
+
+Before seeking technical support, please use the following resources:
+
+o  Security advisories and updated errata information for all releases are
+   at http://www.FreeBSD.org/releases/ - always consult the ERRATA section
+   for your release first as it's updated frequently.
+
+o  The Handbook and FAQ documents are at http://www.FreeBSD.org/ and,
+   along with the mailing lists, can be searched by going to
+   http://www.FreeBSD.org/search/.  If the doc package has been installed
+   (or fetched via pkg install lang-freebsd-doc, where lang is the
+   2-letter language code, e.g. en), they are also available formatted
+   in /usr/local/share/doc/freebsd.
+
+If you still have a question or problem, please take the output of
+`uname -a', along with any relevant error messages, and email it
+as a question to the questions@FreeBSD.org mailing list.  If you are
+unfamiliar with FreeBSD's directory layout, please refer to the hier(7)
+manual page.  If you are not familiar with manual pages, type `man man'.
+
+Edit /etc/motd to change this login announcement.
+
+$
+</code></pre></div></div>
+
+<h3 id="10-その他の設定">10. その他の設定</h3>
+
+<p>以下は、必要に応じて行う。</p>
+
+<h4 id="10-1-その他-freebsd-update-ミラーサイト変更">10-1. （その他） freebsd-update ミラーサイト変更</h4>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/freebsd-update.conf</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="code"><pre><span class="c">#ServerName update.FreeBSD.org</span>
+ServerName update1.FreeBSD.org  <span class="c"># &lt;= 変更</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h4 id="10-2-その他ユーザ追加">10-2. （その他）ユーザ追加</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mkdir /usr/share/skel/public_html
+# pw useradd user_name -m -d /home/user_name
+# passwd user_name
+Changing local password for user_name
+New Password:user_pass         # &lt;= パスワード入力
+Retype New Password:user_pass  # &lt;= パスワード確認入力
+# chmod 701 /home/user_name
+</code></pre></div></div>
+
+<h4 id="10-3-その他一般ユーザの-su-化を許可">10-3. （その他）一般ユーザの su 化を許可</h4>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/group</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="code"><pre><span class="c">#wheel:*:0:root</span>
+wheel:<span class="k">*</span>:0:root,user_name  <span class="c"># &lt;= 変更（一般ユーザ名を wheel グループに所属させる）</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h4 id="10-4-その他ホスト名変更">10-4. （その他）ホスト名変更</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># hostname hoge.mk-mode.com  # &lt;= ホストネーム変更（FQDN を指定）
+# hostname                   # &lt;= ホストネーム確認
+hoge.mk-mode.com
+</code></pre></div></div>
+
+<p>恒久的に変更するには以下のようにする。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/hosts</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="code"><pre><span class="c">#127.0.0.1       localhost localhost.my.domain</span>
+127.0.0.1       localhost hoge.mk-mode.com      <span class="c"># &lt;= 変更（FQDN を指定）</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<hr />
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/freebsd" class="page__taxonomy-item" rel="tag">FreeBSD</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-10-17T00:20:00+09:00">2014-10-17 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=FreeBSD+10.0+-+%E5%88%9D%E6%9C%9F%E8%A8%AD%E5%AE%9A%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2014%2F10%2F17%2Ffreebsd-10-0-initial-setting%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2014%2F10%2F17%2Ffreebsd-10-0-initial-setting%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2014%2F10%2F17%2Ffreebsd-10-0-initial-setting%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2014/10/16/freebsd-10-0-installation/" class="pagination--pager" title="FreeBSD 10.0 - インストール！
+">Previous</a>
+    
+    
+      <a href="/2014/10/18/freebsd-10-0-setting-of-utf8/" class="pagination--pager" title="FreeBSD 10.0 - UTF-8 化！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2014/10/17/freebsd-10-0-initial-setting/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2014/10/17/freebsd-10-0-initial-setting"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

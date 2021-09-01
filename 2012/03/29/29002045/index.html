@@ -1,0 +1,922 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>株価 - JASDAQ の始値に注意！ - mk-mode BLOG</title>
+<meta name="description" content="  【はじめに】Yahoo!ファイナンス掲載情報の自動取得（スクレイピング）は禁止されています。（参照）以下の記事を参考にすることもお勧めしません。こんばんは。JASDAQ とは大阪証券取引所の扱う日本発のベンチャー（新興）企業向けの市場のことです。表題の「始値に注意！」とは、Yahoo!ファイナンス等で取得できる株価データの中でも「古い」データには「始値」が公表されていないものがある、ということなんです。実際、テクニカル分析用にとプログラミング言語を駆使してデータを収集していて気付いたことです。色々調べてみると、確かに始値が公表されていないケースがあるようです。参考までに、2012年3月14日現在 JASDAQ に上場している銘柄（スタンダード：906銘柄、グロース：51銘柄、外国：1銘柄）で、始値が公表されていない銘柄、期間、件数を調べてみました。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="株価 - JASDAQ の始値に注意！">
+<meta property="og:url" content="https://komasaru.github.io/2012/03/29/29002045/">
+
+
+  <meta property="og:description" content="  【はじめに】Yahoo!ファイナンス掲載情報の自動取得（スクレイピング）は禁止されています。（参照）以下の記事を参考にすることもお勧めしません。こんばんは。JASDAQ とは大阪証券取引所の扱う日本発のベンチャー（新興）企業向けの市場のことです。表題の「始値に注意！」とは、Yahoo!ファイナンス等で取得できる株価データの中でも「古い」データには「始値」が公表されていないものがある、ということなんです。実際、テクニカル分析用にとプログラミング言語を駆使してデータを収集していて気付いたことです。色々調べてみると、確かに始値が公表されていないケースがあるようです。参考までに、2012年3月14日現在 JASDAQ に上場している銘柄（スタンダード：906銘柄、グロース：51銘柄、外国：1銘柄）で、始値が公表されていない銘柄、期間、件数を調べてみました。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="株価 - JASDAQ の始値に注意！">
+  <meta name="twitter:description" content="  【はじめに】Yahoo!ファイナンス掲載情報の自動取得（スクレイピング）は禁止されています。（参照）以下の記事を参考にすることもお勧めしません。こんばんは。JASDAQ とは大阪証券取引所の扱う日本発のベンチャー（新興）企業向けの市場のことです。表題の「始値に注意！」とは、Yahoo!ファイナンス等で取得できる株価データの中でも「古い」データには「始値」が公表されていないものがある、ということなんです。実際、テクニカル分析用にとプログラミング言語を駆使してデータを収集していて気付いたことです。色々調べてみると、確かに始値が公表されていないケースがあるようです。参考までに、2012年3月14日現在 JASDAQ に上場している銘柄（スタンダード：906銘柄、グロース：51銘柄、外国：1銘柄）で、始値が公表されていない銘柄、期間、件数を調べてみました。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2012/03/29/29002045/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2012-03-29T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2012/03/29/29002045/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="株価 - JASDAQ の始値に注意！">
+    <meta itemprop="description" content="  【はじめに】Yahoo!ファイナンス掲載情報の自動取得（スクレイピング）は禁止されています。（参照）以下の記事を参考にすることもお勧めしません。こんばんは。JASDAQ とは大阪証券取引所の扱う日本発のベンチャー（新興）企業向けの市場のことです。表題の「始値に注意！」とは、Yahoo!ファイナンス等で取得できる株価データの中でも「古い」データには「始値」が公表されていないものがある、ということなんです。実際、テクニカル分析用にとプログラミング言語を駆使してデータを収集していて気付いたことです。色々調べてみると、確かに始値が公表されていないケースがあるようです。参考までに、2012年3月14日現在 JASDAQ に上場している銘柄（スタンダード：906銘柄、グロース：51銘柄、外国：1銘柄）で、始値が公表されていない銘柄、期間、件数を調べてみました。">
+    <meta itemprop="datePublished" content="March 29, 2012">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">株価 - JASDAQ の始値に注意！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-03-29T00:20:00+09:00">2012-03-29 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <blockquote>
+  <p><strong>【はじめに】<br />
+Yahoo!ファイナンス掲載情報の自動取得（スクレイピング）は禁止されています。（<a href="http://www.yahoo-help.jp/app/answers/detail/p/546/a_id/93575/" title="Yahoo!ファイナンスヘルプ - Yahoo!ファイナンス掲載情報の自動取得（スクレイピング）は禁止しています">参照</a>）<br />
+以下の記事を参考にすることもお勧めしません。</strong></p>
+</blockquote>
+
+<p>こんばんは。</p>
+
+<p>JASDAQ とは大阪証券取引所の扱う日本発のベンチャー（新興）企業向けの市場のことです。</p>
+
+<p>表題の「始値に注意！」とは、<a href="http://finance.yahoo.co.jp/" title="Yahoo!ファイナンス">Yahoo!ファイナンス</a>等で取得できる株価データの中でも「古い」データには「始値」が公表されていないものがある、ということなんです。</p>
+
+<p>実際、テクニカル分析用にとプログラミング言語を駆使してデータを収集していて気付いたことです。</p>
+
+<p>色々調べてみると、確かに始値が公表されていないケースがあるようです。</p>
+
+<p>参考までに、2012年3月14日現在 JASDAQ に上場している銘柄（スタンダード：906銘柄、グロース：51銘柄、外国：1銘柄）で、始値が公表されていない銘柄、期間、件数を調べてみました。</p>
+
+<!--more-->
+
+<h4 id="調査結果">調査結果</h4>
+
+<p>銘柄コード・欠落期間（開始・終了）・欠落日数（営業日数ベース）の一覧です。
+全部で 147 銘柄（全てスタンダード）が該当していました。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1376] 1987-03-02 1991-10-25  922
+[1841] 1987-03-02 1991-10-25  639
+[1873] 1988-08-03 1991-10-25  706
+[1981] 1987-03-02 1991-09-30  541
+[1984] 1987-03-02 1991-10-25  984
+[1992] 1989-05-23 1991-10-25  436
+[1994] 1990-07-24 1991-10-25  289
+[2221] 1989-10-26 1991-10-11  276
+[2268] 1987-12-10 1991-10-25  662
+[2289] 1987-03-03 1991-10-25  642
+[2293] 1990-11-08 1991-10-21  182
+[2813] 1989-11-30 1991-10-25  429
+[2814] 1991-04-30 1991-10-23   99
+[2901] 1987-03-09 1991-10-25  352
+[2904] 1989-02-07 1991-10-23  355
+[2905] 1989-11-29 1991-10-25  463
+[2906] 1990-02-22 1991-10-24  267
+[3587] 1987-03-07 1991-10-25  382
+[3948] 1988-08-18 1991-10-25  382
+[4274] 1987-03-04 1991-10-24  476
+[4625] 1988-06-14 1991-10-25  527
+[5199] 1987-03-02 1991-10-25  982
+[5212] 1987-03-25 1991-10-25  137
+[5277] 1991-09-17 1991-10-25   25
+[5387] 1990-10-18 1991-10-25  176
+[5388] 1989-06-06 1991-10-25  470
+[5448] 1990-04-26 1991-10-25  289
+[5542] 1987-03-04 1991-10-25  195
+[5695] 1990-02-27 1991-10-25  303
+[5906] 1989-09-19 1991-10-15  258
+[5939] 1988-11-10 1991-10-25  427
+[5945] 1988-11-10 1991-10-25  401
+[5999] 1987-03-02 1991-10-25 1114
+[6145] 1989-01-31 1991-10-25  595
+[6147] 1990-03-26 1991-10-25  289
+[6149] 1991-07-29 1991-10-25   61
+[6276] 1989-03-23 1991-10-25  479
+[6281] 1989-12-06 1991-10-25  292
+[6284] 1990-05-25 1991-10-25  299
+[6286] 1990-10-19 1991-10-25  137
+[6347] 1987-03-02 1991-10-25 1030
+[6352] 1987-03-04 1991-10-25  804
+[6403] 1987-03-02 1991-10-25  931
+[6408] 1987-03-05 1991-10-25  877
+[6411] 1987-03-03 1991-10-18  471
+[6414] 1990-02-28 1991-10-25  363
+[6416] 1991-09-11 1991-10-25   30
+[6488] 1990-10-11 1991-10-25  215
+[6494] 1987-03-02 1991-10-25  406
+[6497] 1987-03-05 1991-10-04  338
+[6593] 1987-03-19 1991-10-25  466
+[6716] 1987-03-04 1991-10-15  571
+[6819] 1990-04-27 1991-10-25  345
+[6852] 1987-03-03 1991-10-25  729
+[6862] 1988-11-22 1991-10-25  509
+[6863] 1989-10-27 1991-10-25  427
+[6864] 1990-04-24 1991-10-23  281
+[6916] 1991-03-28 1991-10-25  133
+[6918] 1991-02-20 1991-10-24  165
+[6919] 1990-12-25 1991-10-25  190
+[6920] 1990-12-25 1991-10-25  188
+[6922] 1990-11-30 1991-10-25  214
+[6928] 1990-11-27 1991-10-25  203
+[6930] 1990-09-28 1991-10-25  244
+[6942] 1988-12-06 1991-10-24  557
+[6943] 1988-09-26 1991-10-17  468
+[6944] 1988-09-14 1991-10-11  456
+[6957] 1987-03-02 1991-10-24  797
+[6960] 1987-03-02 1991-10-25 1155
+[7255] 1987-03-03 1991-10-25  397
+[7711] 1991-04-26 1991-10-25  114
+[7743] 1989-12-04 1991-10-25  377
+[7918] 1987-03-04 1991-09-13  492
+[7922] 1989-11-24 1991-10-25  317
+[7932] 1987-03-02 1991-10-24  570
+[7938] 1990-12-03 1991-10-25  203
+[7939] 1990-11-02 1991-10-25  205
+[7954] 1988-09-28 1991-10-25  684
+[7963] 1987-03-04 1991-10-18  520
+[7980] 1987-03-02 1991-10-25  927
+[7986] 1987-03-02 1991-10-23  994
+[8045] 1987-03-02 1991-10-22  521
+[8073] 1987-03-02 1991-10-25  621
+[8119] 1987-03-03 1991-10-24 1148
+[8120] 1987-03-02 1991-10-25  802
+[8123] 1987-03-02 1991-10-24  703
+[8147] 1987-03-04 1991-09-24  170
+[8186] 1987-03-05 1991-10-25  475
+[8191] 1987-03-02 1991-10-22  354
+[8205] 1987-03-02 1991-10-25  884
+[8208] 1987-03-02 1991-10-25  866
+[8215] 1987-09-09 1991-10-25  831
+[8256] 1988-11-07 1991-10-23  596
+[8257] 1987-03-17 1991-09-27  105
+[8275] 1988-11-08 1991-10-25  644
+[8298] 1988-02-05 1991-10-23  595
+[8301] 1987-03-02 1991-10-25  854
+[8836] 1987-03-02 1991-10-25 1098
+[8844] 1987-03-02 1991-10-25 1176
+[8850] 1989-05-30 1991-10-24  444
+[9012] 1987-03-02 1991-10-24  633
+[9073] 1987-03-27 1991-08-01   52
+[9087] 1989-12-25 1991-10-25  269
+[9133] 1990-11-28 1991-10-14  147
+[9176] 1987-03-16 1991-09-20   66
+[9408] 1987-03-10 1991-10-23  146
+[9663] 1991-10-03 1991-10-25   16
+[9679] 1991-04-25 1991-10-25  115
+[9685] 1990-12-21 1991-10-24  130
+[9687] 1990-12-06 1991-10-25  205
+[9691] 1990-11-27 1991-10-24  183
+[9695] 1990-10-29 1991-10-25  197
+[9696] 1990-10-17 1991-10-25  235
+[9698] 1990-09-17 1991-10-25  188
+[9707] 1990-02-14 1991-10-23  343
+[9720] 1987-03-02 1991-09-18  195
+[9730] 1988-12-22 1991-10-25  630
+[9733] 1988-12-21 1991-10-25  450
+[9734] 1987-03-04 1991-10-08  115
+[9736] 1987-03-02 1991-10-24  956
+[9753] 1988-05-06 1991-10-25  577
+[9758] 1988-10-04 1991-10-25  556
+[9768] 1987-03-04 1991-10-25  662
+[9769] 1987-03-02 1991-10-25  757
+[9812] 1991-01-30 1991-10-25  159
+[9816] 1991-02-22 1991-10-25  149
+[9820] 1991-04-02 1991-10-25  122
+[9822] 1991-04-30 1991-10-24  120
+[9823] 1991-05-23 1991-10-25  106
+[9827] 1991-07-23 1991-10-25   66
+[9829] 1991-08-29 1991-10-25   38
+[9836] 1989-06-22 1991-10-25  544
+[9849] 1989-11-15 1991-10-25  248
+[9852] 1989-11-28 1991-10-25  221
+[9853] 1989-11-28 1991-10-11  230
+[9867] 1990-04-24 1991-10-24  295
+[9876] 1990-08-24 1991-10-25  261
+[9888] 1990-10-24 1991-10-25  198
+[9890] 1990-10-30 1991-10-24  144
+[9892] 1990-11-02 1991-10-25  222
+[9895] 1990-11-28 1991-10-25  216
+[9898] 1990-12-12 1991-10-25  190
+[9903] 1991-09-18 1991-10-25   26
+[9905] 1991-10-02 1991-10-25   17
+[9906] 1991-10-03 1991-10-25   16
+[9908] 1991-10-08 1991-10-25   13
+[9909] 1991-10-14 1991-10-25   10
+</code></pre></div></div>
+
+<h4 id="分かった事">分かった事</h4>
+
+<p>上記のデータからわかることと言えば、1991年10月28日（月曜日）以降は公表されていない銘柄は存在しないということ。
+この1991年10月28日は、実は JASDAQインデックス（JASDAQ指数）の基準日となっている日で、さらに株式売買・情報ネットワーク「ジャスダックシステム」が稼動した日です。
+やはり、このシステム稼動に合わせて始値も公表するようにしたのではないでしょうか。</p>
+
+<hr />
+
+<p>1991年のデータをが現在のテクニカル分析に直接は関係しませんが、知らないよりは知っていた方がいいと思える内容ではないでしょうか。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/mysql" class="page__taxonomy-item" rel="tag">MySQL</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%A0%AA%E5%BC%8F" class="page__taxonomy-item" rel="tag">株式</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-03-29T00:20:00+09:00">2012-03-29 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E6%A0%AA%E4%BE%A1+-+JASDAQ+%E3%81%AE%E5%A7%8B%E5%80%A4%E3%81%AB%E6%B3%A8%E6%84%8F%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2012%2F03%2F29%2F29002045%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2012%2F03%2F29%2F29002045%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2012%2F03%2F29%2F29002045%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2012/03/27/27002055/" class="pagination--pager" title="Cygwin - Fortran95 を使う！
+">Previous</a>
+    
+    
+      <a href="/2012/03/31/31002036/" class="pagination--pager" title="株価 - バックテスト（単純移動平均版）！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2012/03/29/29002045/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2012/03/29/29002045"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

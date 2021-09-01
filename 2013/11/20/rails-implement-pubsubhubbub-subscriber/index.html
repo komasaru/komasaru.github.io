@@ -1,0 +1,1036 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby on Rails - PubSubHubbub Subscriber 実装！ - mk-mode BLOG</title>
+<meta name="description" content="今回は、PubSubHubbub という Google 提唱のフィードをリアルタイムで配信するプロトコルについてです。中でも、フィードを購読する側（Subcriber）を Rails で実装する方法についての記録です。ブログの更新通知を即座に行うのにも利用したりしますが、当方の場合は「気象庁防災情報XML」をリアルタイム受信するために使用したく、実装を試みた次第です。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby on Rails - PubSubHubbub Subscriber 実装！">
+<meta property="og:url" content="https://komasaru.github.io/2013/11/20/rails-implement-pubsubhubbub-subscriber/">
+
+
+  <meta property="og:description" content="今回は、PubSubHubbub という Google 提唱のフィードをリアルタイムで配信するプロトコルについてです。中でも、フィードを購読する側（Subcriber）を Rails で実装する方法についての記録です。ブログの更新通知を即座に行うのにも利用したりしますが、当方の場合は「気象庁防災情報XML」をリアルタイム受信するために使用したく、実装を試みた次第です。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby on Rails - PubSubHubbub Subscriber 実装！">
+  <meta name="twitter:description" content="今回は、PubSubHubbub という Google 提唱のフィードをリアルタイムで配信するプロトコルについてです。中でも、フィードを購読する側（Subcriber）を Rails で実装する方法についての記録です。ブログの更新通知を即座に行うのにも利用したりしますが、当方の場合は「気象庁防災情報XML」をリアルタイム受信するために使用したく、実装を試みた次第です。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/11/20/rails-implement-pubsubhubbub-subscriber/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-11-20T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/11/20/rails-implement-pubsubhubbub-subscriber/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby on Rails - PubSubHubbub Subscriber 実装！">
+    <meta itemprop="description" content="今回は、PubSubHubbub という Google 提唱のフィードをリアルタイムで配信するプロトコルについてです。中でも、フィードを購読する側（Subcriber）を Rails で実装する方法についての記録です。ブログの更新通知を即座に行うのにも利用したりしますが、当方の場合は「気象庁防災情報XML」をリアルタイム受信するために使用したく、実装を試みた次第です。">
+    <meta itemprop="datePublished" content="November 20, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby on Rails - PubSubHubbub Subscriber 実装！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-11-20T00:20:00+09:00">2013-11-20 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>今回は、PubSubHubbub という Google 提唱のフィードをリアルタイムで配信するプロトコルについてです。</p>
+
+<p>中でも、フィードを購読する側（Subcriber）を Rails で実装する方法についての記録です。</p>
+
+<p>ブログの更新通知を即座に行うのにも利用したりしますが、当方の場合は「気象庁防災情報XML」をリアルタイム受信するために使用したく、実装を試みた次第です。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>OS: Linux Mint 14(64bit)</li>
+  <li>Ruby: 2.0.0-p247</li>
+  <li>Rails: 4.0.0</li>
+  <li>Web サイトを公開できる環境が必要<br />
+当方は、Ruby on Rails 製サイトを Nginx + Unicorn で構築している。当然、 Apache 等の Web サーバで PHP 等を使用することも可能。（実際にはそちらの方が多いでしょう）</li>
+  <li>今回、Subscriber(Callbak) の URL は <code class="language-plaintext highlighter-rouge">http://www.mk-mode.com/rails/jmx</code> を想定。<br />
+（将来的なことを考えて “jmx” を使用しているだけであり、当然何でもよい）</li>
+  <li>今回、フィードの URL は <code class="language-plaintext highlighter-rouge">http://www.mk-mode.com/test_op/atom.xml</code> を想定。</li>
+  <li><strong>Subscriber やフィードの URL は、今回の当方のテスト用なので、このまま使用してもダメ。</strong><br />
+<strong>自分のものに置き換えて考えること。</strong></li>
+</ul>
+
+<h3 id="1-pubsubhubbub-概要">1. PubSubHubbub 概要</h3>
+
+<p><a href="https://code.google.com/p/pubsubhubbub/" title="PubSubHubbub">PubSubHubbub</a> とは、フィードをリアルタイムで配信（プッシュ）するプロトコルである。名称が長いので PuSH などと略すこともある。</p>
+
+<p>通常、フィードがいつ更新されるか分からないので、利用者側は定期的にフィード URL にアクセスしてフィードを取得し、内容をチェックする必要があります。当然これではタイムラグが発生する。</p>
+
+<p>しかし、PubSubHubbub の場合、利用者側とフィード側の間に Hub を介在させることで、フィード更新をリアルタイムで利用者側に通知することできる。<br />
+あらかじめ、Hub に利用者側（Subscriber と呼ぶ）とフィード側（Publisher と呼ぶ）を登録しておくことで可能となる。<br />
+実際には、以下の図のように、Publisher が Hub に対して更新フィード（フィードを更新した旨のみのフィード）を発行すると、Hub が登録されている Subscriber に更新フィードを配信し、更新フィードを受け取った Subscriber は必要に応じてその更新フィードに記載されている本文（本来の）フィードの URL にアクセスして本文フィードを受け取るという形式となる。</p>
+
+<p><img src="/images/2013/11/20/PUSH_FIG.png" alt="PUSH_FIG" title="PUSH_FIG" /></p>
+
+<p>つまり、速効性が求められる場合に有用である。その利用例として「<a href="http://xml.kishou.go.jp/" title="気象庁防災情報XML">気象庁防災情報XML</a>」が挙げられる。</p>
+
+<p>というわけで、PubSubHubbub を実現させるためには、Publisher（フィード発行側）と Subscriber（フィード購読側）、それらを仲介する（フィード発行を知らせる）Hub が必要となる。<br />
+Publisher はフィードを発行する側なので、フィード（その URL）に相当する。フィード発行機能のあるブログ等が利用できる。<br />
+Hub は Publisher と Subscriber を登録しておくもので、Google がテスト用に公開している <a href="https://pubsubhubbub.appspot.com/" title="Google Pubsubhubbub Hub">Hub</a> 等を利用できる。<br />
+Subscriber は Hub からフィード発行の情報を受信する側なので、自分に相当する。なので、Hub からの情報を処理できるように実装しなければならない。（今回紹介する部分）</p>
+
+<h3 id="2-publisherフィード発行側準備">2. Publisher（フィード発行側）準備</h3>
+
+<p>任意のタイミングで容易にフィード発行できるもの、つまりブログを用意する。<br />
+フィード発行機能があるのなら、普段利用しているブログでもよいが、テストを行うのに不具合（テスト用の投稿が公開されてしまう）を感じるので、当方は別途テスト用のブログを簡易的に構築した。（普段使用しているブログを複製して）</p>
+
+<p>テスト用ブログの URL は <code class="language-plaintext highlighter-rouge">http://www.mk-mode.com/test_op/</code>、フィード URL は <code class="language-plaintext highlighter-rouge">http://www.mk-mode.com/test_op/atom.xml</code> とする。</p>
+
+<h3 id="3-subscriberフィード購読側準備">3. Subscriber（フィード購読側）準備</h3>
+
+<p>Hub からの通知を正常に受け取るために、Web サーバ側で実装する。<br />
+今回は、Ruby on Rails（コントローラ）で実装する。</p>
+
+<p>URL は <code class="language-plaintext highlighter-rouge">http://www.mk-mode.com/rails/jmx</code> （コントローラ名は JmxController(“jmx_controller.rb”)）とする。<br />
+そして、重要なのは、普段の Hub からのフィード更新通知は POST リクエストだが、 Hub 登録時や定期的に Hub から購読確認の GET リクエストが飛んでくるので、そのための処理が必要だということ。</p>
+
+<p>GET リクエスト時には、HEADER の <code class="language-plaintext highlighter-rouge">Content-Type</code> に <code class="language-plaintext highlighter-rouge">text/plain</code> を設定し、GET リクエスト受信時に取得した「チャレンジコード(<code class="language-plaintext highlighter-rouge">hub.challenge</code> の値)」をそのまま、ステータスコード <code class="language-plaintext highlighter-rouge">200</code> とともに返却しないといけない。（チャレンジコードの末尾に改行があってはならない）</p>
+
+<p>POST リクエスト時は Publisher 発行の更新フィードがそのまま Hub 経由で飛んでくる。あとは、好みの処理を行えばよい。（以下の例では、単純にファイル保存しているだけであるが、実際には更新フィード内記載の実際のフィードの URL にアクセスして処理を行うことになるであろう）<br />
+また、ヘッダ <code class="language-plaintext highlighter-rouge">HTTP_X_HUB_SIGNATURE</code> の値は、<code class="language-plaintext highlighter-rouge">hub.verify_token</code> から計算した <code class="language-plaintext highlighter-rouge">HMAC-SHA1</code> の値と等しくなるはずなので、実際にはこれらが一致することを確認できた時だけ処理を行うようにすれば、セキュアな処理になるだろう。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">jmx_controller.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+</pre></td><td class="code"><pre> 
+<span class="k">class</span> <span class="nc">JmxController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="no">DATA_DIR</span>     <span class="o">=</span> <span class="s2">"/path/to/jmx/data/"</span>
+  <span class="no">VERIFY_TOKEN</span> <span class="o">=</span> <span class="s2">"hoge"</span>
+
+  <span class="c1"># application_controller 内の</span>
+  <span class="c1"># "protect_from_forgery with: :exception"</span>
+  <span class="c1"># を無効にする設定</span>
+  <span class="c1"># （ワーニングが出力されないようにするため）</span>
+  <span class="n">skip_before_filter</span> <span class="ss">:verify_authenticity_token</span>
+
+  <span class="k">def</span> <span class="nf">index</span>
+    <span class="n">req_method</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="nf">request_method</span>
+
+    <span class="c1"># HTTP リクエスト別に振り分け</span>
+    <span class="k">if</span> <span class="n">req_method</span> <span class="o">==</span> <span class="s2">"GET"</span>
+      <span class="c1"># 各パラメータの取得</span>
+      <span class="n">p_mode</span>         <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">'hub.mode'</span><span class="p">]</span>
+      <span class="n">p_topic</span>        <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">'hub.topic'</span><span class="p">]</span>
+      <span class="n">p_challenge</span>    <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">'hub.challenge'</span><span class="p">]</span>
+      <span class="n">p_verify_token</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">'hub.verify_token'</span><span class="p">]</span>
+
+      <span class="c1"># hub.mode チェック</span>
+      <span class="k">if</span> <span class="n">p_mode</span> <span class="o">==</span> <span class="s2">"subscribe"</span> <span class="o">||</span> <span class="n">p_mode</span> <span class="o">==</span> <span class="s2">"unsubscribe"</span>
+        <span class="c1"># hub.verify_token チェック</span>
+        <span class="k">if</span> <span class="n">p_verify_token</span> <span class="o">==</span> <span class="no">VERIFY_TOKEN</span>
+          <span class="c1"># Content-type に "text/plain" を指定し、</span>
+          <span class="c1"># challenge コードをそのまま返却</span>
+          <span class="n">response</span><span class="p">.</span><span class="nf">headers</span><span class="p">[</span><span class="s1">'Content-Type'</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"text/plain"</span>
+          <span class="n">render</span> <span class="ss">text: </span><span class="n">p_challenge</span><span class="p">.</span><span class="nf">chomp</span><span class="p">,</span> <span class="ss">status: </span><span class="mi">200</span>
+        <span class="k">else</span>
+          <span class="n">render</span> <span class="ss">nothing: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">status: </span><span class="mi">404</span>
+        <span class="k">end</span>
+      <span class="k">else</span>
+        <span class="n">render</span> <span class="ss">nothing: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">status: </span><span class="mi">404</span>
+      <span class="k">end</span>
+    <span class="k">elsif</span> <span class="n">req_method</span> <span class="o">==</span> <span class="s2">"POST"</span>
+      <span class="c1"># リクエストボディの取得</span>
+      <span class="n">req_body</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="nf">body</span><span class="p">.</span><span class="nf">read</span>
+
+      <span class="c1"># ヘッダ HTTP_X_HUB_SIGNATURE の値を取得</span>
+      <span class="n">hub_sig</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="nf">env</span><span class="p">[</span><span class="s1">'HTTP_X_HUB_SIGNATURE'</span><span class="p">]</span>
+
+      <span class="c1"># HMAC-SHA1 の計算</span>
+      <span class="n">sha1</span> <span class="o">=</span> <span class="no">OpenSSL</span><span class="o">::</span><span class="no">HMAC</span><span class="o">::</span><span class="n">hexdigest</span><span class="p">(</span><span class="no">OpenSSL</span><span class="o">::</span><span class="no">Digest</span><span class="o">::</span><span class="no">SHA1</span><span class="p">.</span><span class="nf">new</span><span class="p">,</span> <span class="no">VERIFY_TOKEN</span><span class="p">,</span> <span class="n">req_body</span><span class="p">)</span>
+
+      <span class="n">logger</span><span class="p">.</span><span class="nf">info</span> <span class="s2">"#### hub_sig = </span><span class="si">#{</span><span class="n">hub_sig</span><span class="si">}</span><span class="s2">"</span>
+      <span class="n">logger</span><span class="p">.</span><span class="nf">info</span> <span class="s2">"#### sha1    = </span><span class="si">#{</span><span class="n">sha1</span><span class="si">}</span><span class="s2">"</span>
+
+      <span class="c1"># ファイルとして保存</span>
+      <span class="c1"># ## 実際は、HTTP_X_HUB_SIGNATURE の値と</span>
+      <span class="c1"># ## と verigy_token から計算した HMAC-SHA1 が等しい場合のみ処理を行う</span>
+      <span class="n">file_name</span> <span class="o">=</span> <span class="s2">"</span><span class="si">#{</span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y%m%d%H%M%S"</span><span class="p">)</span><span class="si">}</span><span class="s2">_atom.xml"</span>
+      <span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="no">DATA_DIR</span><span class="si">}#{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s1">'wb'</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="p">.</span><span class="nf">write</span> <span class="n">req_body</span> <span class="p">}</span>
+
+      <span class="n">render</span> <span class="ss">nothing: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">status: </span><span class="mi">200</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/7209862" title="Gist - Rails controller to receive feeds from the Hub of PubSubHubbub.">Gist - Rails controller to receive feeds from the Hub of PubSubHubbub.</a></li>
+</ul>
+
+<p>GET リクエスト時のパラメータは以下のとおり。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">hub.mode</code> … <code class="language-plaintext highlighter-rouge">subscribe</code>（購読登録） か <code class="language-plaintext highlighter-rouge">unsubscribe</code>（登録解除）</li>
+  <li><code class="language-plaintext highlighter-rouge">hub.topic</code> … フィードの URL</li>
+  <li><code class="language-plaintext highlighter-rouge">hub.challenge</code> … Hub 側指定の認証用のランダムな文字列</li>
+  <li><code class="language-plaintext highlighter-rouge">hub.verify_token</code> … 購読者側指定の認証用のランダムな文字列（但し、Hub 登録時に指定した場合のみ）</li>
+  <li><code class="language-plaintext highlighter-rouge">hub.lease_seconds</code> … Hub 再登録までの時間（但し、Hub 登録時に指定した場合のみ。上記の例では使用していない）</li>
+</ul>
+
+<p>Rails のバージョン等によっては、 “config/routes.rb” を適切に設定（POST リクエストを処理できるように）する必要がある。<br />
+当方の場合、”config/routes.rb” に以下の記述を追加している。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">config/routes.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="code"><pre> 
+  <span class="n">post</span> <span class="s1">'jmx'</span> <span class="o">=&gt;</span> <span class="s1">'jmx#index'</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="4-hub-登録">4. Hub 登録</h3>
+
+<p>Publisher（フィード発行側） と Subscriber（フィード購読者側）を仲介する Hub の登録を行う。</p>
+
+<p>今回は Google がテスト用に公開している <a href="https://pubsubhubbub.appspot.com/" title="Google Pubsubhubbub Hub">Hub</a> を利用する。 <a href="https://pubsubhubbub.appspot.com/" title="Google Pubsubhubbub Hub">Hub</a> ページの下方にある “Subscribe” というリンク（<code class="language-plaintext highlighter-rouge">https://pubsubhubbub.appspot.com/subscribe</code>）をクリックする。</p>
+
+<p>Subscribe 登録画面が表示されるので以下のように入力して “Do It!” ボタンをクリックする。</p>
+
+<p><img src="/images/2013/11/20/PUSH_SUB_1.png" alt="PUSH_SUB_1" title="PUSH_SUB_1" /></p>
+
+<ul>
+  <li>“Callback URL” には、用意した Subscriber の URL を入力する。</li>
+  <li>“Topic URL” には、フィード発行側の URL を入力する。</li>
+  <li>“Verify Type” は、デフォルトのまま。</li>
+  <li>“Mode” は、”Subscribe” を選択する。</li>
+  <li>“Verify Token” は、認証用文字列を入力する。（利用したい場合のみ）</li>
+  <li>“HMAC secret” は、デフォルト（空白）のまま。</li>
+  <li>“Lease seconds” は、デフォルト（空白）のまま。（指定すれば、購読意思確認（Hub から GET リクエストが届く）間隔を変更できる。デフォルトは「５日」）</li>
+</ul>
+
+<p>登録が成功したかは <a href="https://pubsubhubbub.appspot.com/subscribe" title="Subscribe">Subscribe</a> ページの下部に以下のように入力して “Get Info” ボタンをクリックする。</p>
+
+<p><img src="/images/2013/11/20/PUSH_SUB_2.png" alt="PUSH_SUB_2" title="PUSH_SUB_2" /></p>
+
+<p>以下のような画面が表示されるので確認する。</p>
+
+<p><img src="/images/2013/11/20/PUSH_SUB_3.png" alt="PUSH_SUB_3" title="PUSH_SUB_3" /></p>
+
+<p>ログファイル（Web サーバや Rails のログ）でも確認できるので、正常にやり取りできているか確認する。</p>
+
+<h3 id="5-フィード作成">5. フィード作成</h3>
+
+<p>動作確認のためにフィードを作成してみる。<br />
+実際には、ブログ記事を作成してデプロイ等行い、フィードを発行する。</p>
+
+<h3 id="6-フィード発行通知">6. フィード発行通知</h3>
+
+<p>動作確認のために、先ほど作成したフィードを Hub に対して発行する。</p>
+
+<p><a href="https://pubsubhubbub.appspot.com/subscribe" title="Subscribe">Subscribe</a> 同様、<a href="https://pubsubhubbub.appspot.com/" title="Google Pubsubhubbub Hub">Hub</a> ページの下方にある “Publish” というリンク（<code class="language-plaintext highlighter-rouge">https://pubsubhubbub.appspot.com/publish</code>）をクリックする。</p>
+
+<p>Publish 登録画面が表示されるので以下のように入力して “Publish” ボタンをクリックする。</p>
+
+<p><img src="/images/2013/11/20/PUSH_PUB_1.png" alt="PUSH_PUB_1" title="PUSH_PUB_1" /></p>
+
+<ul>
+  <li>“Topic URL” には、フィードの URL を入力する。</li>
+</ul>
+
+<p>フィード発行通知が成功したかは <a href="https://pubsubhubbub.appspot.com/publish" title="Publish">Publish</a> ページの下部に以下のように入力して “Get Info” ボタンをクリックする。</p>
+
+<p><img src="/images/2013/11/20/PUSH_PUB_2.png" alt="PUSH_PUB_2" title="PUSH_PUB_2" /></p>
+
+<p>以下のような画面が表示されるので確認する。</p>
+
+<p><img src="/images/2013/11/20/PUSH_PUB_3.png" alt="PUSH_PUB_3" title="PUSH_PUB_3" /></p>
+
+<h3 id="7-フィード受信確認">7. フィード受信確認</h3>
+
+<p>Subscriber （Rails 側）でフィードが受信できているか、確認する。<br />
+今回の例（前述の controller の処理）の場合、指定の場所に受信したフィードをファイルとして保存できているか確認する。</p>
+
+<p>実際の作業では、「Subscriber のコード（controller）を編集し、フィードを作成・発行後動作を確認する」の繰り返しになるだろう。</p>
+
+<h3 id="8-応用">8. 応用</h3>
+
+<p>当記事内でも何度か登場してきた「気象庁防災情報XML」、これも PubSubHubbub プロトコルを利用したシステムである。</p>
+
+<p>これまで説明したとおりに Subscriber が実装できれば、Hub（「気象庁防災情報XML」の場合は、Alert HUB） の登録を気象庁にお願いする。（登録者数把握のために気象庁側が登録するようになっている）<br />
+登録されれば気象庁から即時に各種更新フィードが送信されるので、その更新フィード内に記載の実フィードの URL にアクセスすれば目的の情報が取得できる。</p>
+
+<p>「気象庁防災情報XML」の仕様や技術情報、環境や登録方法等については全て「<a href="http://xml.kishou.go.jp/" title="気象庁防災情報XMLフォーマット">気象庁防災情報XMLフォーマット</a>」に記載されている。<br />
+特に Subscriber の構築については「<a href="http://xml.kishou.go.jp/seminar/seminarInfo.html" title="気象庁XML利活用セミナー">気象庁XML利活用セミナー</a>」の「気象庁XMLを入手しよう」が参考になるだろう。（但し、当然ながら自分で自由に利用できる Web サーバや、動的処理ができる言語（PHP, Rails, JavaScript 等々のうちどれか）の知識も必要である）</p>
+
+<p>また、いくつかの Web サイトでも PubSubHubbub を利用して「気象庁防災情報XML」を取得する方法等が紹介されているので、参考にするとよい。</p>
+
+<h3 id="参考サイト">参考サイト</h3>
+
+<ul>
+  <li><a href="https://code.google.com/p/pubsubhubbub/" title="pubsubhubbub - A simple, open, webhook based pubsub protocol &amp; open source reference implementation. - Google Project Hosting">pubsubhubbub - A simple, open, webhook based pubsub protocol &amp; open source reference implementation. - Google Project Hosting</a></li>
+  <li><a href="http://xml.kishou.go.jp/" title="気象庁防災情報XMLフォーマット">気象庁防災情報XMLフォーマット</a></li>
+</ul>
+
+<hr />
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/feed" class="page__taxonomy-item" rel="tag">Feed</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/rails" class="page__taxonomy-item" rel="tag">Rails</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/xml" class="page__taxonomy-item" rel="tag">XML</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-11-20T00:20:00+09:00">2013-11-20 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+on+Rails+-+PubSubHubbub+Subscriber+%E5%AE%9F%E8%A3%85%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F11%2F20%2Frails-implement-pubsubhubbub-subscriber%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F11%2F20%2Frails-implement-pubsubhubbub-subscriber%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F11%2F20%2Frails-implement-pubsubhubbub-subscriber%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/11/18/google-app-engine-python/" class="pagination--pager" title="Google App Engine SDK for Python！
+">Previous</a>
+    
+    
+      <a href="/2013/11/22/debian-7-charset-on-console/" class="pagination--pager" title="Debian 7 Wheezy - コンソールでの日本語表示！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/11/20/rails-implement-pubsubhubbub-subscriber/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/11/20/rails-implement-pubsubhubbub-subscriber"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

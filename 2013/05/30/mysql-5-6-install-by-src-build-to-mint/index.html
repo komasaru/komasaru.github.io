@@ -1,0 +1,1041 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>MySQL - 5.6.11 ソースビルドでインストール(on Linux Mint)！ - mk-mode BLOG</title>
+<meta name="description" content="以前、MySQL 5.5 系を CentOS(Redhat 系ディストリビューション) にソールビルドでインストールはしていました。  * Linux - MySQL 5.5.23 をソースからインストール！今回は、MySQL の最新安定版 5.6.11 （当記事執筆時点）を Linux Mint 14 でソースをビルドしてインストールしてみました。（同じく cmake を使用する MariaDB でも同様です）">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="MySQL - 5.6.11 ソースビルドでインストール(on Linux Mint)！">
+<meta property="og:url" content="https://komasaru.github.io/2013/05/30/mysql-5-6-install-by-src-build-to-mint/">
+
+
+  <meta property="og:description" content="以前、MySQL 5.5 系を CentOS(Redhat 系ディストリビューション) にソールビルドでインストールはしていました。  * Linux - MySQL 5.5.23 をソースからインストール！今回は、MySQL の最新安定版 5.6.11 （当記事執筆時点）を Linux Mint 14 でソースをビルドしてインストールしてみました。（同じく cmake を使用する MariaDB でも同様です）">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="MySQL - 5.6.11 ソースビルドでインストール(on Linux Mint)！">
+  <meta name="twitter:description" content="以前、MySQL 5.5 系を CentOS(Redhat 系ディストリビューション) にソールビルドでインストールはしていました。  * Linux - MySQL 5.5.23 をソースからインストール！今回は、MySQL の最新安定版 5.6.11 （当記事執筆時点）を Linux Mint 14 でソースをビルドしてインストールしてみました。（同じく cmake を使用する MariaDB でも同様です）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/05/30/mysql-5-6-install-by-src-build-to-mint/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-05-30T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/05/30/mysql-5-6-install-by-src-build-to-mint/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="MySQL - 5.6.11 ソースビルドでインストール(on Linux Mint)！">
+    <meta itemprop="description" content="以前、MySQL 5.5 系を CentOS(Redhat 系ディストリビューション) にソールビルドでインストールはしていました。  * Linux - MySQL 5.5.23 をソースからインストール！今回は、MySQL の最新安定版 5.6.11 （当記事執筆時点）を Linux Mint 14 でソースをビルドしてインストールしてみました。（同じく cmake を使用する MariaDB でも同様です）">
+    <meta itemprop="datePublished" content="May 30, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">MySQL - 5.6.11 ソースビルドでインストール(on Linux Mint)！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-05-30T00:20:00+09:00">2013-05-30 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>以前、MySQL 5.5 系を CentOS(Redhat 系ディストリビューション) にソールビルドでインストールはしていました。</p>
+
+<ul>
+  <li><a href="http://www.mk-mode.com/octopress/2012/04/26/26002002/" title="* Linux - MySQL 5.5.23 をソースからインストール！">* Linux - MySQL 5.5.23 をソースからインストール！</a></li>
+</ul>
+
+<p>今回は、MySQL の最新安定版 5.6.11 （当記事執筆時点）を Linux Mint 14 でソースをビルドしてインストールしてみました。<br />
+（同じく <code class="language-plaintext highlighter-rouge">cmake</code> を使用する MariaDB でも同様です）</p>
+
+<!--more-->
+
+<h4 id="0-前提条件">0. 前提条件</h4>
+
+<ul>
+  <li>Linux Mint 14 (64bit) での作業を想定。</li>
+  <li>マシン搭載メモリは 4GB.</li>
+  <li>MySQL インストール先は “/usr/local/mysql”</li>
+  <li>データディレクトリは “/var/mysql/data”</li>
+</ul>
+
+<h4 id="1-事前準備">1. 事前準備</h4>
+
+<p>最近の MySQL(5.5系以降) はビルド時に <code class="language-plaintext highlighter-rouge">configure</code> ではなく <code class="language-plaintext highlighter-rouge">cmake</code> を使用するので、未インストールならインストールしておく。<br />
+また、<code class="language-plaintext highlighter-rouge">bison</code>, <code class="language-plaintext highlighter-rouge">g++</code>, <code class="language-plaintext highlighter-rouge">libncurses5-dev</code> 等も未インストールならインストールしておく。（コンパイルオプションによって異なるかもしれないが、実際に <code class="language-plaintext highlighter-rouge">cmake</code> してみてエラー・警告メッセージを確認するのもよい）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo apt-get install cmake
+$ sudo apt-get install bison
+$ sudo apt-get install g++
+$ sudo apt-get install libncurses5-dev
+</code></pre></div></div>
+
+<h4 id="2-アーカイブダウンロード展開">2. アーカイブダウンロード＆展開</h4>
+
+<p><a href="http://dev.mysql.com/downloads/mysql/" title="MySQL :: Download MySQL Community Server">MySQL :: Download MySQL Community Server</a> から “Generic Linux (Architecture Independent), Compressed TAR Archive”(“mysql-5.6.11.tar.gz”)をダウンロードし、展開しておく。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd /usr/local/src/
+$ sudo wget -O mysql-5.6.11.tar.gz http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.11.tar.gz/from/http://cdn.mysql.com/
+$ sudo tar zxvf mysql-5.6.11.tar.gz
+</code></pre></div></div>
+
+<h4 id="3-ビルドインストール">3. ビルド＆インストール</h4>
+
+<p>以下のように cmake, make, make install する。（<code class="language-plaintext highlighter-rouge">configure</code> ではなく <code class="language-plaintext highlighter-rouge">cmake</code>）<br />
+取り急ぎ、コンパイルオプションは以下のようにした。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd mysql-5.6.11
+$ sudo cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
+-DMYSQL_DATADIR=/var/mysql/data \
+-DMYSQL_UNIX_ADDR=/var/run/mysqld/mysqld.sock \
+-DENABLED_LOCAL_INFILE=1 \
+-DDEFAULT_CHARSET=utf8 \
+-DDEFAULT_COLLATION=utf8_general_ci \
+-DWITH_EXTRA_CHARSETS=all \
+-DWITH_INNOBASE_STORAGE_ENGINE=1
+$ sudo make
+$ sudo make install
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">CMAKE_INSTALL_PREFIX</code>        : インストール先ディレクトリ (Default: /usr/local/mysql)</li>
+  <li><code class="language-plaintext highlighter-rouge">MYSQL_DATADIR</code>               : デフォルトのデータディレクトリ</li>
+  <li><code class="language-plaintext highlighter-rouge">MYSQL_UNIX_ADDR</code>             : ソケットファイルのフルパス (Default: /tmp/mysql.sock)</li>
+  <li><code class="language-plaintext highlighter-rouge">ENABLED_LOCAL_INFILE</code>        : LOAD DATA INFILE を有効にするか(Default: OFF)</li>
+  <li><code class="language-plaintext highlighter-rouge">DEFAULT_CHARSET</code>             : デフォルトの文字セット(Default: latin1)</li>
+  <li><code class="language-plaintext highlighter-rouge">DEFAULT_COLLATION</code>           : デフォルトの照合順序(Default: 	latin1_swedish_ci)</li>
+  <li><code class="language-plaintext highlighter-rouge">WITH_EXTRA_CHARSETS</code>         : 追加の文字セット(Default: all)</li>
+  <li><code class="language-plaintext highlighter-rouge">WITH_INNOBASE_STORAGE_ENGINE</code>: InnoDB ストレージ エンジンを有効にする</li>
+</ul>
+
+<p><strong>何かパッケージが不足していてパッケージインストール後に再度ビルドを行う場合は、<code class="language-plaintext highlighter-rouge">CMakeCache.txt</code> を削除してから <code class="language-plaintext highlighter-rouge">cmake</code> を行う。</strong></p>
+
+<h4 id="4-ユーザグループ作成">4. ユーザ・グループ作成</h4>
+
+<p>MySQL 用のユーザとグループを作成する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo groupadd mysql
+$ sudo useradd -r -g mysql mysql
+</code></pre></div></div>
+
+<h4 id="5-データディレクトリ作成">5. データディレクトリ作成</h4>
+
+<p>データディレクトリが無ければ作成し、所有者・グループを設定しておく。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo mkdir /var/mysql
+$ sudo mkdir /var/mysql/data
+$ sudo chown -R mysql. /var/mysql/data/
+</code></pre></div></div>
+
+<h4 id="6-ログディレクトリ作成">6. ログディレクトリ作成</h4>
+
+<p>ログ用ディレクトリを作成し、所有者・グループを設定しておく。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo mkdir /var/log/mysql
+$ sudo chown -R mysql. /var/log/mysql/
+</code></pre></div></div>
+
+<h4 id="7-ソケットpidディレクトリ作成">7. ソケット・PIDディレクトリ作成</h4>
+
+<p>ソケット・プロセスID用ディレクトリの所有者・グループを設定する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo mkdir /var/run/mysqld
+$ sudo chown -R mysql. /var/run/mysqld/
+</code></pre></div></div>
+
+<h4 id="8-設定ファイル編集">8. 設定ファイル編集</h4>
+
+<p>デフォルトの設定ファイル <code class="language-plaintext highlighter-rouge">/usr/local/mysql/support-files/my-default.cnf</code> を <code class="language-plaintext highlighter-rouge">/etc/my.cnf</code> にコピーして、適当に編集する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo cp /usr/local/mysql/support-files/my-default.cnf /etc/my.cnf
+</code></pre></div></div>
+
+<p>以下は当方の例。実際は、<code class="language-plaintext highlighter-rouge">my-default.cnf</code> を複製して使用せず、以前 MySQL5.5 で使用していたものを流用。<br />
+（ストレージエンジンに InnoDB を利用することを想定している）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[client]
+port   = 3306
+socket = /var/run/mysqld/mysqld.sock
+default-character-set = utf8
+
+[mysqld_safe]
+socket = /var/run/mysqld/mysqld.sock
+nice   = 0
+
+[mysqld]
+# ==== Basic
+sql_mode             = NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+user                 = mysql
+pid-file             = /var/run/mysqld/mysql.pid
+socket               = /var/run/mysqld/mysqld.sock
+port                 = 3306
+basedir              = /usr/local/mysql
+datadir              = /var/mysql/data
+tmpdir               = /tmp
+lc-messages-dir      = /usr/local/mysql/share
+character-set-server = utf8
+skip-external-locking
+skip-character-set-client-handshake
+
+# ==== Buffer
+key_buffer              = 32M
+max_allowed_packet      = 16M
+sort_buffer_size        = 1M
+read_buffer_size        = 1M
+myisam_sort_buffer_size = 16M
+thread_stack            = 192K
+thread_cache_size       = 32
+query_cache_limit       = 1M
+query_cache_size        = 128M
+tmp_table_size          = 64MB
+max_heap_table_size     = 64M
+
+# ==== Binary Log
+log-bin          = mysql-bin  # データインポート時はコメントアウト
+expire_logs_days = 10
+max_binlog_size  = 100M
+
+# ==== Connection
+bind-address       = 127.0.0.1
+max_connections    = 100
+max_connect_errors = 1000
+
+# ==== MyISAM
+myisam-recover = BACKUP
+
+# ==== InnoDB
+innodb_data_file_path           = ibdata1:1G:autoextend
+innodb_file_per_table
+innodb_autoextend_increment     = 64
+innodb_buffer_pool_size         = 1G
+innodb_write_io_threads         = 8
+innodb_read_io_threads          = 8
+innodb_log_buffer_size          = 8M   # 通常時:8程度, データインポート時:32程度
+innodb_log_file_size            = 256M
+innodb_flush_log_at_trx_commit  = 1  # 通常時:1(デフォルト), データインポート時:2 or 0
+#skip_innodb_doublewrite  # ダブルライトバッファへの書き込みをスキップ(通常時は指定しない。データインポート時のみ)
+
+# ==== Log
+log-error           = /var/log/mysql/error.log
+#general_log_file    = /var/log/mysql/mysql.log  # デバッグ時に有効化
+#general_log         = 1                         # デバッグ時に有効化
+#slow_query_log_file = /var/log/mysql/slow.log   # デバッグ時に有効化
+#slow_query_log      = 1                         # デバッグ時に有効化
+
+[mysqldump]
+quick
+quote-names
+max_allowed_packet = 16M
+
+[mysql]
+
+[isamchk]
+key_buffer = 16M
+</code></pre></div></div>
+
+<h4 id="9-mysql-初期化">9. MySQL 初期化</h4>
+
+<p>MySQL データを初期化し、システムテーブルを作成する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd /usr/local/mysql
+$ sudo scripts/mysql_install_db --user=mysql --basedir=/usr/local/mysql --datadir=/var/mysql/data --defaults-file=/etc/my.cnf
+</code></pre></div></div>
+
+<h4 id="10-起動スクリプト準備">10. 起動スクリプト準備</h4>
+
+<p>起動用スクリプトを準備する。（用意されているスクリプトをコピーする）<br />
+場合によっては編集することになるが、<code class="language-plaintext highlighter-rouge">my.cnf</code> で <code class="language-plaintext highlighter-rouge">basedir</code>, <code class="language-plaintext highlighter-rouge">datadir</code> 等を指定しているので、ここでは特に編集はしない。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo cp support-files/mysql.server /etc/init.d/mysqld
+</code></pre></div></div>
+
+<h4 id="11-起動再起動ステータス確認停止のテスト">11. 起動・再起動・ステータス確認・停止のテスト</h4>
+
+<p>起動・再起動・ステータス確認・停止ができるか確認する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo /etc/init.d/mysqld start
+$ sudo /etc/init.d/mysqld restart
+$ sudo /etc/init.d/mysqld status
+$ sudo /etc/init.d/mysqld stop
+</code></pre></div></div>
+
+<p>もちろん、”service” コマンドでも起動・再起動・ステータス確認・停止ができるはずです。</p>
+
+<h4 id="12-自動起動設定">12. 自動起動設定</h4>
+
+<p>マシン起動時に自動で MySQL を起動させたい場合は、以下のようにする。<br />
+当方は、今回はサーバ用途ではないので、自動起動の設定はしない。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo update-rc.d mysql defaults
+$ sudo sysv-rc-conf --list | grep mysqld
+</code></pre></div></div>
+
+<p>2,3,4,5 が <code class="language-plaintext highlighter-rouge">on</code> になっていることを確認する。</p>
+
+<h4 id="13-環境変数-path-の設定">13. 環境変数 PATH の設定</h4>
+
+<p>mysql コマンドへのパスを設定するために <code class="language-plaintext highlighter-rouge">.bash_profile</code> の最終行に以下の記述を追加する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># vi ~/.bash_profile
+export PATH=/usr/local/mysql/bin:$PATH
+</code></pre></div></div>
+
+<p>マシンを再起動すれば PATH が有効化するが、直ちに有効化したければ以下のようにする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># source ~/.bash_profile
+</code></pre></div></div>
+
+<h4 id="14-mysql-セキュリティ設定">14. MySQL セキュリティ設定</h4>
+
+<p>root のバスワード設定、テストDB削除等を行う。<br />
+（root のパスワードのみ設定して、後はデフォルト（エンター押下））</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo /usr/local/mysql/bin/mysql_secure_installation
+</code></pre></div></div>
+
+<h4 id="15-動作確認">15. 動作確認</h4>
+
+<p>MySQL サーバにログインしてみる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ mysql -uroot -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 13
+Server version: 5.6.11-log Source distribution
+
+Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql&gt; show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
++--------------------+
+3 rows in set (0.02 sec)
+
+mysql&gt; 
+</code></pre></div></div>
+
+<p>その他、実際にデータベースを作成してみたりしてみる。</p>
+
+<h4 id="16-注意">16. 注意</h4>
+
+<p>MySQL サーバを今回のようにソースからインストールし、同じマシンに別途パッケージから MySQL クライアント等（MySQL Workbench も）をインストールしたりした場合は、パッケージインストールした設定ファイル “my.cnf” を認識するようになるので注意！</p>
+
+<h4 id="17-参考サイト">17. 参考サイト</h4>
+
+<ul>
+  <li><a href="http://dev.mysql.com/doc/refman/5.6/en/source-configuration-options.html" title="MySQL :: MySQL 5.6 Reference Manual :: 2.9.4 MySQL Source-Configuration Options">MySQL :: MySQL 5.6 Reference Manual :: 2.9.4 MySQL Source-Configuration Options</a></li>
+</ul>
+
+<hr />
+
+<p>あとは通常通り使用可能です。</p>
+
+<p>パフォーマンス的に 5.5 系と比べてどうなのか？については、今後使用してみて体感できればと考えています。（ブログ記事にするか否かは不明）</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/linuxmint" class="page__taxonomy-item" rel="tag">LinuxMint</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/mariadb" class="page__taxonomy-item" rel="tag">MariaDB</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/mysql" class="page__taxonomy-item" rel="tag">MySQL</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-05-30T00:20:00+09:00">2013-05-30 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=MySQL+-+5.6.11+%E3%82%BD%E3%83%BC%E3%82%B9%E3%83%93%E3%83%AB%E3%83%89%E3%81%A7%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%28on+Linux+Mint%29%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F05%2F30%2Fmysql-5-6-install-by-src-build-to-mint%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F05%2F30%2Fmysql-5-6-install-by-src-build-to-mint%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F05%2F30%2Fmysql-5-6-install-by-src-build-to-mint%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/05/28/mysql-innodb-tablespace-for-a-table/" class="pagination--pager" title="MySQL - InnoDB データファイルをテーブル単位に変更！
+">Previous</a>
+    
+    
+      <a href="/2013/05/31/mysql-5-6-timestamp-default-warning/" class="pagination--pager" title="MySQL - 5.6 系で TIMESTAMP 型デフォルト値警告！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/05/30/mysql-5-6-install-by-src-build-to-mint/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/05/30/mysql-5-6-install-by-src-build-to-mint"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

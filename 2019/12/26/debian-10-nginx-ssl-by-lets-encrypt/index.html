@@ -1,0 +1,1020 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Debian 10 (buster) - Let’s Encrypt で常時 SSL 化(with Nginx)！ - mk-mode BLOG</title>
+<meta name="description" content="Debian GNU/Linux 10 (buster) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。（当然ながら、興味がなければスルーしてください）">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Debian 10 (buster) - Let’s Encrypt で常時 SSL 化(with Nginx)！">
+<meta property="og:url" content="https://komasaru.github.io/2019/12/26/debian-10-nginx-ssl-by-lets-encrypt/">
+
+
+  <meta property="og:description" content="Debian GNU/Linux 10 (buster) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。（当然ながら、興味がなければスルーしてください）">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Debian 10 (buster) - Let’s Encrypt で常時 SSL 化(with Nginx)！">
+  <meta name="twitter:description" content="Debian GNU/Linux 10 (buster) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。（当然ながら、興味がなければスルーしてください）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2019/12/26/debian-10-nginx-ssl-by-lets-encrypt/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2019-12-26T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2019/12/26/debian-10-nginx-ssl-by-lets-encrypt/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Debian 10 (buster) - Let’s Encrypt で常時 SSL 化(with Nginx)！">
+    <meta itemprop="description" content="Debian GNU/Linux 10 (buster) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。（当然ながら、興味がなければスルーしてください）">
+    <meta itemprop="datePublished" content="December 26, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Debian 10 (buster) - Let’s Encrypt で常時 SSL 化(with Nginx)！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-12-26T00:20:00+09:00">2019-12-26 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Debian GNU/Linux 10 (buster) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。</p>
+
+<p>（当然ながら、興味がなければスルーしてください）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Debian GNU/Linux 10 (buster; 64bit) での作業を想定。</li>
+  <li>クライアント側も Debian GNU/Linux 10 (buster; 64bit) を想定。</li>
+  <li>Web(HTTP)サーバ Nginx が「<a href="/2019/12/20/debian-10-nginx-installation-by-official-apt" title="Debian 10 (buster) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！">Debian 10 (buster) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！</a>」の方法で導入済みであることを想定。</li>
+  <li>Nginx 1.16.1 での作業を想定。</li>
+  <li>Python 2.7 系がインストール済みであること。（当方は 2.7.16 がインストール済み）</li>
+  <li>バーチャルホストは使用しない。</li>
+  <li>root ユーザでの作業を想定。</li>
+</ul>
+
+<h3 id="1-debian-backports-リポジトリの有効化">1. Debian backports リポジトリの有効化</h3>
+
+<p>Let’s Encrypt のクライアントソフトウェア Certbot を使用するが、 Debian 10 用の Certbot パケージは Stretch backports リポジトリから取得するため、 backports リポジトリが有効になっていなければ、有効にしておく。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/apt/sources.list</code></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>deb http://ftp.debian.org/debian buster-backports main
+</code></pre></div></div>
+
+<p>パッケージリストの更新。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y update
+</code></pre></div></div>
+
+<h3 id="2-certbot-クライアントのインストール">2. Certbot クライアントのインストール</h3>
+
+<p>Let’s Encrypt のクライアントソフトウェア Certbot をインストールする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y -t buster-backports install certbot
+</code></pre></div></div>
+
+<h3 id="3-certbot-のテスト">3. Certbot のテスト</h3>
+
+<p>バージョンを出力してみる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># certbot --version
+certbot 0.31.0
+</code></pre></div></div>
+
+<p>オプション無しで実行してみる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># certbot
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Certbot doesn't know how to automatically configure the web server 
+on this system. However, it can still get a certificate for you. 
+Please run "certbot certonly" to do so. You'll need to manually 
+configure your web server to use the resulting certificate.
+</code></pre></div></div>
+
+<h3 id="4-ポートの開放">4. ポートの開放</h3>
+
+<p>ドメイン所有者の認証のために TCP ポートの <code class="language-plaintext highlighter-rouge">80</code> 番と <code class="language-plaintext highlighter-rouge">443</code> 番に接続されるので、開放されてなければ開放しておく。</p>
+
+<p><code class="language-plaintext highlighter-rouge">ufw</code> コマンドによるポート開放については、過去記事「<a href="/2019/10/26/debian-10-firewall-setting" title="Debian 10 (buster) - ファイアウォール設定！">Debian 10 (buster) - ファイアウォール設定！</a>」を参照。</p>
+
+<h3 id="5-certbot-クライアントの起動">5. Certbot クライアントの起動</h3>
+
+<p>証明書発行のために Certbot クライアントを起動する。（起動後の設定は次項で）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># certbot certonly --standalone -d example.jp -d www.example.jp
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">example.jp</code>, <code class="language-plaintext highlighter-rouge">www.example.jp</code> は自分のものに置き換えること。</li>
+  <li>上記コマンド実行後、最初にバージョンチェックが行われ、必要に応じてアップデートされる。</li>
+</ul>
+
+<h3 id="6-メールアドレス等の設定">6. メールアドレス等の設定</h3>
+
+<p>メールアドレスの設定と利用規約への同意を行う。</p>
+
+<p>Web サーバ Nginx を停止していなかったので、以下では停止するよう警告された。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Plugins selected: Authenticator standalone, Installer None
+Enter email address (used for urgent renewal and security notices) (Enter 'c' to
+cancel): webmaster@mk-mode.com
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Please read the Terms of Service at
+https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf. You must
+agree in order to register with the ACME server at
+https://acme-v02.api.letsencrypt.org/directory
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+(A)gree/(C)ancel: A
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Would you be willing to share your email address with the Electronic Frontier
+Foundation, a founding partner of the Let's Encrypt project and the non-profit
+organization that develops Certbot? We'd like to send you email about our work
+encrypting the web, EFF news, campaigns, and ways to support digital freedom.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+(Y)es/(N)o: Y
+Obtaining a new certificate
+Performing the following challenges:
+http-01 challenge for mk-mode.com
+http-01 challenge for www.mk-mode.com
+Cleaning up challenges
+Problem binding to port 80: Could not bind to IPv4 or IPv6.
+
+IMPORTANT NOTES:
+ - Your account credentials have been saved in your Certbot
+   configuration directory at /etc/letsencrypt. You should make a
+   secure backup of this folder now. This configuration directory will
+   also contain certificates and private keys obtained by Certbot so
+   making regular backups of this folder is ideal.
+</code></pre></div></div>
+
+<h3 id="7-web-サーバ-の停止">7. Web サーバ の停止</h3>
+
+<p>Certbot クライアントは、ドメイン所有者であることの認証に TCP ポートの <code class="language-plaintext highlighter-rouge">80</code> 番と <code class="language-plaintext highlighter-rouge">443</code> 番を使用するため、 Web サーバ（今回は Nginx）を一時的に終了させる必要がある。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl stop nginx
+</code></pre></div></div>
+
+<h3 id="8-certbot-クライアントの再実行">8. Certbot クライアントの再実行</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># certbot certonly --standalone -d example.jp -d www.example.jp
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">example.jp</code>, <code class="language-plaintext highlighter-rouge">www.example.jp</code> は自分のものに置き換えること。</li>
+  <li>最初の Certbot 実行時に設定したメールアドレスや利用規約の同意の情報は引き継がれる。</li>
+</ul>
+
+<h3 id="9-ssltls-サーバ証明書の取得完了">9. SSL/TLS サーバ証明書の取得完了</h3>
+
+<p>しばらく待つと、以下のようなメッセージを出力して SSL/TLS サーバ証明書の取得プロセスが完了する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Plugins selected: Authenticator standalone, Installer None
+Obtaining a new certificate
+Performing the following challenges:
+http-01 challenge for mk-mode.com
+http-01 challenge for www.mk-mode.com
+Waiting for verification...
+Cleaning up challenges
+
+IMPORTANT NOTES:
+ - Congratulations! Your certificate and chain have been saved at:
+   /etc/letsencrypt/live/mk-mode.com/fullchain.pem
+   Your key file has been saved at:
+   /etc/letsencrypt/live/mk-mode.com/privkey.pem
+   Your cert will expire on 2020-02-15. To obtain a new or tweaked
+   version of this certificate in the future, simply run certbot
+   again. To non-interactively renew *all* of your certificates, run
+   "certbot renew"
+ - If you like Certbot, please consider supporting our work by:
+
+   Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+   Donating to EFF:                    https://eff.org/donate-le
+
+</code></pre></div></div>
+
+<ul>
+  <li>サーバ証明書の実体（ファイル）は、 <code class="language-plaintext highlighter-rouge">/etc/letsencrypt/archive/ドメイン名</code> ディレクトリ配下に保存される。
+    <ul>
+      <li>サーバ証明書（公開鍵） … <code class="language-plaintext highlighter-rouge">certN.pem</code></li>
+      <li>中間証明書 … <code class="language-plaintext highlighter-rouge">chainN.pem</code></li>
+      <li>サーバ証明書と中間証明書の結合ファイル … <code class="language-plaintext highlighter-rouge">fullchainN.pem</code></li>
+      <li>秘密鍵 … <code class="language-plaintext highlighter-rouge">privkeyN.pem</code></li>
+    </ul>
+  </li>
+  <li>シンボリックリンクは、 <code class="language-plaintext highlighter-rouge">/etc/letsencrypt/live/ドメイン名</code> ディレクトリ配下に保存される。
+    <ul>
+      <li>サーバ証明書（公開鍵） … <code class="language-plaintext highlighter-rouge">cert.pem</code></li>
+      <li>中間証明書 … <code class="language-plaintext highlighter-rouge">chain.pem</code></li>
+      <li>サーバ証明書と中間証明書の結合ファイル … <code class="language-plaintext highlighter-rouge">fullchain.pem</code></li>
+      <li>秘密鍵 … <code class="language-plaintext highlighter-rouge">privkey.pem</code></li>
+    </ul>
+  </li>
+  <li>SSL/TLS サーバ証明書の取得に失敗した場合は、ポート開放等の設定を再確認する。</li>
+</ul>
+
+<h3 id="10-nginx-設定ファイルの編集">10. Nginx 設定ファイルの編集</h3>
+
+<p>環境により設定ファイルの配置ディレクトリやファイル名、記述方法等が異なるかもしれない。適宜置き換えること。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/nginx/conf.d/default.conf</code></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server {
+    listen 80;
+    #       :
+    # ===&lt; 中略 &gt;===
+    #       :
+    return 301 https://$host$request_uri;  # &lt;= 追加
+    #       :
+    # ===&lt; 中略 &gt;===
+    #       :
+}
+</code></pre></div></div>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/nginx/conf.d/ssl.conf</code></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server {
+    listen 443 ssl;
+    #       :
+    # ===&lt; 中略 &gt;===
+    #       :
+    ssl on;                                                               # &lt;= 追加
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;                            # &lt;= 追加
+    ssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem;  # &lt;= 追加
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;    # &lt;= 追加
+    #       :
+    # ===&lt; 中略 &gt;===
+    #       :
+</code></pre></div></div>
+
+<h3 id="11-nginx-設定ファイルの文法チェック">11. Nginx 設定ファイルの文法チェック</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+</code></pre></div></div>
+
+<p>問題があれば、設定ファイルの内容を見直す。</p>
+
+<h3 id="12-web-サーバ-の起動">12. Web サーバ の起動</h3>
+
+<p>停止していた Web サーバ（今回は Ngxin）を再開させる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl start nginx
+</code></pre></div></div>
+
+<h3 id="13-証明書の更新">13. 証明書の更新</h3>
+
+<p>Debian 用 Certbot は、インストール時に自動で更新されるよう <code class="language-plaintext highlighter-rouge">/etc/cron.d/certbot</code> が登録されるので、自分でコマンドを実行して更新する必要はないはずだったが、最近は Web サーバが起動していると <code class="language-plaintext highlighter-rouge">certbot -q renew</code> に失敗するので、編集する。（<code class="language-plaintext highlighter-rouge">--pre-hook</code>, <code class="language-plaintext highlighter-rouge">--post-hook</code> オプションの追加）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/cron.d/certbot</code></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># /etc/cron.d/certbot: crontab entries for the certbot package
+#
+# Upstream recommends attempting renewal twice a day
+#
+# Eventually, this will be an opportunity to validate certificates
+# haven't been revoked, etc.  Renewal will only occur if expiration
+# is within 30 days.
+#
+# Important Note!  This cronjob will NOT be executed if you are
+# running systemd as your init system.  If you are running systemd,
+# the cronjob.timer function takes precedence over this cronjob.  For
+# more details, see the systemd.timer manpage, or use systemctl show
+# certbot.timer.
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+#0 */12 * * * root test -x /usr/bin/certbot -a \! -d /run/systemd/system &amp;&amp; perl -e 'sleep int(rand(43200))' &amp;&amp; certbot -q renew
+0 */12 * * * root test -x /usr/bin/certbot -a \! -d /run/systemd/system &amp;&amp; perl -e 'sleep int(rand(43200))' &amp;&amp; certbot -q renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
+</code></pre></div></div>
+
+<p>cron 登録されていない場合は、証明書の失効日（有効期限は90日）が近づいたら、証明書更新のためにコマンドを実行する必要がある。（失効日が近くない場合は、実行しても更新は行われない）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># certbot renew
+</code></pre></div></div>
+
+<p>もしくは、自動で更新するよう cron 登録を行う。（以下は一例。上記の cron をコピー＆ペーストしてもよいだろう）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/cron.d/certbot</code></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0 2 * * * root certbot renew &amp;&amp; systemctl reload nginx
+</code></pre></div></div>
+
+<h3 id="14-参考サイト">14. 参考サイト</h3>
+
+<ul>
+  <li><a href="https://letsencrypt.jp/docs/using.html" title="ユーザーガイド - Let's Encrypt 総合ポータル">ユーザーガイド - Let’s Encrypt 総合ポータル</a></li>
+</ul>
+
+<hr />
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/debian" class="page__taxonomy-item" rel="tag">Debian</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/nginx" class="page__taxonomy-item" rel="tag">Nginx</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/ssl" class="page__taxonomy-item" rel="tag">SSL</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-12-26T00:20:00+09:00">2019-12-26 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Debian+10+%28buster%29+-+Let%27s+Encrypt+%E3%81%A7%E5%B8%B8%E6%99%82+SSL+%E5%8C%96%28with+Nginx%29%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2019%2F12%2F26%2Fdebian-10-nginx-ssl-by-lets-encrypt%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2019%2F12%2F26%2Fdebian-10-nginx-ssl-by-lets-encrypt%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2019%2F12%2F26%2Fdebian-10-nginx-ssl-by-lets-encrypt%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2019/12/23/debian-10-nginx-ssl-connection-setting/" class="pagination--pager" title="Debian 10 (buster) - Web サーバ Nginx で SSL 接続！
+">Previous</a>
+    
+    
+      <a href="/2019/12/29/debian-10-ruby-2-6-installation-by-src/" class="pagination--pager" title="Debian 10 (buster) - Ruby 2.6 インストール（ソースビルド）！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2019/12/26/debian-10-nginx-ssl-by-lets-encrypt/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2019/12/26/debian-10-nginx-ssl-by-lets-encrypt"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

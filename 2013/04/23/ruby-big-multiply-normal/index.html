@@ -1,0 +1,1175 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby - 多桁乗算（標準（筆算）法）！ - mk-mode BLOG</title>
+<meta name="description" content="前回は、C++ による「多桁同士の乗算（筆算法）」のアルゴリズムを紹介しました。  C++ - 多桁乗算（標準（筆算）法）！今日は、同じアルゴリズムを Ruby で実現してみました。Ruby では桁数（整数型の範囲）をあまり気にしなくても、メモリの許される限り計算できますが、それでも多桁同士の乗算では不都合でしょう。アルゴリズムについては、上記リンクの過去記事等を参照してください。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby - 多桁乗算（標準（筆算）法）！">
+<meta property="og:url" content="https://komasaru.github.io/2013/04/23/ruby-big-multiply-normal/">
+
+
+  <meta property="og:description" content="前回は、C++ による「多桁同士の乗算（筆算法）」のアルゴリズムを紹介しました。  C++ - 多桁乗算（標準（筆算）法）！今日は、同じアルゴリズムを Ruby で実現してみました。Ruby では桁数（整数型の範囲）をあまり気にしなくても、メモリの許される限り計算できますが、それでも多桁同士の乗算では不都合でしょう。アルゴリズムについては、上記リンクの過去記事等を参照してください。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby - 多桁乗算（標準（筆算）法）！">
+  <meta name="twitter:description" content="前回は、C++ による「多桁同士の乗算（筆算法）」のアルゴリズムを紹介しました。  C++ - 多桁乗算（標準（筆算）法）！今日は、同じアルゴリズムを Ruby で実現してみました。Ruby では桁数（整数型の範囲）をあまり気にしなくても、メモリの許される限り計算できますが、それでも多桁同士の乗算では不都合でしょう。アルゴリズムについては、上記リンクの過去記事等を参照してください。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/04/23/ruby-big-multiply-normal/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-04-23T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/04/23/ruby-big-multiply-normal/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby - 多桁乗算（標準（筆算）法）！">
+    <meta itemprop="description" content="前回は、C++ による「多桁同士の乗算（筆算法）」のアルゴリズムを紹介しました。  C++ - 多桁乗算（標準（筆算）法）！今日は、同じアルゴリズムを Ruby で実現してみました。Ruby では桁数（整数型の範囲）をあまり気にしなくても、メモリの許される限り計算できますが、それでも多桁同士の乗算では不都合でしょう。アルゴリズムについては、上記リンクの過去記事等を参照してください。">
+    <meta itemprop="datePublished" content="April 23, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby - 多桁乗算（標準（筆算）法）！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-04-23T00:20:00+09:00">2013-04-23 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>前回は、C++ による「多桁同士の乗算（筆算法）」のアルゴリズムを紹介しました。</p>
+
+<ul>
+  <li><a href="/2013/04/22/cpp-big-multiply-normal/" title="C++ - 多桁乗算（標準（筆算）法）！">C++ - 多桁乗算（標準（筆算）法）！</a></li>
+</ul>
+
+<p>今日は、同じアルゴリズムを Ruby で実現してみました。<br />
+Ruby では桁数（整数型の範囲）をあまり気にしなくても、メモリの許される限り計算できますが、それでも多桁同士の乗算では不都合でしょう。<br />
+アルゴリズムについては、上記リンクの過去記事等を参照してください。</p>
+
+<!--more-->
+
+<p>実際、ほとんど同じです。</p>
+
+<p>以下、Ruby によるサンプルスクリプトです。</p>
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Linux Mint 14 Nadia (64bit) での作業を想定。</li>
+  <li>Ruby 2.0.0-p0 を使用。</li>
+</ul>
+
+<h3 id="1-ruby-スクリプト作成">1. Ruby スクリプト作成</h3>
+
+<p>スクリプト中の随所にあるテスト用コメントを解除すると、1ループあたりの乗算回数をカウントしたり、100 ループした場合の処理時間を計測するようになっている。<br />
+また、近い将来考えていることの準備として、計算可能な最大桁数の設定を2のべき乗桁にしている。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">multiply_normal.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+</pre></td><td class="code"><pre><span class="c1">#! /usr/local/bin/ruby</span>
+<span class="c1">#*********************************************</span>
+<span class="c1"># 多倍長乗算 ( by 標準(筆算)方式 )</span>
+<span class="c1">#   - 多倍長 * 多倍長</span>
+<span class="c1">#   - 最下位の桁を配列の先頭とする考え方</span>
+<span class="c1">#*********************************************</span>
+<span class="c1">#</span>
+<span class="k">class</span> <span class="nc">MultiplyNormal</span>
+  <span class="no">D_MAX</span> <span class="o">=</span> <span class="mi">1024</span>  <span class="c1"># 計算可能な最大桁数 ( 2のべき乗 )</span>
+  <span class="no">D</span>     <span class="o">=</span> <span class="mi">1024</span>  <span class="c1"># 実際に計算する桁数 ( D_MAX 以下の 4 の倍数 )</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="c1"># ====================================== #</span>
+    <span class="c1"># テストなので、被乗数・乗数は乱数を使用 #</span>
+    <span class="c1"># ====================================== #</span>
+    <span class="vi">@a</span><span class="p">,</span> <span class="vi">@b</span> <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span><span class="p">,</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span>
+    <span class="n">rnd_a</span><span class="p">,</span> <span class="n">rnd_b</span> <span class="o">=</span> <span class="no">Random</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="no">Random</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># 被乗数・乗数桁数設定</span>
+    <span class="mi">0</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="no">D</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+      <span class="vi">@a</span> <span class="o">&lt;&lt;</span> <span class="n">rnd_a</span><span class="p">.</span><span class="nf">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+      <span class="vi">@b</span> <span class="o">&lt;&lt;</span> <span class="n">rnd_b</span><span class="p">.</span><span class="nf">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1"># 計算 ( 標準(筆算)法 )</span>
+  <span class="k">def</span> <span class="nf">calc_normal</span>
+    <span class="c1"># 配列初期設定 ( コンストラクタで生成した配列を使用 )</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="vi">@a</span><span class="p">,</span> <span class="vi">@b</span>  <span class="c1"># 被乗数配列、乗数配列</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span>  <span class="c1"># 計算結果用配列</span>
+
+    <span class="k">begin</span>
+      <span class="c1"># 最大桁に満たない部分は 0 を設定</span>
+      <span class="p">(</span><span class="no">D_MAX</span> <span class="o">-</span> <span class="n">a</span><span class="p">.</span><span class="nf">size</span><span class="p">).</span><span class="nf">times</span> <span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span><span class="p">}</span>
+      <span class="p">(</span><span class="no">D_MAX</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="nf">size</span><span class="p">).</span><span class="nf">times</span> <span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span><span class="p">}</span>
+      <span class="c1"># ====[ TEST ]===&gt;</span>
+      <span class="c1"># t1 = Time.now      # 計算開始時刻</span>
+      <span class="c1"># 100.times do |l|  # 100 回 LOOP</span>
+      <span class="c1"># @cnt_mul = 0       # 乗算回数リセット</span>
+      <span class="c1"># &lt;===[ TEST ]====</span>
+      <span class="c1"># 乗算 ( 標準(筆算)法 )</span>
+      <span class="n">z</span> <span class="o">=</span> <span class="n">multiply_normal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+      <span class="c1"># ====[ TEST ]===&gt;</span>
+      <span class="c1"># end</span>
+      <span class="c1"># t2 = Time.now      # 計算終了時刻</span>
+      <span class="c1"># @tt = t2 - t1      # 計算時間</span>
+      <span class="c1"># &lt;===[ TEST ]====</span>
+      <span class="c1"># 繰り上がり処理</span>
+      <span class="n">z</span> <span class="o">=</span> <span class="n">do_carry</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+      <span class="c1"># 結果出力</span>
+      <span class="nb">display</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="c1"># 乗算 ( 標準(筆算)法 )</span>
+  <span class="k">def</span> <span class="nf">multiply_normal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="c1"># 配列サイズ取得</span>
+    <span class="n">a_len</span><span class="p">,</span> <span class="n">b_len</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="nf">size</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="nf">size</span>
+    <span class="c1"># 計算結果初期化</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">a_len</span> <span class="o">+</span> <span class="n">b_len</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># 各配列を各桁とみなして乗算</span>
+    <span class="mi">0</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="n">b_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">j</span><span class="o">|</span>
+      <span class="mi">0</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="n">a_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="n">z</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="c1"># ====[ TEST ]===&gt;</span>
+        <span class="c1"># @cnt_mul += 1  # 乗算カウント</span>
+        <span class="c1"># &lt;===[ TEST ]====</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">z</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1"># 繰り上がり処理</span>
+  <span class="k">def</span> <span class="nf">do_carry</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">cr</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 繰り上がり</span>
+
+    <span class="k">begin</span>
+      <span class="mi">0</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="nf">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">cr</span>
+        <span class="n">cr</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">cr</span> <span class="o">*</span> <span class="mi">10</span>
+      <span class="k">end</span>
+      <span class="c1"># オーバーフロー時</span>
+      <span class="nb">puts</span> <span class="s2">"[ OVERFLOW!! ] </span><span class="si">#{</span><span class="n">cr</span><span class="si">}</span><span class="s2">"</span> <span class="k">unless</span> <span class="n">cr</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="k">return</span> <span class="n">a</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1"># 結果出力</span>
+  <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+    <span class="c1"># 上位桁の不要な 0 を削除するために、配列サイズを取得</span>
+    <span class="n">aLen</span><span class="p">,</span> <span class="n">bLen</span><span class="p">,</span> <span class="n">zLen</span> <span class="o">=</span> <span class="no">D_MAX</span><span class="p">,</span> <span class="no">D_MAX</span><span class="p">,</span> <span class="no">D_MAX</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="k">while</span> <span class="n">a</span><span class="p">[</span><span class="n">aLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">do</span> <span class="n">aLen</span> <span class="o">-=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="n">aLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">end</span>
+    <span class="k">while</span> <span class="n">b</span><span class="p">[</span><span class="n">bLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">do</span> <span class="n">bLen</span> <span class="o">-=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">b</span><span class="p">[</span><span class="n">bLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">end</span>
+    <span class="k">while</span> <span class="n">z</span><span class="p">[</span><span class="n">zLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">do</span> <span class="n">zLen</span> <span class="o">-=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">z</span><span class="p">[</span><span class="n">zLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">end</span>
+    <span class="c1"># a 値</span>
+    <span class="nb">puts</span> <span class="s2">"a ="</span>
+    <span class="p">(</span><span class="n">aLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nf">downto</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="nb">print</span> <span class="s2">" "</span> <span class="k">if</span> <span class="p">(</span><span class="n">aLen</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="nb">puts</span> <span class="k">if</span> <span class="p">(</span><span class="n">aLen</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">end</span>
+    <span class="nb">puts</span>
+    <span class="c1"># b 値</span>
+    <span class="nb">puts</span> <span class="s2">"b ="</span>
+    <span class="p">(</span><span class="n">bLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nf">downto</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="nb">print</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="nb">print</span> <span class="s2">" "</span> <span class="k">if</span> <span class="p">(</span><span class="n">bLen</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="nb">puts</span> <span class="k">if</span> <span class="p">(</span><span class="n">bLen</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">end</span>
+    <span class="nb">puts</span>
+    <span class="c1"># z 値</span>
+    <span class="nb">puts</span> <span class="s2">"z ="</span>
+    <span class="p">(</span><span class="n">zLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nf">downto</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="nb">print</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="nb">print</span> <span class="s2">" "</span> <span class="k">if</span> <span class="p">(</span><span class="n">zLen</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="nb">puts</span> <span class="k">if</span> <span class="p">(</span><span class="n">zLen</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">end</span>
+    <span class="nb">puts</span><span class="p">;</span> <span class="nb">puts</span>
+    <span class="c1"># ====[ TEST ]====</span>
+    <span class="c1"># puts "Counts of multiply / 1 loop = #{@cnt_mul}"     # 乗算回数</span>
+    <span class="c1"># puts "Total time of all loops     = #{@tt} seconds"  # 処理時間</span>
+    <span class="c1"># ====[ TEST ]====</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">if</span> <span class="kp">__FILE__</span> <span class="o">==</span> <span class="vg">$0</span>
+  <span class="k">begin</span>
+    <span class="c1"># 計算クラスインスタンス化</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="no">MultiplyNormal</span><span class="p">.</span><span class="nf">new</span>
+    <span class="c1"># 乗算 ( 標準(筆算)法)</span>
+    <span class="n">obj</span><span class="p">.</span><span class="nf">calc_normal</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"[</span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">e</span><span class="p">.</span><span class="nf">backtrace</span><span class="p">.</span><span class="nf">each</span><span class="p">{</span> <span class="o">|</span><span class="n">tr</span><span class="o">|</span> <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"</span><span class="se">\t</span><span class="si">#{</span><span class="n">tr</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/5361556" title="Gist - Ruby script to multiply big-digit values.">Gist - Ruby script to multiply big-digit values.</a></li>
+</ul>
+
+<h3 id="2-実行">2. 実行</h3>
+
+<p>まず、実行権限を付与。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ chmod +x multiply_normal.rb
+</code></pre></div></div>
+
+<p>そして、実行。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./multiply_normal.rb
+a =
+7993052566 8266064120 9097111427 5774289876 9220210035 
+6094933506 4702388611 0101279155 8371352898 5052170975 
+3926963548 8731739637 6743795237 0368961910 3122447549 
+5194526143 3281479241 8365545146 6582572406 7077163650 
+0195786995 7087173085 1831895634 4368860514 5108355450 
+7316277206 2677740416 9951088544 9003370047 6315434536 
+7000001555 8046599285 1545839232 2526666165 7161294064 
+6222369363 0633287892 8428293107 5189445994 2962047204 
+7143171320 4503742960 9429732066 1140571121 8714853851 
+4523992357 8665157906 5598331564 9556263646 8353285018 
+8038209012 2465229172 5695670806 3266793272 1494794231 
+9492916303 0723963808 5573950374 6353746871 5593804189 
+2365348701 1431212339 6480044413 0541483069 1976637531 
+7951496714 4872802947 1638986807 8876699130 0561727532 
+5293314745 8058733642 4609407481 7783078833 4840609190 
+2995913276 1677525552 4121123739 0448830118 0552048518 
+2215779323 7999733543 5793285648 0756363238 8619668298 
+8756940813 5690958089 6340348283 8802328883 3606003286 
+4192143233 2927209570 2302421050 3951055734 8443446449 
+5302763997 1189414865 5400272374 0991073331 8320530349 
+8951877618 8674253973 305
+b =
+7406962534 3269498879 7758624488 0138514732 7547672156 
+2285146200 6064210929 2603946403 6444383734 3961641897 
+0253894348 4620826253 0429543527 5876496551 9236794638 
+6208832937 3820946953 2294258723 4770621711 5139254149 
+5020274596 4681816335 2152593700 7073816261 8189614729 
+5355229878 1788396494 1205374925 7211236115 9022075013 
+2406527382 0691150394 9016440216 8077915939 3526545171 
+0748115630 9530042478 6576765791 7567165509 4682888493 
+1092820323 7316618099 3689043958 9000885051 0032332621 
+5114656411 7997250276 5427167789 0449126034 5265801044 
+7721006810 8276362315 6863307639 3214226646 9560360383 
+7717767842 0467250503 1633393195 7558856510 6622237413 
+5830052400 2342684093 5081578946 9515911702 7088870572 
+9264524616 0610374066 8950582250 7983612844 9932804521 
+9394300492 4689995926 7460367634 2607402194 9581250627 
+7786652594 5976088357 4309307606 9200696966 1371404128 
+2071576538 3304423537 6334183092 4803827060 3421530243 
+0781185854 5572988644 1939075987 0451215606 4156077266 
+2906272132 8910489717 0209477448 7526546803 1177803797 
+7208639547 7396897729 4029304184 3915637893 8810196799 
+6071977424 2542967100 5985
+z =
+5920424089 7390532610 0449048020 7708572450 1476445790 
+9365457906 5910883189 1331132174 4965328263 9353351322 
+7052991161 7322641278 7387898933 2029871191 3960608745 
+8559762279 6903824628 2373557557 2978381756 5519737717 
+3877862291 6191997852 3264087612 0827484143 7081220122 
+7861107782 3917808080 6063312413 4857056174 5146266153 
+4279955364 3358317184 8613028798 3721088957 9893156532 
+8581959825 2293549941 2197987848 2173489186 2346714538 
+8366825393 0197781379 9194605147 8447222353 9183505540 
+4029451071 5861384696 5637266583 2032094605 9028532063 
+6267446914 2333761740 8432920499 6602754639 3728829690 
+9556374047 0787834929 7721750440 5542338514 4973680927 
+9455787671 8874626549 2459029172 1631688453 9489095404 
+5964277634 8770445317 5231519866 0697559968 1702445406 
+9641353090 3025032364 4407208014 1325089338 4164501934 
+1172979019 5905034780 6659841527 3858137835 4780538735 
+2615874044 7481839536 7073725379 9018054925 1686421460 
+8495016498 7792681475 3182738125 0781771741 3341815336 
+4625118321 8721477575 5247076764 7637643902 4897996444 
+6473500433 7619017662 5133259102 6639792309 2653057206 
+2149065710 5580756845 7340480236 9057262428 0375682188 
+4221075478 6297812376 0755917527 9276522244 6626325323 
+9188445335 2132882454 7554436749 1651557377 5375882773 
+1544803975 0017438932 9611639321 3873590885 9238139242 
+5384005471 2361798000 1207046515 3263968450 2709672867 
+7965176482 6879721635 6373273046 5955334217 4432478933 
+1648807917 1524422682 0066018797 1327686809 9391132033 
+4724727337 9524643670 9250458898 2763139664 0123548988 
+5101157032 9126732981 5290336675 0585775407 1429563057 
+5070405323 4673861758 8903590789 9113287776 7853493246 
+9711588154 9686641908 7882969904 2263306248 7683938134 
+0494265715 4261147471 2054787790 6019886698 6320353270 
+0098385009 1723109317 7433930926 8465521602 1619671075 
+7021276570 7502918191 7336149373 3941101236 0211981730 
+4095670897 3875345966 1124855708 4807212942 3206212176 
+8537784809 9992661658 4284692215 3921208115 2987165729 
+2759649851 1491250563 0677871704 1395045822 1316264691 
+3435716435 4386702886 9850601641 2736343637 5501167273 
+4865565979 4396664345 6840367301 3797103744 1990313034 
+3003254964 1864102703 7141499881 5261359712 8773968334 
+1154253526 2498414253 5029159468 3280434268 5230425
+</code></pre></div></div>
+
+<p>部分的に電卓で計算してみた結果、計算は合っているようだ。</p>
+
+<h3 id="3-検証">3. 検証</h3>
+
+<p>上記のコードを利用して、乗算回数が何回になるか、計算(100回ループ)にどれくらい時間がかかるかを検証してみた。<br />
+乗算回数は予想通り配列数の２乗回に、計算にかかる時間も乗算回数に比例した時間となった。<br />
+だが、やはり C++ 版による計算より莫大に時間がかかっている。<br />
+<strong>ちなみに、C++ 版では 1000 回ループの時間を計測したが、Ruby 版では時間がかかりすぎるため 100 回ループの時間を計測した。</strong></p>
+
+<p><img src="/images/2013/04/23/MULTIPLY_NORMAL_RUBY.png" alt="MULTIPLY_NORMAL_RUBY" title="MULTIPLY_NORMAL_RUBY" /></p>
+
+<hr />
+
+<p>ただ、もっと大きな桁同士の乗算を行う際に、筆算方式ではなく別のアルゴリズムを使用すると高速化も可能のようです。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%95%B0%E5%AD%A6" class="page__taxonomy-item" rel="tag">数学</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-04-23T00:20:00+09:00">2013-04-23 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+-+%E5%A4%9A%E6%A1%81%E4%B9%97%E7%AE%97%EF%BC%88%E6%A8%99%E6%BA%96%EF%BC%88%E7%AD%86%E7%AE%97%EF%BC%89%E6%B3%95%EF%BC%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F04%2F23%2Fruby-big-multiply-normal%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F04%2F23%2Fruby-big-multiply-normal%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F04%2F23%2Fruby-big-multiply-normal%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/04/22/cpp-big-multiply-normal/" class="pagination--pager" title="C++ - 多桁乗算（標準（筆算）法）！
+">Previous</a>
+    
+    
+      <a href="/2013/04/25/cpp-big-multiply-karatsuba/" class="pagination--pager" title="C++ - 多桁乗算（Karatsuba 法）！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/04/23/ruby-big-multiply-normal/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/04/23/ruby-big-multiply-normal"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

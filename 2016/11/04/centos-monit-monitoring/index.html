@@ -1,0 +1,955 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>CentOS - Monit でプロセス監視！ - mk-mode BLOG</title>
+<meta name="description" content="不意にサーバプロセスが落ちてしまい、さらに、落ちたことにも気付かず何日も経過してしまう、ということがないよう、プロセスを監視するツール Monit を使用します。以下、使用方法についての簡単な記録です。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="CentOS - Monit でプロセス監視！">
+<meta property="og:url" content="https://komasaru.github.io/2016/11/04/centos-monit-monitoring/">
+
+
+  <meta property="og:description" content="不意にサーバプロセスが落ちてしまい、さらに、落ちたことにも気付かず何日も経過してしまう、ということがないよう、プロセスを監視するツール Monit を使用します。以下、使用方法についての簡単な記録です。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="CentOS - Monit でプロセス監視！">
+  <meta name="twitter:description" content="不意にサーバプロセスが落ちてしまい、さらに、落ちたことにも気付かず何日も経過してしまう、ということがないよう、プロセスを監視するツール Monit を使用します。以下、使用方法についての簡単な記録です。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2016/11/04/centos-monit-monitoring/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2016-11-04T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2016/11/04/centos-monit-monitoring/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="CentOS - Monit でプロセス監視！">
+    <meta itemprop="description" content="不意にサーバプロセスが落ちてしまい、さらに、落ちたことにも気付かず何日も経過してしまう、ということがないよう、プロセスを監視するツール Monit を使用します。以下、使用方法についての簡単な記録です。">
+    <meta itemprop="datePublished" content="November 04, 2016">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">CentOS - Monit でプロセス監視！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-11-04T00:20:00+09:00">2016-11-04 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>不意にサーバプロセスが落ちてしまい、さらに、落ちたことにも気付かず何日も経過してしまう、ということがないよう、プロセスを監視するツール Monit を使用します。</p>
+
+<p>以下、使用方法についての簡単な記録です。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>CentOS 6.8(32bit) での作業を想定。<br />
+（Debian 系はディレクトリ構成等が異なるので、適宜置き換えて考える）</li>
+  <li>RPMForge リポジトリが導入済みである。（過去記事参照： <a href="/2013/12/13/centos-6-5-first-setting/" title="CentOS 6.5 - 初期設定！">CentOS 6.5 - 初期設定！</a> ）</li>
+</ul>
+
+<h3 id="1--monit-のインストール">1.  monit のインストール</h3>
+
+<p>CentOS のデフォルトのリポジトリには存在しないため RPMForge リポジトリを使用してインストールする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ yum --enablerepo=rpmforge -y install monit
+</code></pre></div></div>
+
+<p>CentOS 7 系なら標準リポジトリでインストールできる（かもしれない）。</p>
+
+<h3 id="2-設定ファイル編集">2. 設定ファイル編集</h3>
+
+<p>設定ファイル “/etc/monit.conf” を編集する。<br />
+以下は当方の例。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/monit.conf</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+</pre></td><td class="code"><pre><span class="nb">set </span>daemon 60                               <span class="c"># 監視間隔（秒）</span>
+
+<span class="nb">set </span>logfile /var/log/monit.log              <span class="c"># ログファイル</span>
+
+<span class="nb">set </span>idfile /var/monit/id                    <span class="c"># Monit インスタンスの ID ファイル</span>
+
+<span class="nb">set </span>statefile /var/monit/state              <span class="c"># Monitering ステート保存ファイル</span>
+
+<span class="nb">set </span>mailserver localhost                    <span class="c"># メールサーバ</span>
+
+<span class="nb">set </span>mail-format <span class="o">{</span>                           <span class="c"># メール書式</span>
+     from: monit@<span class="nv">$HOST</span>
+  subject: monit alert <span class="nt">--</span>  <span class="nv">$EVENT</span> <span class="nv">$SERVICE</span>
+  message: <span class="nv">$EVENT</span> Service <span class="nv">$SERVICE</span>
+        Date:        <span class="nv">$DATE</span>
+        Action:      <span class="nv">$ACTION</span>
+        Host:        <span class="nv">$HOST</span>
+        Description: <span class="nv">$DESCRIPTION</span>
+
+   Your faithful employee,
+   Monit
+<span class="o">}</span>
+
+<span class="nb">set </span>alert root@localhost                    <span class="c"># 通知先メールアドレス</span>
+
+include /etc/monit.d/<span class="k">*</span>                      <span class="c"># 別の設定ファイル読み込み</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">set logfile /var/log/monit.log</code> を <code class="language-plaintext highlighter-rouge">set logfile syslog facility log_daemon</code> とすると syslog での出力となる。</li>
+  <li>メールサーバは複数設定可能。</li>
+  <li>メール通知先も複数設定可能。</li>
+  <li><code class="language-plaintext highlighter-rouge">set alert root@localhost only on { xxxx }</code> などとすれば、xxxx アクション発生時のみメール通知するようにする。</li>
+  <li><code class="language-plaintext highlighter-rouge">set alert root@localhost but not on { xxxx }</code> などとすれば、xxxx 以外のアクション発生時のみメール通知するようにする。</li>
+  <li>その他の設定等については、 “monit.conf” 内のコメントや<a href="https://mmonit.com/monit/documentation/monit.html">公式ドキュメント</a>を参照のこと。</li>
+</ul>
+
+<h3 id="3-アラート機能の設定">3. アラート機能の設定</h3>
+
+<p>以下は MySQL サーバを監視する例。（パスは環境に合わせて適宜置き換えること）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/monit.d/mysqld</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="code"><pre>check process mysql with pidfile /var/run/mysqld/mysqld.pid
+    every 2 cycle
+    start program <span class="o">=</span> <span class="s2">"/etc/rc.d/init.d/mysqld start"</span>
+    stop  program <span class="o">=</span> <span class="s2">"/etc/rc.d/init.d/mysqld stop"</span>
+    <span class="k">if </span>failed
+        host localhost port 3306 protocol mysql
+        with <span class="nb">timeout </span>15 seconds <span class="k">for </span>3 <span class="nb">times </span>within 4 cycles
+    <span class="k">then </span>restart<span class="err">$</span>
+    <span class="k">if </span>failed
+        unixsocket /var/lib/mysql/mysql.sock protocol mysql
+        <span class="k">for </span>3 <span class="nb">times </span>within 4 cycles
+    <span class="k">then </span>restart<span class="err">$</span>
+    <span class="k">if </span>5 restarts within 5 cycles <span class="k">then </span><span class="nb">timeout</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li>“mysqld.pid” ファイルを2サイクル（今回の設定では 60秒 * 2 = 120秒）毎に監視し、存在しなければ MySQL サーバを再起動する。</li>
+  <li>TCP ポート 3306 への接続が4回中3回15秒のタイムアウトで失敗する場合は、 MySQL サーバを再起動する。</li>
+  <li>Unix ソケットへの接続が4回中3回失敗する場合は、 MySQL サーバを再起動する。</li>
+  <li>5回中5回再起動となる場合は、タイムアウトする。</li>
+  <li><code class="language-plaintext highlighter-rouge">group xxxx</code> としてグループ単位で監視の制御をすることも可能。</li>
+  <li>CPU 使用量やメモリ使用量等を監視することも可能。</li>
+</ul>
+
+<p>PID ファイルの存在を監視するのではなく、プロセス自体の存在を監視したければ、１行目を以下のようにする。（以下は、プロセス名に <code class="language-plaintext highlighter-rouge">hoge</code> を含むプロセスを監視する例で、正規表現で指定する）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/monit.d/hoge</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+</pre></td><td class="code"><pre>check process hoge matching <span class="s2">"hoge"</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="4-構文チェック">4. 構文チェック</h3>
+
+<p>予め設定ファイルの構文をチェックすることができる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ monit -t
+Control file syntax OK
+</code></pre></div></div>
+
+<h3 id="5-monit-の起動">5. Monit の起動</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ /etc/rc.d/init.d/monit start
+Starting monit: Starting monit daemon with http interface at [localhost:2812]
+                                                           [  OK  ]
+</code></pre></div></div>
+
+<h3 id="6-監視状況の確認">6. 監視状況の確認</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ monit status
+The Monit daemon 5.5 uptime: 5m
+
+Process 'mysql'
+  status                            Running
+  monitoring status                 Monitored
+  pid                               14542
+  parent pid                        13372
+  uptime                            9h 18m
+  children                          0
+  memory kilobytes                  863204
+  memory kilobytes total            863204
+  memory percent                    44.7%
+  memory percent total              44.7%
+  cpu percent                       1.3%
+  cpu percent total                 1.3%
+  unix socket response time         0.001s to /var/lib/mysql/mysql.sock [MYSQL]
+  port response time                0.001s to localhost:3306 [MYSQL via TCP]
+  data collected                    Sun, 09 Oct 2016 23:31:18
+
+System 'foo.bar.buz'
+  status                            Running
+  monitoring status                 Monitored
+  load average                      [0.42] [0.38] [0.38]
+  cpu                               12.9%us 1.7%sy 14.2%wa
+  memory usage                      1807708 kB [93.6%]
+  swap usage                        889344 kB [21.2%]
+  data collected                    Sun, 09 Oct 2016 23:31:18
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">status</code> が <code class="language-plaintext highlighter-rouge">Running</code> であれば、「監視中」である。</p>
+
+<p><code class="language-plaintext highlighter-rouge">monit summary</code> だと <code class="language-plaintext highlighter-rouge">status</code> だけを確認できる。</p>
+
+<h3 id="7-個別監視の停止起動">7. 個別監視の停止・起動</h3>
+
+<p>個別に監視を停止・起動するには以下のようにする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ monit xxxx stop
+$ monit xxxx start
+</code></pre></div></div>
+
+<h3 id="8-グループ単位での監視の停止起動">8. グループ単位での監視の停止・起動</h3>
+
+<p>個別の設定ファイル内で <code class="language-plaintext highlighter-rouge">group xxxx</code> のように記述していれば、xxxx グループの単位で監視を停止・起動することができる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ monit -g xxxx stop
+$ monit -g xxxx start
+</code></pre></div></div>
+
+<h3 id="9-参考サイト">9. 参考サイト</h3>
+
+<ul>
+  <li><a href="https://mmonit.com/monit/" title="Easy, proactive monitoring of processes, programs, files, directories, filesystems and hosts - Monit">Easy, proactive monitoring of processes, programs, files, directories, filesystems and hosts - Monit</a></li>
+</ul>
+
+<hr />
+
+<p>プロセスが落ちていないかをチェックするためにシェルスクリプトを作成する必要がないので、手軽で便利です。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/centos" class="page__taxonomy-item" rel="tag">CentOS</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-11-04T00:20:00+09:00">2016-11-04 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=CentOS+-+Monit+%E3%81%A7%E3%83%97%E3%83%AD%E3%82%BB%E3%82%B9%E7%9B%A3%E8%A6%96%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2016%2F11%2F04%2Fcentos-monit-monitoring%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2016%2F11%2F04%2Fcentos-monit-monitoring%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2016%2F11%2F04%2Fcentos-monit-monitoring%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2016/11/01/blog-access/" class="pagination--pager" title="2016年10月 - OS・ブラウザ別アクセス状況！【自動集計】
+">Previous</a>
+    
+    
+      <a href="/2016/11/08/linux-sed-deleting-last-line-with-specific-strings/" class="pagination--pager" title="Linux - sed で最終行が特定の文字列の場合のみ行削除！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2016/11/04/centos-monit-monitoring/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2016/11/04/centos-monit-monitoring"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

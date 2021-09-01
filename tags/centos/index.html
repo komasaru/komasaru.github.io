@@ -1,0 +1,4695 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>CentOS - mk-mode BLOG</title>
+<meta name="description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+
+
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="CentOS">
+<meta property="og:url" content="https://komasaru.github.io/tags/centos/">
+
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="CentOS">
+  <meta name="twitter:description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+  <meta name="twitter:url" content="https://komasaru.github.io/tags/centos/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/tags/centos/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--archive-taxonomy wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      <div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <div class="archive">
+    <h1 class="page__title">CentOS</h1>
+    <div id="google-ad-1"></div>
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/11/04/centos-monit-monitoring/" rel="permalink">CentOS - Monit でプロセス監視！
+</a>
+        &nbsp;<small>(2016-11-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">不意にサーバプロセスが落ちてしまい、さらに、落ちたことにも気付かず何日も経過してしまう、ということがないよう、プロセスを監視するツール Monit を使用します。
+
+以下、使用方法についての簡単な記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/09/15/nginx-deleting-proxy-caches/" rel="permalink">Nginx - キャッシュの手動削除！
+</a>
+        &nbsp;<small>(2016-09-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">HTTP &amp; リバースプロキシサーバ Nginx の溜まったキャッシュを手動で削除する方法についての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/06/30/cenos-downgrading-yum-package/" rel="permalink">CentOS - Yum パッケージのダウングレード！
+</a>
+        &nbsp;<small>(2016-06-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">CentOS で、アップデートされてしまった Yum パッケージをダウングレードする方法についての記録です。
+
+（「アップグレード」の反意ではなく「アップデート」の反意なので「ダウンデート」と呼びたいところ。しかし、「ダウンデート」などという言葉は存在しないので「ダウングレード」と表現しています。（単に「バージョ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/05/24/centos-groonga-installation-by-src/" rel="permalink">CentOS 6.7 - Groonga インストール（by ソースビルド）！
+</a>
+        &nbsp;<small>(2016-05-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">オープンソースのカラムストア機能付き全文検索エンジン Groonga を、 CentOS にソースをビルドしてインストールする方法についての記録です。
+
+ちなみに、以前、 Linux Mint にソースをビルドしてインストールする方法については紹介しました。
+
+
+  Linux Mint - Groonga イン...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/03/15/linux-control-oomkiller/" rel="permalink">Linux - OOM Killer の発動を抑制！
+</a>
+        &nbsp;<small>(2016-03-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux で、大事なサービスがメモリ不足で kill されないようにするための方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/01/08/centos-mroonga-installation-by-src/" rel="permalink">CentOS - Mroonga インストール（by ソースビルド）！
+</a>
+        &nbsp;<small>(2016-01-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL 5.7 に全文検索エンジン Groonga の機能を実現するストレージエンジン Mroonga をソースをビルドしてインストールする方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/01/04/centos-groonga-installation-by-yum/" rel="permalink">CentOS - Groonga インストール（by yum パッケージ）！
+</a>
+        &nbsp;<small>(2016-01-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">カラムストア機能付き全文検索エンジン Groonga を、CentOS 6.7 に Groonga 公式 yum リポジトリを使用してインストールする方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/12/28/centos-mroonga-installation-on-mysql-56-by-yum/" rel="permalink">CentOS 6.7 - 全文検索ストレージエンジン Mroonga 導入（公式リポジトリ使用）！
+</a>
+        &nbsp;<small>(2015-12-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Mroonga は、全文検索エンジン Groonga をベースとした MySQL のストレージエンジンです。
+
+インストール済みの MySQL（5.6 系）に Mroonga ストレージエンジンを追加する方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/12/20/centos-mysql-57-installation-by-src/" rel="permalink">CentOS - MySQL 5.7 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2015-12-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL 5.7 系の最新版をソースをビルドして CentOS 6.7 にインストールする方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/12/16/centos-mysql-57-installation-by-yum/" rel="permalink">CentOS 7.1 - DB サーバ MySQL 5.7 構築（公式リポジトリ使用）！
+</a>
+        &nbsp;<small>(2015-12-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL 5.7 系の最新版を公式リポジトリを使用して CentOS 7.1 にインストールする方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/12/12/centos-nginx-installation-by-yum/" rel="permalink">CentOS - Web/Proxy サーバ Nginx の最新版を yum インストール！
+</a>
+        &nbsp;<small>(2015-12-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux や Linux Mint への公式 Apt を使用した Nginx のインストールは記録として残していましたが、 CentOS への公式 yum を使用したインストールについて記録として残してなかったので、今回記録しておくことにしました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/11/27/centos-yum-cache-error/" rel="permalink">CentOS - yum の ‘Not using downloaded repomd.xml because it is older than what we have’ エラー対策！
+</a>
+        &nbsp;<small>(2014-11-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">CentOS サーバで、いつの頃から yum update 関係のエラーが出力されるようになりました。
+
+実際には cron.hourly がエラーメールを送ってくるようになりました。
+
+以下、原因と対策についての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/10/02/installation-newest-gcc-by-src-on-centos/" rel="permalink">GCC - 最新版をソースビルドでインストール(on CentOS)！
+</a>
+        &nbsp;<small>(2014-10-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんばんは。
+
+パッケージでインストールされる GCC(GNU Compiler Collection) はバージョンが若干古く、新しいバージョンで搭載された機能を試す（使用する）ことができません。
+（例えば、旧バージョンでは boost ライブラリを使用しなければならなかった “regex” が標準で使用できる...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/18/centos-7-0-installation-of-roundcube-mail/" rel="permalink">CentOS 7.0 - Webmail システム RoundCube Webmail 導入！
+</a>
+        &nbsp;<small>(2014-09-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - Webmail システム RoundCube Webmail 導入」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/17/centos-7-0-setting-of-vacation-on-usermin/" rel="permalink">CentOS 7.0 - Usermin で Vacation 設定！
+</a>
+        &nbsp;<small>(2014-09-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - Usermin で Vacation 設定」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/16/centos-7-0-installation-of-usermin/" rel="permalink">CentOS 7.0 - ユーザ管理ツール Usermin 導入！
+</a>
+        &nbsp;<small>(2014-09-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - ユーザ管理ツール Usermin 導入」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/15/centos-7-0-setting-of-cooperation-nginx-php/" rel="permalink">CentOS 7.0 - PHP と Nginx の連携！
+</a>
+        &nbsp;<small>(2014-09-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - PHP と Nginx の連携」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/14/centos-7-0-installation-of-php-by-src/" rel="permalink">CentOS 7.0 - PHP インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2014-09-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - PHP インストール（ソースビルド）」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/13/centos-7-0-setting-of-nginx-ssl-connection/" rel="permalink">CentOS 7.0 - Web サーバ Nginx で SSL 接続！
+</a>
+        &nbsp;<small>(2014-09-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - Web サーバ Nginx で SSL 接続」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/12/centos-7-0-setting-of-munin-nginx/" rel="permalink">CentOS 7.0 - サーバ監視ツール Munin で Nginx を監視！
+</a>
+        &nbsp;<small>(2014-09-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - サーバ監視ツール Munin で Nginx を監視」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/11/centos-7-0-setting-of-munin-mariadb-mysql/" rel="permalink">CentOS 7.0 - サーバ監視ツール Munin で MariaDB(MySQL) を監視！
+</a>
+        &nbsp;<small>(2014-09-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - サーバ監視ツール Munin で MariaDB(MySQL) を監視」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/10/centos-7-0-setting-of-munin-cpu-volt-fan/" rel="permalink">CentOS 7.0 - サーバ監視ツール Munin でCPU温度・電圧・ファン回転数測定！
+</a>
+        &nbsp;<small>(2014-09-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - サーバ監視ツール Munin でCPU温度・電圧・ファン回転数測定」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/09/centos-7-0-setting-of-munin-hddtemp/" rel="permalink">CentOS 7.0 - サーバ監視ツール Munin でハードディスク温度監視！
+</a>
+        &nbsp;<small>(2014-09-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - サーバ監視ツール Munin でハードディスク温度監視」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/08/centos-7-0-installation-of-munin/" rel="permalink">CentOS 7.0 - サーバ監視ツール Munin 導入！
+</a>
+        &nbsp;<small>(2014-09-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - サーバ監視ツール Munin 導入」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/06/centos-7-0-installation-of-logwatch/" rel="permalink">CentOS 7.0 - ログ解析ツール LogWatch 導入！
+</a>
+        &nbsp;<small>(2014-09-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - ログ解析ツール LogWatch 導入」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/05/centos-7-0-installation-of-git-server/" rel="permalink">CentOS 7.0 - Git サーバ構築！
+</a>
+        &nbsp;<small>(2014-09-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - Git サーバ構築」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/04/centos-7-0-synchronizing-of-rsync-as-sources/" rel="permalink">CentOS 7.0 - rsync でファイル・ディレクトリ同期（同期元として）！
+</a>
+        &nbsp;<small>(2014-09-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - rsync でファイル・ディレクトリ同期（同期元として）」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/03/centos-7-0-synchronizing-of-rsync-as-destinations/" rel="permalink">CentOS 7.0 - rsync でファイル・ディレクトリ同期（同期先として）！
+</a>
+        &nbsp;<small>(2014-09-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - rsync でファイル・ディレクトリ同期（同期先として）」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/02/centos-7-0-setting-of-auto-backup/" rel="permalink">CentOS 7.0 - 自動バックアップ運用！
+</a>
+        &nbsp;<small>(2014-09-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - 自動バックアップ運用」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/31/centos-7-0-installation-of-python-by-src/" rel="permalink">CentOS 7.0 - Python 3.4.1 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2014-08-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - Python 3.4.1 インストール（ソースビルド）」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/30/centos-7-0-installation-of-ruby-by-src/" rel="permalink">CentOS 7.0 - Ruby 2.1.2 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2014-08-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - Ruby 2.1.2 インストール（ソースビルド）」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/29/centos-7-0-installation-of-mariadb/" rel="permalink">CentOS 7.0 - DB サーバ MariaDB 構築！
+</a>
+        &nbsp;<small>(2014-08-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - DB サーバ MariaDB 構築」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/28/centos-7-0-installation-of-nginx-by-src/" rel="permalink">CentOS 7.0 - Web サーバ Nginx 構築（ソースインストール）！
+</a>
+        &nbsp;<small>(2014-08-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - Web サーバ Nginx 構築（ソースインストール）」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/27/centos-7-0-installation-of-fetchmail/" rel="permalink">CentOS 7.0 - 複数ドメイン宛メールの集約 Fetchmail！
+</a>
+        &nbsp;<small>(2014-08-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - 複数ドメイン宛メールの集約 Fetchmail」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/26/centos-7-0-installation-of-pflogsumm/" rel="permalink">CentOS 7.0 - Postfix ログ解析ツール pflogsumm 導入！
+</a>
+        &nbsp;<small>(2014-08-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - Postfix ログ解析ツール pflogsumm 導入」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/25/centos-7-0-installation-of-vacation/" rel="permalink">CentOS 7.0 - メール自動返信機能 Vacation 導入！
+</a>
+        &nbsp;<small>(2014-08-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - メール自動返信機能 Vacation 導入」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/23/centos-7-0-setting-of-spamassassin-misrecognition/" rel="permalink">CentOS 7.0 - スパムメール誤認識対策 Postfix + SpamAssassin！
+</a>
+        &nbsp;<small>(2014-08-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - スパムメール誤認識対策 Postfix + SpamAssassin」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/22/centos-7-0-setting-of-antivirus-spam-on-mail/" rel="permalink">CentOS 7.0 - メールサーバ Postfix でウィルス＆スパムチェック！
+</a>
+        &nbsp;<small>(2014-08-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - メールサーバ Postfix でウィルス＆スパムチェック」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/21/centos-7-0-setting-of-openssl-between-mailservers/" rel="permalink">CentOS 7.0 - メールサーバ間通信内容暗号化 OpenSSL！
+</a>
+        &nbsp;<small>(2014-08-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - メールサーバ間通信内容暗号化 OpenSSL」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/20/centos-7-0-installation-of-dovecot/" rel="permalink">CentOS 7.0 - 受信メールサーバ Dovecot 構築！
+</a>
+        &nbsp;<small>(2014-08-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - 受信メールサーバ Dovecot 構築」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/19/centos-7-0-setting-of-op25b/" rel="permalink">CentOS 7.0 - Postfix の OP25B 対策！
+</a>
+        &nbsp;<small>(2014-08-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - Postfix の OP25B 対策」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/18/centos-7-0-installation-of-postfix/" rel="permalink">CentOS 7.0 - 送信メールサーバ Postfix 構築！
+</a>
+        &nbsp;<small>(2014-08-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - 送信メールサーバ Postfix 構築」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/16/centos-7-0-installation-of-samba/" rel="permalink">CentOS 7.0 - ファイルサーバ Samba 構築！
+</a>
+        &nbsp;<small>(2014-08-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - ファイルサーバ Samba 構築」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/15/centos-7-0-installation-of-nfs/" rel="permalink">CentOS 7.0 - ファイルサーバ NFS 構築！
+</a>
+        &nbsp;<small>(2014-08-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - ファイルサーバ NFS 構築」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/14/centos-7-0-installation-of-vsftpd/" rel="permalink">CentOS 7.0 - FTP サーバ vsftpd 構築！
+</a>
+        &nbsp;<small>(2014-08-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - FTP サーバ vsftpd 構築」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/13/centos-7-0-installation-of-bind/" rel="permalink">CentOS 7.0 - DNS サーバ BIND 構築！
+</a>
+        &nbsp;<small>(2014-08-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - DNS サーバ BIND 構築」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/12/centos-7-0-installation-of-openssh/" rel="permalink">CentOS 7.0 - SSHサーバ OpenSSH 設定！
+</a>
+        &nbsp;<small>(2014-08-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - SSHサーバ OpenSSH 設定」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/11/centos-7-0-setting-of-ntp-chrony/" rel="permalink">CentOS 7.0 - NTP サーバ Chrony 設定！
+</a>
+        &nbsp;<small>(2014-08-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - NTP サーバ Chrony 設定」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/09/centos-7-0-setting-of-firewall/" rel="permalink">CentOS 7.0 - ファイアウォール設定！
+</a>
+        &nbsp;<small>(2014-08-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - ファイアウォール設定」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/08/centos-7-0-installation-of-clam-anti-virus/" rel="permalink">CentOS 7.0 - アンチウイルスソフト Clam AntiVirus 導入！
+</a>
+        &nbsp;<small>(2014-08-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - アンチウイルスソフト Clam AntiVirus 導入」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/07/centos-7-0-installation-of-chrootkit/" rel="permalink">CentOS 7.0 - rootkit 検知ツール chkrootkit 導入！
+</a>
+        &nbsp;<small>(2014-08-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - rootkit 検知ツール chkrootkit 導入」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/06/centos-7-0-addition-of-repository/" rel="permalink">CentOS 7.0 - リポジトリ追加！
+</a>
+        &nbsp;<small>(2014-08-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - リポジトリ追加」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/05/centos-7-0-initial-setting/" rel="permalink">CentOS 7.0 - 初期設定！
+</a>
+        &nbsp;<small>(2014-08-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - 初期設定」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/04/centos-7-0-installation/" rel="permalink">CentOS 7.0 - インストール！
+</a>
+        &nbsp;<small>(2014-08-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - インストール」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/07/17/linux-bash-setting-files/" rel="permalink">Linux - bash 設定ファイル！
+</a>
+        &nbsp;<small>(2014-07-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux で bash(Bourne Shell) の設定をする際に知っておくとよい読み込み順についての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/04/25/linux-getting-system-starttime/" rel="permalink">Linux - システム稼働開始日時取得！
+</a>
+        &nbsp;<small>(2014-04-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux 等では uptime でシステムの稼働時間を取得できますが、いつから稼動しているのかは取得できません。
+
+以下、別のコマンドでシステム稼働開始日時を取得する方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/04/08/linux-difference-of-service-start/" rel="permalink">Linux - サービスの init.d 起動と service 起動の違い！
+</a>
+        &nbsp;<small>(2014-04-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux 上でサービス起動・停止等の操作を行う際に、/etc/init.d/xxxx [start|stop|...] や service xxxx [start|stop|...] とコマンドを入力すると思います。
+
+一見全く同じ挙動するように思うかも知れませんが、厳密には異なります（場合によっては異なる挙動...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/04/02/git-installation-on-linux-by-src/" rel="permalink">Git - Linux にソースビルドでインストール！
+</a>
+        &nbsp;<small>(2014-04-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当記事執筆時点、Git は 1.9.1 が最新ですが、Scientific Linux 6.5, CentOS 6.5 の標準リポジトリでは 1.7.1, Linux Mint 13 では 1.7.9.5 と若干古いです。
+
+そこで、ソースを取得後ビルドしてインストールしてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/03/25/linux-check-capasity-of-disk/" rel="permalink">Linux - ディスク使用量監視＆メール通知！
+</a>
+        &nbsp;<small>(2014-03-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux サーバで、ディスク使用量を監視しパーティションの残容量が少なくなった場合にメール通知する設定についてです。
+
+そういうことは munin 等のサーバ監視ツールでもできますが、当方が以前から使用している方法（シェルスクリプト＆cronを使用する方法）を紹介します。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/28/centos-6-5-summary-of-server-setting/" rel="permalink">CentOS 6.5 - サーバ構築まとめ！
+</a>
+        &nbsp;<small>(2014-01-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">これまで、１か月以上にわたって CentOS 6.5 によるサーバ構築について（実際に当方が行なっている作業を中心に）紹介してきました。
+
+ちなみに、毎日膨大な労力を費やして記事にしていた訳ではありません。
+普段から録りためていた資料を参考にサーバ構築作業を行い、変更点があればその記録を修正し、それをコピーアンド...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/27/centos-6-5-procmail-setting/" rel="permalink">CentOS 6.5 - Procmail によるメール転送設定！
+</a>
+        &nbsp;<small>(2014-01-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上で Web カメラの構築（USB カメラによる静止画自動保存）を行いました。
+今回はメール転送（振り分け）システム Procmail でのメール転送設定を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/26/centos-6-5-webcam-setting/" rel="permalink">CentOS 6.5 - Web カメラ構築！
+</a>
+        &nbsp;<small>(2014-01-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上でプログラミング言語 Python をソースをビルドしてインストールしました。
+今回は Web カメラの構築（USB カメラによる静止画自動保存）を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/25/centos-6-5-python-installation-by-src/" rel="permalink">CentOS 6.5 - Python インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2014-01-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上でログ監視ツール SWATCH の導入を行いました。
+今回はプログラミング言語 Python をソースをビルドしてインストールします。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/24/centos-6-5-swatch-installation/" rel="permalink">CentOS 6.5 - ログ監視ツール SWATCH 導入！
+</a>
+        &nbsp;<small>(2014-01-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上で Web メールシステム SquirrelMail の導入を行いました。
+今回はログ監視ツール SWATCH の導入を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/23/centos-6-5-squirrel-mail-installation/" rel="permalink">CentOS 6.5 - Webmail システム SquirrelMail 導入！
+</a>
+        &nbsp;<small>(2014-01-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上でユーザ管理ツール Usermin でメール自動返信 Vacation を利用する設定を行いました。
+今回は Web メールシステム SquirrelMail の導入を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/22/centos-6-5-usermin-vacation-setting/" rel="permalink">CentOS 6.5 - Usermin で Vacation 設定！
+</a>
+        &nbsp;<small>(2014-01-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上でユーザ管理ツール Usermin の導入を行いました。
+今回は Usermin でメール自動返信 Vacation を利用する設定を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/21/centos-6-5-usermin-installation/" rel="permalink">CentOS 6.5 - ユーザ管理ツール（Usermin）導入！
+</a>
+        &nbsp;<small>(2014-01-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上で PHP と Web サーバ Nginx の連携を行いました。
+今回はユーザ管理ツール Usermin の導入を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/20/centos-6-5-php-coordination-with-nginx/" rel="permalink">CentOS 6.5 - PHP と Nginx の連携！
+</a>
+        &nbsp;<small>(2014-01-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上で PHP のインストール（ソースビルド）を行いました。
+今回は PHP と Web サーバ Nginx の連携を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/19/centos-6-5-php-installation-by-src/" rel="permalink">CentOS 6.5 - PHP インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2014-01-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上の Web(HTTP) サーバ Nginx で SSL 接続するため設定を行いました。
+今回は PHP のインストール（ソースビルド）を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/18/centos-6-5-nginx-setting-of-ssl/" rel="permalink">CentOS 6.5 - Web サーバ Nginx で SSL 接続！
+</a>
+        &nbsp;<small>(2014-01-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上のサーバ監視ツール munin で Web(HTTP) サーバ Nginx の監視設定を行いました。
+今回は Web(HTTP) サーバ Nginx で SSL 接続するため設定を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/17/centos-6-5-munin-setting-of-nginx/" rel="permalink">CentOS 6.5 - サーバ監視ツール（munin）で Nginx を監視！
+</a>
+        &nbsp;<small>(2014-01-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上のサーバ監視ツール munin で MariaDB(MySQL) の監視設定を行いました。
+今回はサーバ監視ツール munin で Web(HTTP) サーバ Nginx の監視設定を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/16/centos-6-5-munin-setting-of-mariadb-mysql/" rel="permalink">CentOS 6.5 - サーバ監視ツール（munin）で MariaDB(MySQL) を監視！
+</a>
+        &nbsp;<small>(2014-01-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上のサーバ監視ツール munin で CPU 温度・電圧・ファン回転数監視の設定を行いました。
+今回はサーバ監視ツール munin で MariaDB(MySQL) の監視設定を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/15/centos-6-5-munin-setting-of-cpu-fan/" rel="permalink">CentOS 6.5 - サーバ監視ツール（munin）でCPU温度・電圧・ファン回転数測定！
+</a>
+        &nbsp;<small>(2014-01-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上のサーバ監視ツール munin でハードディスク温度監視の設定を行いました。
+今回はサーバ監視ツール munin で CPU 温度・電圧・ファン回転数監視の設定を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/14/centos-6-5-munin-setting-of-hddtemp/" rel="permalink">CentOS 6.5 - サーバ監視ツール（munin）でハードディスク温度監視！
+</a>
+        &nbsp;<small>(2014-01-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバでサーバ監視ツール munin の導入を行いました。
+今回はサーバ監視ツール munin でハードディスク温度監視の設定を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/13/centos-6-5-munin-installation/" rel="permalink">CentOS 6.5 - サーバ監視ツール（munin）導入！
+</a>
+        &nbsp;<small>(2014-01-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバでログ解析ツール LogWatch の導入を行いました。
+今回はサーバ監視ツール munin の導入を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/12/centos-6-5-logwatch-installation/" rel="permalink">CentOS 6.5 - ログ解析ツール（LogWatch）導入！
+</a>
+        &nbsp;<small>(2014-01-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに Git サーバの構築を行いました。
+今回はログ解析ツール LogWatch の導入を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/11/centos-6-5-git-installation/" rel="permalink">CentOS 6.5 - Git サーバ構築！
+</a>
+        &nbsp;<small>(2014-01-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバを同期元として rsync でファイル・ディレクトリの同期を行いました。
+今回は Git サーバの構築を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/10/centos-6-5-rsync-setting-as-source/" rel="permalink">CentOS 6.5 - rsync でファイル・ディレクトリ同期（同期元として）！
+</a>
+        &nbsp;<small>(2014-01-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバを同期先として rsync でファイル・ディレクトリの同期を行いました。
+今回はその逆で rsync で CentOS サーバを同期元としてファイル・ディレクトリの同期を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/09/centos-6-5-rsync-setting-as-destination/" rel="permalink">CentOS 6.5 - rsync でファイル・ディレクトリ同期（同期先として）！
+</a>
+        &nbsp;<small>(2014-01-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバで自動バックアップ運用の設定を行いました。
+今回は rsync で CentOS サーバを同期先としてファイル・ディレクトリの同期を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/08/centos-6-5-automatic-backup-setting/" rel="permalink">CentOS 6.5 - 自動バックアップ運用！
+</a>
+        &nbsp;<small>(2014-01-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに Ruby 2.0 のインストール（ソースビルド）を行いました。
+今回は自動バックアップ運用の設定を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/07/centos-6-5-ruby-installation-by-src/" rel="permalink">CentOS 6.5 - Ruby 2.0 インストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2014-01-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに DB サーバ MariaDB の構築（ソースインストール）を行いました。
+今回は Ruby 2.0 のインストール（ソースビルド）を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/06/centos-6-5-mariadb-installation-by-src/" rel="permalink">CentOS 6.5 - DB サーバ MariaDB 構築（ソースインストール）！
+</a>
+        &nbsp;<small>(2014-01-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに Web サーバ Nginx の構築（ソースをビルドしてインストール）を行いました。
+今回は DB サーバ MariaDB の構築（ソースインストール）を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/05/centos-6-5-nginx-installation-by-src/" rel="permalink">CentOS 6.5 - Web サーバ Nginx 構築（ソースインストール）！
+</a>
+        &nbsp;<small>(2014-01-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバで Fetchmail による複数ドメイン宛メールの集約を行いました。
+今回は Web サーバ Nginx の構築（ソースをビルドしてインストール）を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/04/centos-6-5-fetchmail-installation/" rel="permalink">CentOS 6.5 - 複数ドメイン宛メールの集約（Fetchmail）！
+</a>
+        &nbsp;<small>(2014-01-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに Postfix ログ解析ツール pflogsumm の導入を行いました。
+今回は Fetchmail による複数ドメイン宛メールの集約を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/03/centos-6-5-pflogsumm-installation/" rel="permalink">CentOS 6.5 - Postfix ログ解析ツール（pflogsumm）導入！
+</a>
+        &nbsp;<small>(2014-01-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバにメール自動返信機能 Vacation の導入を行いました。
+今回は Postfix ログ解析ツール pflogsumm の導入を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/02/centos-6-5-vacation-installation/" rel="permalink">CentOS 6.5 - メール自動返信機能（Vacation）導入！
+</a>
+        &nbsp;<small>(2014-01-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上の Postfix + SpamAssassin でスパムメール誤認識対策を行いました。
+今回はメール自動返信機能 Vacation の導入を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/31/centos-6-5-taking-measures-spam-disrecognition/" rel="permalink">CentOS 6.5 - スパムメール誤認識対策（Postfix + SpamAssassin）！
+</a>
+        &nbsp;<small>(2013-12-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">本年最後の投稿です。
+
+前回は CentOS 6.5 サーバ上のメールサーバ Postfix でスパムチェックを行いました。
+今回は Postfix + SpamAssassin でのスパムメール誤認識対策を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/30/centos-6-5-mail-spam-check/" rel="permalink">CentOS 6.5 - メールサーバ（Postfix）でスパムチェック！
+</a>
+        &nbsp;<small>(2013-12-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上のメールサーバ Postfix でウィルスチェックを行いました。
+今回はメールサーバ Postfix でスパムチェックを行います。
+
+送信メールサーバ Postfix と SpamAssassin を Amavisd-new で連携して、スパムメールチェックを行う。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/29/centos-6-5-mail-virus-check/" rel="permalink">CentOS 6.5 - メールサーバ（Postfix）でウイルスチェック！
+</a>
+        &nbsp;<small>(2013-12-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバで OpenSSL によるメールサーバ間通信内容暗号化を行いました。
+今回はメールサーバ Postfix でウイルスチェックを行います。
+
+送信メールサーバ Postfix と Clam AntiVirus を Amavisd-new で連携して、メールのウイルスチェックを行う。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/28/centos-6-5-mail-openssl/" rel="permalink">CentOS 6.5 - メールサーバ間通信内容暗号化（OpenSSL）！
+</a>
+        &nbsp;<small>(2013-12-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに受信メールサーバ Dovecot の構築を行いました。
+今回は OpenSSL によるメールサーバ間通信内容暗号化を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/27/centos-6-5-dovecot-installation/" rel="permalink">CentOS 6.5 - 受信メールサーバ（Dovecot）構築！
+</a>
+        &nbsp;<small>(2013-12-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに Postfix の OP25B 対策を行いました。
+今回は受信メールサーバ Dovecot の構築を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/26/centos-6-5-postfix-op25b-setting/" rel="permalink">CentOS 6.5 - Postfix の OP25B 対策！
+</a>
+        &nbsp;<small>(2013-12-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに送信メールサーバ Postfix の構築を行いました。
+今回は Postfix の OP25B 対策を行います。
+
+自宅サーバであるとは言っても、Postfix でメールを送信する際にはプロバイダを経由することになる。
+プロバイダが OP25B(Outbound Port 2...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/25/centos-6-5-postfix-installation/" rel="permalink">CentOS 6.5 - 送信メールサーバ（Postfix）構築！
+</a>
+        &nbsp;<small>(2013-12-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバにファイルサーバ Samba の構築を行いました。
+今回は送信メールサーバ Postfix の構築を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/24/centos-6-5-samba-installation/" rel="permalink">CentOS 6.5 - ファイルサーバ（Samba）構築！
+</a>
+        &nbsp;<small>(2013-12-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバにファイルサーバ NFS の構築を行いました。
+今回はファイルサーバ Samba の構築を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/23/centos-6-5-nfs-installation/" rel="permalink">CentOS 6.5 - ファイルサーバ（NFS）構築！
+</a>
+        &nbsp;<small>(2013-12-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに FTP サーバ vsftpd の構築を行いました。
+今回はファイルサーバ NFS の構築を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/22/centos-6-5-vsftpd-installation/" rel="permalink">CentOS 6.5 - FTP サーバ（vsftpd）構築！
+</a>
+        &nbsp;<small>(2013-12-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに DNS サーバ BIND の構築を行いました。
+今回は FTP サーバ vsftpd の構築を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/21/centos-6-5-bind-installation/" rel="permalink">CentOS 6.5 - DNS サーバ（BIND）構築！
+</a>
+        &nbsp;<small>(2013-12-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバにファイアウォール iptables の構築を行いました。
+今回は DNS サーバ BIND の構築を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/20/centos-6-5-iptables-installation/" rel="permalink">CentOS 6.5 - ファイアウォール（iptables）構築！
+</a>
+        &nbsp;<small>(2013-12-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバにアンチウィルスソフト Clam AntiVirus の導入を行いました。
+今回はファイアウォール iptables の構築を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/19/centos-6-5-clamantivirus-installation/" rel="permalink">CentOS 6.5 - アンチウイルスソフト（Clam AntiVirus）導入！
+</a>
+        &nbsp;<small>(2013-12-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに rootkit 検知ツール chkrootkit の導入を行いました。
+今回はアンチウイルスソフト Clam AntiVirus 導入を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/18/centos-6-5-chkrootkit-installation/" rel="permalink">CentOS 6.5 - rootkit 検知ツール（chkrootkit）導入！
+</a>
+        &nbsp;<small>(2013-12-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバにファイル改ざん検知システム Tripwire の導入を行いました。
+今回は rootkit 検知ツール chkrootkit の導入を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/17/centos-6-5-tripwire-installation/" rel="permalink">CentOS 6.5 - ファイル改ざん検知システム（Tripwire）導入！
+</a>
+        &nbsp;<small>(2013-12-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに NTP サーバをインストールしました。
+今回はファイル改ざん検知システム Tripwire の導入を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/16/centos-6-5-ntp-installation/" rel="permalink">CentOS 6.5 - NTP サーバ構築！
+</a>
+        &nbsp;<small>(2013-12-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに SSH サーバ OpenSSH をインストールしました。
+今回は NTP サーバのインストールを行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/15/centos-6-5-ssh-connection-by-key-certificate/" rel="permalink">CentOS 6.5 - SSH サーバ 鍵認証接続！
+</a>
+        &nbsp;<small>(2013-12-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバに SSH サーバ OpenSSH をインストールしました。
+今回は OpenSSH サーバに鍵認証方式で接続する設定を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/14/centos-6-5-openssh-installation/" rel="permalink">CentOS 6.5 - SSHサーバ（OpenSSH）構築！
+</a>
+        &nbsp;<small>(2013-12-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバインストール後の初期設定を行いました。
+今回は SSH サーバである OpenSSH のインストール・設定を行います。
+
+デフォルトでインストールされている OpenSSH サーバには chroot 機能がないため、OpenSSH 6.4-p1 アーカイブを取得して RPM イ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/13/centos-6-5-first-setting/" rel="permalink">CentOS 6.5 - 初期設定！
+</a>
+        &nbsp;<small>(2013-12-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回 CentOS 6.5 をインストールしたので、今回は各種初期設定を行います。
+
+主に参考にしているサイト以外にも、自分で必要だと思って追加設定していることも多数記録しています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/12/12/centos-6-5-install/" rel="permalink">CentOS 6.5 - インストール！
+</a>
+        &nbsp;<small>(2013-12-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">先日 CentOS の 6.5 が正式リリースされたので、自分のサーバ構築記録を更新する意味でインストールしてみました。
+
+当方自宅で本運用中の CentOS サーバマシンは 6.4 の時にインストールしたものがアップデートされて 6.5 になっている状態で、今も安定稼働しております。
+ですから、今回は物理マシン...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/26/linux-cron-locale-behavior/" rel="permalink">Linux - cron での locale の挙動！
+</a>
+        &nbsp;<small>(2013-11-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux で、自分が作成したスクリプトがコンソール上では正常に動作するのに、 cron で定時起動させようとすると文字コードの関係でうまく日本語出力ができないことがあります。
+
+以下、それについての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/09/30/centos-tripwire-warning/" rel="permalink">CentOS - Tripwire での警告メッセージ！
+</a>
+        &nbsp;<small>(2013-09-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">CentOS (RedHat 系 Linux) サーバで、ファイル改ざん検知システム Tripwire を運用していると、ある警告が出ることがあります。（未確認ですが、他の Linux 系ディストリビューションや BSD 系 Unix 等も同様かも知れません）
+
+その警告とは、サイズが 2GB を超えるファイルが...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/06/17/smtp-rejct-unauth-relay/" rel="permalink">SMTP サーバ - 不正中継拒否のログ！
+</a>
+        &nbsp;<small>(2013-06-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方の CentOS サーバの SMTP サーバのログについての記録です。
+
+問題無いログなのですが、どういう意味のログなのかについて記録しておく。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/06/16/smtp-saslauthd-auth-failure/" rel="permalink">SMTP サーバ - saslauthd: do_auth : auth failure について！
+</a>
+        &nbsp;<small>(2013-06-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">先日、当方の CentOS サーバのログを確認していたところ、メールサーバに関して少し気になるメッセージが出力されていました。
+
+調べてみました。以下、現象・原因・対策についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/06/14/centos-clam-antivirus-permission-error/" rel="permalink">CentOS - Clam AntiVirus でパーミッションエラー！
+</a>
+        &nbsp;<small>(2013-06-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、以前から CentOS サーバで運用しています。
+ウイルス対策として “Clam AntiVirus” を導入しているのですが、いつの頃からかエラーメールが届くようになっていました。
+
+以下、現象と原因と対策についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/06/13/centos-munin-nginx/" rel="permalink">CentOS - munin で Nginx 監視！
+</a>
+        &nbsp;<small>(2013-06-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">過去、サーバ監視ツール munin については何回か記録してきました。
+（過去記事にはタグがうまく付いていないので、適時検索してくだい。）
+
+今回は、munin で Web サーバ Nginx も監視できるように設定を追加してみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/02/27/mariadb-centos-by-yum/" rel="permalink">MariaDB - CentOS にインストール（yum 使用）！
+</a>
+        &nbsp;<small>(2013-02-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">MySQL から派生したオープンソースな RDBMS（リレーショナルDB管理システム）の MariaDB を CentOS にインストールしてみました。
+
+インストール方法は色々ありますが、今回は yum を使用する方法でインストールしてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/02/17/nginx-logrotation/" rel="permalink">Nginx - ログローテーション設定！
+</a>
+        &nbsp;<small>(2013-02-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、軽量 Web サーバ Nginx を CentOS にインストールしました。
+
+
+  Nginx - CentOS にインストール（ソースビルド）！
+
+
+しかし、ログローテーションの設定をしていなかったため、知らないうちにログが肥大化していました。（幸い、サーバにはまだ影響が出ていませんでしたが）
+
+以下、...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/25/nginx-centos-install-by-src/" rel="permalink">Nginx - CentOS にインストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2013-01-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、軽量 Web サーバ Nginx をLinux Mint にソースをビルドしてインストールする手順について記録しました。
+
+
+  Nginx - Linux Mint にインストール（ソースビルド）！
+
+
+今日は、Nginx を CentOS(Redhat 系ディストリビューション) にソースをビルドしてイ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/12/07/centos-construct-git-server/" rel="permalink">CentOS - Git サーバ構築！
+</a>
+        &nbsp;<small>(2012-12-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">分散型バージョン管理 Git (リーナス・トーバルズによって開発) のサーバ(リモートリポジトリ管理用)を CentOS に構築してみました。
+
+個人利用なので、今まではローカルリポジトリだけでソースを管理していましたが、せっかく Git を使うならリモートリポジトリの扱い方も理解しておかなければと思った次第です...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/11/28/28002001/" rel="permalink">Linux - md5sum チェック！
+</a>
+        &nbsp;<small>(2012-11-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">ISO ファイル等をダウンロード後、破損していないかチェックするのに、 sha1sum や sha256sum の他に md5sum も使用します。
+
+md5sum コマンドについてのメモです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/11/19/19002043/" rel="permalink">CentOS - Linux Mint へ Rsync で同期(xinetd 使用)！
+</a>
+        &nbsp;<small>(2012-11-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">CentOS サーバのあるディレクトリを、別のマシン（今回は Linux Mint マシン）へ同期する方法についての記録です。
+
+cron で定期的に実行するようにしておくと便利です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/11/17/17002029/" rel="permalink">CentOS - NFS サーバ起動時の IPv6 関連エラー！
+</a>
+        &nbsp;<small>(2012-11-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">CentOS サーバでファイル共有システム NFS サーバを起動する際に発生するエラーについてのメモです。
+
+エラーは出力されても NFS サーバ自体は起動に成功しているので問題は無いように思える。
+しかし、気持ち悪いので対策しておいた。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/10/30/30002054/" rel="permalink">Scientific Linux - Google 日本語入力システム Mozc インストール！
+</a>
+        &nbsp;<small>(2012-10-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Linux の Gnome 環境に Google 日本語入力システム Mozc をインストールしてみました。
+
+デフォルトの日本語入力システム Anthy に少し不満があったからです。
+
+以下、作業記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/10/15/15002031/" rel="permalink">Scientific Linux - 仮想プリンタ Cups-PDF インストール！
+</a>
+        &nbsp;<small>(2012-10-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Linux のデスクトップ環境に仮想プリンタ Cups-PDF をインストールしてみました。
+
+ドキュメントを PDF 化して保存したい場合に大変便利です。
+
+ちなみに、”Cups” とは Unix系OS ユーザにはお馴染みですが、”Common Unix Printing System” ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/10/13/13002056/" rel="permalink">Scientific Linux - RStudio インストール！
+</a>
+        &nbsp;<small>(2012-10-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">昨日は、Scientific Linux のデスクトップ環境に統計解析向けプログラミング言語 R をインストールしました。
+
+
+  Scientific Linux - R 言語環境構築！
+
+
+今日は R の IDE ツールをインストールしてみました。
+
+デスクトップ版とサーバ版がありますが、今回は個人使用なので...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/10/12/12002003/" rel="permalink">Scientific Linux - R 言語環境構築！
+</a>
+        &nbsp;<small>(2012-10-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Lixun のデスクトップ環境に統計解析向けプログラミング言語 R の環境を構築してみました。
+
+時々、緻密なグラフを作りたい状況があるからです。
+
+以下、作業記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/10/11/11002027/" rel="permalink">Scientific Linux - Terminator インストール！
+</a>
+        &nbsp;<small>(2012-10-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Linux のデスクトップ環境に端末エミュレータ Terminator をインストールしてみました。
+
+端末エミュレータは他にも色々あるようですが、よく検索でヒットする Terminator を試してみようと考えた次第です。
+
+画面が分割できるのが一番の魅力だと思います。
+
+以下、作業記録で...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/10/06/06002059/" rel="permalink">Scientific Linux - TeXworks インストール！
+</a>
+        &nbsp;<small>(2012-10-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Linux のデスクトップ環境に \(\TeX\) を扱う GUI ツール TeXworks をインストールしてみました。
+当然、\(\TeX\) 環境は導入済みです。
+
+以下、作業記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/09/30/30002013/" rel="permalink">Scientific Linux - MySQL Workbench インストール！
+</a>
+        &nbsp;<small>(2012-09-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Linux のデスクトップ環境 GNOME に MySQL GUI ツールの MySQL Workbench をインストールする方法についてです。
+
+簡単な作業ですが、後学のために記録しておく。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/09/28/28002043/" rel="permalink">Scientific Linux - VirtualBox インストール！
+</a>
+        &nbsp;<small>(2012-09-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Linux のデスクトップ環境 GNOME に仮想マシン環境 VirtualBox をインストールする方法についてです。
+
+簡単な作業ですが、後学のために記録しておく。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/09/27/27002031/" rel="permalink">Scientific Linux - VMware Player のアンインストール！
+</a>
+        &nbsp;<small>(2012-09-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Linux のデスクトップ環境 GNOME にインストールした仮想マシン環境 VMware Player のアンインストール方法についてです。
+
+インストール自体は VMware サイトからダウンロードした rpm ファイルを
+rpm -Uvh でインストールするだけですが、アンインストール...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/09/26/26002045/" rel="permalink">Scientific Linux - ホームディレクトリの日本語ディレクトリ名の英語化！
+</a>
+        &nbsp;<small>(2012-09-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Linux のデスクトップ環境では、デフォルトではホームディレクトリ配下のディレクトリ名が「デスクトップ」、「ダウンロード」等のように日本語になっています。
+
+端末エミュレータ等をよく使用する場合には、都度ディレクトリ名に日本語入力するのは面倒です。
+
+以下、”Desktop”, “Down...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/09/25/25002042/" rel="permalink">Scientific Linux - Flash Player で画面が青みがかる場合！
+</a>
+        &nbsp;<small>(2012-09-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Linux のデスクトップ環境 GNOME で、ブラウザで Flash コンテンツを視聴すると、画面が青みがかる現象が発生しました。
+
+どうやら、NVIDIA のビデオカードを使用していると発生するようで、RGB の青と赤が逆になるバグのようです。
+（使用するドライバによっては発生しない？）...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/09/24/24002030/" rel="permalink">Scientific Linux - Flash Player インストール！
+</a>
+        &nbsp;<small>(2012-09-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Linux や CentOS のデスクトップ環境ではデフォルトでは Flash Player がインストールされていないので、ブラウザで動画が視聴できません。
+（実際は OS に Flash Player をインストールするのではなく、ブラウザにインストールするものですが）
+
+そこで、Fla...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/09/23/23002025/" rel="permalink">Scientific Linux - Firefox 最新版インストール！
+</a>
+        &nbsp;<small>(2012-09-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Linux や CentOS のデスクトップ環境にデフォルトで入っている Web ブラウザ Firefox を最新版にする方法についてです。
+
+単純な作業ではなかったため、記録として残しておきます。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/09/22/22002052/" rel="permalink">Scientific Linux - Google Chrome を yum インストール！
+</a>
+        &nbsp;<small>(2012-09-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Scientific Linux や CentOS のデスクトップ環境に Web ブラウザ Google Chrome をインストールする方法についてです。
+
+別途リポジトリを用意する必要があったため、記録として残しておきます。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/09/20/20002008/" rel="permalink">Scientific Linux - NVIDIA ドライバのインストール！
+</a>
+        &nbsp;<small>(2012-09-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方がメインで使用していたマシンに Scientific Linux 6.3 (GNOME) をインストールしたので、NVIDIA ビデオカード対応のドライバもインストールしました。
+
+作業が単純ではないので、記録として残しておきます。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/09/18/18002034/" rel="permalink">Cygwin - 公開鍵認証 SSH クライアントとして使用！
+</a>
+        &nbsp;<small>(2012-09-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Cygwin から「秘密鍵・公開鍵」を使用して Linux サーバに SSH 接続する方法についての記録です。
+
+当方、普段は Windows 上では端末エミュレータとして Poderosa を使用していますが、何かあった時のために Cygwin でも SSH 接続できるように記録しておいた次第です。
+
+また、こ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/09/15/15002016/" rel="permalink">CentOS - TeX Live 2012 インストール！
+</a>
+        &nbsp;<small>(2012-09-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">サーバマシン(CentOS 6.3)に \(\TeX\) のディストリビューションの一つである \(TEX Live\ 2012\) をインストールした際の記録です。
+ちなみに、\(\TeX\) とは組版システムで、論文や数式書いたりするソフトです。
+
+当方、ブログ(WordPress)で数式をアップロードする際...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/09/04/04002017/" rel="permalink">CentOS - 起動時プログレスバー非表示設定！
+</a>
+        &nbsp;<small>(2012-09-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">CentOS や Scientific Linux の Redhat クローンの Linux では、起動時に画面下部にプログレスバーが表示されます。
+
+プログレスバー表示中に ESC キー等キーボードを押下するとブートメッセージが表示されますが、デフォルトでブートメッセージを表示させることも可能のようなので、その...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/08/21/21002019/" rel="permalink">Linux - 電源ボタンでシャットダウン！
+</a>
+        &nbsp;<small>(2012-08-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">RedHad 系 Linux(CentOS, Scientific Linux) でマシンの電源ボタンを押したら、（正規のシャットダウンプロセスを踏んで）シャットダウンできるようにしてみました。
+
+ディスプレイやキーボードを接続していないマシンで、普段リモートターミナル経由で操作している場合などでは特に有効です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/08/16/16002002/" rel="permalink">VirtualBox - CentOS 6.3 で GuestAdditions インストール時に OpenGL でエラー！
+</a>
+        &nbsp;<small>(2012-08-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">仮想マシン Oracle VirtualBox(Ver.4.1.18) にゲストOSとして CentOS 6.3(x86_64) のデスクトップ環境を導入後、Geust Additions をインストールしようとすると OpenGL の部分で以下のようなエラーが発生します。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/07/18/18002018/" rel="permalink">CentOS - Java インストール！
+</a>
+        &nbsp;<small>(2012-07-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">CentOS 6.2 にはデフォルトで GNU 版の Java が用意されていますが、Oracle 版の Java をインストールして使用可能にする設定をしました。
+
+CentOS への Java のインストールについての情報は結構ありますが、インストールしただけでは GNU 版の Java が有効になったままで...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/21/21002052/" rel="permalink">CentOS 6 系 - ログ監視ツール SWATCH！
+</a>
+        &nbsp;<small>(2012-05-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux サーバでログ監視ツール SWATCH を利用されていいる方も結構いらっしゃると思います。
+しかし、CentOS 6 系の場合は 5 系と同様の方法で設定しても SWATCH は起動しません。
+（人によって手順・設定が異なるので一概には言えませんが、自分はそうでした。）
+慌ててサーバ設定をしていると見逃...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/29/29002017/" rel="permalink">Linux - Apache 2.2.22 を yum でインストール！
+</a>
+        &nbsp;<small>(2012-04-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">現在の Scientific Linux 6.2 や CentOS 6.2 ではリポジトリの関係上、yum でインストールできる Apache は 2.2.15 です。（RPMForge, EPEL, REMI リポジトリも同様）
+しかし、2.2.20 未満のバージョンでは脆弱性があるため DoS 攻撃を受け、O...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/27/27002000/" rel="permalink">Linux - PHP 5.4.0 をソースからインストール！
+</a>
+        &nbsp;<small>(2012-04-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">現在の Scientific Linux 6.2 や CentOS 6.2 ではリポジトリの関係上、パッケージでインストールできる PHP: Hypertext Preprocessor は 5.3.3 とかです。（今回は RedHat(RPM) 系 Linux での話です。）
+
+PHP では現在既に 5.4 系...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/26/26002002/" rel="permalink">Linux - MySQL 5.5.23 をソースからインストール！
+</a>
+        &nbsp;<small>(2012-04-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">現在の Scientific Linux 6.2 や CentOS 6.2 ではリポジトリの関係上、パッケージでインストールできる MySQL は 5.1.52 とかです。（今回は RedHat(RPM) 系 Linux での話です。）
+
+MySQL では現在既に 5.5 系がリリースされていますので、今回は最新...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/25/25002026/" rel="permalink">Linux - Apache 2.4.1 をソースからインストール！
+</a>
+        &nbsp;<small>(2012-04-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">現在の Scientific Linux 6.2 や CentOS 6.2 ではリポジトリの関係上、パッケージでインストールできる Apache は 2.2.15 です。（今回は RedHat(RPM) 系 Linux での話です。）
+しかし、2.2.20 未満のバージョンでは脆弱性があるため DoS 攻撃を受け...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/08/08002056/" rel="permalink">Apache2 - DoS 攻撃対策！
+</a>
+        &nbsp;<small>(2012-02-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">少し前に、「Apache2 - 脆弱性対策！」で紹介したとおり、Apache2 脆弱性（DoS攻撃）対策として、Apache 設定ファイルに不正なヘッダーやリクエストそのものを拒否する記述を追加する方法を採っていました。
+※本来は、Apache2 のバージョンを 2.2.20 以上にする事が一番妥当な方法ですが。...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/06/06002057/" rel="permalink">CentOS - SSL サーバ証明書の有効期限通知！
+</a>
+        &nbsp;<small>(2012-02-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Webサーバー間の通信内容を暗号化するため、 Apache に mod_ssl を導入している場合、サーバ証明書に有効期限が設定されているので、更新作業を忘れると有効期限が切れてしまいます。
+
+そのような状況に陥らないためには、SSLサーバ証明書の有効期限まで1ヶ月を切ったら、root宛にメールで通知してくれるツ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/30/30002016/" rel="permalink">Apache2 - 脆弱性対策！
+</a>
+        &nbsp;<small>(2012-01-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">最終的には Apache2 の脆弱性の対策を施していますが、経緯から記録します。
+確認・対策した環境は CentOS 6.2 です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/25/25002016/" rel="permalink">CentOS - Rails ログローテーション！
+</a>
+        &nbsp;<small>(2012-01-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、CentOS 6.2 上に構築した Ruby on Rails 環境のログの肥大化対策についてです。
+
+Ruby on Rails で Web 公開（production モードでの運用）すると Web サーバのログとは別にログが記録されます。
+開発（development）モードほどではありませんが、公...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/22/22002025/" rel="permalink">CentOS 6.2 - IPv6 無効化！
+</a>
+        &nbsp;<small>(2012-01-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">自宅サーバ CentOS 6.2 で IPv6 の機能は使用しないので、
+
+# chkconfig ip6tables off
+
+
+で自動起動しないようにしていたつもりでしたが、ifconfig で確認してみると IPv6 が起動していました。
+
+と言うわけで、ちゃんと設定しなおしました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/17/17002008/" rel="permalink">Ruby 1.9.3 - ソースからのインストールは注意！
+</a>
+        &nbsp;<small>(2012-01-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、テスト環境での Ruby は RVM を使用したりしていますが、本運用サーバではソースからビルド＆インストールした Ruby １本で運用しています。
+
+その Ruby ( 1.9.2-p290 ) を 1.9.3-p0 に入れ替えようとテスト環境（今回は CentOS 6.2）でソースからのインストールテス...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/07/12/12002041/" rel="permalink">CentOS6.0 - やっとリリース！
+</a>
+        &nbsp;<small>(2011-07-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">RedHatEnterpriseLinux6.0(以後、RHEL6.0)クローンのCentOS6.0がやっと2011/07/11にリリースされました。
+5月末のリリース予定から毎週のように遅延しながらのリリースで、RHEL6.0のリリースから約8ヶ月の遅れでした。
+公式サイトにもアナウンスがやっと載りました。（事...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/06/01/01002047/" rel="permalink">Ｔｗｉｔｔｅｒ － CentOS6とは？
+</a>
+        &nbsp;<small>(2011-06-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">昨日、当方が見つけたＴｗｉｔｔｅｒのＣｅｎｔＯＳ６というアカウントの書き込み。
+＜２０１１年５月３０日のツイート＞
+
+The full CentOS 6.0 tree is not yet available to the QA team.
+The planning for the CentOS 6 releas...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/05/31/31004536/" rel="permalink">ＣｅｎｔＯＳ６．０ － リリースさらに遅延？！
+</a>
+        &nbsp;<small>(2011-05-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">ＣｅｎｔＯＳ６．０はこちら（ＱＡｗｅｂ）の最新の情報（当記事執筆時点）によると６月６日には外部ミラーサイトへアップ開始となっていました。
+（なぜか５月２７日のＩＳＯイメージがＱＡチームに引き渡される日をリリース日と勘違いされておられる方も見受けられますが。。。）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/05/25/25002024/" rel="permalink">Ｆｅｄｏｒａ１５ － リリース！
+</a>
+        &nbsp;<small>(2011-05-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">ついにＦｅｄｏｒａ１５がリリースされました。
+
+日付が変わったので昨日（５月２４日）となりますが、２０時過ぎに日本国内のＦｅｄｏｒａのミラーサイトを複数チェックしてみました。
+
+２０時過ぎ時点では、北陸先端科学技術大学院大学のダウンロードサイトだけにＩＳＯイメージがアップされていました。
+（世界標準時で１４：００...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/05/20/20002047/" rel="permalink">ＳｃｉｅｎｔｉｆｉｃＬｉｎｕｘ６．０ － サーバ運用開始！
+</a>
+        &nbsp;<small>(2011-05-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">先日までは、ＣｅｎｔＯＳ６．０のリリースが待ち遠しい！というようなことをつぶやいていましたが、やはりあまりにも待たされ過ぎているのとＣｅｎｔＯＳの今後が非常に不安、ということから当サーバをＳｃｉｅｎｔｉｆｉｃＬｉｎｕｘに移行し運用を開始しました。
+（当記事執筆時点、こちらによると、また６日後ろへずれ込んでいます。...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/05/18/18002015/" rel="permalink">CentOS6.0 － リリース危うし？
+</a>
+        &nbsp;<small>(2011-05-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">一昨日、ＣｅｎｔＯＳ６．０のリリース時期について記事にしたばかりですが、こちら（2011年5月17日　CentOS 6.0は本当にリリースされるのか？─メイン開発者の離脱が意味するメッセージ）によるとＣｅｎｔＯＳのメイン開発者がプロジェクトから離脱した模様。
+
+そのためにＣｅｎｔＯＳ６．０のリリースが遅れているよ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/05/17/17002030/" rel="permalink">Fedora15のリリース時期について！
+</a>
+        &nbsp;<small>(2011-05-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">昨日は、CentOS6.0のリリース時期について！記載しましたが、こちらによるとＦｅｄｏｒａも今月中にはＦｅｄｏｒａ１５がリリースされるようです。
+
+※当記事執筆時点では２０１１年５月２４日にリリースされる模様（例によってこちらも日々後ろへスケジュールがずれ込んでいるので現時点では未確定ですが。。。）
+
+当方、Ｌ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/05/16/16002043/" rel="permalink">CentOS6.0のリリース時期について！
+</a>
+        &nbsp;<small>(2011-05-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">ＣｅｎｔＯＳ５．６のリリースとＲｅｄＨａｔＥｎｔｅｒｐｒｉｓｅＬｉｎｕｘ６．０のリリースから早数ヶ月。
+
+通常、ＲｅｄＨａｔＥｎｔｅｒｐｒｉｓｅＬｉｎｕｘがリリースされてから早い段階でＣｅｎｔＯＳがリリースされますが、今回はかなり遅れている（ヒートアップしている）ようです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/04/27/27002017/" rel="permalink">ＣｅｎｔＯＳ５．６ － Ｅｘｔ４について！
+</a>
+        &nbsp;<small>(2011-04-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">先日、当方のＣｅｎｔＯＳサーバを５．６で再構築してみました。
+
+実際のところＣｅｎｔＯＳ５．５がアップデートされて５．６となっていましたが、新規にインストールすることで発見できることもあったりするので、新規インストールしてみました。
+
+ファイルシステムでＥｘｔ４がフルサポートされたとのことだったので、インストール...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/04/13/13002038/" rel="permalink">ＣｅｎｔＯＳ５．６ リリース！
+</a>
+        &nbsp;<small>(2011-04-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「ＣｅｎｔＯＳ」５系の最終バージョン５．６がやっとリリースされましたね。
+
+当方のＣｅｎｔＯＳサーバは自動アップデートにしているので、昨日確認してみたら５．６にアップデートされていました。
+
+# cat /etc/redhat-release
+CentOS release 5.6 (Final)
+
+
+
+今後のため...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/01/28/28002023/" rel="permalink">Ｒｕｂｙ １．９．２－ｐ１３６ にアップデート！
+</a>
+        &nbsp;<small>(2011-01-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方のホームページは「ＣｅｎｔＯＳ ＋ Ａｐａｃｈｅ２ ＋ Ｒｕｂｙ１．９．２ｐ０ ＋ Ｒａｉｌｓ ３．０．３」で運用しているのですが、「Ｒｕｂｙ」の修正版が出ているのではないかと思って、「Ｒｕｂｙ」の公式サイトを覗いてみるとやっぱり修正版がリリースされていました。
+
+早速、「 Ruby_1.9.2-p136 」...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/12/06/06002039/" rel="permalink">ＣｅｎｔＯＳ － 「ｍｕｎｉｎ」フォント設定！
+</a>
+        &nbsp;<small>(2010-12-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">サーバー監視ツール「ｍｕｎｉｎ」を導入したのはいいのだが、グラフの下部に表示される文字が等幅フォントでないらしく、不揃いで見た目があまりよくない。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/12/03/03002058/" rel="permalink">ＣｅｎｔＯＳ － 「ｍｕｎｉｎ」でＣＰＵ温度監視！
+</a>
+        &nbsp;<small>(2010-12-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、サーバー監視ツール「ｍｕｎｉｎ」を導入し、ハードディスク温度の監視も追加しました。
+※参照 → 	ＣｅｎｔＯＳ − サーバ監視ツール「ｍｕｎｉｎ」導入！
+
+導入記録
+
+【前提条件】
+●マザーボートモニタツール「ｌｍ＿ｓｅｎｓｏｒｓ」導入済み。
+※導入方法はこちらを参照 → ＭＲＴＧでＣＰＵ温度監視！
+
+１．...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/11/30/30002046/" rel="permalink">ＣｅｎｔＯＳ － サーバ監視ツール「ｍｕｎｉｎ」導入！
+</a>
+        &nbsp;<small>(2010-11-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方のサーバでは今まで「ＭＲＴＧ」を使用して監視を行っていましたが、導入が簡単でデフォルトで様々な情報に対応している「ｍｕｎｉｎ」を導入してみました。
+※「ｍｕｍｉｎ」（ムーミン）ではなく「ｍｕｎｉｎ」（ムーニン）です。
+
+「ｍｕｎｉｎ」とは？
+
+「ｍｕｎｉｎ」（ムーニン）は、オープンソースで公開されているサーバ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/11/25/25002009/" rel="permalink">ＣｅｎｔＯＳ － smartctl でハードディスク温度取得！
+</a>
+        &nbsp;<small>(2010-11-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方の稼動中のサーバの監視ツールとして「ＭＲＴＧ」を使用しているのですが、今までそこでハードディスクの温度を「ｈｄｄｔｅｍｐ」を利用してハードディスクの温度を取得していました。
+
+しかし、最近「ｈｄｄｔｅｍｐ」でハードディスクの温度を取得するのが一般的でないという事に気づきました。
+
+普通は「ｓｍａｒｔｃｔｌ」を...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/11/07/07002033/" rel="permalink">ＣｅｎｔＯＳ － ＷａｋｅＯｎＬａｎ！
+</a>
+        &nbsp;<small>(2010-11-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ｌｉｎｕｘ（ＣｅｎｔＯＳ）マシンから他のマシンをネットワーク経由で起動させる方法です。
+
+作業記録
+
+１．起動対象の情報取得
+
+ＷａｋｅＯｎＬａｎで起動したいマシンでＩＰアドレス・Ｅｔｈｅｒｎｅｔ情報を確認する。
+●Ｌｉｎｕｘの場合
+
+[root@hoge ~]# ifconfig
+eth0      Link ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/10/06/06002043/" rel="permalink">CentOS – 画像認証「Ｔｅｘｔ＿ＣＡＰＴＣＨＡ」使用方法！
+</a>
+        &nbsp;<small>(2010-10-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今回はＷｉｎｄｏｗｓで試してみた時と同じように、「Ｔｅｘｔ＿ＣＡＰＴＣＨＡ」の使用に挑戦してみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/10/05/05002027/" rel="permalink">CentOS – 画像認証「Ｔｅｘｔ＿ＣＡＰＴＣＨＡ」インストール！
+</a>
+        &nbsp;<small>(2010-10-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回まではＷｉｎｄｏｗｓＸＰで「Ｔｅｘｔ＿ＣＡＰＴＣＨＡ」を使って画像認証を試してみました。
+今回はＣｅｎｔＯＳで試してみました。
+（結局うまくいきませんでしたが・・・）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/09/18/18002043/" rel="permalink">ＷｏｒｄＰｒｅｓｓ － 画像アップロード時サムネイルが選択できない！
+</a>
+        &nbsp;<small>(2010-09-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今さら？っていう感じですが、
+「ＷｏｒｄＰｒｅｓｓで画像をアップロードする際にフルサイズ以外のラジオボタンが選択されない」
+という不具合が起こることがあります。
+こんな感じで。
+
+
+
+以下がその解決方法です。
+※サーバＯＳ「ＣｅｎｔＯＳ５．５」での作業です。（Ｆｅｄｏｒａでも同じだと思います）
+
+[root@ho...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/06/01/01002039/" rel="permalink">CentOS 5.5 － 自宅サーバ再構築！
+</a>
+        &nbsp;<small>(2010-06-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方は「ＣｅｎｔＯＳ５．４」をインストールしてサーバを構築し、
+先日リリースされた「ＣｅｎｔＯＳ５．５」にアップグレードして、
+運用していました。
+
+別にこれでも安定していたのですが、
+ファイルシステムを「ＣｅｎｔＯＳ５．５」からサポートされた「ｅｘｔ４」にしてみたかったので、
+「ＣｅｎｔＯＳ５．５」を最初からイ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/05/20/20002005/" rel="permalink">CentOS 5.5 リリース！
+</a>
+        &nbsp;<small>(2010-05-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">うちのサーバは現在「ＣｅｎｔＯＳ５．４」で運用しているんですが、
+
+２０１０年５月１４日に「ＣｅｎｔＯＳ５．５」がリリースされたようです。
+
+大きな特徴は、
+
+
+  ＲＨＥＬ５．５に対応。
+  ＣｅｎｔＯＳ５．０～５．４からは「yum update」でＣｅｎｔＯＳ５．５にアップグレードが可能。
+  Ｅｘｔ４のファ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/04/18/18002043/" rel="permalink">CentOS - PXEサーバ構築
+</a>
+        &nbsp;<small>(2010-04-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、「ＰＸＥサーバ」についてです。
+通常ＯＳをインストールする際、ディスクやＵＳＢメモリなどを使用したりすると思います。
+（外部のサイトに接続してネットワークインストールすることもあるかと思います）
+
+しかし、手元にインストールイメージ（ＩＳＯファイル）があり、インストールしようとしているマシンにＤＶＤ・ＣＤ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/03/10/10002050/" rel="permalink">CentOS - Webカメラ構築成功！
+</a>
+        &nbsp;<small>(2010-03-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、自作のＦｅｄｏｒａサーバで構築していた、Webカメラ画像公開なんですが、
+
+サーバを「CentOS5.4」にしてからうまく構築できないままでいました。
+
+今日、再度挑戦してみたらあっさりできました。
+
+方法はＦｅｄｏｒａにWebカメラを構築した方法とまったく同じです。
+
+こちらを参照 → [Fedora12...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/02/02/02002027/" rel="permalink">ＭＲＴＧ監視状況！
+</a>
+        &nbsp;<small>(2010-02-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、当方の自作ＣｅｎｔｏＯＳサーバの監視状況を公開します。
+
+公開しても問題ないと思い公開します。
+
+ＣｅｎｔＯＳ上に構築したＭＲＴＧの情報です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/01/31/31002040/" rel="permalink">サーバ復帰！
+</a>
+        &nbsp;<small>(2010-01-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">昨日、当方の自作ＣｅｎｔＯＳサーバのハードディスクを交換したのですが、パーティションバックアップからうまくリストアできなかったので、最初から構築しなおしました。
+
+設定ファイルとかＤＢとかは別途バックアップしてあるので、当方に必要なサーバの構築に１日かかりませんでした。
+
+（Ｗｅｂ、メール、ＳＳＨ、ＤＢ・・・）
+...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/01/24/24002048/" rel="permalink">ＣｅｎｔＯＳ － ＺＡＢＢＩＸで統合監視！
+</a>
+        &nbsp;<small>(2010-01-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日はうちのＣｅｎｔＯＳサーバに「 ＺＡＢＢＩＸ 」という統合監視ツールを導入してみました。
+
+「 Ｃａｃｔｉ 」とか「 ＭＲＴＧ 」とかいろいろサーバ監視ツールはありますが、これらは「 サービスが停止した時 」にメールで知らせてはくれません。
+
+そこで探していたら「 ＺＡＢＢＩＸ 」というものを見つけました。
+...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/01/23/23002009/" rel="permalink">ＭＲＴＧで警告メール送信！
+</a>
+        &nbsp;<small>(2010-01-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方のサーバ（現在はＣｅｎｔＯＳ５．４）では、ＭＲＴＧによりネットワークトラフィックやディスク・メモリ使用量、ＣＰＵ・ディスク温度などの監視をしています。
+
+今回は、異常な値を記録した際にメールで警告するようにしてみました。
+（取り急ぎ、ハードディスク温度について試してみました）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/01/21/21002003/" rel="permalink">CentOS - USBハードディスクマウント！
+</a>
+        &nbsp;<small>(2010-01-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">ＵＳＢ接続のポータブルハードディスク（５ＧＢ）を自宅サーバ（CentOS）のバックアップ用として使用してみようと思い、まずは使用可能の状態にするまでを試みました。
+
+忘れるといけないので、記録として残しておきます。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/01/19/19002025/" rel="permalink">ＣｅｎｔＯＳ － 丸ごとコピー！
+</a>
+        &nbsp;<small>(2010-01-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、ハードディスクを丸ごと（パーティションごと）別のハードディスクへコピーしました。
+（しかもコピー元のディスク同様にブート可能にします）
+
+コピー元のハードディスクからパーティションごとバックアップしたり、
+コピー先へパーティションごとリストアしたり、
+という作業は、ＤＶＤブートのＫｎｏｐｐｉｘで「 Par...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/01/17/17002027/" rel="permalink">ＣｅｎｔＯＳ － オリジナルインストールＩＳＯ作成！
+</a>
+        &nbsp;<small>(2010-01-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、ＣｅｎｔＯＳのオリジナルインストールＤＶＤイメージを作成すること挑戦しました。
+（とりあえずのインストールが自動でできるインストールＤＶＤイメージです）
+
+通常ＧＵＩ画面で「 ｒｅｖｉｓｏｒ 」とか「 ｋｉｃｋｓｔａｒｔ 」を使用してインストールオプションを設定したｋｓファイルを作成し、それを既存のインス...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/01/13/13002031/" rel="permalink">ｐｒｏｃｍａｉｌ － 特定のメールのみ転送！
+</a>
+        &nbsp;<small>(2010-01-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、稼動中の自宅サーバ（ＣｅｎｔＯＳ）で自分宛に届いたメールのうち、条件に一致するメールのみを別のメールアドレス宛に転送する、ということをしました。
+（自宅サーバをＣｅｎｔＯＳにしてからはまだ導入していなかったので）
+
+※具体的には、ブログにコメントがあった際に届く自分宛のメールを携帯に転送します。
+
+よくあ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/01/12/12002007/" rel="permalink">CentOS - カーネルアップデート！
+</a>
+        &nbsp;<small>(2010-01-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、予備機として待機中のCentOSマシンのカーネルをバージョンアップしてみました。
+当方の現在のCentOSのカーネルバージョンが「 2.6.18-164.9.1.el5 」ですが、これを現時点での Linux の最新カーネル「 2.6.32.3 」にしてみたいと思い作業しましたが、失敗。
+「 カーネルパニ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/01/11/11002001/" rel="permalink">CentOS - USBデバイスからインストール！
+</a>
+        &nbsp;<small>(2010-01-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は、
+ＫｎｏｐｐｉｘをＵＳＢデバイスにインストールして、ＵＳＢブートさせることをしました。
+
+今回は「ＣｅｎｔＯＳ」のインストールイメージをＵＳＢデバイスにコピーし、ＵＳＢデバイスからインストールしてみることを試してみました。
+※よくある方法としては、ブートイメージだけをＵＳＢデバイスにインストールして、ＵＳ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/01/04/04092008/" rel="permalink">ＣｅｎｔＯＳにて自宅サーバ稼動開始！
+</a>
+        &nbsp;<small>(2010-01-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">おはようございます。
+
+先日、今まで稼動させていたＦｅｄｏｒａ１１による自宅サーバがダウン（ハードディスククラッシュ）したため、
+補助用のＡｔｏｍマシンに「 ＣｅｎｔＯＳ５．４ 」をインストールし、本稼動を開始しました。
+
+</p>
+  </article>
+</div>
+
+    
+    <div id="google-ad-3"></div>
+    <div id="google-ad-2"></div>
+  </div>
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+
+  </body>
+</html>

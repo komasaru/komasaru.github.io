@@ -1,0 +1,1176 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby on Rails - 郵便番号検索システム修正！ - mk-mode BLOG</title>
+<meta name="description" content="以前、日本郵便提供の郵便番号データ（CSVデータ）を使って以下の作業をしました。  Ruby + MySQL で郵便番号データ取り込み！  Ruby on Rails - 郵便番号検索システム作成！しかし、日本郵便提供の郵便番号データ（CSVデータ）は仕様上非常に危険なデータとなっています。日本郵便サイトの情報の転載は禁止されているので、ここには仕様を転載できません。郵便番号データの説明 をご覧ください。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby on Rails - 郵便番号検索システム修正！">
+<meta property="og:url" content="https://komasaru.github.io/2011/12/06/06002042/">
+
+
+  <meta property="og:description" content="以前、日本郵便提供の郵便番号データ（CSVデータ）を使って以下の作業をしました。  Ruby + MySQL で郵便番号データ取り込み！  Ruby on Rails - 郵便番号検索システム作成！しかし、日本郵便提供の郵便番号データ（CSVデータ）は仕様上非常に危険なデータとなっています。日本郵便サイトの情報の転載は禁止されているので、ここには仕様を転載できません。郵便番号データの説明 をご覧ください。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby on Rails - 郵便番号検索システム修正！">
+  <meta name="twitter:description" content="以前、日本郵便提供の郵便番号データ（CSVデータ）を使って以下の作業をしました。  Ruby + MySQL で郵便番号データ取り込み！  Ruby on Rails - 郵便番号検索システム作成！しかし、日本郵便提供の郵便番号データ（CSVデータ）は仕様上非常に危険なデータとなっています。日本郵便サイトの情報の転載は禁止されているので、ここには仕様を転載できません。郵便番号データの説明 をご覧ください。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2011/12/06/06002042/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2011-12-06T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2011/12/06/06002042/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby on Rails - 郵便番号検索システム修正！">
+    <meta itemprop="description" content="以前、日本郵便提供の郵便番号データ（CSVデータ）を使って以下の作業をしました。  Ruby + MySQL で郵便番号データ取り込み！  Ruby on Rails - 郵便番号検索システム作成！しかし、日本郵便提供の郵便番号データ（CSVデータ）は仕様上非常に危険なデータとなっています。日本郵便サイトの情報の転載は禁止されているので、ここには仕様を転載できません。郵便番号データの説明 をご覧ください。">
+    <meta itemprop="datePublished" content="December 06, 2011">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby on Rails - 郵便番号検索システム修正！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-12-06T00:20:00+09:00">2011-12-06 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>以前、<a href="http://www.post.japanpost.jp/" title="日本郵便">日本郵便</a>提供の郵便番号データ（CSVデータ）を使って以下の作業をしました。</p>
+
+<ul>
+  <li><a href="/2011/08/28/28002011/" title="Ruby + MySQL で郵便番号データ取り込み！">Ruby + MySQL で郵便番号データ取り込み！</a></li>
+  <li><a href="/2011/08/29/29002026/" title="Ruby on Rails - 郵便番号検索システム作成！">Ruby on Rails - 郵便番号検索システム作成！</a></li>
+</ul>
+
+<p>しかし、<a href="http://www.post.japanpost.jp/" title="日本郵便">日本郵便</a>提供の郵便番号データ（CSVデータ）は仕様上非常に危険なデータとなっています。
+日本郵便サイトの情報の転載は禁止されているので、ここには仕様を転載できません。<a href="http://www.post.japanpost.jp/zipcode/dl/readme.html" target="_blank">
+郵便番号データの説明</a> をご覧ください。</p>
+
+<!--more-->
+<p>Ruby や Rails で作業するに当たって、当然この仕様のことは承知の上でしたが、個人レベルで使用するには支障がなかったので対応しておりませんでした。</p>
+
+<p>最近この郵便番号データが危険であることについてコメントを頂いたこともあり、今回の改修作業に踏み切りました。
+※ちなみに、どうしても自動での対応が出来ないものもあります。</p>
+
+<p>※以下に登場する「郵便番号」は全て7桁の郵便番号のことを示しています。</p>
+
+<p>以下に記録します。</p>
+
+<h4 id="データの仕様から判明する事実">データの仕様から判明する事実</h4>
+
+<p>データの仕様に目を通したり、データを目で見て判明した重要な事実です。</p>
+
+<ul>
+  <li>提供されているデータは文字コードに Shift-JIS 、文字セットに JIS X0208-1983 を使用しているため、定義されていない漢字はひらがなで設定されている。</li>
+  <li>町域名フリガナが76文字を超える、または、町域名漢字が38文字を超える場合は複数レコードに分割されている。</li>
+  <li>全国地方公共団体コード毎に、”イカニケイサイガナイバアイ”（”以下に掲載がない場合”）、”○○ノツギニバンチガクルバアイ”（”○○の次に番地がくる場合”）、五十音順となっている。（但し、町域名が長いために分割される場合は五十音順ではなく連続して配置されている）</li>
+  <li>上記3のようにソートされているため、同じ郵便番号でも不連続となっているものが多数ある。</li>
+</ul>
+
+<h4 id="問題点">問題点</h4>
+
+<p>【問題点１】</p>
+
+<ul>
+  <li>実際は漢字なのに、ひらがなで表示されているものがある。</li>
+</ul>
+
+<p>【問題点２】</p>
+
+<ul>
+  <li>「一つの郵便番号で二以上の町域を表す場合の表示」が「0」（非該当）にも関わらず同じ郵便番号が連続して重複する場合は町域名の文字列長が長いことより分割されているということなので、無条件に結合すればよい。</li>
+  <li>しかし、「一つの郵便番号で二以上の町域を表す場合の表示」が「1」（該当）の場合は、本来は結合する必要はないが、それらのレコードの中に町域名の文字列長が長いことより分割されているものも存在する。</li>
+  <li>これを判断するフラグが存在しないため、人間の目で見て判別する必要がある。</li>
+</ul>
+
+<h4 id="上記の問題点を解消するための事前調査">上記の問題点を解消するための事前調査</h4>
+
+<h2 id="20111128付のデータレコード件数123048件を使用して検証してみました">2011/11/28付のデータ（レコード件数：123,048件）を使用して検証してみました。</h2>
+<p>●「一つの郵便番号で二以上の町域を表す場合の表示」が「0」（非該当）で「郵便番号」が連続して重複しているものを検証</p>
+<table>
+  <tr>
+    <th align="center">重複</th>
+    <th align="center">件数</th>
+  </tr>
+  <tr>
+    <td align="right">なし</td>
+    <td align="right">122,498</td>
+  </tr>
+  <tr>
+    <td align="right">2件</td>
+    <td align="right">166</td>
+  </tr>
+  <tr>
+    <td align="right">3件</td>
+    <td align="right">38</td>
+  </tr>
+  <tr>
+    <td align="right">4件</td>
+    <td align="right">13</td>
+  </tr>
+  <tr>
+    <td align="right">5件</td>
+    <td align="right">2</td>
+  </tr>
+  <tr>
+    <td align="right">6件</td>
+    <td align="right">3</td>
+  </tr>
+  <tr>
+    <td align="right">8件</td>
+    <td align="right">3</td>
+  </tr>
+</table>
+<p>【例】（8件重複している例）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ====&lt; 途中省略 &gt;====
+26102,"602  ","6020056","キョウトフ","キョウトシカミギョウク","キタフナハシチョウ","京都府","京都市上京区","北舟橋町",0,0,0,0,0,0
+26102,"602  ","6028368","キョウトフ","キョウトシカミギョウク","キタマチ","京都府","京都市上京区","北町（上の下立売通天神道西入上る、上の下立売通御前西入、上",0,0,0,0,0,0
+26102,"602  ","6028368","キョウトフ","キョウトシカミギョウク","キタマチ","京都府","京都市上京区","の下立売通御前西入上る、上の下立売通御前西入２丁目、上の下立売通御前西入",0,0,0,0,0,0
+26102,"602  ","6028368","キョウトフ","キョウトシカミギョウク","キタマチ","京都府","京都市上京区","２筋目、下長者町通御前西入、天神道上の下立売上る、天神道仁和寺街道下る、",0,0,0,0,0,0
+26102,"602  ","6028368","キョウトフ","キョウトシカミギョウク","キタマチ","京都府","京都市上京区","天神道下立売上る、天神道妙心寺道上る、天神道妙心寺道上る西入、仁和寺街",0,0,0,0,0,0
+26102,"602  ","6028368","キョウトフ","キョウトシカミギョウク","キタマチ","京都府","京都市上京区","道天神道西入下る、仁和寺街道天神道東入下る、御前通上の下立売上る、御前通",0,0,0,0,0,0
+26102,"602  ","6028368","キョウトフ","キョウトシカミギョウク","キタマチ","京都府","京都市上京区","上の下立売上る西入、御前通下立売上る、御前通下長者町上る西入、御前通仁",0,0,0,0,0,0
+26102,"602  ","6028368","キョウトフ","キョウトシカミギョウク","キタマチ","京都府","京都市上京区","和寺街道下る西入、御前通妙心寺道上る西入、御前通西裏上の下立売上る、御前",0,0,0,0,0,0
+26102,"602  ","6028368","キョウトフ","キョウトシカミギョウク","キタマチ","京都府","京都市上京区","通西裏下立売上る）",0,0,0,0,0,0
+26102,"602  ","6028392","キョウトフ","キョウトシカミギョウク","キタマチ","京都府","京都市上京区","北町（御前通五辻上る、御前通今出川上る、御前通今出川上る１",0,0,0,0,0,0
+  ====&lt; 途中省略 &gt;====
+</code></pre></div></div>
+
+<hr />
+<p>●「一つの郵便番号で二以上の町域を表す場合の表示」が「1」（該当）で「郵便番号」が連続して重複しているものを検証</p>
+<table>
+  <tr>
+    <th align="center">重複</th>
+    <th align="center">件数</th>
+  </tr>
+  <tr>
+    <td align="right">なし</td>
+    <td align="right">120,581</td>
+  </tr>
+  <tr>
+    <td align="right">2件</td>
+    <td align="right">476</td>
+  </tr>
+  <tr>
+    <td align="right">3件</td>
+    <td align="right">115</td>
+  </tr>
+  <tr>
+    <td align="right">4件</td>
+    <td align="right">35</td>
+  </tr>
+  <tr>
+    <td align="right">5件</td>
+    <td align="right">26</td>
+  </tr>
+  <tr>
+    <td align="right">6件</td>
+    <td align="right">10</td>
+  </tr>
+  <tr>
+    <td align="right">7件</td>
+    <td align="right">15</td>
+  </tr>
+  <tr>
+    <td align="right">8件</td>
+    <td align="right">9</td>
+  </tr>
+  <tr>
+    <td align="right">9件</td>
+    <td align="right">5</td>
+  </tr>
+  <tr>
+    <td align="right">10件</td>
+    <td align="right">5</td>
+  </tr>
+  <tr>
+    <td align="right">11件</td>
+    <td align="right">3</td>
+  </tr>
+  <tr>
+    <td align="right">12件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">13件</td>
+    <td align="right">4</td>
+  </tr>
+  <tr>
+    <td align="right">14件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">15件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">16件</td>
+    <td align="right">2</td>
+  </tr>
+  <tr>
+    <td align="right">17件</td>
+    <td align="right">2</td>
+  </tr>
+  <tr>
+    <td align="right">19件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">20件</td>
+    <td align="right">5</td>
+  </tr>
+  <tr>
+    <td align="right">21件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">22件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">24件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">25件</td>
+    <td align="right">2</td>
+  </tr>
+  <tr>
+    <td align="right">26件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">27件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">41件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">46件</td>
+    <td align="right">1</td>
+  </tr>
+</table>
+<p>【例】（3件重複している例）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ====&lt; 途中省略 &gt;====
+28208,"678  ","6780072","ヒョウゴケン","アイオイシ","リュウセンチョウ","兵庫県","相生市","竜泉町",0,0,0,0,0,0
+28208,"678  ","6780081","ヒョウゴケン","アイオイシ","ワカサノチョウアマウチ","兵庫県","相生市","若狭野町雨内",0,0,0,1,0,0
+28208,"678  ","6780081","ヒョウゴケン","アイオイシ","ワカサノチョウイリノ","兵庫県","相生市","若狭野町入野",0,0,0,1,0,0
+28208,"678  ","6780081","ヒョウゴケン","アイオイシ","ワカサノチョウウエマツ","兵庫県","相生市","若狭野町上松",0,0,0,1,0,0
+28208,"678  ","6780082","ヒョウゴケン","アイオイシ","ワカサノチョウシモドイ","兵庫県","相生市","若狭野町下土井",0,0,0,1,0,0
+  ====&lt; 途中省略 &gt;====
+</code></pre></div></div>
+
+<hr />
+<p>●「一つの郵便番号で二以上の町域を表す場合の表示」が「1」（該当）で「郵便番号」・「丁目を有する町域の場合の表示」が連続して重複しているものを検証
+		（「一つの郵便番号で二以上の町域を表す場合の表示」が同一でも「丁目を有する町域の場合の表示」が異なれば分けて考えることが可能であるため）</p>
+<table>
+  <tr>
+    <th align="center">重複</th>
+    <th align="center">件数</th>
+  </tr>
+  <tr>
+    <td align="right">なし</td>
+    <td align="right">120,798</td>
+  </tr>
+  <tr>
+    <td align="right">2件</td>
+    <td align="right">375</td>
+  </tr>
+  <tr>
+    <td align="right">3件</td>
+    <td align="right">110</td>
+  </tr>
+  <tr>
+    <td align="right">4件</td>
+    <td align="right">35</td>
+  </tr>
+  <tr>
+    <td align="right">5件</td>
+    <td align="right">26</td>
+  </tr>
+  <tr>
+    <td align="right">6件</td>
+    <td align="right">10</td>
+  </tr>
+  <tr>
+    <td align="right">7件</td>
+    <td align="right">15</td>
+  </tr>
+  <tr>
+    <td align="right">8件</td>
+    <td align="right">9</td>
+  </tr>
+  <tr>
+    <td align="right">9件</td>
+    <td align="right">5</td>
+  </tr>
+  <tr>
+    <td align="right">10件</td>
+    <td align="right">5</td>
+  </tr>
+  <tr>
+    <td align="right">11件</td>
+    <td align="right">3</td>
+  </tr>
+  <tr>
+    <td align="right">12件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">13件</td>
+    <td align="right">4</td>
+  </tr>
+  <tr>
+    <td align="right">14件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">15件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">16件</td>
+    <td align="right">2</td>
+  </tr>
+  <tr>
+    <td align="right">17件</td>
+    <td align="right">2</td>
+  </tr>
+  <tr>
+    <td align="right">19件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">20件</td>
+    <td align="right">5</td>
+  </tr>
+  <tr>
+    <td align="right">21件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">22件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">24件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">25件</td>
+    <td align="right">2</td>
+  </tr>
+  <tr>
+    <td align="right">26件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">27件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">41件</td>
+    <td align="right">1</td>
+  </tr>
+  <tr>
+    <td align="right">46件</td>
+    <td align="right">1</td>
+  </tr>
+</table>
+<p>【例】（2件重複している例）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ====&lt; 途中省略 &gt;====
+01631,"08005","0800564","ホッカイドウ","カトウグンオトフケチョウ","コマバキタマチ","北海道","河東郡音更町","駒場北町",0,0,0,1,0,0
+01631,"08005","0800564","ホッカイドウ","カトウグンオトフケチョウ","コマバキタ1ジョウドオリ","北海道","河東郡音更町","駒場北１条通",0,0,1,1,0,0
+01631,"08005","0800564","ホッカイドウ","カトウグンオトフケチョウ","コマバキタ2ジョウドオリ","北海道","河東郡音更町","駒場北２条通",0,0,1,1,0,0
+01631,"08005","0800572","ホッカイドウ","カトウグンオトフケチョウ","コマバナミキ","北海道","河東郡音更町","駒場並木",0,0,0,0,0,0
+  ====&lt; 途中省略 &gt;====
+</code></pre></div></div>
+
+<h4 id="問題点の対応方法">問題点の対応方法</h4>
+
+<p>【問題点１の対応】</p>
+
+<ul>
+  <li>本来は漢字であるべきものがひらがなとなっているものについては、自動処理での対応は不可能。
+（もともとひらがなであるかもしれないし、件数が多すぎるので個人のレベルでの手動修正もほぼ不可能。）</li>
+</ul>
+
+<p>【問題点２の対応】</p>
+
+<ul>
+  <li>「一つの郵便番号で二以上の町域を表す場合の表示」が「0」（非該当）にも関わらず同じ「郵便番号」が連続して重複する場合は町域名の文字列長が長いことより分割されているということなので、無条件に結合する。</li>
+  <li>「丁目を有する町域の場合の表示」・「一つの郵便番号で二以上の町域を表す場合の表示」・「郵便番号」が連続して重複し「一つの郵便番号で二以上の町域を表す場合の表示」が「1」（該当）の場合は、、結合はしないが分割されている可能性があるので、その旨を把握できるようにする。（町域名の先頭にコメントを付加するなど）
+※自分の目で見てデータを直接メンテナンスすることも可能。しかし、毎月修正がある郵便番号データを都度メンテナンスするのは事実上不可能。</li>
+</ul>
+
+<hr />
+
+<p>という訳で、データベース（MySQL）取り込みの Ruby スクリプト、Ruby on Rails 製の検索アプリを修正しました。
+実際には、結合可能なデータは結合し、分割されているかもしれないが自動判別が不可能なデータの町域名先頭に「※」マークを付加しました。</p>
+
+<p>2011/11/28付のデータ（レコード件数：123,048件）で取り込み処理を実行した結果、計算どおりの 122,723件に集約できました。（検索アプリ（Rails）側はロジックの変更は無かったので、注意書きを修正しただけです）</p>
+
+<p>以下で確認できます。</p>
+
+<ul>
+  <li><a href="http://www.mk-mode.com/rails/postal" title="mk-mode SITE : 郵便番号検索">mk-mode SITE : 郵便番号検索</a></li>
+</ul>
+
+<h4 id="スナップショット">スナップショット</h4>
+
+<ul>
+  <li>「一つの郵便番号で二以上の町域を表す場合の表示」が「0」（非該当）で「郵便番号」が連続して重複しているもの。
+  無条件に結合して１件のデータとして扱えるようになりました。</li>
+</ul>
+
+<p><img src="/images/2011/12/POSTCODE_1.jpg" alt="POSTCODE_1" title="POSTCODE_1" /></p>
+
+<p><img src="/images/2011/12/POSTCODE_2.jpg" alt="POSTCODE_2" title="POSTCODE_2" /></p>
+
+<ul>
+  <li>「一つの郵便番号で二以上の町域を表す場合の表示」が「1」（該当）で「郵便番号」・「丁目を有する町域の場合の表示」が連続して重複しているもの。
+  分割されていないデータだが、フラグだけでは自動判別不可能なため、「※」マークを付加している。
+  （同じ郵便番号なのに「※」マークが付加されていないデータは連続したデータでないから）</li>
+</ul>
+
+<p><img src="/images/2011/12/POSTCODE_3.jpg" alt="POSTCODE_3" title="POSTCODE_3" /></p>
+
+<ul>
+  <li>「一つの郵便番号で二以上の町域を表す場合の表示」が「1」（該当）で「郵便番号」・「丁目を有する町域の場合の表示」が連続して重複しているもの。
+  分割されているデータだが、フラグだけでは自動判別不可能なため、「※」マークを付加している。
+  （同じ郵便番号なのに「※」マークが付加されていないデータは連続したデータでないから）</li>
+</ul>
+
+<p><img src="/images/2011/12/POSTCODE_4.jpg" alt="POSTCODE_4" title="POSTCODE_4" /></p>
+
+<h4 id="参考サイト等">参考サイト等</h4>
+
+<ul>
+  <li><a href="http://www.post.japanpost.jp/zipcode/dl/readme.html" title="郵便番号データの説明">郵便番号データの説明</a></li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>[郵便番号データの落とし穴</td>
+          <td>YU-TANG’s MS-Access Discovery](http://www.f3.dion.ne.jp/~element/msaccess/AcTipsKenAllCsv.html “郵便番号データの落とし穴</td>
+          <td>YU-TANG’s MS-Access Discovery”)</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<hr />
+
+<p>Visual C# 版アプリも作っているので、対応しなければ・・・</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/mysql" class="page__taxonomy-item" rel="tag">MySQL</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/rails" class="page__taxonomy-item" rel="tag">Rails</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-12-06T00:20:00+09:00">2011-12-06 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+on+Rails+-+%E9%83%B5%E4%BE%BF%E7%95%AA%E5%8F%B7%E6%A4%9C%E7%B4%A2%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E4%BF%AE%E6%AD%A3%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2011%2F12%2F06%2F06002042%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2011%2F12%2F06%2F06002042%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2011%2F12%2F06%2F06002042%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2011/12/04/04002057/" class="pagination--pager" title="Cygwin - Ruby をソースからインストール！
+">Previous</a>
+    
+    
+      <a href="/2011/12/08/08002006/" class="pagination--pager" title="Scientific Linux - OpenCV をソースからインストール
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2011/12/06/06002042/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2011/12/06/06002042"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

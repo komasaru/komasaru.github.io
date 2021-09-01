@@ -1,0 +1,1051 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Linux Mint - tmux インストール！ - mk-mode BLOG</title>
+<meta name="description" content="当方、Linux Mint では今まで標準の「GNOME端末」ではなく、”Terminator” という画面分割等の可能な端末ソフトを使用していました。今回、何かと便利そうな仮想端末管理ソフト tmux(Terminal MUltipleXer) を導入してみました。同様のソフトで、”GNU Screen” というものもあります（使用したことありません）が、色々調べてみると “tmux” の方が良さそうに感じました。（”GNU Screen” から “tmux” へ移行している方々が多かったので。）">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Linux Mint - tmux インストール！">
+<meta property="og:url" content="https://komasaru.github.io/2013/06/05/linux-mint-install-tmux/">
+
+
+  <meta property="og:description" content="当方、Linux Mint では今まで標準の「GNOME端末」ではなく、”Terminator” という画面分割等の可能な端末ソフトを使用していました。今回、何かと便利そうな仮想端末管理ソフト tmux(Terminal MUltipleXer) を導入してみました。同様のソフトで、”GNU Screen” というものもあります（使用したことありません）が、色々調べてみると “tmux” の方が良さそうに感じました。（”GNU Screen” から “tmux” へ移行している方々が多かったので。）">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Linux Mint - tmux インストール！">
+  <meta name="twitter:description" content="当方、Linux Mint では今まで標準の「GNOME端末」ではなく、”Terminator” という画面分割等の可能な端末ソフトを使用していました。今回、何かと便利そうな仮想端末管理ソフト tmux(Terminal MUltipleXer) を導入してみました。同様のソフトで、”GNU Screen” というものもあります（使用したことありません）が、色々調べてみると “tmux” の方が良さそうに感じました。（”GNU Screen” から “tmux” へ移行している方々が多かったので。）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/06/05/linux-mint-install-tmux/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-06-05T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/06/05/linux-mint-install-tmux/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Linux Mint - tmux インストール！">
+    <meta itemprop="description" content="当方、Linux Mint では今まで標準の「GNOME端末」ではなく、”Terminator” という画面分割等の可能な端末ソフトを使用していました。今回、何かと便利そうな仮想端末管理ソフト tmux(Terminal MUltipleXer) を導入してみました。同様のソフトで、”GNU Screen” というものもあります（使用したことありません）が、色々調べてみると “tmux” の方が良さそうに感じました。（”GNU Screen” から “tmux” へ移行している方々が多かったので。）">
+    <meta itemprop="datePublished" content="June 05, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Linux Mint - tmux インストール！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-06-05T00:20:00+09:00">2013-06-05 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>当方、Linux Mint では今まで標準の「GNOME端末」ではなく、”Terminator” という画面分割等の可能な端末ソフトを使用していました。</p>
+
+<p>今回、何かと便利そうな仮想端末管理ソフト <a href="http://tmux.github.io/" title="tmux">tmux(Terminal MUltipleXer)</a> を導入してみました。</p>
+
+<p>同様のソフトで、”GNU Screen” というものもあります（使用したことありません）が、色々調べてみると “tmux” の方が良さそうに感じました。（”GNU Screen” から “tmux” へ移行している方々が多かったので。）</p>
+
+<!--more-->
+
+<h4 id="0-前提条件">0. 前提条件</h4>
+
+<ul>
+  <li>Linux Mint 14 (64bit) での作業を想定。（Unix 系なら同じだと思う）</li>
+  <li>パッケージインストールする。</li>
+  <li>インストールする tmux のバージョンは 1.6</li>
+</ul>
+
+<h4 id="1-インストール">1. インストール</h4>
+
+<p><code class="language-plaintext highlighter-rouge">apt-get</code> でインストールする。（”Synaptic パッケージマージャ” でもよい）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo apt-get install tmux
+</code></pre></div></div>
+
+<h4 id="2-インストール確認">2. インストール確認</h4>
+
+<p>インストールされているかバージョンを表示して確認してみる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ tmux -V
+tmux 1.6
+</code></pre></div></div>
+
+<h4 id="3-設定">3. 設定</h4>
+
+<p>デフォルトでも使用可能だが、若干殺風景なのでデザインをカスタマイズしたり、キーバインド等の設定を行う。<br />
+設定ファイルは “.tmux.conf” で、作成場所はユーザホームディレクトリ。<br />
+以下は当方の例で、</p>
+
+<ul>
+  <li>プリフィックスをデフォルトの <code class="language-plaintext highlighter-rouge">CTRL-b</code> から <code class="language-plaintext highlighter-rouge">CTRL-t</code> に変更、</li>
+  <li>設定ファイル変更後、プリフィックス + <code class="language-plaintext highlighter-rouge">r</code> で即設定反映、</li>
+  <li>vi のキーマップを使用、</li>
+  <li>マウスでタブやペインを選択できるように、</li>
+  <li>マウスでスクロールバックできるように、</li>
+  <li>プリフィックス + <code class="language-plaintext highlighter-rouge">H</code> で表示履歴をファイル出力開始、プリフィックス + <code class="language-plaintext highlighter-rouge">h</code> でファイル出力停止、<br />
+（出力ファイルのフォーマットは “tmux-{Session番号}-{Tag番号}-{Pane番号}<em>YYmmdd_HHMMSS`</em>{Window名}.log” とした）</li>
+</ul>
+
+<p>等行うように設定している。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">~/.tmux.conf</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+</pre></td><td class="code"><pre><span class="c"># ==== Basic</span>
+<span class="c"># Default shell</span>
+set-option <span class="nt">-g</span> default-shell /bin/bash
+set-option <span class="nt">-g</span> default-command /bin/bash  <span class="c"># &lt;= .bashrc を引き継ぐために必要</span>
+<span class="c"># Allow UTF-8</span>
+set-window-option <span class="nt">-g</span> utf8 on
+<span class="c"># Disable ESC delay</span>
+set-option <span class="nt">-s</span> escape-time 0
+
+<span class="c"># ==== Reload config (r)</span>
+bind-key r source-file ~/.tmux.conf<span class="p">;</span> display-message <span class="s2">"Reload Config!!"</span>
+
+<span class="c"># ==== Key mappings</span>
+<span class="c"># Vi binding</span>
+set-window-option <span class="nt">-g</span> mode-keys vi
+<span class="c"># Prefix (^T)</span>
+unbind C-b
+set-option <span class="nt">-g</span> prefix ^T
+
+<span class="c"># ==== Color setting</span>
+<span class="c"># Enable 256 color</span>
+set-option <span class="nt">-g</span> default-terminal <span class="s2">"screen-256color"</span>
+<span class="c"># Status line</span>
+set-option <span class="nt">-g</span> status-fg white
+set-option <span class="nt">-g</span> status-bg black
+<span class="c"># Pane border</span>
+set-option <span class="nt">-g</span> pane-border-fg colour245
+set-option <span class="nt">-g</span> pane-active-border-fg colour39
+
+<span class="c"># ==== Title of terminal</span>
+set-option <span class="nt">-g</span> set-titles on
+set-option <span class="nt">-g</span> set-titles-string <span class="s2">"tmux.#I.#W"</span>
+
+<span class="c"># ==== Status line</span>
+<span class="c"># Update interval</span>
+set-option <span class="nt">-g</span> status-interval 5
+<span class="c"># Left</span>
+set-option <span class="nt">-g</span> status-left-length 30
+set-option <span class="nt">-g</span> status-left <span class="s1">'#[fg=yellow]#h[#S:#I.#P] #[default]'</span>
+<span class="c"># main</span>
+set-option <span class="nt">-g</span> window-status-format <span class="s2">"[#I #W #F]"</span>
+set-option <span class="nt">-g</span> window-status-current-format <span class="s2">"#[fg=white,bg=green][#I #W #F]#[default]"</span>
+<span class="c"># Right</span>
+set-option <span class="nt">-g</span> status-right-length 150
+set-option <span class="nt">-g</span> status-right <span class="s1">'#[fg=white,bg=blue,bold]%Y/%m/%d(%a) %H:%M#[default]'</span>
+
+<span class="c"># ==== Pane active border</span>
+set-option <span class="nt">-g</span> pane-active-border-fg black
+set-option <span class="nt">-g</span> pane-active-border-bg blue
+
+<span class="c"># ==== Log output</span>
+bind-key H pipe-pane <span class="nt">-o</span> <span class="s1">'cat &gt;&gt; $HOME/.tmux/tmux-#S-#I-#P_`date +%Y%m%d_%H%M%S`_#W.log'</span> <span class="se">\;</span> display-message <span class="s1">'Started logging to $HOME/.tmux/tmux-#S-#I-#P_`date +%Y%m%d_%H%M%S`_#W.log'</span>
+bind-key h pipe-pane <span class="se">\;</span> display-message <span class="s1">'Ended logging to $HOME/.tmux/tmux-#S-#I-#P_`date +%Y%m%d_%H%M%S`_#W.log'</span>
+
+<span class="c"># ==== Mouse</span>
+set-option <span class="nt">-g</span> mode-mouse on
+set-option <span class="nt">-g</span> mouse-select-pane on
+set-option <span class="nt">-g</span> mouse-select-window on
+set-option <span class="nt">-g</span> mouse-resize-pane on
+
+<span class="c"># ==== Scroll back</span>
+<span class="c">#set-option -g history-limit 10000  # default:2000</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>今後実際に tmux を使用してみて、さらに設定を変更する可能性は十分ある。</p>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/5574812" title="tmux config(setting) file.">tmux config(setting) file.</a></li>
+</ul>
+
+<h4 id="3-2-256色設定について">3-2. 256色設定について</h4>
+
+<p>色の指定は <code class="language-plaintext highlighter-rouge">black</code>, <code class="language-plaintext highlighter-rouge">red</code>, <code class="language-plaintext highlighter-rouge">green</code>, <code class="language-plaintext highlighter-rouge">yellow</code>, <code class="language-plaintext highlighter-rouge">blue</code>, <code class="language-plaintext highlighter-rouge">magenta</code>, <code class="language-plaintext highlighter-rouge">cyan</code>, <code class="language-plaintext highlighter-rouge">white</code> か <code class="language-plaintext highlighter-rouge">colour0</code> - <code class="language-plaintext highlighter-rouge">colour255</code> で行う。<br />
+<code class="language-plaintext highlighter-rouge">colour0</code> - <code class="language-plaintext highlighter-rouge">colour255</code> がどんな色かは以下のようなシェルスクリプトを実行することで確認可能。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">~/tmux_colour256.sh</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre></td><td class="code"><pre><span class="c">#!/bin/bash</span>
+
+<span class="k">for </span>fgbg <span class="k">in </span>38 48  <span class="c">#Foreground/Background</span>
+<span class="k">do
+    for </span>color <span class="k">in</span> <span class="o">{</span>0..255<span class="o">}</span>  <span class="c">#Colors</span>
+    <span class="k">do</span>
+        <span class="c">#Display the color</span>
+        <span class="nb">echo</span> <span class="nt">-en</span> <span class="s2">"</span><span class="se">\e</span><span class="s2">[</span><span class="k">${</span><span class="nv">fgbg</span><span class="k">}</span><span class="s2">;5;</span><span class="k">${</span><span class="nv">color</span><span class="k">}</span><span class="s2">m </span><span class="k">${</span><span class="nv">color</span><span class="k">}</span><span class="se">\t\e</span><span class="s2">[0m"</span>
+        <span class="c">#Display 10 colors per lines</span>
+        <span class="k">if</span> <span class="o">[</span> <span class="k">$((</span><span class="o">(</span><span class="nv">$color</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">%</span> <span class="m">10</span><span class="k">))</span> <span class="o">==</span> 0 <span class="o">]</span> <span class="p">;</span> <span class="k">then
+            </span><span class="nb">echo</span> <span class="c">#New line</span>
+        <span class="k">fi
+    done
+    </span><span class="nb">echo</span> <span class="c">#New line</span>
+<span class="k">done
+
+</span><span class="nb">exit </span>0
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p><img src="/images/2013/06/05/TMUX_COLOUR_256.png" alt="TMUX_COLOUR_256" title="TMUX_COLOUR_256" /></p>
+
+<h4 id="4-実行">4. 実行</h4>
+
+<p>tmux を実行してみる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ tmux -2
+</code></pre></div></div>
+
+<p>オプションの <code class="language-plaintext highlighter-rouge">-2</code> は、256色で起動するオプション。（当方の環境では必要だった）</p>
+
+<p>以下は、タブを複数開いたり、ウィンドウを分割したりした例。</p>
+
+<p><img src="/images/2013/06/05/TMUX_EXAMPLE.png" alt="TMUX_EXAMPLE" title="TMUX_EXAMPLE" /></p>
+
+<h4 id="5-キー設定の確認">5. キー設定の確認</h4>
+
+<p>よく使用するであろうものは以下の通り。<br />
+以下はカスタマイズしていない場合の例。<br />
+以下のキー押下の前にプリフィックス（デフォルト：<code class="language-plaintext highlighter-rouge">CTRL-b</code>、当方：<code class="language-plaintext highlighter-rouge">CTRL-t</code>）を押下する。</p>
+
+<table class="common">
+  <tr>
+    <th>キーバインド</th><th>動作</th>
+  </tr>
+  <tr>
+    <td>c (create)</td><td>新ウインドウを作成</td>
+  </tr>
+  <tr>
+    <td>n (next)</td><td>次ウインドウへ移動</td>
+  </tr>
+  <tr>
+    <td>p (prev)</td><td>前ウインドウへ移動</td>
+  </tr>
+  <tr>
+    <td>w (windows)</td><td>ウインドウ一覧を表示</td>
+  </tr>
+  <tr>
+    <td>,</td><td>ウインドウに名前をつける</td>
+  </tr>
+  <tr>
+    <td>%</td><td>ウインドウを縦分割して新ペインを作成</td>
+  </tr>
+  <tr>
+    <td>"</td><td>ウインドウを横分割して新ペインを作成</td>
+  </tr>
+  <tr>
+    <td>o</td><td>次のペインに移動</td>
+  </tr>
+  <tr>
+    <td>カーソルキー</td><td>カーソルキーの方向のペインに移動</td>
+  </tr>
+  <tr>
+    <td>q + 番号</td><td>番号のペインに移動（q 押下後に一瞬ペイン番号が表示される）</td>
+  </tr>
+  <tr>
+    <td>[</td><td>コピーモード開始（Spaceキー：開始位置指定、Enterキー：終了位置指定）</td>
+  </tr>
+  <tr>
+    <td>]</td><td>ペースト</td>
+  </tr>
+  <tr>
+    <td>?</td><td>キーバインド一覧表示</td>
+  </tr>
+</table>
+
+<h4 id="6-所感">6. 所感</h4>
+
+<p>GNU Screen さえ使用したことがないので、tmux のキーバインドに慣れるには時間がかかりそうに感じた。<br />
+ただ、tmux では使用中のウィンドウ・ペイン構成（セッション）をデタッチすることで保存ができ、tmux 起動時にアタッチすることで復元されることが最大のメリットであることは、先人の方々のおっしゃるとおりだと感じた。<br />
+また、当方はあまり使用する機会はないが、別々のウィンドウ・ペインから同一のセッションにアクセスでき、画面入出力の同期がとれるのも素晴らしい機能だと感じた。</p>
+
+<h4 id="7-参考サイト">7. 参考サイト</h4>
+
+<ul>
+  <li><a href="http://tmux.github.io/" title="tmux">tmux</a></li>
+  <li><a href="http://gihyo.jp/admin/serial/01/ubuntu-recipe/0127" title="第127回　ターミナルマルチプレクサ tmuxを使ってみよう：Ubuntu Weekly Recipe｜gihyo.jp … 技術評論社">第127回　ターミナルマルチプレクサ tmuxを使ってみよう：Ubuntu Weekly Recipe｜gihyo.jp … 技術評論社</a></li>
+</ul>
+
+<hr />
+
+<p>「いまさら、tmux？」というような感じがしないでもないが、ぜひとも使いこなせるようになりたいと思った次第です。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/linuxmint" class="page__taxonomy-item" rel="tag">LinuxMint</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/tmux" class="page__taxonomy-item" rel="tag">tmux</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/%E7%AB%AF%E6%9C%AB" class="page__taxonomy-item" rel="tag">端末</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/pc-tips" class="page__taxonomy-item" rel="tag">PC_Tips</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-06-05T00:20:00+09:00">2013-06-05 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Linux+Mint+-+tmux+%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F06%2F05%2Flinux-mint-install-tmux%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F06%2F05%2Flinux-mint-install-tmux%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F06%2F05%2Flinux-mint-install-tmux%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/06/03/mysql-config-file-read-order/" class="pagination--pager" title="MySQL - 設定ファイル my.cnf 読み込み順序！
+">Previous</a>
+    
+    
+      <a href="/2013/06/06/linux-mint-tmux-auto-attach/" class="pagination--pager" title="Linux Mint - tmux 起動時に自動でアタッチ！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/06/05/linux-mint-install-tmux/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/06/05/linux-mint-install-tmux"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

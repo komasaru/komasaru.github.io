@@ -1,0 +1,1033 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby - Twitter ツイートを形態素解析！ - mk-mode BLOG</title>
+<meta name="description" content="当方、自宅サーバにて、Ruby + MySQL + Twitter API で Twitter の自分のツイートをアカウント取得（2011年7月7日）以来全て保存しております。形態素解析の勉強もかねて Ruby で解析してみました。以下の過去記事もご参照ください。  Cygwin - 形態素解析 MeCab をインストール！  Cygwin - Ruby で形態素解析 MeCab を使う！">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby - Twitter ツイートを形態素解析！">
+<meta property="og:url" content="https://komasaru.github.io/2012/03/23/23002043/">
+
+
+  <meta property="og:description" content="当方、自宅サーバにて、Ruby + MySQL + Twitter API で Twitter の自分のツイートをアカウント取得（2011年7月7日）以来全て保存しております。形態素解析の勉強もかねて Ruby で解析してみました。以下の過去記事もご参照ください。  Cygwin - 形態素解析 MeCab をインストール！  Cygwin - Ruby で形態素解析 MeCab を使う！">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby - Twitter ツイートを形態素解析！">
+  <meta name="twitter:description" content="当方、自宅サーバにて、Ruby + MySQL + Twitter API で Twitter の自分のツイートをアカウント取得（2011年7月7日）以来全て保存しております。形態素解析の勉強もかねて Ruby で解析してみました。以下の過去記事もご参照ください。  Cygwin - 形態素解析 MeCab をインストール！  Cygwin - Ruby で形態素解析 MeCab を使う！">
+  <meta name="twitter:url" content="https://komasaru.github.io/2012/03/23/23002043/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2012-03-23T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2012/03/23/23002043/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby - Twitter ツイートを形態素解析！">
+    <meta itemprop="description" content="当方、自宅サーバにて、Ruby + MySQL + Twitter API で Twitter の自分のツイートをアカウント取得（2011年7月7日）以来全て保存しております。形態素解析の勉強もかねて Ruby で解析してみました。以下の過去記事もご参照ください。  Cygwin - 形態素解析 MeCab をインストール！  Cygwin - Ruby で形態素解析 MeCab を使う！">
+    <meta itemprop="datePublished" content="March 23, 2012">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby - Twitter ツイートを形態素解析！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-03-23T00:20:00+09:00">2012-03-23 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>当方、自宅サーバにて、Ruby + MySQL + Twitter API で Twitter の自分のツイートをアカウント取得（2011年7月7日）以来全て保存しております。</p>
+
+<p>形態素解析の勉強もかねて Ruby で解析してみました。</p>
+
+<p>以下の過去記事もご参照ください。</p>
+
+<ul>
+  <li><a href="/2012/03/06/06002013/" title="Cygwin - 形態素解析 MeCab をインストール！">Cygwin - 形態素解析 MeCab をインストール！</a></li>
+  <li><a href="/2012/03/11/11002004/" title="Cygwin - Ruby で形態素解析 MeCab を使う！">Cygwin - Ruby で形態素解析 MeCab を使う！</a></li>
+</ul>
+
+<!--more-->
+
+<h3 id="解析結果">解析結果</h3>
+
+<p>Twitter アカウント取得時の2011年7月7日から当記事執筆時点の2012年3月14日までの全1,712件のツイートを集計。</p>
+
+<h4 id="１品詞別出現頻度集計">１．品詞別出現頻度集計</h4>
+
+<p>品詞別に出現頻度の多い単語上位20件を表示。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[名詞]----------------------
+名詞, . : 721
+名詞, / : 441
+名詞, :// : 382
+名詞, http : 381
+名詞, t : 284
+名詞, こと : 284
+名詞, co : 283
+名詞, の : 240
+名詞, - : 238
+名詞, 1 : 220
+名詞, よう : 207
+名詞, 3 : 174
+名詞, Ruby : 173
+名詞, 人 : 170
+名詞, BLOG : 155
+名詞, 時 : 153
+名詞, 2 : 151
+名詞, 年 : 145
+名詞, 日 : 138
+名詞, １ : 132
+[動詞]----------------------
+動詞, し : 736
+動詞, いる : 422
+動詞, する : 362
+動詞, い : 296
+動詞, ある : 238
+動詞, れ : 219
+動詞, さ : 215
+動詞, なっ : 184
+動詞, なる : 170
+動詞, てる : 117
+動詞, 思っ : 95
+動詞, て : 79
+動詞, れる : 64
+動詞, み : 64
+動詞, あっ : 60
+動詞, 思う : 57
+動詞, できる : 52
+動詞, 言っ : 45
+動詞, 見 : 44
+動詞, でき : 44
+[形容詞]--------------------
+形容詞, ない : 73
+形容詞, いい : 63
+形容詞, 多い : 38
+形容詞, 無い : 23
+形容詞, やすい : 22
+形容詞, 近い : 14
+形容詞, 悪い : 12
+形容詞, 古い : 10
+形容詞, おかしい : 10
+形容詞, よかっ : 10
+形容詞, にくい : 9
+形容詞, 欲しい : 9
+形容詞, なかっ : 9
+形容詞, っぽい : 9
+形容詞, 難しい : 9
+形容詞, 高い : 8
+形容詞, 良かっ : 8
+形容詞, なく : 8
+形容詞, 高 : 7
+形容詞, 重い : 7
+[副詞]----------------------
+副詞, どう : 42
+副詞, よく : 34
+副詞, そう : 33
+副詞, 少し : 30
+副詞, まだ : 27
+副詞, やっぱり : 25
+副詞, いつも : 25
+副詞, 時々 : 18
+副詞, 多分 : 17
+副詞, なぜ : 17
+副詞, すぐ : 16
+副詞, ちょっと : 16
+副詞, もっと : 15
+副詞, あまり : 15
+副詞, もう : 15
+副詞, 結構 : 14
+副詞, もちろん : 14
+副詞, 実際 : 13
+副詞, ほぼ : 12
+副詞, ずっと : 12
+[助詞]----------------------
+助詞, の : 2345
+助詞, が : 1768
+助詞, に : 1633
+助詞, は : 1324
+助詞, て : 1319
+助詞, で : 1082
+助詞, を : 1040
+助詞, と : 843
+助詞, も : 531
+助詞, から : 341
+助詞, か : 290
+助詞, ので : 172
+助詞, ね : 161
+助詞, って : 148
+助詞, という : 112
+助詞, のに : 95
+助詞, だけ : 93
+助詞, けど : 91
+助詞, ば : 86
+助詞, や : 78
+[接続詞]--------------------
+接続詞, でも : 45
+接続詞, そして : 23
+接続詞, ちなみに : 16
+接続詞, だから : 14
+接続詞, それとも : 11
+接続詞, 実は : 9
+接続詞, また : 9
+接続詞, それでも : 7
+接続詞, しかも : 6
+接続詞, しかし : 5
+接続詞, ただ : 4
+接続詞, が : 4
+接続詞, それにしても : 3
+接続詞, すなわち : 3
+接続詞, 一方 : 3
+接続詞, 但し : 3
+接続詞, それなら : 2
+接続詞, 及び : 2
+接続詞, 例えば : 2
+接続詞, ないし : 2
+[助動詞]--------------------
+助動詞, た : 1182
+助動詞, ない : 462
+助動詞, だ : 327
+助動詞, な : 277
+助動詞, です : 157
+助動詞, で : 141
+助動詞, う : 123
+助動詞, たら : 114
+助動詞, だっ : 113
+助動詞, ます : 84
+助動詞, なく : 82
+助動詞, なら : 47
+助動詞, なかっ : 37
+助動詞, まし : 36
+助動詞, ず : 36
+助動詞, だろ : 33
+助動詞, でしょ : 30
+助動詞, ん : 20
+助動詞, たい : 19
+助動詞, ある : 15
+[連体詞]--------------------
+連体詞, その : 45
+連体詞, 同じ : 42
+連体詞, この : 32
+連体詞, そんな : 27
+連体詞, 大きな : 11
+連体詞, ある : 10
+連体詞, どんな : 5
+連体詞, いろんな : 5
+連体詞, 我が : 4
+連体詞, ちょっとした : 4
+連体詞, とある : 4
+連体詞, どの : 4
+連体詞, 色んな : 3
+連体詞, 単なる : 2
+連体詞, どういう : 2
+連体詞, あの : 2
+連体詞, こんな : 2
+連体詞, わが : 2
+連体詞, 小さな : 2
+連体詞, 亡き : 1
+[感動詞]--------------------
+感動詞, ありがとう : 8
+感動詞, あ : 7
+感動詞, ま : 5
+感動詞, おめでとう : 4
+感動詞, ガーン : 3
+感動詞, う : 3
+感動詞, お疲れ様 : 2
+感動詞, あっ : 2
+感動詞, ただいま : 2
+感動詞, はじめまして : 1
+感動詞, うーん : 1
+感動詞, すみません : 1
+感動詞, おお : 1
+感動詞, えっ : 1
+感動詞, どういたしまして : 1
+感動詞, ふーん : 1
+[その他]--------------------
+記号, 。 : 2445
+記号, 、 : 1611
+記号, 」 : 803
+記号, 「 : 801
+記号, ！ : 781
+記号, ・ : 666
+記号, ？ : 355
+記号, ） : 236
+記号, （ : 235
+記号, 】 : 154
+記号, 【 : 153
+記号, ： : 32
+記号, ○ : 32
+接頭詞, 再 : 27
+接頭詞, 第 : 26
+接頭詞, 大 : 23
+接頭詞, 約 : 22
+接頭詞, 非 : 21
+接頭詞, お : 19
+記号, → : 16
+[全体]----------------------
+記号, 。 : 2445
+助詞, の : 2345
+助詞, が : 1768
+助詞, に : 1633
+記号, 、 : 1611
+助詞, は : 1324
+助詞, て : 1319
+助動詞, た : 1182
+助詞, で : 1082
+助詞, を : 1040
+助詞, と : 843
+記号, 」 : 803
+記号, 「 : 801
+記号, ！ : 781
+動詞, し : 736
+名詞, . : 721
+記号, ・ : 666
+助詞, も : 531
+助動詞, ない : 462
+名詞, / : 441
+</code></pre></div></div>
+
+<h4 id="２単語数別集計">２．単語数別集計</h4>
+
+<p>１ツイート当たりの単語数を集計。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  1 -  10 :  48
+ 11 -  20 : 300
+ 21 -  30 : 401
+ 31 -  40 : 309
+ 41 -  50 : 257
+ 51 -  60 : 201
+ 61 -  70 : 114
+ 71 -  80 :  63
+ 81 -  90 :  18
+ 91 - 100 :   1
+101 -     :   0
+</code></pre></div></div>
+
+<h4 id="３文字数別集計">３．文字数別集計</h4>
+
+<p>形態素解析に関係ないが、ついでなので、文字数別にも集計してみた。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  1 -  10 :   7
+ 11 -  20 :  48
+ 21 -  30 :  97
+ 31 -  40 : 161
+ 41 -  50 : 222
+ 51 -  60 : 246
+ 61 -  70 : 185
+ 71 -  80 : 172
+ 81 -  90 : 150
+ 91 - 100 : 128
+101 - 110 : 101
+111 - 120 :  69
+121 - 130 :  70
+131 - 140 :  56
+</code></pre></div></div>
+
+<hr />
+
+<p>今回の解析作業で自分のツイートの傾向がなんとなくですが分かりました。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/mysql" class="page__taxonomy-item" rel="tag">MySQL</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/twitter" class="page__taxonomy-item" rel="tag">Twitter</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/sns" class="page__taxonomy-item" rel="tag">SNS</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-03-23T00:20:00+09:00">2012-03-23 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+-+Twitter+%E3%83%84%E3%82%A4%E3%83%BC%E3%83%88%E3%82%92%E5%BD%A2%E6%85%8B%E7%B4%A0%E8%A7%A3%E6%9E%90%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2012%2F03%2F23%2F23002043%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2012%2F03%2F23%2F23002043%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2012%2F03%2F23%2F23002043%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2012/03/21/21002051/" class="pagination--pager" title="株式分割情報を集計！
+">Previous</a>
+    
+    
+      <a href="/2012/03/25/25002021/" class="pagination--pager" title="日経平均株価の計算方法！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2012/03/23/23002043/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2012/03/23/23002043"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,1212 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>ブログ - 1,000 投稿を記念して集計！ - mk-mode BLOG</title>
+<meta name="description" content="先日、2009年1月5日に当ブログを開設してから 1,000 ポスト目の記事を公開することができました。（ちなみに、この投稿は 1,024 ポスト目です）毎月アクセス解析・集計して当ブログ投稿したり、ホームページでリアルタイムに閲覧できるようにしたりしていますが、今回は 1,000 ポストという節目なので少し別の視点で集計してみました。個人的な記録ですので、興味がなければスルーしてください。ちなみに、集計は Markdown で記載している全ての記事（テキスト）ファイルを Ruby で読み込んで集計しました。（形態素解析には “MeCab” を使用）">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="ブログ - 1,000 投稿を記念して集計！">
+<meta property="og:url" content="https://komasaru.github.io/2013/12/08/blog-summary-1000-posts/">
+
+
+  <meta property="og:description" content="先日、2009年1月5日に当ブログを開設してから 1,000 ポスト目の記事を公開することができました。（ちなみに、この投稿は 1,024 ポスト目です）毎月アクセス解析・集計して当ブログ投稿したり、ホームページでリアルタイムに閲覧できるようにしたりしていますが、今回は 1,000 ポストという節目なので少し別の視点で集計してみました。個人的な記録ですので、興味がなければスルーしてください。ちなみに、集計は Markdown で記載している全ての記事（テキスト）ファイルを Ruby で読み込んで集計しました。（形態素解析には “MeCab” を使用）">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="ブログ - 1,000 投稿を記念して集計！">
+  <meta name="twitter:description" content="先日、2009年1月5日に当ブログを開設してから 1,000 ポスト目の記事を公開することができました。（ちなみに、この投稿は 1,024 ポスト目です）毎月アクセス解析・集計して当ブログ投稿したり、ホームページでリアルタイムに閲覧できるようにしたりしていますが、今回は 1,000 ポストという節目なので少し別の視点で集計してみました。個人的な記録ですので、興味がなければスルーしてください。ちなみに、集計は Markdown で記載している全ての記事（テキスト）ファイルを Ruby で読み込んで集計しました。（形態素解析には “MeCab” を使用）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/12/08/blog-summary-1000-posts/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-12-08T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/12/08/blog-summary-1000-posts/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="ブログ - 1,000 投稿を記念して集計！">
+    <meta itemprop="description" content="先日、2009年1月5日に当ブログを開設してから 1,000 ポスト目の記事を公開することができました。（ちなみに、この投稿は 1,024 ポスト目です）毎月アクセス解析・集計して当ブログ投稿したり、ホームページでリアルタイムに閲覧できるようにしたりしていますが、今回は 1,000 ポストという節目なので少し別の視点で集計してみました。個人的な記録ですので、興味がなければスルーしてください。ちなみに、集計は Markdown で記載している全ての記事（テキスト）ファイルを Ruby で読み込んで集計しました。（形態素解析には “MeCab” を使用）">
+    <meta itemprop="datePublished" content="December 08, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">ブログ - 1,000 投稿を記念して集計！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-12-08T00:20:00+09:00">2013-12-08 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>先日、2009年1月5日に当ブログを開設してから 1,000 ポスト目の記事を公開することができました。（ちなみに、この投稿は 1,024 ポスト目です）</p>
+
+<p>毎月アクセス解析・集計して当ブログ投稿したり、<a href="http://www.mk-mode.com/rails/" title="mk-mode- SITE">ホームページ</a>でリアルタイムに閲覧できるようにしたりしていますが、今回は 1,000 ポストという節目なので少し別の視点で集計してみました。</p>
+
+<p>個人的な記録ですので、興味がなければスルーしてください。</p>
+
+<p>ちなみに、集計は Markdown で記載している全ての記事（テキスト）ファイルを Ruby で読み込んで集計しました。（形態素解析には “MeCab” を使用）</p>
+
+<!--more-->
+
+<h3 id="1-カテゴリ別投稿数">1. カテゴリ別投稿数</h3>
+
+<p>当ブログのサイドバーでも確認できるが再掲してみた。（投稿数の降順）<br />
+当ブログがどのような趣向なのかが分かる。<br />
+（当投稿は集計に含んでいなので、サイドバーの「ブログ」カテゴリの件数と１件だけ合わない）</p>
+
+<table class="common">
+<tr><th class="center">カテゴリ</th><th class="center">投稿数</th></tr>
+<tr><td>サーバ構築</td><td class="right">332</td></tr>
+<tr><td>プログラミング</td><td class="right">262</td></tr>
+<tr><td>PC_Tips</td><td class="right">194</td></tr>
+<tr><td>ブログ</td><td class="right">177</td></tr>
+<tr><td>数学</td><td class="right">86</td></tr>
+<tr><td>ホームページ</td><td class="right">67</td></tr>
+<tr><td>日々の話題</td><td class="right">60</td></tr>
+<tr><td>株式</td><td class="right">51</td></tr>
+<tr><td>ロト６</td><td class="right">43</td></tr>
+<tr><td>自作PC</td><td class="right">35</td></tr>
+<tr><td>玄箱</td><td class="right">27</td></tr>
+<tr><td>SNS</td><td class="right">18</td></tr>
+<tr><td>ルービックキューブ</td><td class="right">5</td></tr>
+</table>
+
+<h3 id="2-タグ別投稿数">2. タグ別投稿数</h3>
+
+<p>こちらも、当ブログのサイドバーでも確認できるが再掲してみた。（投稿数の降順）<br />
+当ブログがどのような趣向なのかが分かる。<br />
+（当投稿は集計に含んでいなので、サイドバーの “MeCab”, “Ruby” タグの件数と１件だけ合わない）</p>
+
+<table class="common">
+<tr><th class="center">タグ</th><th class="center">投稿数</th></tr>
+<tr><td>Ruby</td><td class="right">265</td></tr>
+<tr><td>Linux</td><td class="right">121</td></tr>
+<tr><td>WordPress</td><td class="right">102</td></tr>
+<tr><td>MySQL</td><td class="right">101</td></tr>
+<tr><td>Windows</td><td class="right">97</td></tr>
+<tr><td>CentOS</td><td class="right">79</td></tr>
+<tr><td>Fedora</td><td class="right">61</td></tr>
+<tr><td>Rails</td><td class="right">54</td></tr>
+<tr><td>Debian</td><td class="right">43</td></tr>
+<tr><td>C言語</td><td class="right">39</td></tr>
+<tr><td>Octopress</td><td class="right">39</td></tr>
+<tr><td>ScientificLinux</td><td class="right">37</td></tr>
+<tr><td>LinuxMint</td><td class="right">34</td></tr>
+<tr><td>Cygwin</td><td class="right">31</td></tr>
+<tr><td>PHP</td><td class="right">26</td></tr>
+<tr><td>Apache</td><td class="right">24</td></tr>
+<tr><td>Mail</td><td class="right">23</td></tr>
+<tr><td>Twitter</td><td class="right">22</td></tr>
+<tr><td>nanoc</td><td class="right">17</td></tr>
+<tr><td>Nginx</td><td class="right">17</td></tr>
+<tr><td>HTML</td><td class="right">13</td></tr>
+<tr><td>JavaScript</td><td class="right">12</td></tr>
+<tr><td>W3C</td><td class="right">11</td></tr>
+<tr><td>Google</td><td class="right">10</td></tr>
+<tr><td>CSS</td><td class="right">9</td></tr>
+<tr><td>レジストリ</td><td class="right">9</td></tr>
+<tr><td>Webカメラ</td><td class="right">9</td></tr>
+<tr><td>シェル</td><td class="right">8</td></tr>
+<tr><td>FreeBSD</td><td class="right">7</td></tr>
+<tr><td>Vim</td><td class="right">7</td></tr>
+<tr><td>VMware</td><td class="right">7</td></tr>
+<tr><td>Unix</td><td class="right">7</td></tr>
+<tr><td>Facebook</td><td class="right">7</td></tr>
+<tr><td>VisualBasic</td><td class="right">7</td></tr>
+<tr><td>Java</td><td class="right">6</td></tr>
+<tr><td>Markdown</td><td class="right">6</td></tr>
+<tr><td>カレンダー</td><td class="right">6</td></tr>
+<tr><td>アフィリエイト</td><td class="right">6</td></tr>
+<tr><td>Samba</td><td class="right">6</td></tr>
+<tr><td>SQLServer</td><td class="right">6</td></tr>
+<tr><td>P183</td><td class="right">6</td></tr>
+<tr><td>Antec</td><td class="right">6</td></tr>
+<tr><td>Git</td><td class="right">6</td></tr>
+<tr><td>R</td><td class="right">6</td></tr>
+<tr><td>ウィルス対策</td><td class="right">6</td></tr>
+<tr><td>画像</td><td class="right">6</td></tr>
+<tr><td>FTP</td><td class="right">6</td></tr>
+<tr><td>正規表現</td><td class="right">5</td></tr>
+<tr><td>Postfix</td><td class="right">5</td></tr>
+<tr><td>バッチ</td><td class="right">5</td></tr>
+<tr><td>XML</td><td class="right">5</td></tr>
+<tr><td>端末</td><td class="right">5</td></tr>
+<tr><td>Atom</td><td class="right">5</td></tr>
+<tr><td>SSH</td><td class="right">5</td></tr>
+<tr><td>VirtualBox</td><td class="right">5</td></tr>
+<tr><td>Feed</td><td class="right">5</td></tr>
+<tr><td>DNS</td><td class="right">4</td></tr>
+<tr><td>MariaDB</td><td class="right">4</td></tr>
+<tr><td>VisualC＃</td><td class="right">4</td></tr>
+<tr><td>TEX</td><td class="right">4</td></tr>
+<tr><td>Unicorn</td><td class="right">4</td></tr>
+<tr><td>Intel</td><td class="right">4</td></tr>
+<tr><td>スパム対策</td><td class="right">4</td></tr>
+<tr><td>jekyll</td><td class="right">3</td></tr>
+<tr><td>プラグイン</td><td class="right">3</td></tr>
+<tr><td>Excel</td><td class="right">3</td></tr>
+<tr><td>munin</td><td class="right">3</td></tr>
+<tr><td>D945GCLF</td><td class="right">3</td></tr>
+<tr><td>NTP</td><td class="right">3</td></tr>
+<tr><td>XHTML</td><td class="right">3</td></tr>
+<tr><td>Knoppix</td><td class="right">3</td></tr>
+<tr><td>tmux</td><td class="right">3</td></tr>
+<tr><td>VisualC++</td><td class="right">3</td></tr>
+<tr><td>ASUS</td><td class="right">3</td></tr>
+<tr><td>GitHub</td><td class="right">2</td></tr>
+<tr><td>タグクラウド</td><td class="right">2</td></tr>
+<tr><td>Dovecot</td><td class="right">2</td></tr>
+<tr><td>bitly</td><td class="right">2</td></tr>
+<tr><td>Lokka</td><td class="right">2</td></tr>
+<tr><td>Yahoo</td><td class="right">2</td></tr>
+<tr><td>SMTP</td><td class="right">2</td></tr>
+<tr><td>OAuth</td><td class="right">2</td></tr>
+<tr><td>SEO</td><td class="right">2</td></tr>
+<tr><td>NFS</td><td class="right">2</td></tr>
+<tr><td>C#</td><td class="right">2</td></tr>
+<tr><td>Dirac</td><td class="right">2</td></tr>
+<tr><td>Noah</td><td class="right">2</td></tr>
+<tr><td>Fortran</td><td class="right">2</td></tr>
+<tr><td>Python</td><td class="right">2</td></tr>
+<tr><td>PXE</td><td class="right">2</td></tr>
+<tr><td>MeCab</td><td class="right">2</td></tr>
+<tr><td>Namazu</td><td class="right">1</td></tr>
+<tr><td>VBScript</td><td class="right">1</td></tr>
+<tr><td>FreeNAS</td><td class="right">1</td></tr>
+<tr><td>RedHatEnterpriseLinux</td><td class="right">1</td></tr>
+<tr><td>VisualStudio</td><td class="right">1</td></tr>
+<tr><td>Scala</td><td class="right">1</td></tr>
+<tr><td>SQL</td><td class="right">1</td></tr>
+<tr><td>エミュレータ</td><td class="right">1</td></tr>
+<tr><td>ENERMAX</td><td class="right">1</td></tr>
+<tr><td>atom</td><td class="right">1</td></tr>
+<tr><td>Perl</td><td class="right">1</td></tr>
+<tr><td>テスト</td><td class="right">1</td></tr>
+<tr><td>RSpec</td><td class="right">1</td></tr>
+<tr><td>Ubuntu</td><td class="right">1</td></tr>
+<tr><td>モバイル</td><td class="right">1</td></tr>
+<tr><td>形態素解析</td><td class="right">1</td></tr>
+<tr><td>Sinatra</td><td class="right">1</td></tr>
+<tr><td>TeX</td><td class="right">1</td></tr>
+<tr><td>Proxy</td><td class="right">1</td></tr>
+<tr><td>Core2Duo</td><td class="right">1</td></tr>
+<tr><td>Office</td><td class="right">1</td></tr>
+<tr><td>物理</td><td class="right">1</td></tr>
+<tr><td>SCYTHE</td><td class="right">1</td></tr>
+<tr><td>サーバ構築</td><td class="right">1</td></tr>
+<tr><td>SSL</td><td class="right">1</td></tr>
+<tr><td>WebDeveloper</td><td class="right">1</td></tr>
+<tr><td>zsh</td><td class="right">1</td></tr>
+<tr><td>tDiary</td><td class="right">1</td></tr>
+<tr><td>Disqus</td><td class="right">1</td></tr>
+<tr><td>OGP</td><td class="right">1</td></tr>
+<tr><td>thin</td><td class="right">1</td></tr>
+<tr><td>ファイアウォール</td><td class="right">1</td></tr>
+</table>
+
+<h3 id="3-本文行数別投稿数空白行は除く">3. 本文行数別投稿数（空白行は除く）</h3>
+
+<p>１投稿当たりの行数（空白行は除く）別に集計。<br />
+170 行未満の投稿が多いようだ。</p>
+
+<table class="common">
+<tr><th class="center">行数</th><th class="center">投稿数</th></tr>
+<tr><td class="right">0〜9</td><td class="right">21</td></tr>
+<tr><td class="right">10〜19</td><td class="right">123</td></tr>
+<tr><td class="right">20〜29</td><td class="right">154</td></tr>
+<tr><td class="right">30〜39</td><td class="right">104</td></tr>
+<tr><td class="right">40〜49</td><td class="right">77</td></tr>
+<tr><td class="right">50〜59</td><td class="right">75</td></tr>
+<tr><td class="right">60〜69</td><td class="right">58</td></tr>
+<tr><td class="right">70〜79</td><td class="right">44</td></tr>
+<tr><td class="right">80〜89</td><td class="right">47</td></tr>
+<tr><td class="right">90〜99</td><td class="right">42</td></tr>
+<tr><td class="right">100〜109</td><td class="right">26</td></tr>
+<tr><td class="right">110〜119</td><td class="right">38</td></tr>
+<tr><td class="right">120〜129</td><td class="right">29</td></tr>
+<tr><td class="right">130〜139</td><td class="right">16</td></tr>
+<tr><td class="right">140〜149</td><td class="right">24</td></tr>
+<tr><td class="right">150〜159</td><td class="right">14</td></tr>
+<tr><td class="right">160〜169</td><td class="right">20</td></tr>
+<tr><td class="right">170〜179</td><td class="right">5</td></tr>
+<tr><td class="right">180〜189</td><td class="right">8</td></tr>
+<tr><td class="right">190〜199</td><td class="right">7</td></tr>
+<tr><td class="right">200〜209</td><td class="right">6</td></tr>
+<tr><td class="right">210〜219</td><td class="right">6</td></tr>
+<tr><td class="right">220〜229</td><td class="right">5</td></tr>
+<tr><td class="right">230〜239</td><td class="right">5</td></tr>
+<tr><td class="right">240〜249</td><td class="right">3</td></tr>
+<tr><td class="right">250〜259</td><td class="right">6</td></tr>
+<tr><td class="right">260〜269</td><td class="right">3</td></tr>
+<tr><td class="right">270〜279</td><td class="right">4</td></tr>
+<tr><td class="right">280〜289</td><td class="right">2</td></tr>
+<tr><td class="right">290〜299</td><td class="right">2</td></tr>
+<tr><td class="right">300〜309</td><td class="right">2</td></tr>
+<tr><td class="right">310〜319</td><td class="right">4</td></tr>
+<tr><td class="right">330〜339</td><td class="right">1</td></tr>
+<tr><td class="right">350〜359</td><td class="right">2</td></tr>
+<tr><td class="right">360〜369</td><td class="right">3</td></tr>
+<tr><td class="right">370〜379</td><td class="right">1</td></tr>
+<tr><td class="right">380〜389</td><td class="right">1</td></tr>
+<tr><td class="right">390〜399</td><td class="right">1</td></tr>
+<tr><td class="right">410〜419</td><td class="right">3</td></tr>
+<tr><td class="right">420〜429</td><td class="right">2</td></tr>
+<tr><td class="right">440〜449</td><td class="right">2</td></tr>
+<tr><td class="right">460〜469</td><td class="right">1</td></tr>
+<tr><td class="right">470〜479</td><td class="right">4</td></tr>
+<tr><td class="right">480〜489</td><td class="right">1</td></tr>
+<tr><td class="right">490〜499</td><td class="right">3</td></tr>
+<tr><td class="right">500〜509</td><td class="right">2</td></tr>
+<tr><td class="right">520〜529</td><td class="right">3</td></tr>
+<tr><td class="right">530〜539</td><td class="right">3</td></tr>
+<tr><td class="right">540〜549</td><td class="right">2</td></tr>
+<tr><td class="right">550〜559</td><td class="right">2</td></tr>
+<tr><td class="right">560〜569</td><td class="right">5</td></tr>
+<tr><td class="right">570〜579</td><td class="right">1</td></tr>
+<tr><td class="right">600〜609</td><td class="right">1</td></tr>
+<tr><td class="right">1430〜1439</td><td class="right">1</td></tr>
+</table>
+
+<h3 id="4-本文文字数別投稿数">4. 本文文字数別投稿数</h3>
+
+<p>１投稿当たりの文字数（改行は除く）別に集計。<br />
+300 〜 400 文字以上 3,000 〜 3,100 文字以内が多いようだ。</p>
+
+<table class="common">
+<tr><th class="center">文字数</th><th class="center">投稿数</th></tr>
+<tr><td class="right">100〜199</td><td class="right">2</td></tr>
+<tr><td class="right">200〜299</td><td class="right">4</td></tr>
+<tr><td class="right">300〜399</td><td class="right">16</td></tr>
+<tr><td class="right">400〜499</td><td class="right">36</td></tr>
+<tr><td class="right">500〜599</td><td class="right">52</td></tr>
+<tr><td class="right">600〜699</td><td class="right">44</td></tr>
+<tr><td class="right">700〜799</td><td class="right">26</td></tr>
+<tr><td class="right">800〜899</td><td class="right">29</td></tr>
+<tr><td class="right">900〜999</td><td class="right">25</td></tr>
+<tr><td class="right">1000〜1099</td><td class="right">18</td></tr>
+<tr><td class="right">1100〜1199</td><td class="right">28</td></tr>
+<tr><td class="right">1200〜1299</td><td class="right">19</td></tr>
+<tr><td class="right">1300〜1399</td><td class="right">26</td></tr>
+<tr><td class="right">1400〜1499</td><td class="right">26</td></tr>
+<tr><td class="right">1500〜1599</td><td class="right">17</td></tr>
+<tr><td class="right">1600〜1699</td><td class="right">23</td></tr>
+<tr><td class="right">1700〜1799</td><td class="right">22</td></tr>
+<tr><td class="right">1800〜1899</td><td class="right">21</td></tr>
+<tr><td class="right">1900〜1999</td><td class="right">23</td></tr>
+<tr><td class="right">2000〜2099</td><td class="right">21</td></tr>
+<tr><td class="right">2100〜2199</td><td class="right">13</td></tr>
+<tr><td class="right">2200〜2299</td><td class="right">21</td></tr>
+<tr><td class="right">2300〜2399</td><td class="right">22</td></tr>
+<tr><td class="right">2400〜2499</td><td class="right">12</td></tr>
+<tr><td class="right">2500〜2599</td><td class="right">23</td></tr>
+<tr><td class="right">2600〜2699</td><td class="right">18</td></tr>
+<tr><td class="right">2700〜2799</td><td class="right">20</td></tr>
+<tr><td class="right">2800〜2899</td><td class="right">21</td></tr>
+<tr><td class="right">2900〜2999</td><td class="right">13</td></tr>
+<tr><td class="right">3000〜3099</td><td class="right">24</td></tr>
+<tr><td class="right">3100〜3199</td><td class="right">17</td></tr>
+<tr><td class="right">3200〜3299</td><td class="right">12</td></tr>
+<tr><td class="right">3300〜3399</td><td class="right">13</td></tr>
+<tr><td class="right">3400〜3499</td><td class="right">15</td></tr>
+<tr><td class="right">3500〜3599</td><td class="right">9</td></tr>
+<tr><td class="right">3600〜3699</td><td class="right">10</td></tr>
+<tr><td class="right">3700〜3799</td><td class="right">6</td></tr>
+<tr><td class="right">3800〜3899</td><td class="right">15</td></tr>
+<tr><td class="right">3900〜3999</td><td class="right">14</td></tr>
+<tr><td class="right">4000〜4099</td><td class="right">12</td></tr>
+<tr><td class="right">4100〜4199</td><td class="right">13</td></tr>
+<tr><td class="right">4200〜4299</td><td class="right">3</td></tr>
+<tr><td class="right">4300〜4399</td><td class="right">11</td></tr>
+<tr><td class="right">4400〜4499</td><td class="right">4</td></tr>
+<tr><td class="right">4500〜4599</td><td class="right">7</td></tr>
+<tr><td class="right">4600〜4699</td><td class="right">11</td></tr>
+<tr><td class="right">4700〜4799</td><td class="right">4</td></tr>
+<tr><td class="right">4800〜4899</td><td class="right">10</td></tr>
+<tr><td class="right">4900〜4999</td><td class="right">3</td></tr>
+<tr><td class="right">5000〜5099</td><td class="right">7</td></tr>
+<tr><td class="right">5100〜5199</td><td class="right">7</td></tr>
+<tr><td class="right">5200〜5299</td><td class="right">11</td></tr>
+<tr><td class="right">5300〜5399</td><td class="right">4</td></tr>
+<tr><td class="right">5400〜5499</td><td class="right">4</td></tr>
+<tr><td class="right">5500〜5599</td><td class="right">5</td></tr>
+<tr><td class="right">5600〜5699</td><td class="right">2</td></tr>
+<tr><td class="right">5700〜5799</td><td class="right">7</td></tr>
+<tr><td class="right">5800〜5899</td><td class="right">2</td></tr>
+<tr><td class="right">5900〜5999</td><td class="right">8</td></tr>
+<tr><td class="right">6000〜6099</td><td class="right">1</td></tr>
+<tr><td class="right">6100〜6199</td><td class="right">3</td></tr>
+<tr><td class="right">6200〜6299</td><td class="right">6</td></tr>
+<tr><td class="right">6300〜6399</td><td class="right">3</td></tr>
+<tr><td class="right">6400〜6499</td><td class="right">3</td></tr>
+<tr><td class="right">6500〜6599</td><td class="right">2</td></tr>
+<tr><td class="right">6600〜6699</td><td class="right">4</td></tr>
+<tr><td class="right">6900〜6999</td><td class="right">5</td></tr>
+<tr><td class="right">7000〜7099</td><td class="right">2</td></tr>
+<tr><td class="right">7100〜7199</td><td class="right">1</td></tr>
+<tr><td class="right">7200〜7299</td><td class="right">1</td></tr>
+<tr><td class="right">7300〜7399</td><td class="right">1</td></tr>
+<tr><td class="right">7400〜7499</td><td class="right">1</td></tr>
+<tr><td class="right">7500〜7599</td><td class="right">3</td></tr>
+<tr><td class="right">7600〜7699</td><td class="right">2</td></tr>
+<tr><td class="right">7700〜7799</td><td class="right">1</td></tr>
+<tr><td class="right">7800〜7899</td><td class="right">1</td></tr>
+<tr><td class="right">7900〜7999</td><td class="right">2</td></tr>
+<tr><td class="right">8100〜8199</td><td class="right">3</td></tr>
+<tr><td class="right">8200〜8299</td><td class="right">4</td></tr>
+<tr><td class="right">8300〜8399</td><td class="right">2</td></tr>
+<tr><td class="right">8400〜8499</td><td class="right">1</td></tr>
+<tr><td class="right">8500〜8599</td><td class="right">1</td></tr>
+<tr><td class="right">8700〜8799</td><td class="right">1</td></tr>
+<tr><td class="right">8900〜8999</td><td class="right">1</td></tr>
+<tr><td class="right">9000〜9099</td><td class="right">1</td></tr>
+<tr><td class="right">9300〜9399</td><td class="right">2</td></tr>
+<tr><td class="right">9400〜9499</td><td class="right">2</td></tr>
+<tr><td class="right">9600〜9699</td><td class="right">1</td></tr>
+<tr><td class="right">9700〜9799</td><td class="right">1</td></tr>
+<tr><td class="right">10000〜10099</td><td class="right">3</td></tr>
+<tr><td class="right">10100〜10199</td><td class="right">2</td></tr>
+<tr><td class="right">10200〜10299</td><td class="right">3</td></tr>
+<tr><td class="right">10300〜10399</td><td class="right">3</td></tr>
+<tr><td class="right">10400〜10499</td><td class="right">2</td></tr>
+<tr><td class="right">10500〜10599</td><td class="right">2</td></tr>
+<tr><td class="right">10700〜10799</td><td class="right">4</td></tr>
+<tr><td class="right">10800〜10899</td><td class="right">3</td></tr>
+<tr><td class="right">10900〜10999</td><td class="right">4</td></tr>
+<tr><td class="right">11000〜11099</td><td class="right">4</td></tr>
+<tr><td class="right">11200〜11299</td><td class="right">2</td></tr>
+<tr><td class="right">11400〜11499</td><td class="right">3</td></tr>
+<tr><td class="right">11600〜11699</td><td class="right">1</td></tr>
+<tr><td class="right">12000〜12099</td><td class="right">1</td></tr>
+<tr><td class="right">12100〜12199</td><td class="right">1</td></tr>
+<tr><td class="right">12200〜12299</td><td class="right">2</td></tr>
+<tr><td class="right">12400〜12499</td><td class="right">1</td></tr>
+<tr><td class="right">13000〜13099</td><td class="right">1</td></tr>
+<tr><td class="right">13300〜13399</td><td class="right">1</td></tr>
+<tr><td class="right">13400〜13499</td><td class="right">1</td></tr>
+<tr><td class="right">13500〜13599</td><td class="right">1</td></tr>
+<tr><td class="right">13900〜13999</td><td class="right">1</td></tr>
+<tr><td class="right">14500〜14599</td><td class="right">1</td></tr>
+<tr><td class="right">16300〜16399</td><td class="right">1</td></tr>
+<tr><td class="right">17200〜17299</td><td class="right">1</td></tr>
+<tr><td class="right">18100〜18199</td><td class="right">1</td></tr>
+<tr><td class="right">18900〜18999</td><td class="right">1</td></tr>
+<tr><td class="right">24800〜24899</td><td class="right">1</td></tr>
+</table>
+
+<h3 id="5-１投稿当たり単語数別集計">5. １投稿当たり単語数別集計</h3>
+
+<p>形態素解析による単語認識で、１投稿当たりの単語数を集計。<br />
+当然ながら、行数・文字数に比例した結果となった。</p>
+
+<table class="common">
+<tr><th class="center">単語数</th><th class="center">投稿数</th></tr>
+<tr><td class="right">0〜99</td><td class="right">1</td></tr>
+<tr><td class="right">100〜199</td><td class="right">28</td></tr>
+<tr><td class="right">200〜299</td><td class="right">99</td></tr>
+<tr><td class="right">300〜399</td><td class="right">67</td></tr>
+<tr><td class="right">400〜499</td><td class="right">59</td></tr>
+<tr><td class="right">500〜599</td><td class="right">76</td></tr>
+<tr><td class="right">600〜699</td><td class="right">58</td></tr>
+<tr><td class="right">700〜799</td><td class="right">56</td></tr>
+<tr><td class="right">800〜899</td><td class="right">67</td></tr>
+<tr><td class="right">900〜999</td><td class="right">51</td></tr>
+<tr><td class="right">1000〜1099</td><td class="right">58</td></tr>
+<tr><td class="right">1100〜1199</td><td class="right">45</td></tr>
+<tr><td class="right">1200〜1299</td><td class="right">47</td></tr>
+<tr><td class="right">1300〜1399</td><td class="right">42</td></tr>
+<tr><td class="right">1400〜1499</td><td class="right">25</td></tr>
+<tr><td class="right">1500〜1599</td><td class="right">32</td></tr>
+<tr><td class="right">1600〜1699</td><td class="right">22</td></tr>
+<tr><td class="right">1700〜1799</td><td class="right">23</td></tr>
+<tr><td class="right">1800〜1899</td><td class="right">11</td></tr>
+<tr><td class="right">1900〜1999</td><td class="right">11</td></tr>
+<tr><td class="right">2000〜2099</td><td class="right">14</td></tr>
+<tr><td class="right">2100〜2199</td><td class="right">11</td></tr>
+<tr><td class="right">2200〜2299</td><td class="right">4</td></tr>
+<tr><td class="right">2300〜2399</td><td class="right">13</td></tr>
+<tr><td class="right">2400〜2499</td><td class="right">11</td></tr>
+<tr><td class="right">2500〜2599</td><td class="right">5</td></tr>
+<tr><td class="right">2600〜2699</td><td class="right">10</td></tr>
+<tr><td class="right">2700〜2799</td><td class="right">4</td></tr>
+<tr><td class="right">2800〜2899</td><td class="right">9</td></tr>
+<tr><td class="right">2900〜2999</td><td class="right">5</td></tr>
+<tr><td class="right">3000〜3099</td><td class="right">3</td></tr>
+<tr><td class="right">3100〜3199</td><td class="right">2</td></tr>
+<tr><td class="right">3200〜3299</td><td class="right">3</td></tr>
+<tr><td class="right">3300〜3399</td><td class="right">4</td></tr>
+<tr><td class="right">3500〜3599</td><td class="right">1</td></tr>
+<tr><td class="right">3600〜3699</td><td class="right">2</td></tr>
+<tr><td class="right">3700〜3799</td><td class="right">3</td></tr>
+<tr><td class="right">3800〜3899</td><td class="right">5</td></tr>
+<tr><td class="right">3900〜3999</td><td class="right">4</td></tr>
+<tr><td class="right">4000〜4099</td><td class="right">8</td></tr>
+<tr><td class="right">4100〜4199</td><td class="right">5</td></tr>
+<tr><td class="right">4200〜4299</td><td class="right">7</td></tr>
+<tr><td class="right">4300〜4399</td><td class="right">3</td></tr>
+<tr><td class="right">4400〜4499</td><td class="right">2</td></tr>
+<tr><td class="right">4600〜4699</td><td class="right">1</td></tr>
+<tr><td class="right">4800〜4899</td><td class="right">1</td></tr>
+<tr><td class="right">4900〜4999</td><td class="right">1</td></tr>
+<tr><td class="right">5000〜5099</td><td class="right">1</td></tr>
+<tr><td class="right">5700〜5799</td><td class="right">1</td></tr>
+<tr><td class="right">5900〜5999</td><td class="right">1</td></tr>
+<tr><td class="right">6300〜6399</td><td class="right">1</td></tr>
+<tr><td class="right">7100〜7199</td><td class="right">1</td></tr>
+<tr><td class="right">9700〜9799</td><td class="right">1</td></tr>
+</table>
+
+<h3 id="6-品詞別出現回数">6. 品詞別出現回数</h3>
+
+<p>形態素解析による単語認識で、全投稿内の品詞別出現回数を集計。<br />
+やはり、「名詞」がダントツで多いようだ。（使用する形態素解析エンジンにもよるだろうが。当方は “MeCab” を使用）</p>
+
+<table class="common">
+<tr><th class="center">品詞</th><th class="center">出現回数</th></tr>
+<tr><td>名詞</td><td class="right">920,217</td></tr>
+<tr><td>助詞</td><td class="right">106,616</td></tr>
+<tr><td>記号</td><td class="right">71,021</td></tr>
+<tr><td>動詞</td><td class="right">50,886</td></tr>
+<tr><td>助動詞</td><td class="right">35,665</td></tr>
+<tr><td>副詞</td><td class="right">4,797</td></tr>
+<tr><td>接頭詞</td><td class="right">3,712</td></tr>
+<tr><td>接続詞</td><td class="right">3,568</td></tr>
+<tr><td>連体詞</td><td class="right">2,737</td></tr>
+<tr><td>形容詞</td><td class="right">2,673</td></tr>
+<tr><td>感動詞</td><td class="right">1,114</td></tr>
+<tr><td>フィラー</td><td class="right">73</td></tr>
+</table>
+
+<h3 id="7-単語別出現回数">7. 単語別出現回数</h3>
+
+<p>形態素解析による単語認識で、全投稿内の単語別（品詞別）出現回数を集計。<br />
+使用する形態素解析エンジンにもよるだろうが、判別がシビアなため上位に出現する単語は「単語」とは程遠いものだ。<br />
+また、単語別（品詞別）なので全部で 30,000 種類もあった。</p>
+
+<table class="common">
+<tr><th class="center">単語</th><th>品詞</th><th class="center">出現回数</th></tr>
+<tr><td>.</td><td>名詞</td><td class="right">35459</td></tr>
+<tr><td>-</td><td>名詞</td><td class="right">31402</td></tr>
+<tr><td>$gt;</td><td>名詞</td><td class="right">26001</td></tr>
+<tr><td>。</td><td>記号</td><td class="right">22796</td></tr>
+<tr><td>/</td><td>名詞</td><td class="right">22771</td></tr>
+<tr><td>td</td><td>名詞</td><td class="right">22198</td></tr>
+<tr><td>の</td><td>助詞</td><td class="right">18434</td></tr>
+<tr><td>_</td><td>名詞</td><td class="right">17620</td></tr>
+<tr><td>&lt;</td><td>名詞</td><td class="right">17171</td></tr>
+<tr><td>、</td><td>記号</td><td class="right">16372</td></tr>
+<tr><td class="center">：</td><td class="center">：</td><td class="center">：</td></tr>
+</table>
+
+<h3 id="参考">参考</h3>
+
+<p>Ruby で形態素解析エンジン MeCab を使用する方法については、以下の過去記事を参照。</p>
+
+<ul>
+  <li><a href="http://www.mk-mode.com/octopress/2013/01/08/linux-mint-ruby-mecab/" title="Linux Mint - Ruby で形態素解析 MeCab を使う！">Linux Mint - Ruby で形態素解析 MeCab を使う！</a></li>
+</ul>
+
+<p>アクセス解析の観点での集計は、当方サイト「ブログ」メニューから確認できる。</p>
+
+<ul>
+  <li><a href="http://www.mk-mode.com/rails/" title="mk-mode SITE">mk-mode SITE</a></li>
+</ul>
+
+<hr />
+
+<p>「集計した結果がどう」というより、「集計する作業」自体が楽しかっただけのような気もします。<br />
+普段から行なっているアクセス解析の方が有用性が高いです。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/mecab" class="page__taxonomy-item" rel="tag">MeCab</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%96%E3%83%AD%E3%82%B0" class="page__taxonomy-item" rel="tag">ブログ</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-12-08T00:20:00+09:00">2013-12-08 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E3%83%96%E3%83%AD%E3%82%B0+-+1%2C000+%E6%8A%95%E7%A8%BF%E3%82%92%E8%A8%98%E5%BF%B5%E3%81%97%E3%81%A6%E9%9B%86%E8%A8%88%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F12%2F08%2Fblog-summary-1000-posts%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F12%2F08%2Fblog-summary-1000-posts%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F12%2F08%2Fblog-summary-1000-posts%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/12/06/xml-convert-return-to-br-by-xslt/" class="pagination--pager" title="XML - XSLT で改行コードを br タグに変換！
+">Previous</a>
+    
+    
+      <a href="/2013/12/10/ruby-search-vendor-from-mac-address/" class="pagination--pager" title="Ruby - MAC アドレスからベンダ名判別！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/12/08/blog-summary-1000-posts/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/12/08/blog-summary-1000-posts"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

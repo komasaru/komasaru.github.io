@@ -1,0 +1,1094 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby - JPL 天文暦データから地球と惑星の距離を計算！ - mk-mode BLOG</title>
+<meta name="description" content="NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している太陽・月・惑星の暦の最新版 DE430 には太陽・月・惑星の位置（ICRS座標系）の情報が格納されています。それらの値を使用して、地球から太陽・月・その他の惑星との間の距離を Ruby で計算してみました。（JPL DE430 の情報を読み込むには自作の RubyGems ライブラリ “eph_jpl” を使用する）">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby - JPL 天文暦データから地球と惑星の距離を計算！">
+<meta property="og:url" content="https://komasaru.github.io/2016/08/30/ruby-planetary-distance-calculation-with-jpl/">
+
+
+  <meta property="og:description" content="NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している太陽・月・惑星の暦の最新版 DE430 には太陽・月・惑星の位置（ICRS座標系）の情報が格納されています。それらの値を使用して、地球から太陽・月・その他の惑星との間の距離を Ruby で計算してみました。（JPL DE430 の情報を読み込むには自作の RubyGems ライブラリ “eph_jpl” を使用する）">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby - JPL 天文暦データから地球と惑星の距離を計算！">
+  <meta name="twitter:description" content="NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している太陽・月・惑星の暦の最新版 DE430 には太陽・月・惑星の位置（ICRS座標系）の情報が格納されています。それらの値を使用して、地球から太陽・月・その他の惑星との間の距離を Ruby で計算してみました。（JPL DE430 の情報を読み込むには自作の RubyGems ライブラリ “eph_jpl” を使用する）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2016/08/30/ruby-planetary-distance-calculation-with-jpl/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2016-08-30T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2016/08/30/ruby-planetary-distance-calculation-with-jpl/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby - JPL 天文暦データから地球と惑星の距離を計算！">
+    <meta itemprop="description" content="NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している太陽・月・惑星の暦の最新版 DE430 には太陽・月・惑星の位置（ICRS座標系）の情報が格納されています。それらの値を使用して、地球から太陽・月・その他の惑星との間の距離を Ruby で計算してみました。（JPL DE430 の情報を読み込むには自作の RubyGems ライブラリ “eph_jpl” を使用する）">
+    <meta itemprop="datePublished" content="August 30, 2016">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby - JPL 天文暦データから地球と惑星の距離を計算！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-08-30T00:20:00+09:00">2016-08-30 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している太陽・月・惑星の暦の最新版 DE430 には太陽・月・惑星の位置（ICRS座標系）の情報が格納されています。</p>
+
+<p>それらの値を使用して、地球から太陽・月・その他の惑星との間の距離を Ruby で計算してみました。（JPL DE430 の情報を読み込むには自作の RubyGems ライブラリ “eph_jpl” を使用する）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Ruby 2.3.1-p112 での作業を想定。</li>
+  <li>JPL DE430 のバイナリデータを<a href="ftp://ssd.jpl.nasa.gov/pub/eph/planets/ascii/de430/header.430_572">こちら</a>から取得し “JPLEPH” とリネームして適当なディレ取りに配置しておく。</li>
+  <li>当方作成の RubyGems ライブラリ <a href="https://rubygems.org/gems/eph_jpl" title="eph_jpl - RubyGems.org">eph_jpl - RubyGems.org</a> がインストール済みであること。</li>
+</ul>
+
+<h3 id="1-ruby-スクリプトの作成">1. Ruby スクリプトの作成</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">jpl_distance_earth.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+</pre></td><td class="code"><pre><span class="c1">#! /usr/local/bin/ruby</span>
+<span class="c1"># coding: utf-8</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1">#= JPLEPH(JPL の DE430 バイナリデータ)読込後に座標（位置・速度）を計算し、さらに</span>
+<span class="c1">#  地球から太陽・惑星・月までの距離を計算する。</span>
+<span class="c1">#  : 自作の RubyGems ライブラリ eph_jpl を使用する</span>
+<span class="c1">#    （JPL DE430 のバイナリデータが準備済みであること）</span>
+<span class="c1">#</span>
+<span class="c1"># date          name            version</span>
+<span class="c1"># 2016.07.13    mk-mode.com     1.00 新規作成</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright(C) 2016 mk-mode.com All Rights Reserved.</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1"># 【引数】 ユリウス日</span>
+<span class="c1">#          （省略可。省略時は現在日時のユリウス日を地球時TT(≒太陽系力学時TDB)とみなす）</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1">#++</span>
+<span class="nb">require</span> <span class="s1">'eph_jpl'</span>
+
+<span class="k">class</span> <span class="nc">JplDistanceEarth</span>
+  <span class="no">FILE_BIN</span> <span class="o">=</span> <span class="s2">"/path/to/JPLEPH"</span>
+  <span class="no">USAGE</span>    <span class="o">=</span> <span class="s2">"【使用方法】 ./jpl_distance_earth.rb [ユリウス日]"</span>
+  <span class="no">CENTER</span>   <span class="o">=</span> <span class="mi">3</span>
+  <span class="no">KM</span>       <span class="o">=</span> <span class="kp">false</span>  <span class="c1"># true: km, false: AU</span>
+  <span class="no">BODIES</span> <span class="o">=</span> <span class="p">{</span>
+     <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s2">"  水星 (Mercury)"</span><span class="p">,</span>  <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s2">"  金星 (Venus)  "</span><span class="p">,</span>  <span class="mi">3</span> <span class="o">=&gt;</span> <span class="s2">"  地球 (Earth)  "</span><span class="p">,</span>
+     <span class="mi">4</span> <span class="o">=&gt;</span> <span class="s2">"  火星 (Mars)   "</span><span class="p">,</span>  <span class="mi">5</span> <span class="o">=&gt;</span> <span class="s2">"  木星 (Jupiter)"</span><span class="p">,</span>  <span class="mi">6</span> <span class="o">=&gt;</span> <span class="s2">"  土星 (Saturn) "</span><span class="p">,</span>
+     <span class="mi">7</span> <span class="o">=&gt;</span> <span class="s2">"天王星 (Uranus) "</span><span class="p">,</span>  <span class="mi">8</span> <span class="o">=&gt;</span> <span class="s2">"海王星 (Neptune)"</span><span class="p">,</span>  <span class="mi">9</span> <span class="o">=&gt;</span> <span class="s2">"冥王星 (Pluto)  "</span><span class="p">,</span>
+    <span class="mi">10</span> <span class="o">=&gt;</span> <span class="s2">"    月 (Moon)   "</span><span class="p">,</span> <span class="mi">11</span> <span class="o">=&gt;</span> <span class="s2">"  太陽 (Sun)    "</span>
+  <span class="p">}</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="vi">@jd</span>   <span class="o">=</span> <span class="n">get_args</span>
+    <span class="vi">@unit</span> <span class="o">=</span> <span class="no">KM</span> <span class="p">?</span> <span class="s2">"KM"</span> <span class="p">:</span> <span class="s2">"AU"</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">exec</span>
+    <span class="nb">puts</span> <span class="s2">"JD(TT) = </span><span class="si">#{</span><span class="vi">@jd</span><span class="si">}</span><span class="se">\n</span><span class="si">#{</span><span class="no">BODIES</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+    <span class="no">BODIES</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">target</span><span class="p">,</span> <span class="n">target_name</span><span class="o">|</span>
+      <span class="k">next</span> <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="mi">3</span>
+      <span class="n">eph</span> <span class="o">=</span> <span class="no">EphJpl</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">FILE_BIN</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="no">CENTER</span><span class="p">,</span> <span class="vi">@jd</span><span class="p">,</span> <span class="no">KM</span><span class="p">)</span>
+      <span class="n">ps</span> <span class="o">=</span> <span class="n">eph</span><span class="p">.</span><span class="nf">calc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+      <span class="n">d</span> <span class="o">=</span> <span class="n">calc_distance</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span>
+      <span class="n">d</span> <span class="o">=</span> <span class="no">KM</span> <span class="p">?</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"%19.8f"</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="p">:</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"%11.8f"</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="s2">"- </span><span class="si">#{</span><span class="n">target_name</span><span class="si">}</span><span class="s2"> : </span><span class="si">#{</span><span class="n">d</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="vi">@unit</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">end</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s2">"[</span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">msg</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="nf">backtrace</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">tr</span><span class="o">|</span> <span class="s2">"</span><span class="se">\t</span><span class="si">#{</span><span class="n">tr</span><span class="si">}</span><span class="s2">"</span><span class="p">}.</span><span class="nf">join</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="n">msg</span>
+    <span class="nb">exit</span> <span class="mi">1</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># コマンドライン引数取得</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  &lt;none&gt;</span>
+  <span class="c1"># @return: jd</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_args</span>
+    <span class="n">jd</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">.</span><span class="nf">shift</span>
+    <span class="k">return</span> <span class="n">jd</span> <span class="p">?</span> <span class="n">jd</span><span class="p">.</span><span class="nf">to_f</span> <span class="p">:</span> <span class="n">gc2jd</span><span class="p">({</span>
+      <span class="ss">year:  </span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y"</span><span class="p">).</span><span class="nf">to_i</span><span class="p">,</span>
+      <span class="ss">month: </span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%m"</span><span class="p">).</span><span class="nf">to_i</span><span class="p">,</span>
+      <span class="ss">day:   </span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%d"</span><span class="p">).</span><span class="nf">to_i</span><span class="p">,</span>
+      <span class="ss">hour:  </span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%H"</span><span class="p">).</span><span class="nf">to_i</span><span class="p">,</span>
+      <span class="ss">min:   </span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%M"</span><span class="p">).</span><span class="nf">to_i</span><span class="p">,</span>
+      <span class="ss">sec:   </span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%S"</span><span class="p">).</span><span class="nf">to_i</span>
+    <span class="p">})</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="nb">puts</span> <span class="no">USAGE</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 年月日(グレゴリオ暦)からユリウス日(JD)を計算する</span>
+  <span class="c1">#</span>
+  <span class="c1"># * フリーゲルの公式を使用する</span>
+  <span class="c1">#   JD = int(365.25 * year)</span>
+  <span class="c1">#      + int(year / 400)</span>
+  <span class="c1">#      - int(year / 100)</span>
+  <span class="c1">#      + int(30.59 (month - 2))</span>
+  <span class="c1">#      + day</span>
+  <span class="c1">#      + 1721088</span>
+  <span class="c1"># * 上記の int(x) は厳密には、 x を超えない最大の整数</span>
+  <span class="c1"># * 「ユリウス日」でなく「準ユリウス日」を求めるなら、</span>
+  <span class="c1">#   `+ 1721088` を `- 678912` とする。</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  hash = {</span>
+  <span class="c1">#            year(int), month(int), day(int), hour(int), min(int), sec(int)</span>
+  <span class="c1">#          }</span>
+  <span class="c1"># @return: jd (ユリウス日)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">gc2jd</span><span class="p">(</span><span class="nb">hash</span><span class="p">)</span>
+    <span class="n">year</span>  <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:year</span><span class="p">]</span>
+    <span class="n">month</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:month</span><span class="p">]</span>
+    <span class="n">day</span>   <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:day</span><span class="p">]</span>
+    <span class="n">hour</span>  <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:hour</span><span class="p">]</span>
+    <span class="n">min</span>   <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:min</span><span class="p">]</span>
+    <span class="n">sec</span>   <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:sec</span><span class="p">]</span>
+
+    <span class="k">begin</span>
+      <span class="c1"># 1月,2月は前年の13月,14月とする</span>
+      <span class="k">if</span> <span class="n">month</span> <span class="o">&lt;</span> <span class="mi">3</span>
+        <span class="n">year</span>  <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">month</span> <span class="o">+=</span> <span class="mi">12</span>
+      <span class="k">end</span>
+      <span class="c1"># 日付(整数)部分計算</span>
+      <span class="n">jd</span> <span class="o">=</span> <span class="p">(</span><span class="mf">365.25</span> <span class="o">*</span> <span class="n">year</span><span class="p">).</span><span class="nf">floor</span> <span class="p">\</span>
+         <span class="o">+</span> <span class="p">(</span><span class="n">year</span> <span class="o">/</span> <span class="mf">400.0</span><span class="p">).</span><span class="nf">floor</span> <span class="p">\</span>
+         <span class="o">-</span> <span class="p">(</span><span class="n">year</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">).</span><span class="nf">floor</span> <span class="p">\</span>
+         <span class="o">+</span> <span class="p">(</span><span class="mf">30.59</span> <span class="o">*</span> <span class="p">(</span><span class="n">month</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)).</span><span class="nf">floor</span> <span class="p">\</span>
+         <span class="o">+</span> <span class="n">day</span> <span class="p">\</span>
+         <span class="o">+</span> <span class="mi">1721088</span>
+      <span class="c1"># 時間(小数)部分計算</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">sec</span> <span class="o">/</span> <span class="mf">3600.0</span> <span class="o">+</span> <span class="n">min</span> <span class="o">/</span> <span class="mf">60.0</span> <span class="o">+</span> <span class="n">hour</span><span class="p">)</span> <span class="o">/</span> <span class="mf">24.0</span>
+      <span class="k">return</span> <span class="n">jd</span> <span class="o">+</span> <span class="n">t</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 距離計算</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  ps       (x-座標, y-座標, z-座標)</span>
+  <span class="c1"># @return: distance (距離)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_distance</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span>
+    <span class="k">return</span> <span class="no">Math</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">ps</span><span class="p">.</span><span class="nf">inject</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="o">|</span> <span class="n">s</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">a</span> <span class="p">})</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">JplDistanceEarth</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">exec</span> <span class="k">if</span> <span class="kp">__FILE__</span> <span class="o">==</span> <span class="vg">$0</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/f73e86318d91edadee59bceceb5abf61" title="Gist - Ruby script to calculate planetary distances.">Gist - Ruby script to calculate planetary distances.</a></li>
+</ul>
+
+<h3 id="2-ruby-スクリプトの実行">2. Ruby スクリプトの実行</h3>
+
+<p>以下は、「地球時(TT)2016年7月13日0時0時0分0秒」で計算した例。（距離単位を AU で計算したものと km で計算したもの）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./jpl_distance_earth.rb 2457582.5
+JD(TT) = 2457582.5
+地球 (Earth)
+-   水星 (Mercury) :  1.32217757 AU
+-   金星 (Venus)   :  1.69764291 AU
+-   火星 (Mars)    :  0.62571104 AU
+-   木星 (Jupiter) :  5.91822023 AU
+-   土星 (Saturn)  :  9.23857800 AU
+- 天王星 (Uranus)  : 19.99078537 AU
+- 海王星 (Neptune) : 29.30214573 AU
+- 冥王星 (Pluto)   : 32.12201719 AU
+-     月 (Moon)    :  0.00270216 AU
+-   太陽 (Sun)     :  1.01654960 AU
+
+$ ./jpl_distance_earth.rb 2457582.5
+JD(TT) = 2457582.5
+地球 (Earth)
+-   水星 (Mercury) :  197794949.19472104 KM
+-   金星 (Venus)   :  253963763.90310407 KM
+-   火星 (Mars)    :   93605038.57629812 KM
+-   木星 (Jupiter) :  885353144.47506535 KM
+-   土星 (Saturn)  : 1382071597.57920527 KM
+- 天王星 (Uranus)  : 2990578925.21471119 KM
+- 海王星 (Neptune) : 4383538608.69842434 KM
+- 冥王星 (Pluto)   : 4805385374.42336559 KM
+-     月 (Moon)    :     404237.25163473 KM
+-   太陽 (Sun)     :  152073656.28368542 KM
+</code></pre></div></div>
+
+<h3 id="3-計算結果の検証">3. 計算結果の検証</h3>
+
+<p>国立天文台暦計算室・暦象年表のツールで確認してみる。</p>
+
+<ul>
+  <li><a href="http://eco.mtk.nao.ac.jp/cgi-bin/koyomi/cande/sun.cgi" title="太陽の地心座標">太陽の地心座標</a></li>
+  <li><a href="http://eco.mtk.nao.ac.jp/cgi-bin/koyomi/cande/moon.cgi" title="月の地心座標">月の地心座標</a></li>
+  <li><a href="http://eco.mtk.nao.ac.jp/cgi-bin/koyomi/cande/planet.cgi" title="惑星の地心座標">惑星の地心座標</a></li>
+</ul>
+
+<p>かなりの精度で一致することが確認できる。（但し、月は AU 単位では確認できない）</p>
+
+<h3 id="4-参考サイト">4. 参考サイト</h3>
+
+<ul>
+  <li><a href="https://rubygems.org/gems/eph_jpl" title="eph_jpl - RubyGems.org">eph_jpl - RubyGems.org</a></li>
+  <li><a href="https://github.com/komasaru/eph_jpl" title="komasaru/eph_jpl: Ephemeris calculation tool by JPL method.">komasaru/eph_jpl: Ephemeris calculation tool by JPL method.</a></li>
+</ul>
+
+<hr />
+
+<p>JPL 天文暦データから太陽・月・惑星の位置情報（ICRS 座標）を取得する RubyGems ライブラリを自作していたので、距離の計算自体は中学数学レベルで済みました。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">カレンダー</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%9A%A6-%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">暦・カレンダー</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-08-30T00:20:00+09:00">2016-08-30 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+-+JPL+%E5%A4%A9%E6%96%87%E6%9A%A6%E3%83%87%E3%83%BC%E3%82%BF%E3%81%8B%E3%82%89%E5%9C%B0%E7%90%83%E3%81%A8%E6%83%91%E6%98%9F%E3%81%AE%E8%B7%9D%E9%9B%A2%E3%82%92%E8%A8%88%E7%AE%97%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2016%2F08%2F30%2Fruby-planetary-distance-calculation-with-jpl%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2016%2F08%2F30%2Fruby-planetary-distance-calculation-with-jpl%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2016%2F08%2F30%2Fruby-planetary-distance-calculation-with-jpl%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2016/08/26/texlive-installation-on-linux-mint/" class="pagination--pager" title="LMDE2 - TeX Live 2016 のインストール（by ISO イメージ）！
+">Previous</a>
+    
+    
+      <a href="/2016/09/01/blog-access/" class="pagination--pager" title="2016年8月 - OS・ブラウザ別アクセス状況！【自動集計】
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2016/08/30/ruby-planetary-distance-calculation-with-jpl/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2016/08/30/ruby-planetary-distance-calculation-with-jpl"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

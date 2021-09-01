@@ -1,0 +1,861 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Vim - TwitVim における BitLy アカウント設定！ - mk-mode BLOG</title>
+<meta name="description" content="普段、当方デスクトップマシンでは Vim エディタの “TwitVim” プラグインを使ってツイートしています。しかし、TwitVim の BitLy コマンドでは、デフォルトのユーザ名・APIキーで URL が短縮されてしまい、自分のアカウントで統計がとれません。通常（それでも構わなければ）、それで良いのですが、自分で BitLy による URL 短縮を管理したいので、自分のユーザ名・APIキーを設定することにしました。以下、作業記録です。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Vim - TwitVim における BitLy アカウント設定！">
+<meta property="og:url" content="https://komasaru.github.io/2013/07/14/vim-twitvim-bitly-account/">
+
+
+  <meta property="og:description" content="普段、当方デスクトップマシンでは Vim エディタの “TwitVim” プラグインを使ってツイートしています。しかし、TwitVim の BitLy コマンドでは、デフォルトのユーザ名・APIキーで URL が短縮されてしまい、自分のアカウントで統計がとれません。通常（それでも構わなければ）、それで良いのですが、自分で BitLy による URL 短縮を管理したいので、自分のユーザ名・APIキーを設定することにしました。以下、作業記録です。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Vim - TwitVim における BitLy アカウント設定！">
+  <meta name="twitter:description" content="普段、当方デスクトップマシンでは Vim エディタの “TwitVim” プラグインを使ってツイートしています。しかし、TwitVim の BitLy コマンドでは、デフォルトのユーザ名・APIキーで URL が短縮されてしまい、自分のアカウントで統計がとれません。通常（それでも構わなければ）、それで良いのですが、自分で BitLy による URL 短縮を管理したいので、自分のユーザ名・APIキーを設定することにしました。以下、作業記録です。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/07/14/vim-twitvim-bitly-account/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-07-14T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/07/14/vim-twitvim-bitly-account/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Vim - TwitVim における BitLy アカウント設定！">
+    <meta itemprop="description" content="普段、当方デスクトップマシンでは Vim エディタの “TwitVim” プラグインを使ってツイートしています。しかし、TwitVim の BitLy コマンドでは、デフォルトのユーザ名・APIキーで URL が短縮されてしまい、自分のアカウントで統計がとれません。通常（それでも構わなければ）、それで良いのですが、自分で BitLy による URL 短縮を管理したいので、自分のユーザ名・APIキーを設定することにしました。以下、作業記録です。">
+    <meta itemprop="datePublished" content="July 14, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Vim - TwitVim における BitLy アカウント設定！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-07-14T00:20:00+09:00">2013-07-14 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>普段、当方デスクトップマシンでは Vim エディタの “TwitVim” プラグインを使ってツイートしています。<br />
+しかし、TwitVim の BitLy コマンドでは、デフォルトのユーザ名・APIキーで URL が短縮されてしまい、自分のアカウントで統計がとれません。</p>
+
+<p>通常（それでも構わなければ）、それで良いのですが、自分で BitLy による URL 短縮を管理したいので、自分のユーザ名・APIキーを設定することにしました。</p>
+
+<p>以下、作業記録です。</p>
+
+<!--more-->
+
+<h4 id="0-前提条件">0. 前提条件</h4>
+
+<ul>
+  <li>OS は問わないはず。</li>
+  <li>Vim（CUI 版）、GVim（GUI 版）どちらも同じ。</li>
+  <li>Vim 7.3.547 で動作確認。</li>
+  <li>Twitter 関連プラグイン “TwitVim” 導入済み。</li>
+  <li>URL 短縮サービス “BitLy” のアカウント取得済み（API キーも作成済み）である。</li>
+</ul>
+
+<h4 id="1-事前調査">1. 事前調査</h4>
+
+<p>TwitVim プラグインのスクリプト “twitvim.vim” を眺めてみたところ、以下のようなコードがありました。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">twitvim.vim</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre><span class="s2">" Get bit.ly username and api key if configured by the user. Otherwise, use a
+"</span> default username and api key.
+<span class="k">function</span><span class="o">!</span> s:get_bitly_key<span class="o">()</span>
+    <span class="k">if </span>exists<span class="o">(</span><span class="s1">'g:twitvim_bitly_user'</span><span class="o">)</span> <span class="o">&amp;&amp;</span> exists<span class="o">(</span><span class="s1">'g:twitvim_bitly_key'</span><span class="o">)</span>
+        <span class="k">return</span> <span class="o">[</span> g:twitvim_bitly_user, g:twitvim_bitly_key <span class="o">]</span>
+    endif
+    <span class="k">return</span> <span class="o">[</span> <span class="s1">'twitvim'</span>, <span class="s1">'R_a53414d2f36a90c3e189299c967e6efc'</span> <span class="o">]</span>
+endfunction
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>何を意味しているのかというと、<code class="language-plaintext highlighter-rouge">g:twitvim_bitly_user</code> と <code class="language-plaintext highlighter-rouge">g:twitvim_bitly_key</code> の両方が存在すればそれらを使用し、そうでなければデフォルトのユーザとAPI キーを使用するということ。<br />
+この <code class="language-plaintext highlighter-rouge">g:twitvim_bitly_user</code> と <code class="language-plaintext highlighter-rouge">g:twitvim_bitly_key</code> はグローバル変数である。<br />
+当方の環境で設定ファイル “.vimrc” 等を確認したところ、どこにも設定してる箇所は無かった。</p>
+
+<p>====[ 2015-06-21 追記 ]===&gt;</p>
+
+<p>TwitVim 0.9.0 では、以下のようになっている。（API キーではなく OAuth Token を指定するようになっている）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">twitvim.vim</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="s2">" Get bit.ly access token if configured by the user. Otherwise, use a default
+"</span> access token.
+<span class="k">function</span><span class="o">!</span> s:get_bitly_key<span class="o">()</span>
+    <span class="k">return </span>get<span class="o">(</span>g:, <span class="s1">'twitvim_bitly_key'</span>, <span class="s1">'da11381ea442aa466a301a28bb3dcd334448f83a'</span><span class="o">)</span>
+endfunction
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>&lt;===[ 2015-06-21 追記 ]====</p>
+
+<h4 id="2-vim-設定ファイル編集">2. Vim 設定ファイル編集</h4>
+
+<p>Vim 設定ファイル “.vimrc” に以下のような記述（自分のユーザ名・APIキー）を追加する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">~/.vimrc</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="code"><pre><span class="o">[</span>.vimrc]
+<span class="nb">let </span>twitvim_bitly_user <span class="o">=</span> <span class="s2">"USERNAME"</span>
+<span class="nb">let </span>twitvim_bitly_key <span class="o">=</span> <span class="s2">"R_XXXXXXXXXX"</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>関数内ではないので、変数前の <code class="language-plaintext highlighter-rouge">g:</code> は不要。</p>
+
+<p>====[ 2015-06-21 追記 ]===&gt;</p>
+
+<p>当方は、 TwitVim 0.9.0 では、以下のように “twitvim.vim” 内で OAuth Token（API キーではない）を直接指定するようにした。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>" Get bit.ly access token if configured by the user. Otherwise, use a default
+" access token.
+function! s:get_bitly_key()
+    "return get(g:, 'twitvim_bitly_key', 'da11381ea442aa466a301a28bb3dcd334448f83a')
+    return get(g:, 'hoge', 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+endfunction
+</code></pre></div></div>
+
+<p>&lt;===[ 2015-06-21 追記 ]====</p>
+
+<h4 id="3-vim-再起動">3. Vim 再起動</h4>
+
+<p>設定を有効化するため、Vim エディタを再起動する。</p>
+
+<h4 id="4-動作確認">4. 動作確認</h4>
+
+<p>Vim エディタのコマンドラインで <code class="language-plaintext highlighter-rouge">BitLy</code> コマンドを使って URL を短縮化してみる。</p>
+
+<p><img src="/images/2013/07/14/TWITVIM_BITLY_1.png" alt="TWITVIM_BITLY_1" title="TWITVIM_BITLY_1" />
+<img src="/images/2013/07/14/TWITVIM_BITLY_2.png" alt="TWITVIM_BITLY_2" title="TWITVIM_BITLY_2" /></p>
+
+<p>これで、自分のアカウントで管理できるようになっているはずである。<br />
+BitLy サイトにログインしてみて、一覧に正しく表示されていることを確認する。</p>
+
+<p><img src="/images/2013/07/14/TWITVIM_BITLY_3.png" alt="TWITVIM_BITLY_3" title="TWITVIM_BITLY_3" /></p>
+
+<h4 id="参考サイト">参考サイト</h4>
+
+<ul>
+  <li><a href="http://vim.sourceforge.net/scripts/script.php?script_id=2204" title="TwitVim - Twitter client for Vim : vim online">TwitVim - Twitter client for Vim : vim online</a></li>
+  <li><a href="http://twitvim.googlecode.com/svn-history/r66/trunk/twitvim.txt" title="*twitvim.txt*  Twitter client for Vim"><em>twitvim.txt</em>  Twitter client for Vim</a></li>
+</ul>
+
+<p>検索の仕方が良くないのか、BitLy のアカウント設定について説明しているサイトは世界中で１件（TwitVim の公式ドキュメント）しか見当たりませんでした。</p>
+
+<hr />
+
+<p>これで、TwitVim で短縮した URL も自分のアカウントで管理できるようになりました。</p>
+
+<p>実は、随分前から BitLy の自分のアカウントで管理できる URL の数が少ないとは思っていましたが、あまり重要視していなかったので特に気に留めていませんでした。<br />
+改めて調査してみて気付いた次第です。</p>
+
+<p>また、今後 BitLy API を使用して色々操作してみたいとも考えています。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/vim" class="page__taxonomy-item" rel="tag">Vim</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/pc-tips" class="page__taxonomy-item" rel="tag">PC_Tips</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-07-14T00:20:00+09:00">2013-07-14 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Vim+-+TwitVim+%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B+BitLy+%E3%82%A2%E3%82%AB%E3%82%A6%E3%83%B3%E3%83%88%E8%A8%AD%E5%AE%9A%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F07%2F14%2Fvim-twitvim-bitly-account%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F07%2F14%2Fvim-twitvim-bitly-account%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F07%2F14%2Fvim-twitvim-bitly-account%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/07/12/google-maps-api-calc-distance/" class="pagination--pager" title="Google Maps JavaScript API V3 ＋ ２点間距離計算！
+">Previous</a>
+    
+    
+      <a href="/2013/07/16/bitly-get-access-token/" class="pagination--pager" title="bitly - OAuth 認証アクセストークン取得！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/07/14/vim-twitvim-bitly-account/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/07/14/vim-twitvim-bitly-account"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,1285 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Cygwin - RVM 環境構築！ - mk-mode BLOG</title>
+<meta name="description" content="今日は、複数の Ruby 環境を簡単に切り替えて使用可能にする環境 RVM(Ruby Version Manager) を Cygwin に構築してみました。Cygwin に Gem パッケージ RVM をインストールするには、  公式サイトで配布されている tarball からのインストール  GitHub からのインストール  Gem でのインストールの方法があるようです。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Cygwin - RVM 環境構築！">
+<meta property="og:url" content="https://komasaru.github.io/2012/01/05/05002031/">
+
+
+  <meta property="og:description" content="今日は、複数の Ruby 環境を簡単に切り替えて使用可能にする環境 RVM(Ruby Version Manager) を Cygwin に構築してみました。Cygwin に Gem パッケージ RVM をインストールするには、  公式サイトで配布されている tarball からのインストール  GitHub からのインストール  Gem でのインストールの方法があるようです。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Cygwin - RVM 環境構築！">
+  <meta name="twitter:description" content="今日は、複数の Ruby 環境を簡単に切り替えて使用可能にする環境 RVM(Ruby Version Manager) を Cygwin に構築してみました。Cygwin に Gem パッケージ RVM をインストールするには、  公式サイトで配布されている tarball からのインストール  GitHub からのインストール  Gem でのインストールの方法があるようです。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2012/01/05/05002031/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2012-01-05T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2012/01/05/05002031/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Cygwin - RVM 環境構築！">
+    <meta itemprop="description" content="今日は、複数の Ruby 環境を簡単に切り替えて使用可能にする環境 RVM(Ruby Version Manager) を Cygwin に構築してみました。Cygwin に Gem パッケージ RVM をインストールするには、  公式サイトで配布されている tarball からのインストール  GitHub からのインストール  Gem でのインストールの方法があるようです。">
+    <meta itemprop="datePublished" content="January 05, 2012">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Cygwin - RVM 環境構築！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-01-05T00:20:00+09:00">2012-01-05 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>今日は、複数の Ruby 環境を簡単に切り替えて使用可能にする環境 RVM(Ruby Version Manager) を Cygwin に構築してみました。</p>
+
+<p>Cygwin に Gem パッケージ RVM をインストールするには、</p>
+
+<ul>
+  <li><a href="https://rvm.beginrescueend.com/rvm/install/" title="公式サイト">公式サイト</a>で配布されている tarball からのインストール</li>
+  <li><a href="https://github.com/wayneeseguin/rvm" title="GitHub">GitHub</a> からのインストール</li>
+  <li>Gem でのインストール</li>
+</ul>
+
+<p>の方法があるようです。</p>
+
+<!--more-->
+<p>当方の Cygwin には既に Ruby 1.9.2 がインストールされていますので、「Gem でのインストール」をしてみました。</p>
+
+<p>以下はその記録です。</p>
+
+<h3 id="rvm-環境構築記録">RVM 環境構築記録</h3>
+
+<h4 id="前提条件">前提条件</h4>
+
+<p>以下の環境を前提としています。</p>
+
+<ul>
+  <li>Windows XP SP3 (32bit) 上に導入した Cygwin 1.7.9 で作業。</li>
+  <li>Cygwin 上に Ruby 1.9.2 p290 がインストール済み。</li>
+  <li>インストール済み Gem のバージョンは 1.8.13 である。</li>
+</ul>
+
+<h4 id="１事前準備">１．事前準備</h4>
+
+<p>Cygwin 上で作業するにあたり、予め Cygwin の setup.exe により、以下のパッケージをインストールしておく。
+※ご使用の環境によっては、以下以外のパッケージが必要になるかもしれません。</p>
+
+<ul>
+  <li>curl</li>
+  <li>ncurses</li>
+</ul>
+
+<h4 id="２gem-パッケージ-rvm-のインストール">２．Gem パッケージ RVM のインストール</h4>
+
+<p>Gem で RVM パッケージをインストールします。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>gem <span class="nb">install </span>rvm
+Fetching: rvm-1.9.2.gem <span class="o">(</span>100%<span class="o">)</span>
+<span class="k">********************************************************************************</span>
+
+  This gem contains only the Ruby libraries <span class="k">for </span>the RVM Ruby API.
+
+  In order to <span class="nb">install </span>RVM please use one of the methods listed <span class="k">in </span>the
+  documentation:
+
+    https://rvm.beginrescueend.com/rvm/install/
+
+  such as,
+
+    bash &lt;
+  followed by placing the sourcing line <span class="k">in </span>your ~/.bash_profile or wherever may
+  be appropriate <span class="k">for </span>your setup <span class="o">(</span>example, .zshenv, /etc/profile, ...<span class="o">)</span>:
+
+    <span class="c"># Load RVM into a shell session *as a function*</span>
+    <span class="o">[[</span> <span class="nt">-s</span> <span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.rvm/scripts/rvm"</span> <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nb">.</span> <span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.rvm/scripts/rvm"</span>
+
+  After completing setup please open a new shell to use RVM and be sure to run
+  <span class="s1">'rvm notes'</span> to gain a list of dependencies to <span class="nb">install </span>before installing the
+  first Ruby. You can <span class="nb">read </span>more details about this process on the above
+  mentioned <span class="nb">install </span>page as well as the basics page:
+
+    https://rvm.beginrescueend.com/rvm/basics/
+
+  Enjoy!
+
+      ~Wayne
+
+<span class="k">********************************************************************************</span>
+Successfully installed rvm-1.9.2
+1 gem installed
+Installing ri documentation <span class="k">for </span>rvm-1.9.2...
+Installing RDoc documentation <span class="k">for </span>rvm-1.9.2...
+</code></pre></div></div>
+
+<p>インストールできているか確認する。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>gem list
+
+<span class="k">***</span> LOCAL GEMS <span class="k">***</span>
+
+minitest <span class="o">(</span>1.6.0<span class="o">)</span>
+mysql2 <span class="o">(</span>0.3.11<span class="o">)</span>
+rake <span class="o">(</span>0.8.7<span class="o">)</span>
+rdoc <span class="o">(</span>2.5.8<span class="o">)</span>
+rubygems-update <span class="o">(</span>1.8.13<span class="o">)</span>
+rvm <span class="o">(</span>1.9.2<span class="o">)</span>
+</code></pre></div></div>
+
+<p>インストールできています。</p>
+
+<h4 id="３rvm-のインストール">３．RVM のインストール</h4>
+
+<p>以下のようにして、RVM をインストールします。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>bash &lt; &lt;<span class="o">(</span>curl <span class="nt">-s</span> <span class="nt">-B</span> https://rvm.beginrescueend.com/install/rvm<span class="o">)</span>
+Downloading RVM from wayneeseguin branch master
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   125  100   125    0     0     43      0  0:00:02  0:00:02 <span class="nt">--</span>:--:--   183
+100  792k  100  792k    0     0  45947      0  0:00:17  0:00:17 <span class="nt">--</span>:--:--  103k
+
+  RVM:  Shell scripts enabling management of multiple ruby environments.
+  RTFM: https://rvm.beginrescueend.com/
+  HELP: http://webchat.freenode.net/?channels<span class="o">=</span>rvm <span class="o">(</span><span class="c">#rvm on irc.freenode.net)</span>
+  Screencast: http://screencasts.org/episodes/how-to-use-rvm
+
+Installing RVM to /home/masaru/.rvm/
+    Correct permissions <span class="k">for </span>base binaries <span class="k">in</span> /home/masaru/.rvm/bin...
+    Copying manpages into place.
+    Recording config files <span class="k">for </span>rubies.
+
+masaru,
+
+If you have any questions, issues and/or ideas <span class="k">for </span>improvement please
+fork the project and issue a pull request.
+
+If you wish to disable the project .rvmrc file functionality, <span class="nb">set
+</span><span class="nv">rvm_project_rvmrc</span><span class="o">=</span>0 <span class="k">in </span>either /etc/rvmrc or ~/.rvmrc.
+
+NOTE: To Multi-User installers, please <span class="k">do </span>NOT forget to add your <span class="nb">users </span>to the <span class="s1">'rvm'</span> group.
+  The installer no longer auto-adds root or <span class="nb">users </span>to the rvm group. Admins must <span class="k">do </span>this.
+  Also, please note that group memberships are ONLY evaluated at login time.
+  This means that <span class="nb">users </span>must log out <span class="k">then </span>back <span class="k">in </span>before group membership takes effect!
+
+Thank you <span class="k">for </span>using RVM!
+
+I sincerely hope that RVM helps to make your life easier and more enjoyable!!!
+
+  ~Wayne
+
+SYSTEM NOTES:
+
+If you <span class="k">do </span>not wish to <span class="nb">enable </span>reading of per-project .rvmrc files, simply <span class="nb">set</span>:
+        <span class="nb">export </span><span class="nv">rvm_project_rvmrc</span><span class="o">=</span>0
+within either your /etc/rvmrc or <span class="nv">$HOME</span>/.rvmrc file, <span class="k">then </span>log out and back <span class="k">in</span><span class="nb">.</span>
+
+In <span class="k">case</span> your shell exits on entering directory with freshly checked out sources
+you should update .rvmrc file, and replace any <span class="sb">`</span><span class="nb">exit</span> <span class="sb">`</span> with <span class="sb">`</span><span class="k">return</span> <span class="sb">`</span><span class="nb">.</span>
+
+You _must_ <span class="nb">read</span> <span class="s1">'rvm requirements'</span> <span class="k">for </span>additional OS specific requirements <span class="k">for
+</span>various rubies, and native-extension gems. Expect failures <span class="k">until </span>those are met!
+
+For screen <span class="nb">users</span>, please <span class="k">do </span>not forget to <span class="nb">read </span>https://rvm.beginrescueend.com/workflow/screen/.
+You will need to add <span class="s1">'shell -/bin/bash'</span> to your <span class="nv">$HOME</span>/.screenrc to properly load RVM.
+
+  You must now <span class="nb">complete </span>the <span class="nb">install </span>by loading RVM <span class="k">in </span>new shells.
+
+  If you wish to use RVM <span class="k">in </span>an interactive fashion <span class="k">in </span>your shells <span class="k">then
+  </span>Place the following line at the end of your shell<span class="s1">'s loading files
+  (.bashrc or .bash_profile for bash and .zshrc for zsh),
+  after all PATH/variable settings:
+
+  [[ -s "/home/masaru/.rvm/scripts/rvm" ]] &amp;&amp; source "/home/masaru/.rvm/scripts/rvm"  # This loads RVM into a shell session.
+
+  You only need to add this line the first time you install RVM.
+
+  If you are choosing to source RVM into your environment to switch current
+  shell environments, be sure to close this shell and open a new one so that
+  the RVM functions load.
+
+Installation of RVM to /home/masaru/.rvm/ is complete.
+</span></code></pre></div></div>
+
+<p>【2012.07.07 追記 ===&gt;】
+ Ruby 1.9.3-p194, RVM(RubyGems) 1.11.3.5, RVM 1.14.5 では上記のコマンドでは失敗します。
+ 以下のコマンドで成功しました。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>bash <span class="nt">-s</span> stable &lt; &lt;<span class="o">(</span>curl <span class="nt">-s</span> https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer <span class="o">)</span>
+</code></pre></div></div>
+
+<p>もしくは、</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl <span class="nt">-L</span> https://get.rvm.io | bash <span class="nt">-s</span> stable
+</code></pre></div></div>
+
+<p>そして、シェルのリロードとテスト。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">source</span> ~/.rvm/scripts/rvm
+<span class="nv">$ </span><span class="nb">type </span>rvm | <span class="nb">head</span> <span class="nt">-n</span> 1
+rvm is a <span class="k">function</span>
+</code></pre></div></div>
+
+<p>さらに、依存性のある必要な物はないかチェック。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rvm requirements
+</code></pre></div></div>
+
+<p>※詳細はこちら ＝＝＝＞ <a href="https://rvm.io/rvm/install/" title="RVM: Ruby Version Manager - Installing RVM">RVM: Ruby Version Manager - Installing RVM</a>
+【&lt;==== 2012.07.07 追記】&lt;/pre&gt;</p>
+
+<h4 id="４シェルの有効化">４．シェルの有効化</h4>
+
+<p>RVM のインストールを有効にするためにシェルの有効化を実行します。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">source</span> ~/.bashrc
+</code></pre></div></div>
+
+<h4 id="５rvm-のインストール確認">５．RVM のインストール確認</h4>
+
+<p>RVM がインストールされたか確認してみます。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rvm <span class="nt">-v</span>
+
+rvm 1.10.0 by Wayne E. Seguin , Michal Papis  <span class="o">[</span>https://rvm.beginrescueend.com/]
+</code></pre></div></div>
+
+<p>ヘルプを表示してみる。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rvm <span class="nb">help</span>
+<span class="o">=</span> rvm
+
+<span class="k">*</span> http://github.com/wayneeseguin/rvm
+
+<span class="o">==</span> DESCRIPTION:
+
+RVM is the Ruby enVironment Manager <span class="o">(</span>rvm<span class="o">)</span><span class="nb">.</span>
+It manages Ruby application environments and switching between them.
+
+<span class="o">==</span> Usage
+
+  rvm <span class="o">[</span>Flags] <span class="o">[</span>Options] Action <span class="o">[</span>Implementation[,Implementation[,...]]
+
+<span class="o">==</span> Flags
+
+  <span class="nt">--default</span>     - with <span class="s1">'rvm use X'</span>, sets the default ruby <span class="k">for </span>new shells to X.
+  <span class="nt">--debug</span>       - Toggle debug mode on <span class="k">for </span>very verbose output.
+  <span class="nt">--trace</span>       - Toggle trace mode on to see EVERYTHING rvm is doing.
+  <span class="nt">--force</span>       - Force <span class="nb">install</span>, removes old <span class="nb">install</span> &amp; <span class="nb">source </span>before install.
+  <span class="nt">--summary</span>     - Used with rubydo to print out a summary of the commands run.
+  <span class="nt">--latest</span>      - with gemset <span class="nt">--dump</span> skips version strings <span class="k">for </span>latest gem.
+  <span class="nt">--gems</span>        - with uninstall/remove removes gems with the interpreter.
+  <span class="nt">--docs</span>        - with <span class="nb">install</span>, attempt to generate ri after installation.
+  <span class="nt">--reconfigure</span> - Force ./configure on <span class="nb">install </span>even <span class="k">if </span>Makefile already exists.
+
+<span class="o">==</span> Options
+
+  <span class="nt">-v</span>|--version    - Emit rvm version loaded <span class="k">for </span>current shell
+  <span class="nt">-l</span>|--level      - patch level to use with rvm use / <span class="nb">install</span>
+     <span class="nt">--bin</span>        - path <span class="k">for </span>binaries to be placed <span class="o">(</span>~/.rvm/bin/<span class="o">)</span>
+  <span class="nt">-S</span>              - Specify a script file to attempt to load and run <span class="o">(</span>rubydo<span class="o">)</span>
+  <span class="nt">-e</span>              - Execute code from the <span class="nb">command </span>line.
+  <span class="nt">--gems</span>          - Used to <span class="nb">set </span>the <span class="s1">'gems_flag'</span>, use with <span class="s1">'remove'</span> to remove gems
+  <span class="nt">--archive</span>       - Used to <span class="nb">set </span>the <span class="s1">'archive_flag'</span>, use with <span class="s1">'remove'</span> to remove archive
+  <span class="nt">--patch</span>         - With MRI Rubies you may specify one or more full paths to patches
+                    <span class="k">for </span>multiple, specify comma separated:
+                    <span class="nt">--patch</span> /.../.../a.patch[%prefix],/.../.../.../b.patch
+                    <span class="s1">'prefix'</span> is an optional argument, which will be bypassed
+                    to the <span class="s1">'-p'</span> argument of the <span class="s1">'patch'</span> command. It is separated
+                    from patch file name with <span class="s1">'%'</span> symbol.
+  <span class="nt">-C</span>|--configure  - custom configure options. If you need to pass several configure
+                    options <span class="k">then </span>append them comma separated: <span class="nt">-C</span> <span class="nt">--</span>...,--...,--...
+  <span class="nt">--nice</span>          - process niceness <span class="o">(</span><span class="k">for </span>slow computers, default 0<span class="o">)</span>
+  <span class="nt">--ree-options</span>   - Options passed directly to ree<span class="s1">'s '</span>./installer<span class="s1">' on the command line.
+  --with-rubies   - Specifies a string for rvm to attempt to expand for set operations.
+
+== Action
+
+  (Note that for most actions, '</span>rvm <span class="nb">help </span>action-name<span class="s1">' may provide more information.)
+
+  * usage    - show this usage information
+  version    - show the rvm version installed in rvm_path
+  use        - setup current shell to use a specific ruby version
+  reload     - reload rvm source itself (useful after changing rvm source)
+  implode    - (seppuku) removes the rvm installation completely.
+               This means everything in $rvm_path (~/.rvm || /usr/local/rvm).
+               This does not touch your profiles. However, this means that you
+               must manually clean up your profiles and remove the lines which source RVM.
+  get        - {head,latest} upgrades rvm to latest head or release version.
+               (If you experience bugs try this first with head version, then
+                ask for help in #rvm on irc.freenode.net and hang around)
+  reset      - remove current and stored default &amp; system settings.
+               (If you experience odd behavior try this second)
+  info       - show the *current* environment information for current ruby
+  current    - print the *current* ruby version and the name of any gemset being used.
+  debug      - show info plus additional information for common issues
+
+  install    - install one or many ruby versions
+               See also: http://rvm.beginrescueend.com/rubies/installing/
+  uninstall  - uninstall one or many ruby versions, leaves their sources
+  remove     - uninstall one or many ruby versions and remove their sources
+
+  migrate    - Lets you migrate all gemsets from one ruby to another.
+  upgrade    - Lets you upgrade from one version of a ruby to another, including
+               migrating your gemsets semi-automatically.
+
+  wrapper    - generates a set of wrapper executables for a given ruby with the
+               specified ruby and gemset combination. Used under the hood for
+               passenger support and the like.
+
+  cleanup    - Lets you remove stale source folders / archives and other miscellaneous
+               data associated with rvm.
+  repair     - Lets you repair parts of your environment e.g. wrappers, env files and
+               and similar files (e.g. general maintenance).
+  snapshot   - Lets your backup / restore an rvm installation in a lightweight manner.
+
+  disk-usage - Tells you how much disk space rvm install is using.
+  tools      - Provides general information about the ruby environment,
+               primarily useful when scripting rvm.
+  docs       - Tools to make installing ri and rdoc documentation easier.
+  rvmrc      - Tools related to managing rvmrc trust and loading.
+
+  do         - runs an arbitrary command against specified and/or all rubies
+  tests      - runs '</span>rake <span class="nb">test</span><span class="s1">' across selected ruby versions
+  specs      - runs '</span>rake spec<span class="s1">' across selected ruby versions
+  monitor    - Monitor cwd for testing, run `rake {spec,test}` on changes.
+
+  gemset     - gemsets: http://rvm.beginrescueend.com/gemsets/
+
+  rubygems   - Switches the installed version of rubygems for the current ruby.
+
+  gemdir     - display the path to the current gem directory (GEM_HOME).
+  srcdir     - display the path to rvm source directory (may be yanked)
+
+  fetch      - Performs an archive / src fetch only of the selected ruby.
+  list       - show currently installed rubies, interactive output.
+               http://rvm.beginrescueend.com/rubies/list/
+  pkg        - Install a dependency package {readline,iconv,zlib,openssl}
+               http://rvm.beginrescueend.com/packages/
+  notes      - Display notes, with operating system specifics.
+
+  export     - Temporarily set an environment variable in the current shell.
+  unexport   - Undo changes made to the environment by '</span>rvm <span class="nb">export</span><span class="s1">'.
+  requirements - Shows additional OS specific dependencies/requirementes for building various rubies.
+
+== Implementation
+
+  * ruby    - MRI/YARV Ruby (The Gold Standard) {1.8.6,1.8.7,1.9.1,1.9.2...}
+  jruby     - JRuby, Ruby interpreter on the Java Virtual Machine.
+  rbx       - Rubinius
+  ree       - Ruby Enterprise Edition, MRI Ruby with several custom
+              patches for performance, stability, and memory.
+  macruby   - MacRuby, insanely fast, can make real apps (Mac OS X Only).
+  maglev    - GemStone Ruby, awesome persistent ruby object store.
+  ironruby  - IronRuby, NOT supported yet. Looking for volunteers to help.
+  system    - use the system ruby (eg. pre-rvm state)
+  default   - use rvm set default ruby and system if it hasn'</span>t been set.
+              http://rvm.beginrescueend.com/rubies/default/
+
+<span class="o">==</span> Resources:
+
+  http://rvm.beginrescueend.com/
+  https://www.pivotaltracker.com/projects/26822
+
+<span class="o">==</span> Contributions:
+
+  Any and all contributions offered <span class="k">in </span>any form, past present or future, to the
+  RVM project are understood to be <span class="k">in </span><span class="nb">complete </span>agreement and acceptance with the
+  Apache Licence v2.0.
+
+<span class="o">==</span> INSTALL:
+
+See http://rvm.beginrescueend.com/rvm/install/
+
+or just use:
+
+    bash &lt;
+<span class="o">==</span> LICENSE:
+
+Copyright <span class="o">(</span>c<span class="o">)</span> 2009-2011 Wayne E. Seguin
+
+Licensed under the Apache License, Version 2.0 <span class="o">(</span>the <span class="s2">"License"</span><span class="o">)</span><span class="p">;</span>
+you may not use this file except <span class="k">in </span>compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to <span class="k">in </span>writing, software
+distributed under the License is distributed on an <span class="s2">"AS IS"</span> BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License <span class="k">for </span>the specific language governing permissions and
+limitations under the License.
+Commands available with <span class="s1">'rvm help'</span>:
+
+    <span class="nb">alias </span>benchmark build cleanup current debug disk-usage <span class="k">do </span>docs fetch gemdir gemset get implode info <span class="nb">install </span>list migrate monitor notes pkg rake remove repair reset ruby rubygems rvmrc snapshot specs srcdir tests tools uninstall update upgrade use wrapper
+For additional information please visit RVM<span class="s1">'s documentation website:
+
+    https://rvm.beginrescueend.com/
+If you still cannot find what an answer to your question, find me '</span>wayneeseguin<span class="s1">' in #rvm on irc.freenode.net:
+
+    http://webchat.freenode.net/?channels=rvm
+</span></code></pre></div></div>
+
+<h4 id="６動作確認">６．動作確認</h4>
+
+<p>RVM が正常に動作するか確認します。
+まず、RVM でインストールできる Ruby の一覧を表示してみます。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ rvm list known
+# MRI Rubies
+[ruby-]1.8.6[-p420]
+[ruby-]1.8.6-head
+[ruby-]1.8.7[-p352]
+[ruby-]1.8.7-head
+[ruby-]1.9.1-p378
+[ruby-]1.9.1[-p431]
+[ruby-]1.9.1-head
+[ruby-]1.9.2-p180
+[ruby-]1.9.2[-p290]
+[ruby-]1.9.2-head
+[ruby-]1.9.3-preview1
+[ruby-]1.9.3-rc1
+[ruby-]1.9.3[-p0]
+[ruby-]1.9.3-head
+ruby-head
+
+# GoRuby
+goruby
+
+# JRuby
+jruby-1.2.0
+jruby-1.3.1
+jruby-1.4.0
+jruby-1.6.1
+jruby-1.6.2
+jruby-1.6.3
+jruby-1.6.4
+jruby[-1.6.5]
+jruby-head
+
+# Rubinius
+rbx-1.0.1
+rbx-1.1.1
+rbx-1.2.3
+rbx-1.2.4
+rbx[-head]
+rbx-2.0.0pre
+
+# Ruby Enterprise Edition
+ree-1.8.6
+ree[-1.8.7][-2011.03]
+ree-1.8.6-head
+ree-1.8.7-head
+
+# Kiji
+kiji
+
+# MagLev
+maglev[-head]
+maglev-1.0.0
+
+# Mac OS X Snow Leopard Only
+macruby[-0.10]
+macruby-nightly
+macruby-head
+
+# IronRuby -- Not implemented yet.
+ironruby-0.9.3
+ironruby-1.0-rc2
+ironruby-head
+</code></pre></div></div>
+
+<p>今の時点では、まだ RVM でインストールされたものはありません。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rvm list
+
+rvm rubies
+</code></pre></div></div>
+
+<p>RVM で Ruby 1.9.3 p-0 をインストールしてみます。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rvm <span class="nb">install </span>1.9.3
+Installing Ruby from <span class="nb">source </span>to: /home/masaru/.rvm/rubies/ruby-1.9.3-p0, this may take a <span class="k">while </span>depending on your cpu<span class="o">(</span>s<span class="o">)</span>...
+
+ruby-1.9.3-p0 - <span class="c">#fetching</span>
+ruby-1.9.3-p0 - <span class="c">#downloading ruby-1.9.3-p0, this may take a while depending on your connection...</span>
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 9330k  100 9330k    0     0   360k      0  0:00:25  0:00:25 <span class="nt">--</span>:--:--  380k
+ruby-1.9.3-p0 - <span class="c">#extracting ruby-1.9.3-p0 to /home/masaru/.rvm/src/ruby-1.9.3-p0</span>
+ruby-1.9.3-p0 - <span class="c">#extracted to /home/masaru/.rvm/src/ruby-1.9.3-p0</span>
+Fetching yaml-0.1.4.tar.gz to /home/masaru/.rvm/archives
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  460k  100  460k    0     0  96082      0  0:00:04  0:00:04 <span class="nt">--</span>:--:--  118k
+Extracting yaml-0.1.4.tar.gz to /home/masaru/.rvm/src
+Configuring yaml <span class="k">in</span> /home/masaru/.rvm/src/yaml-0.1.4.
+Compiling yaml <span class="k">in</span> /home/masaru/.rvm/src/yaml-0.1.4.
+Installing yaml to /home/masaru/.rvm/usr
+ruby-1.9.3-p0 - <span class="c">#configuring</span>
+ruby-1.9.3-p0 - <span class="c">#compiling</span>
+ruby-1.9.3-p0 - <span class="c">#installing</span>
+Retrieving rubygems-1.8.10
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  243k  100  243k    0     0   141k      0  0:00:01  0:00:01 <span class="nt">--</span>:--:--  361k
+Extracting rubygems-1.8.10 ...
+Removing old Rubygems files...
+Installing rubygems-1.8.10 <span class="k">for </span>ruby-1.9.3-p0 ...
+Installation of rubygems completed successfully.
+ruby-1.9.3-p0 - adjusting <span class="c">#shebangs for (gem irb erb ri rdoc testrb rake).</span>
+ruby-1.9.3-p0 - <span class="c">#importing default gemsets (/home/masaru/.rvm/gemsets/)</span>
+Install of ruby-1.9.3-p0 - <span class="c">#complete</span>
+</code></pre></div></div>
+
+<p>インストールできたか確認します。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rvm list
+
+rvm rubies
+
+   ruby-1.9.3-p0 <span class="o">[</span> i386 <span class="o">]</span>
+</code></pre></div></div>
+
+<p>RVM で「Ruby 1.9.3 p-0」のインストールはできたが、有効なのはまだ元からインストールされている「Ruby 1.9.2 p290」です。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>ruby <span class="nt">-v</span>
+ruby 1.9.2p290 <span class="o">(</span>2011-07-09 revision 32553<span class="o">)</span> <span class="o">[</span>i386-cygwin]
+</code></pre></div></div>
+
+<p>RVM でインストールした「Ruby 1.9.3 p-0」に変更してみます。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rvm use 1.9.3
+Using /home/masaru/.rvm/gems/ruby-1.9.3-p0
+<span class="nv">$ </span>ruby <span class="nt">-v</span>
+ruby 1.9.3p0 <span class="o">(</span>2011-10-30 revision 33570<span class="o">)</span> <span class="o">[</span>i386-cygwin]
+</code></pre></div></div>
+
+<p>元からインストールされている Ruby に戻してみます。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rvm use system
+Now using system ruby.
+<span class="nv">$ </span>ruby <span class="nt">-v</span>
+ruby 1.9.2p290 <span class="o">(</span>2011-07-09 revision 32553<span class="o">)</span> <span class="o">[</span>i386-cygwin]
+</code></pre></div></div>
+
+<h4 id="７その他">７．その他</h4>
+
+<p>よく使う RVM のコマンドです。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rvm list known   <span class="c"># インストール可能な Ruby リスト表示</span>
+<span class="nv">$ </span>rvm list         <span class="c"># インストール済みの Ruby リスト表示</span>
+<span class="nv">$ </span>rvm use 1.9.3    <span class="c"># 1.9.3の環境へ切り替え</span>
+<span class="nv">$ </span>rvm use system   <span class="c"># システム側の Ruby へ切り替え</span>
+<span class="nv">$ </span>rvm remove 1.9.3 <span class="c"># 1.9.3のアンインストール</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>これで、開発作業で楽にバージョン切り替えができるようになりました。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/cygwin" class="page__taxonomy-item" rel="tag">Cygwin</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-01-05T00:20:00+09:00">2012-01-05 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Cygwin+-+RVM+%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2012%2F01%2F05%2F05002031%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2012%2F01%2F05%2F05002031%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2012%2F01%2F05%2F05002031%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2012/01/03/03002024/" class="pagination--pager" title="VMware Player - 仮想マシンのコピー！
+">Previous</a>
+    
+    
+      <a href="/2012/01/07/07002019/" class="pagination--pager" title="Cygwin - Ruby で OpenSSL！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2012/01/05/05002031/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2012/01/05/05002031"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

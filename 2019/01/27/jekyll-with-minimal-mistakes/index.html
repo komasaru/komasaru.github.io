@@ -1,0 +1,1757 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Jekyll 環境の構築（テーマは Gem 化された Minimal Mistakes）！ - mk-mode BLOG</title>
+<meta name="description" content="プレーンテキストから静的な Web/Blog サイトを生成する Ruby 製ツール Jekyll の環境を構築してみました。（使用するテーマは Minimal Mistakes）以下、作業記録です。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Jekyll 環境の構築（テーマは Gem 化された Minimal Mistakes）！">
+<meta property="og:url" content="https://komasaru.github.io/2019/01/27/jekyll-with-minimal-mistakes/">
+
+
+  <meta property="og:description" content="プレーンテキストから静的な Web/Blog サイトを生成する Ruby 製ツール Jekyll の環境を構築してみました。（使用するテーマは Minimal Mistakes）以下、作業記録です。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Jekyll 環境の構築（テーマは Gem 化された Minimal Mistakes）！">
+  <meta name="twitter:description" content="プレーンテキストから静的な Web/Blog サイトを生成する Ruby 製ツール Jekyll の環境を構築してみました。（使用するテーマは Minimal Mistakes）以下、作業記録です。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2019/01/27/jekyll-with-minimal-mistakes/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2019-01-27T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2019/01/27/jekyll-with-minimal-mistakes/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Jekyll 環境の構築（テーマは Gem 化された Minimal Mistakes）！">
+    <meta itemprop="description" content="プレーンテキストから静的な Web/Blog サイトを生成する Ruby 製ツール Jekyll の環境を構築してみました。（使用するテーマは Minimal Mistakes）以下、作業記録です。">
+    <meta itemprop="datePublished" content="January 27, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Jekyll 環境の構築（テーマは Gem 化された Minimal Mistakes）！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-01-27T00:20:00+09:00">2019-01-27 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>プレーンテキストから静的な Web/Blog サイトを生成する Ruby 製ツール Jekyll の環境を構築してみました。（使用するテーマは Minimal Mistakes）</p>
+
+<p>以下、作業記録です。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>LMDE 3 (Linux Mint Debian Edition 3; 64bit) での作業を想定。</li>
+  <li>Ruby 2.6.0-p0 での作業を想定。</li>
+  <li>作業ディレクトリはホームディレクトリ直下の <code class="language-plaintext highlighter-rouge">jekyll</code> を想定。</li>
+  <li>Jekyll で使用するテーマは <strong>Gem 化された</strong> <a href="https://mmistakes.github.io/minimal-mistakes/" title="Minimal Mistakes">Minimal Mistakes</a> とする。（4.15.1 を想定）</li>
+  <li>Jekyll でブログサイトを運用することを想定。（後日、 Octopress からの移行も）</li>
+  <li>GitHub Pages での運用は想定していない。（自前サーバでの運用を想定）</li>
+  <li>Jekyll 3.8.5 での作業を想定。</li>
+  <li>カスタマイズ量は多め。</li>
+</ul>
+
+<h3 id="1-jekyll-のインストール">1. Jekyll のインストール</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo gem install jekyll
+</code></pre></div></div>
+
+<h3 id="2-minimal-mistakes-のインストール">2. Minimal Mistakes のインストール</h3>
+
+<p>ディレクトリを作成し、そのディレクトリ内へ移動。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ mkdir jekyll
+$ cd jekyll
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Gemfile</code> を作成。（デフォルトの <code class="language-plaintext highlighter-rouge">liquid</code> を使用せず、<code class="language-plaintext highlighter-rouge">jekyll-archives</code> を使用することを想定）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">Gemfile</code></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">source</span> <span class="s2">"https://rubygems.org"</span>
+<span class="n">gem</span> <span class="s2">"minimal-mistakes-jekyll"</span>
+
+<span class="c1"># If you have any plugins, put them here!</span>
+<span class="n">group</span> <span class="ss">:jekyll_plugins</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s2">"jekyll-archives"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>そして、インストール。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ bundle install
+</code></pre></div></div>
+
+<h3 id="3-各種ファイルの配置">3. 各種ファイルの配置</h3>
+
+<p>インストール直後は <code class="language-plaintext highlighter-rouge">Gemfile</code> と <code class="language-plaintext highlighter-rouge">Gemfile.lock</code> しかないので、 <a href="https://github.com/mmistakes/minimal-mistakes/archive/master.zip" title="Minimal Mistakes Theme">ZIP ファイル</a> か <a href="https://github.com/mmistakes/minimal-mistakes" title="mmistakes/minimal-mistakes: A flexible two-column Jekyll theme perfect for building personal sites, blogs, and portfolios.">GitHub</a> か <code class="language-plaintext highlighter-rouge">minimal-mistakes-jekyll</code> gem から取得するなどして、配置する。</p>
+
+<p>最低限、以下は必要。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">_data/navigation.yml</code><br />
+取り急ぎ、 <code class="language-plaintext highlighter-rouge">main:</code> のみでよい。必要になった際にメニューとして追加していく。</li>
+  <li><code class="language-plaintext highlighter-rouge">_config.yml</code><br />
+今回は <code class="language-plaintext highlighter-rouge">minimal-mistakes-jekyll</code> gem を使用するので、 <code class="language-plaintext highlighter-rouge">theme: "minimal-mistakes-jekyll"</code> の記述は必須。</li>
+  <li><code class="language-plaintext highlighter-rouge">index.html</code><br />
+index ページ。</li>
+</ul>
+
+<h3 id="4-jekyll-の基本的な使い方">4. Jekyll の基本的な使い方</h3>
+
+<p>以下のサイトを参照すれば分かるが、</p>
+
+<ul>
+  <li><a href="https://jekyllrb.com/" title="Jekyll">Jekyll</a></li>
+  <li><a href="https://jekylltips-ja.github.io/" title="Jekyll Tips">Jekyll Tips</a></li>
+</ul>
+
+<p>基本的には、</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">_posts</code> ディレクトリ内に Yaml Front Matter 付き Markdown 形式で記述したテキストファイルを配置。</li>
+  <li><code class="language-plaintext highlighter-rouge">bundle exec jekyll build</code> でビルド。</li>
+  <li><code class="language-plaintext highlighter-rouge">bundle exec jekyll serve</code> でローカルサーバ起動。</li>
+  <li>Web ブラウザで <code class="language-plaintext highlighter-rouge">http://localhost:4000</code> にアクセスして確認。</li>
+  <li>（公開する場合は Web サーバにアップロードする）</li>
+</ol>
+
+<p>記事ファイルの記述例。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
+layout   : single
+title    : "Jekyll 環境の構築（テーマは Gem 化された Minimal Mistakes）！"
+published: false
+date     : 2019-01-27 00:20:00 +0900
+comments : true
+categories:
+- ブログ
+tags:
+- Jekyll
+- Ruby
+- HTML
+- Markdown
+- JavaScript
+- CSS
+---
+
+以下、記事本文
+※Markdown 形式、 Liquid 形式、 HTML 形式等で記述
+</code></pre></div></div>
+
+<p>これまでの最低限必要なファイルのみを配置した状態では、 Web ブラウザで次のように表示されるはず。</p>
+
+<p><img src="/images/2019/01/27/JEKYLL.png" alt="JEKYLL" title="JEKYLL" /></p>
+
+<h3 id="5-ディレクトリ構成">5. ディレクトリ構成</h3>
+
+<p>以下、当方の例。<br />
+基本的に、カスタマイズしたいもののみを <code class="language-plaintext highlighter-rouge">minimal-mistakes-jekyll</code> gem から複製して編集。必要であれば、新規追加も。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
+├── _data
+│   └── navigation.yml
+├── _includes   &lt;= インクルードファイル
+├── _layouts    &lt;= レイアウトフィアル
+├── _pages      &lt;= 追加ページ用
+├── _posts      &lt;= 記事データ用
+├── _site       &lt;= このディレクトリ配下を Web サーバへ配置
+├── assets      &lt;= サイト内で使用する CSS, 画像, JS ファイル
+│   ├── css
+│   ├── images
+│   └── js
+├── images      &lt;= 投稿に使用する画像ファイル
+├── Gemfile
+├── Gemfile.lock
+├── _config.yml
+└── index.html
+</code></pre></div></div>
+
+<h3 id="6-設定ファイルの編集">6. 設定ファイルの編集</h3>
+
+<p>設定ファイル <code class="language-plaintext highlighter-rouge">_config.yml</code> を編集する。</p>
+
+<h4 id="6-1-テーマの設定">6-1. テーマの設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Theme Settings</span>
+<span class="c1">#</span>
+<span class="c1"># Review documentation to determine if you should use `theme` or `remote_theme`</span>
+<span class="c1"># https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/#installing-the-theme</span>
+
+<span class="na">theme                </span><span class="pi">:</span> <span class="s2">"</span><span class="s">minimal-mistakes-jekyll"</span>
+<span class="c1"># remote_theme       : "mmistakes/minimal-mistakes"</span>
+<span class="na">minimal_mistakes_skin</span><span class="pi">:</span> <span class="s2">"</span><span class="s">dark"</span>  <span class="c1"># "default", "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">theme</code> : 今回、 <code class="language-plaintext highlighter-rouge">minimal-mistakes-jekyll</code> の設定が必須。</li>
+  <li><code class="language-plaintext highlighter-rouge">remote_theme</code> : GitHub Pages を利用するならコメント解除。</li>
+  <li><code class="language-plaintext highlighter-rouge">minimal_mistakes_skin</code> : Minimal Mistakes テーマ用のスキン。好みのものに変更。</li>
+</ul>
+
+<h4 id="6-2-サイトの設定">6-2. サイトの設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Site Settings</span>
+<span class="na">locale               </span><span class="pi">:</span> <span class="s2">"</span><span class="s">ja-JP"</span>  <span class="c1"># "en-US"</span>
+<span class="na">title                </span><span class="pi">:</span> <span class="s2">"</span><span class="s">mk-mode</span><span class="nv"> </span><span class="s">BLOG"</span>
+<span class="na">title_separator      </span><span class="pi">:</span> <span class="s2">"</span><span class="s">-"</span>
+<span class="na">name                 </span><span class="pi">:</span> <span class="s2">"</span><span class="s">mk-mode.com"</span>
+<span class="na">description          </span><span class="pi">:</span> <span class="s2">"</span><span class="s">このブログは自作の自宅サーバに構築した</span><span class="nv"> </span><span class="s">Debian</span><span class="nv"> </span><span class="s">GNU/Linux</span><span class="nv"> </span><span class="s">で運用しています。PC・サーバ構築等の話題を中心に公開しております。"</span>
+<span class="na">url                  </span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://www.mk-mode.com"</span>  <span class="c1"># the base hostname &amp; protocol for your site e.g. "https://mmistakes.github.io"</span>
+<span class="na">baseurl              </span><span class="pi">:</span> <span class="s2">"</span><span class="s">/blog"</span>  <span class="c1"># the subpath of your site, e.g. "/blog"</span>
+<span class="na">repository           </span><span class="pi">:</span> <span class="c1"># GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"</span>
+<span class="na">teaser               </span><span class="pi">:</span> <span class="c1"># path of fallback teaser image, e.g. "/assets/images/500x300.png"</span>
+<span class="na">breadcrumbs          </span><span class="pi">:</span> <span class="no">false</span>  <span class="c1"># true, false (default)</span>
+<span class="na">words_per_minute     </span><span class="pi">:</span> <span class="m">200</span>
+<span class="na">comments</span><span class="pi">:</span>
+  <span class="na">provider           </span><span class="pi">:</span> <span class="s2">"</span><span class="s">disqus"</span>  <span class="c1"># false (default), "disqus", "discourse", "facebook", "google-plus", "staticman", "staticman_v2", "utterances", "custom"</span>
+  <span class="na">disqus</span><span class="pi">:</span>
+    <span class="na">shortname        </span><span class="pi">:</span> <span class="s2">"</span><span class="s">xxxxxxxx"</span>  <span class="c1"># https://help.disqus.com/customer/portal/articles/466208-what-s-a-shortname-</span>
+  <span class="na">discourse</span><span class="pi">:</span>
+    <span class="na">server           </span><span class="pi">:</span> <span class="c1"># https://meta.discourse.org/t/embedding-discourse-comments-via-javascript/31963 , e.g.: meta.discourse.org</span>
+  <span class="na">facebook</span><span class="pi">:</span>
+    <span class="c1"># https://developers.facebook.com/docs/plugins/comments</span>
+    <span class="na">appid            </span><span class="pi">:</span>
+    <span class="na">num_posts        </span><span class="pi">:</span> <span class="c1"># 5 (default)</span>
+    <span class="na">colorscheme      </span><span class="pi">:</span> <span class="c1"># "light" (default), "dark"</span>
+  <span class="na">utterances</span><span class="pi">:</span>
+    <span class="na">theme            </span><span class="pi">:</span> <span class="c1"># "github-light" (default), "github-dark"</span>
+    <span class="na">issue_term       </span><span class="pi">:</span> <span class="c1"># "pathname" (default)</span>
+<span class="na">staticman</span><span class="pi">:</span>
+  <span class="na">allowedFields      </span><span class="pi">:</span> <span class="c1"># ['name', 'email', 'url', 'message']</span>
+  <span class="na">branch             </span><span class="pi">:</span> <span class="c1"># "master"</span>
+  <span class="na">commitMessage      </span><span class="pi">:</span> <span class="c1"># "New comment by {fields.name}"</span>
+  <span class="na">filename           </span><span class="pi">:</span> <span class="c1"># comment-{@timestamp}</span>
+  <span class="na">format             </span><span class="pi">:</span> <span class="c1"># "yml"</span>
+  <span class="na">moderation         </span><span class="pi">:</span> <span class="c1"># true</span>
+  <span class="na">path               </span><span class="pi">:</span> <span class="c1"># "/_data/comments/{options.slug}" (default)</span>
+  <span class="na">requiredFields     </span><span class="pi">:</span> <span class="c1"># ['name', 'email', 'message']</span>
+  <span class="na">transforms</span><span class="pi">:</span>
+    <span class="na">email            </span><span class="pi">:</span> <span class="c1"># "md5"</span>
+  <span class="na">generatedFields</span><span class="pi">:</span>
+    <span class="na">date</span><span class="pi">:</span>
+      <span class="na">type           </span><span class="pi">:</span> <span class="c1"># "date"</span>
+      <span class="na">options</span><span class="pi">:</span>
+        <span class="na">format       </span><span class="pi">:</span> <span class="c1"># "iso8601" (default), "timestamp-seconds", "timestamp-milliseconds"</span>
+  <span class="na">endpoint           </span><span class="pi">:</span> <span class="c1"># URL of your own deployment with trailing slash, will fallback to the public instance</span>
+<span class="na">reCaptcha</span><span class="pi">:</span>
+  <span class="na">siteKey            </span><span class="pi">:</span>
+  <span class="na">secret             </span><span class="pi">:</span>
+<span class="na">search               </span><span class="pi">:</span> <span class="no">true</span>  <span class="c1"># true, false (default)</span>
+<span class="na">search_provider      </span><span class="pi">:</span> <span class="s2">"</span><span class="s">google"</span>  <span class="c1"># lunr (default), algolia, google</span>
+<span class="na">search_full_content  </span><span class="pi">:</span> <span class="no">true</span>  <span class="c1"># true, false (default)</span>
+<span class="na">algolia</span><span class="pi">:</span>
+  <span class="na">application_id     </span><span class="pi">:</span> <span class="c1"># YOUR_APPLICATION_ID</span>
+  <span class="na">index_name         </span><span class="pi">:</span> <span class="c1"># YOUR_INDEX_NAME</span>
+  <span class="na">search_only_api_key</span><span class="pi">:</span> <span class="c1"># YOUR_SEARCH_ONLY_API_KEY</span>
+  <span class="na">powered_by         </span><span class="pi">:</span> <span class="c1"># true (default), false</span>
+<span class="na">google</span><span class="pi">:</span>
+  <span class="na">search_engine_id   </span><span class="pi">:</span> <span class="s2">"</span><span class="s">9999999999999999:9999999999"</span>  <span class="c1"># YOUR_SEARCH_ENGINE_ID</span>
+  <span class="na">instant_search     </span><span class="pi">:</span> <span class="no">false</span>  <span class="c1"># false (default), true</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">locale</code> : 言語・国</li>
+  <li><code class="language-plaintext highlighter-rouge">title</code> : サイトのタイトル</li>
+  <li><code class="language-plaintext highlighter-rouge">title_separator</code> : 記事タイトルとサイトタイトルの区切り記号</li>
+  <li><code class="language-plaintext highlighter-rouge">name</code> : 管理者名</li>
+  <li><code class="language-plaintext highlighter-rouge">description</code> : サイトの説明</li>
+  <li><code class="language-plaintext highlighter-rouge">url</code> : サイトの URL.（プロトコル(<code class="language-plaintext highlighter-rouge">http</code> or <code class="language-plaintext highlighter-rouge">https</code>) + <code class="language-plaintext highlighter-rouge">://</code> + ドメイン名）</li>
+  <li><code class="language-plaintext highlighter-rouge">baseurl</code> : サイトのサブディレクトリ。必要なら設定。</li>
+  <li><code class="language-plaintext highlighter-rouge">repository</code> : GitHub Pages を利用する場合に設定。</li>
+  <li><code class="language-plaintext highlighter-rouge">teaser</code> : 関連記事を表示する際に使用するデフォルトの画像。必要なら設定。</li>
+  <li><code class="language-plaintext highlighter-rouge">breadcrumbs</code> : いわゆるパンくずリスト。必要なら <code class="language-plaintext highlighter-rouge">true</code> に設定。</li>
+  <li><code class="language-plaintext highlighter-rouge">words_per_minute</code> : 1つの記事を読むのに必要な時間を計算するのに使用する単語数</li>
+  <li><code class="language-plaintext highlighter-rouge">comments</code> : コメント機能
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">provider</code> : コメントを使用する場合に、使用したいコメントサービスを指定し、以降で各種アカウントを設定<br />
+<code class="language-plaintext highlighter-rouge">comments</code> と同じ階層に <code class="language-plaintext highlighter-rouge">staticman</code> が存在するが、これもコメントサービスの一種</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">reCaptcha</code> : コメント入力時に使用する Google のボット防御システム
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">siteKey</code>, <code class="language-plaintext highlighter-rouge">secret</code> : 使用する場合に Site Key, Secret Code を取得して設定</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">search</code> : 検索サービス</li>
+  <li><code class="language-plaintext highlighter-rouge">search_provider</code> : 使用する検索サービス。</li>
+  <li><code class="language-plaintext highlighter-rouge">search_full_content</code> : 検索サービスとして Lunr を使用する際に1記事あたり全ての語を取得するための設定。（デフォルトは <code class="language-plaintext highlighter-rouge">false</code> で、1記事あたり 50語しか取得しない）</li>
+  <li><code class="language-plaintext highlighter-rouge">algolia</code> : <code class="language-plaintext highlighter-rouge">search_provider</code> に <code class="language-plaintext highlighter-rouge">algoria</code> を設定した場合に設定</li>
+  <li><code class="language-plaintext highlighter-rouge">google</code> : <code class="language-plaintext highlighter-rouge">search_provider</code> に <code class="language-plaintext highlighter-rouge">google</code> を設定した場合に設定
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">search_engine_id</code> : 使用する場合に、 Search Engine ID を取得して設定<br />
+（ちなみに、 Google Adsense 向けの Search Enigine なら、 ID の頭に <code class="language-plaintext highlighter-rouge">partner-pub-</code>が付く）</li>
+      <li><code class="language-plaintext highlighter-rouge">instant_search</code> : 検索語を入力しながら（確定しなくとも）リアルタイムで検索結果を表示する機能（おそらく）</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="6-3-seo-の設定">6-3. SEO の設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># SEO Related</span>
+<span class="na">google_site_verification</span><span class="pi">:</span> <span class="s2">"</span><span class="s">XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"</span>
+<span class="na">bing_site_verification  </span><span class="pi">:</span>
+<span class="na">yandex_site_verification</span><span class="pi">:</span>
+<span class="na">naver_site_verification </span><span class="pi">:</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">google_site_verification</code> : Google のサイト所有者検証用コード<br />
+使用する場合は、 Google Search Console からコードを取得して設定。（<code class="language-plaintext highlighter-rouge">meta</code> タグにセットされる）<br />
+（ちなみに、 Google の場合、コードを <code class="language-plaintext highlighter-rouge">meta</code> タグにセットする方法以外に、指定の HTML ファイルを設置する方法等もある）</li>
+</ul>
+
+<h4 id="6-4-sns-系の設定">6-4. SNS 系の設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Social Sharing</span>
+<span class="na">twitter</span><span class="pi">:</span>
+  <span class="na">username</span><span class="pi">:</span> <span class="s2">"</span><span class="s">account_name"</span>
+<span class="na">facebook</span><span class="pi">:</span>
+  <span class="na">username </span><span class="pi">:</span>
+  <span class="na">app_id   </span><span class="pi">:</span>
+  <span class="na">publisher</span><span class="pi">:</span>
+<span class="na">og_image</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://www.mk-mode.com/blog/assets/images/about_me.png"</span>  <span class="c1"># Open Graph/Twitter default site image</span>
+<span class="c1"># For specifying social profiles</span>
+<span class="c1"># - https://developers.google.com/structured-data/customize/social-profiles</span>
+<span class="na">social</span><span class="pi">:</span>
+  <span class="na">type </span><span class="pi">:</span> <span class="c1"># Person or Organization (defaults to Person)</span>
+  <span class="na">name </span><span class="pi">:</span> <span class="c1"># If the user or organization name differs from the site's name</span>
+  <span class="na">links</span><span class="pi">:</span> <span class="c1"># An array of links to social media profiles</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">twitter</code> : 記事が共有される際に使用される。</li>
+  <li><code class="language-plaintext highlighter-rouge">facebook</code> : 記事が共有される際に使用される。</li>
+  <li><code class="language-plaintext highlighter-rouge">og_image</code> : 記事が共有された場合に使用される画像</li>
+  <li><code class="language-plaintext highlighter-rouge">social</code> : Google+ 用？（当方不使用なので、詳細不明）<br />
+Google+ 用だとしても、サービス自体が2019年に終了なので不要。</li>
+</ul>
+
+<h4 id="6-5-アクセス解析の設定">6-5. アクセス解析の設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Analytics</span>
+<span class="na">analytics</span><span class="pi">:</span>
+  <span class="na">provider</span><span class="pi">:</span> <span class="s2">"</span><span class="s">google"</span>  <span class="c1"># false (default), "google", "google-universal", "custom"</span>
+  <span class="na">google</span><span class="pi">:</span>
+    <span class="na">tracking_id </span><span class="pi">:</span> <span class="s2">"</span><span class="s">UA-99999999-9"</span>
+    <span class="na">anonymize_ip</span><span class="pi">:</span> <span class="c1"># true, false (default)</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">analytics</code> : アクセス解析の設定
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">provider</code> : 使用するアクセス解析サービス</li>
+      <li><code class="language-plaintext highlighter-rouge">google</code> : <code class="language-plaintext highlighter-rouge">provider</code> で <code class="language-plaintext highlighter-rouge">google</code> を設定した場合に設定
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">tracking_id</code> : Tracking ID を取得して設定</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="6-6-サイト管理者の設定">6-6. サイト管理者の設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Site Author</span>
+<span class="na">author</span><span class="pi">:</span>
+  <span class="na">name    </span><span class="pi">:</span> <span class="s2">"</span><span class="s">mk-mode.com"</span>
+  <span class="na">avatar  </span><span class="pi">:</span> <span class="s2">"</span><span class="s">/assets/images/about_me.png"</span>
+  <span class="na">bio     </span><span class="pi">:</span> <span class="s2">"</span><span class="s">Linux,</span><span class="nv"> </span><span class="s">Debian,</span><span class="nv"> </span><span class="s">IT,</span><span class="nv"> </span><span class="s">Server,</span><span class="nv"> </span><span class="s">PG,</span><span class="nv"> </span><span class="s">Ruby,</span><span class="nv"> </span><span class="s">Rails,</span><span class="nv"> </span><span class="s">Python,</span><span class="nv"> </span><span class="s">Fortran,</span><span class="nv"> </span><span class="s">PC,</span><span class="nv"> </span><span class="s">MariaDB,</span><span class="nv"> </span><span class="s">math,</span><span class="nv"> </span><span class="s">GIS,</span><span class="nv"> </span><span class="s">etc..."</span> <span class="c1"># "I am an amazing person."</span>
+  <span class="na">location</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Ruby</span><span class="nv"> </span><span class="s">City</span><span class="nv"> </span><span class="s">MATSUE"</span>
+  <span class="na">email   </span><span class="pi">:</span>
+  <span class="na">links</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Email"</span>
+      <span class="na">icon </span><span class="pi">:</span> <span class="s2">"</span><span class="s">fas</span><span class="nv"> </span><span class="s">fa-fw</span><span class="nv"> </span><span class="s">fa-envelope-square"</span>
+      <span class="c1"># url: "mailto:webmaster@mk-mode.com"</span>
+    <span class="pi">-</span> <span class="na">label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">mk-mode</span><span class="nv"> </span><span class="s">SITE"</span>
+      <span class="na">icon </span><span class="pi">:</span> <span class="s2">"</span><span class="s">fas</span><span class="nv"> </span><span class="s">fa-fw</span><span class="nv"> </span><span class="s">fa-link"</span>
+      <span class="na">url  </span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://www.mk-mode.com"</span>
+    <span class="pi">-</span> <span class="na">label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Twitter"</span>
+      <span class="na">icon </span><span class="pi">:</span> <span class="s2">"</span><span class="s">fab</span><span class="nv"> </span><span class="s">fa-fw</span><span class="nv"> </span><span class="s">fa-twitter-square"</span>
+      <span class="na">url  </span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://twitter.com/account_name"</span>
+    <span class="pi">-</span> <span class="na">label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Facebook"</span>
+      <span class="na">icon </span><span class="pi">:</span> <span class="s2">"</span><span class="s">fab</span><span class="nv"> </span><span class="s">fa-fw</span><span class="nv"> </span><span class="s">fa-facebook-square"</span>
+      <span class="c1"># url: "https://facebook.com/"</span>
+    <span class="pi">-</span> <span class="na">label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">GitHub"</span>
+      <span class="na">icon </span><span class="pi">:</span> <span class="s2">"</span><span class="s">fab</span><span class="nv"> </span><span class="s">fa-fw</span><span class="nv"> </span><span class="s">fa-github"</span>
+      <span class="na">url  </span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://github.com/komasaru"</span>
+    <span class="pi">-</span> <span class="na">label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Instagram"</span>
+      <span class="na">icon </span><span class="pi">:</span> <span class="s2">"</span><span class="s">fab</span><span class="nv"> </span><span class="s">fa-fw</span><span class="nv"> </span><span class="s">fa-instagram"</span>
+      <span class="c1"># url: "https://instagram.com/"</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">author</code> : サイト管理者の設定<br />
+ここで設定されたものは左サイドバーに表示される（Minimal Mistakes の場合）
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">name</code> : サイトの管理者名</li>
+      <li><code class="language-plaintext highlighter-rouge">avatar</code> : 管理者のアバタ画像</li>
+      <li><code class="language-plaintext highlighter-rouge">bio</code> : 管理者のプロフィール</li>
+      <li><code class="language-plaintext highlighter-rouge">location</code> : 管理者の居住地</li>
+      <li><code class="language-plaintext highlighter-rouge">email</code> : 管理者のメールアドレス</li>
+      <li><code class="language-plaintext highlighter-rouge">links</code> : 各種リンク
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">label</code> : リンクのラベル</li>
+          <li><code class="language-plaintext highlighter-rouge">icon</code> : リンクのアイコン。（Font Awesome で設定）</li>
+          <li><code class="language-plaintext highlighter-rouge">url</code> : リンク URL. （コメント化すると、ラベル・アイコンは表示されない）</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="6-7-フッタの設定">6-7. フッタの設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Site Footer</span>
+<span class="na">footer</span><span class="pi">:</span>
+  <span class="na">links</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Twitter"</span>
+      <span class="na">icon </span><span class="pi">:</span> <span class="s2">"</span><span class="s">fab</span><span class="nv"> </span><span class="s">fa-fw</span><span class="nv"> </span><span class="s">fa-twitter-square"</span>
+      <span class="na">url  </span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://twitter.com/rsm_mzk"</span>
+    <span class="pi">-</span> <span class="na">label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Facebook"</span>
+      <span class="na">icon </span><span class="pi">:</span> <span class="s2">"</span><span class="s">fab</span><span class="nv"> </span><span class="s">fa-fw</span><span class="nv"> </span><span class="s">fa-facebook-square"</span>
+      <span class="c1"># url:</span>
+    <span class="pi">-</span> <span class="na">label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">GitHub"</span>
+      <span class="na">icon </span><span class="pi">:</span> <span class="s2">"</span><span class="s">fab</span><span class="nv"> </span><span class="s">fa-fw</span><span class="nv"> </span><span class="s">fa-github"</span>
+      <span class="na">url  </span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://github.com/komasaru"</span>
+    <span class="pi">-</span> <span class="na">label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">GitLab"</span>
+      <span class="na">icon </span><span class="pi">:</span> <span class="s2">"</span><span class="s">fab</span><span class="nv"> </span><span class="s">fa-fw</span><span class="nv"> </span><span class="s">fa-gitlab"</span>
+      <span class="c1"># url:</span>
+    <span class="pi">-</span> <span class="na">label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Bitbucket"</span>
+      <span class="na">icon </span><span class="pi">:</span> <span class="s2">"</span><span class="s">fab</span><span class="nv"> </span><span class="s">fa-fw</span><span class="nv"> </span><span class="s">fa-bitbucket"</span>
+      <span class="c1"># url:</span>
+    <span class="pi">-</span> <span class="na">label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Instagram"</span>
+      <span class="na">icon </span><span class="pi">:</span> <span class="s2">"</span><span class="s">fab</span><span class="nv"> </span><span class="s">fa-fw</span><span class="nv"> </span><span class="s">fa-instagram"</span>
+      <span class="c1"># url:</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">footer</code> : フッタに表示するリンクの設定
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">links</code> : 各種リンク
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">label</code> : リンクのラベル</li>
+          <li><code class="language-plaintext highlighter-rouge">icon</code> : リンクのアイコン（Font Awesome で設定）</li>
+          <li><code class="language-plaintext highlighter-rouge">url</code> : リンク URL. （コメント化すると、ラベル・アイコンは表示されない）</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="6-8-ファイル読み込みの設定">6-8. ファイル読み込みの設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Reading Files</span>
+<span class="na">include</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">.htaccess</span>
+  <span class="pi">-</span> <span class="s">_pages</span>
+<span class="na">exclude</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s2">"</span><span class="s">*.sublime-project"</span>
+  <span class="pi">-</span> <span class="s2">"</span><span class="s">*.sublime-workspace"</span>
+  <span class="pi">-</span> <span class="s">vendor</span>
+  <span class="pi">-</span> <span class="s">.asset-cache</span>
+  <span class="pi">-</span> <span class="s">.bundle</span>
+  <span class="pi">-</span> <span class="s">.jekyll-assets-cache</span>
+  <span class="pi">-</span> <span class="s">.sass-cache</span>
+  <span class="pi">-</span> <span class="s">assets/js/plugins</span>
+  <span class="pi">-</span> <span class="s">assets/js/_main.js</span>
+  <span class="pi">-</span> <span class="s">assets/js/vendor</span>
+  <span class="pi">-</span> <span class="s">Capfile</span>
+  <span class="pi">-</span> <span class="s">CHANGELOG</span>
+  <span class="pi">-</span> <span class="s">config</span>
+  <span class="pi">-</span> <span class="s">Gemfile</span>
+  <span class="pi">-</span> <span class="s">Gruntfile.js</span>
+  <span class="pi">-</span> <span class="s">gulpfile.js</span>
+  <span class="pi">-</span> <span class="s">LICENSE</span>
+  <span class="pi">-</span> <span class="s">log</span>
+  <span class="pi">-</span> <span class="s">node_modules</span>
+  <span class="pi">-</span> <span class="s">package.json</span>
+  <span class="pi">-</span> <span class="s">Rakefile</span>
+  <span class="pi">-</span> <span class="s">README</span>
+  <span class="pi">-</span> <span class="s">tmp</span>
+  <span class="pi">-</span> <span class="s">/docs</span> <span class="c1"># ignore Minimal Mistakes /docs</span>
+  <span class="pi">-</span> <span class="s">/test</span> <span class="c1"># ignore Minimal Mistakes /test</span>
+<span class="na">keep_files</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">.git</span>
+  <span class="pi">-</span> <span class="s">.svn</span>
+<span class="na">encoding    </span><span class="pi">:</span> <span class="s2">"</span><span class="s">utf-8"</span>
+<span class="na">markdown_ext</span><span class="pi">:</span> <span class="s2">"</span><span class="s">markdown,mkdown,mkdn,mkd,md"</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">include</code> : 強制的に変換対象に含めるディレクトリ／ファイルを設定。</li>
+  <li><code class="language-plaintext highlighter-rouge">exclude</code> : 変換対象から除外するディレクトリ／ファイルを設定。</li>
+  <li><code class="language-plaintext highlighter-rouge">keep_files</code> : Jekyll によって生成はされないが、保存しておきたいディレクトリ／ファイルを設定。</li>
+  <li><code class="language-plaintext highlighter-rouge">encoding</code> : ページのエンコード</li>
+  <li><code class="language-plaintext highlighter-rouge">markdown_ext</code> : Markdown ファイルの拡張子一覧</li>
+</ul>
+
+<h4 id="6-9-変換の設定">6-9. 変換の設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Conversion</span>
+<span class="na">markdown         </span><span class="pi">:</span> <span class="s">kramdown</span>
+<span class="na">highlighter      </span><span class="pi">:</span> <span class="s">rouge</span>
+<span class="na">lsi              </span><span class="pi">:</span> <span class="no">false</span>
+<span class="na">excerpt_separator</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;!--more--&gt;"</span>  <span class="c1">#"\n\n"</span>
+<span class="na">incremental      </span><span class="pi">:</span> <span class="no">false</span>  <span class="c1"># (Incremental regeneration is still an experimental feature)</span>
+
+
+<span class="c1"># Markdown Processing</span>
+<span class="na">kramdown</span><span class="pi">:</span>
+  <span class="na">input         </span><span class="pi">:</span> <span class="s">GFM</span>
+  <span class="na">hard_wrap     </span><span class="pi">:</span> <span class="no">false</span>
+  <span class="na">auto_ids      </span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">footnote_nr   </span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">entity_output </span><span class="pi">:</span> <span class="s">as_char</span>
+  <span class="na">toc_levels    </span><span class="pi">:</span> <span class="s">1..6</span>
+  <span class="na">smart_quotes  </span><span class="pi">:</span> <span class="s">lsquo,rsquo,ldquo,rdquo</span>
+  <span class="na">enable_coderay</span><span class="pi">:</span> <span class="no">false</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">markdown</code> : 使用する Markdown コンバータ</li>
+  <li><code class="language-plaintext highlighter-rouge">highlighter</code> : 使用する syntax highlighter</li>
+  <li><code class="language-plaintext highlighter-rouge">lsi</code> : 関連記事のインデックスを作成するか否か。</li>
+  <li><code class="language-plaintext highlighter-rouge">excerpt_separator</code> : 記事一覧表示時にこの文字列以前を抜粋</li>
+  <li><code class="language-plaintext highlighter-rouge">incremental</code> : 記事ビルド時に増分のみビルドするか否か（但し、実験的機能）</li>
+  <li><code class="language-plaintext highlighter-rouge">kramdown</code> : <code class="language-plaintext highlighter-rouge">markdown</code> で <code class="language-plaintext highlighter-rouge">kramdown</code> を設定した場合に設定。
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">input</code> : <code class="language-plaintext highlighter-rouge">GFM</code> を設定することで、 GitHub Flavored Markdown を使用可能。</li>
+      <li><code class="language-plaintext highlighter-rouge">auto_ids</code> : <code class="language-plaintext highlighter-rouge">true</code> を設定することで、 TOC に対応。（目次からのページ内リンク）</li>
+      <li>…</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="6-10-スタイルシートscssの設定">6-10. スタイルシート(SCSS)の設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Sass/SCSS</span>
+<span class="na">sass</span><span class="pi">:</span>
+  <span class="na">sass_dir</span><span class="pi">:</span> <span class="s">_sass</span>
+  <span class="na">style   </span><span class="pi">:</span> <span class="s">compressed</span> <span class="c1"># http://sass-lang.com/documentation/file.SASS_REFERENCE.html#output_style</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">sass</code> : SCSS の設定
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">sass_dir</code> : 生成される Sass ファイルを配置するディレクトリ</li>
+      <li><code class="language-plaintext highlighter-rouge">style</code> : 生成される Sass ファイルを圧縮(minify)する場合は <code class="language-plaintext highlighter-rouge">compressed</code> を設定</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="6-11-出力の設定">6-11. 出力の設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Outputting</span>
+<span class="na">permalink    </span><span class="pi">:</span> <span class="s">/:year/:month/:day/:title/</span>  <span class="c1"># /:categories/:title/</span>
+<span class="na">paginate     </span><span class="pi">:</span> <span class="m">10</span> <span class="c1"># amount of posts to show</span>
+<span class="na">paginate_path</span><span class="pi">:</span> <span class="s">/page:num/</span>
+<span class="na">timezone     </span><span class="pi">:</span> <span class="s">Asia/Tokyo</span>  <span class="c1"># https://en.wikipedia.org/wiki/List_of_tz_database_time_zones</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">permalink</code> : 記事のパス形式</li>
+  <li><code class="language-plaintext highlighter-rouge">paginate</code> : ページ処理する際の1ページの最大記事数</li>
+  <li><code class="language-plaintext highlighter-rouge">paginate_path</code> : ページ処理する際のページのパス形式</li>
+  <li><code class="language-plaintext highlighter-rouge">timezone</code> : タイムゾーン</li>
+</ul>
+
+<h4 id="6-12-プラグインの設定">6-12. プラグインの設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Plugins (previously gems:)</span>
+<span class="na">plugins</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">jekyll-paginate</span>
+  <span class="pi">-</span> <span class="s">jekyll-sitemap</span>
+  <span class="pi">-</span> <span class="s">jekyll-gist</span>
+  <span class="pi">-</span> <span class="s">jekyll-feed</span>
+  <span class="pi">-</span> <span class="s">jemoji</span>
+  <span class="pi">-</span> <span class="s">jekyll-include-cache</span>
+  <span class="pi">-</span> <span class="s">jekyll-archives</span>
+
+<span class="c1"># mimic GitHub Pages with --safe</span>
+<span class="na">whitelist</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">jekyll-paginate</span>
+  <span class="pi">-</span> <span class="s">jekyll-sitemap</span>
+  <span class="pi">-</span> <span class="s">jekyll-gist</span>
+  <span class="pi">-</span> <span class="s">jekyll-feed</span>
+  <span class="pi">-</span> <span class="s">jemoji</span>
+  <span class="pi">-</span> <span class="s">jekyll-include-cache</span>
+  <span class="pi">-</span> <span class="s">jekyll-archives</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">plugins</code> : 使用するプラグインを設定<br />
+上記の <code class="language-plaintext highlighter-rouge">jekyll-paginate</code> 〜 <code class="language-plaintext highlighter-rouge">jekyll-include-cache</code> は Minimal Mistakes のデフォルト。<br />
+追加したいプラグインがあれば、 <code class="language-plaintext highlighter-rouge">jekyll-include-cache</code> より後ろに追加。（<code class="language-plaintext highlighter-rouge">Gemfile</code> への記述も必要）</li>
+  <li><code class="language-plaintext highlighter-rouge">whitelist</code> : GitHub Pages で使用するプラグインを配列化して設定（<code class="language-plaintext highlighter-rouge">plugins</code> と同じ？当方、不使用なので詳細不明）</li>
+</ul>
+
+<h4 id="6-13-フィードの設定">6-13. フィードの設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Jekyll Feed</span>
+<span class="na">feed</span><span class="pi">:</span>
+  <span class="na">path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">atom.xml"</span>
+<span class="na">atom_feed</span><span class="pi">:</span>
+  <span class="na">path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://www.mk-mode.com/blog/atom.xml"</span>  <span class="c1"># blank (default) uses feed.xml</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">feed</code>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">path</code> : 生成するフィードのファイル名</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">atom_feed</code>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">path</code> : フッタのリンクに使用する Atom フィードの URL</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="6-14-アーカイブの設定">6-14. アーカイブの設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Archives</span>
+<span class="c1">#  Type</span>
+<span class="c1">#  - GitHub Pages compatible archive pages built with Liquid ~&gt; type: liquid (default)</span>
+<span class="c1">#  - Jekyll Archives plugin archive pages ~&gt; type: jekyll-archives</span>
+<span class="c1">#  Path (examples)</span>
+<span class="c1">#  - Archive page should exist at path when using Liquid method or you can</span>
+<span class="c1">#    expect broken links (especially with breadcrumbs enabled)</span>
+<span class="c1">#  - &lt;base_path&gt;/tags/my-awesome-tag/index.html ~&gt; path: /tags/</span>
+<span class="c1">#  - &lt;base_path/categories/my-awesome-category/index.html ~&gt; path: /categories/</span>
+<span class="c1">#  - &lt;base_path/my-awesome-category/index.html ~&gt; path: /</span>
+<span class="na">category_archive</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">jekyll-archives</span>  <span class="c1"># liquid</span>
+  <span class="na">path</span><span class="pi">:</span> <span class="s">/categories/</span>
+<span class="na">tag_archive</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">jekyll-archives</span>  <span class="c1"># liquid</span>
+  <span class="na">path</span><span class="pi">:</span> <span class="s">/tags/</span>
+<span class="c1"># https://github.com/jekyll/jekyll-archives</span>
+<span class="na">jekyll-archives</span><span class="pi">:</span>
+  <span class="na">enabled</span><span class="pi">:</span>  <span class="s">all</span>
+    <span class="s">#- year</span>
+    <span class="s">#- month</span>
+    <span class="s">#- day</span>
+    <span class="s">#- categories</span>
+    <span class="s">#- tags</span>
+  <span class="na">layouts</span><span class="pi">:</span>
+    <span class="na">year    </span><span class="pi">:</span> <span class="s">archive-taxonomy</span>
+    <span class="na">month   </span><span class="pi">:</span> <span class="s">archive-taxonomy</span>
+    <span class="na">day     </span><span class="pi">:</span> <span class="s">archive-taxonomy</span>
+    <span class="na">category</span><span class="pi">:</span> <span class="s">archive-taxonomy</span>
+    <span class="na">tag     </span><span class="pi">:</span> <span class="s">archive-taxonomy</span>
+  <span class="na">permalinks</span><span class="pi">:</span>
+    <span class="na">year    </span><span class="pi">:</span> <span class="s">/:year/</span>
+    <span class="na">month   </span><span class="pi">:</span> <span class="s">/:year/:month/</span>
+    <span class="na">day     </span><span class="pi">:</span> <span class="s">/:year/:month/:day/</span>
+    <span class="na">category</span><span class="pi">:</span> <span class="s">/categories/:name/</span>
+    <span class="na">tag     </span><span class="pi">:</span> <span class="s">/tags/:name/</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">category_archive</code>, <code class="language-plaintext highlighter-rouge">tag_archive</code> : カテゴリ／タグ一覧の設定
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">type</code> : アーカイブ生成プラグイン<br />
+<code class="language-plaintext highlighter-rouge">jekyll-archives</code> を使用する場合は、 <code class="language-plaintext highlighter-rouge">plugins</code> で設定しておく。</li>
+      <li><code class="language-plaintext highlighter-rouge">path</code> : カテゴリ／タグ一覧ページのパス</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">jekyll-archives</code> : ekyll-archives の設定
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">enabled</code> : 有効にしたいアーカイブを設定
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">all</code> で年／月／日／カテゴリ／タグの全て。</li>
+          <li>個別に有効にするなら、 <code class="language-plaintext highlighter-rouge">year</code>, <code class="language-plaintext highlighter-rouge">month</code>, <code class="language-plaintext highlighter-rouge">day</code>, <code class="language-plaintext highlighter-rouge">categories</code>, <code class="language-plaintext highlighter-rouge">tags</code> から必要なもののみを配列化して指定。</li>
+        </ul>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">layouts</code> : 配下で各アーカイブのレイアウトを指定。</li>
+      <li><code class="language-plaintext highlighter-rouge">permalinks</code> : 配下で各アーカイブのパスの形式を指定。</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="6-15-html-圧縮minifyの設定">6-15. HTML 圧縮(minify)の設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># HTML Compression</span>
+<span class="c1"># - http://jch.penibelst.de/</span>
+<span class="na">compress_html</span><span class="pi">:</span>
+  <span class="na">clippings </span><span class="pi">:</span> <span class="s">all</span>
+  <span class="na">comments  </span><span class="pi">:</span> <span class="s">all</span>
+  <span class="na">endings   </span><span class="pi">:</span> <span class="s">all</span>
+  <span class="na">ignore</span><span class="pi">:</span>
+    <span class="na">envs    </span><span class="pi">:</span> <span class="s">development</span>
+  <span class="na">blanklines</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">profile   </span><span class="pi">:</span> <span class="no">false</span>
+  <span class="na">startings </span><span class="pi">:</span> <span class="pi">[]</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">compress_html</code> : HTML minify の設定
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">clippings</code> : 空白を除去しても安全な要素に囲まれた空白を除去</li>
+      <li><code class="language-plaintext highlighter-rouge">comments</code> : コメントを除去</li>
+      <li><code class="language-plaintext highlighter-rouge">endings</code> : 任意の終了タグを除去</li>
+      <li><code class="language-plaintext highlighter-rouge">ignore</code> : 無効化
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">envs</code> : 無効化する環境</li>
+        </ul>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">blanklines</code> : 空白行を除去</li>
+      <li><code class="language-plaintext highlighter-rouge">profile</code> : プロファイルモードの有効／無効</li>
+      <li><code class="language-plaintext highlighter-rouge">startings</code> : 任意の開始タグを除去</li>
+    </ul>
+  </li>
+</ul>
+
+<p>この機能は、レイアウトファイル内で <code class="language-plaintext highlighter-rouge">layout</code> に <code class="language-plaintext highlighter-rouge">compress</code> が設定されているものに適用される。<br />
+例えば、 <code class="language-plaintext highlighter-rouge">_layouts/default.html</code> に <code class="language-plaintext highlighter-rouge">layout: compress</code> を設定すれば、概ね全てのページに適用される。<br />
+しかし、当方の Syntax highlight(rouge) の環境の場合、圧縮後の HTML が不正となった上に、行番号が表示されない等の不具合が発生する。（Liquid タグ <code class="language-plaintext highlighter-rouge">highlight</code> に <code class="language-plaintext highlighter-rouge">linenos</code> オプションを使用した場合）
+従って、当方の環境では minify 機能は無効にした。</p>
+
+<h4 id="6-16-yaml-front-matter-既定値の設定">6-16. Yaml Front Matter 既定値の設定</h4>
+
+<p>（記事内の Yaml Front Matter で指定しなかった場合の既定値）</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Defaults</span>
+<span class="na">defaults</span><span class="pi">:</span>
+  <span class="c1"># _posts</span>
+  <span class="pi">-</span> <span class="na">scope</span><span class="pi">:</span>
+      <span class="na">path          </span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+      <span class="na">type          </span><span class="pi">:</span> <span class="s">posts</span>
+    <span class="na">values</span><span class="pi">:</span>
+      <span class="na">layout        </span><span class="pi">:</span> <span class="s">single</span>
+      <span class="na">classes       </span><span class="pi">:</span> <span class="s">wide</span>
+      <span class="na">author_profile</span><span class="pi">:</span> <span class="no">true</span>
+      <span class="na">read_time     </span><span class="pi">:</span> <span class="no">false</span>
+      <span class="na">comments      </span><span class="pi">:</span> <span class="no">true</span>
+      <span class="na">share         </span><span class="pi">:</span> <span class="no">true</span>
+      <span class="na">related       </span><span class="pi">:</span> <span class="no">true</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">defaults</code> : Yaml Front Matter 既定値の設定
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">scope</code> : 既定値を適用する範囲
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">path</code> : パス（<code class="language-plaintext highlighter-rouge">""</code> で当該 Jekyll プロジェクト全体）</li>
+          <li><code class="language-plaintext highlighter-rouge">type</code> : ページのタイプ（<code class="language-plaintext highlighter-rouge">posts</code>, <code class="language-plaintext highlighter-rouge">pages</code>, <code class="language-plaintext highlighter-rouge">drafts</code> 等）</li>
+        </ul>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">values</code> : 既定値
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">layout</code> : レイアウト</li>
+          <li><code class="language-plaintext highlighter-rouge">classes</code> : クラス（<code class="language-plaintext highlighter-rouge">wide</code> で記事ペインの幅がワイドになる）</li>
+          <li><code class="language-plaintext highlighter-rouge">author_profile</code> : サイト管理者の表示</li>
+          <li><code class="language-plaintext highlighter-rouge">read_time</code> : 記事を読むのに必要な時間の表示</li>
+          <li><code class="language-plaintext highlighter-rouge">comments</code> : コメント欄の表示</li>
+          <li><code class="language-plaintext highlighter-rouge">share</code> : 共有の表示</li>
+          <li><code class="language-plaintext highlighter-rouge">related</code> : 関連記事の表示</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="6-17-javascript-追加の設定">6-17. JavaScript 追加の設定</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">head_scripts</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s2">"</span><span class="s">https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">head_scripts</code> : head タグ内に設定する JavaScript の URL を設定しておくと、<code class="language-plaintext highlighter-rouge">_includes/head.html</code> で実装される。<br />
+当方、数式処理のために MathJax を追加。</li>
+</ul>
+
+<h3 id="7-その他の編集">7. その他の編集</h3>
+
+<p>広告用 HTML コードの挿入以外で行ったこと。</p>
+
+<h4 id="7-1-記事の横幅拡大">7-1. 記事の横幅拡大</h4>
+
+<p>メイン領域（ペイン）の右側に TOC 領域（記事内の目次）は不要なので、レイアウトファイルの Yaml Front Matter に以下の記述を追加した。<br />
+（対象ファイル： <code class="language-plaintext highlighter-rouge">archive.html</code>, <code class="language-plaintext highlighter-rouge">categories.html</code>, <code class="language-plaintext highlighter-rouge">tags.html</code>）</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">classes</span><span class="pi">:</span> <span class="s">wide</span>
+</code></pre></div></div>
+
+<p>※記事は <code class="language-plaintext highlighter-rouge">single.html</code> だが、 <code class="language-plaintext highlighter-rouge">_config.yml</code> で既定値として <code class="language-plaintext highlighter-rouge">classes: wide</code> を指定しているの、 <code class="language-plaintext highlighter-rouge">single.html</code> には追加しなくてもよい。</p>
+
+<h4 id="7-2-カテゴリタグ年別アーカイブ一覧ページの作成">7-2. カテゴリ／タグ／年別アーカイブ一覧ページの作成</h4>
+
+<p>デフォルトでは存在しないので、 <code class="language-plaintext highlighter-rouge">_page</code> ディレクトリ内に作成する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">_page/category-archive.md</code></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
+title         : "カテゴリ別一覧"
+layout        : categories
+classes       : wide
+permalink     : /categories/
+author_profile: true
+---
+</code></pre></div></div>
+
+<p>File: <code class="language-plaintext highlighter-rouge">_page/tag-archive.md</code></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
+title         : "タグ別一覧"
+layout        : tags
+classes       : wide
+permalink     : /tags/
+author_profile: true
+---
+</code></pre></div></div>
+
+<p>File: <code class="language-plaintext highlighter-rouge">_page/year-archive.md</code></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
+title         : "アーカイブ"
+layout        : posts
+classes       : wide
+permalink     : /year-archive/
+author_profile: true
+---
+</code></pre></div></div>
+
+<h4 id="7-3-google-カスタム検索用ページの作成">7-3. Google カスタム検索用ページの作成</h4>
+
+<p>当方、サイト内検索に Google カスタム検索を使用するので、 <code class="language-plaintext highlighter-rouge">_page</code> ディレクトリ内に作成した。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">_page/search.md</code></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
+title         : "ページ内検索"
+layout        : single
+classes       : wide
+permalink     : /search/
+author_profile: false
+---
+
+{% include search/google-search-scripts.html %}
+</code></pre></div></div>
+
+<h4 id="7-4-404-ページの作成">7-4. 404 ページの作成</h4>
+
+<p>ページが存在しない場合のエラーページがないので、 <code class="language-plaintext highlighter-rouge">_page</code> ディレクトリ内に作成する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">_page/404.md</code></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
+layout        : single
+title         : "404 ERROR - Not Found"
+excerpt       : "Page not found."
+sitemap       : false
+permalink     : /404.html
+author_profile: true
+---
+
+Sorry, but the page you were trying to view does not exist!
+</code></pre></div></div>
+
+<h4 id="7-5-カテゴリタグ一覧のページ内リンクの変更">7-5. カテゴリ／タグ一覧のページ内リンクの変更</h4>
+
+<p>デフォルトでは、カテゴリ／タグ一覧ページは、 <code class="language-plaintext highlighter-rouge">#</code> を使ってページ内リンクしているが、日本語のカテゴリ／タグ名の場合に正常に機能しない（当方の環境の場合、ブラウザで URL を再確定しないと機能しない）ので、 <code class="language-plaintext highlighter-rouge">#</code> を除去し、カテゴリ／タグ別のページに遷移するよう変更した。<br />
+（<code class="language-plaintext highlighter-rouge">_config.yml</code> でアーカイブページの生成を liquid から jekyll-archives に変更して、カテゴリ／タグ別のページを生成している）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">categories.html</code></p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"#{{ category[0] | slugify }}"</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<p>の行を以下のように。</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{{ category[0] | slugify }}"</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<p>File: <code class="language-plaintext highlighter-rouge">tags.html</code></p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"#{{ tag[0] | slugify }}"</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<p>の行を以下のように。</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{{ tag[0] | slugify }}"</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<p>※年別アーカイブ（<code class="language-plaintext highlighter-rouge">posts.html</code> を使用するもの）に関しては、デフォルトのまま。（ページ内リンク）</p>
+
+<h4 id="7-6-更新日時の書式変更">7-6. 更新日時の書式変更</h4>
+
+<p>記事の最後等に表示される投稿／更新日時の書式を以下のように変更。<br />
+（対象フィル： <code class="language-plaintext highlighter-rouge">single.html</code>）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>date: "%B %d, %Y"
+</code></pre></div></div>
+
+<p>となっている箇所を全て（<code class="language-plaintext highlighter-rouge">meta</code>, <code class="language-plaintext highlighter-rouge">time</code> タグ内、計5箇所）、以下のように。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>date: "%Y-%m-%d %H:%M"
+</code></pre></div></div>
+
+<h4 id="7-7-画像の配置">7-7. 画像の配置</h4>
+
+<p>プロフィール画像や favicon が無いので、 <code class="language-plaintext highlighter-rouge">assets/images</code> ディレクトリ内に配置する。</p>
+
+<p>当方、 <code class="language-plaintext highlighter-rouge">about_me.png</code> と <code class="language-plaintext highlighter-rouge">favicon.ico</code> を配置した。（<code class="language-plaintext highlighter-rouge">about_me.png</code> は、 <code class="language-plaintext highlighter-rouge">_config.yml</code> 内の <code class="language-plaintext highlighter-rouge">og_image</code> や <code class="language-plaintext highlighter-rouge">avatar</code> で指定している）</p>
+
+<ul>
+  <li>投稿記事内で使用する画像は <code class="language-plaintext highlighter-rouge">assets/images</code> ディレクトリ内ではなく、 <code class="language-plaintext highlighter-rouge">images</code> ディレクトリ内に年月日別に作成したディレクトリ内に配置する。</li>
+</ul>
+
+<h4 id="7-8-favicon-の設定">7-8. favicon の設定</h4>
+
+<p>favicon を表示させるために <code class="language-plaintext highlighter-rouge">head</code> タグ内に記述する。<br />
+実際には、 <code class="language-plaintext highlighter-rouge">head</code> カスタマイズ用インクルードファイルに追記。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">_includes/head/custom.html</code></p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"icon"</span> <span class="na">href=</span><span class="s">"{{ site.baseurl }}/assets/images/favicon.ico"</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<h4 id="7-9-google-analytics-の設定">7-9. Google Analytics の設定</h4>
+
+<p>Google Analytics の機能を実装するために <code class="language-plaintext highlighter-rouge">head</code> タグ内に記述する。<br />
+実際には、 <code class="language-plaintext highlighter-rouge">head</code> カスタマイズ用インクルードファイルに追記。（<code class="language-plaintext highlighter-rouge">_config.yml</code> 内でも設定）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">_includes/head/custom.html</code></p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{% include analytics-providers/google.html %}
+</code></pre></div></div>
+
+<h4 id="7-10-ページトップボタンの設置">7-10. ページトップボタンの設置</h4>
+
+<p>ページを下部にスクロールした際に表示するページの最上部に戻るためのボタンを設置する。<br />
+実際には、 <code class="language-plaintext highlighter-rouge">footer</code> カスタマイズ用インクルードファイルに追記。<br />
+（当方、アイコン画像は Font Awesome 使用）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">_includes/footer/custom.html</code></p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">"page-top"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"#"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">"fa fa-angle-double-up fa-2x"</span> <span class="na">aria-hidden=</span><span class="s">"true"</span><span class="nt">&gt;&lt;/i&gt;</span>
+  <span class="nt">&lt;/a&gt;</span>
+<span class="nt">&lt;/p&gt;</span>
+</code></pre></div></div>
+
+<h4 id="7-11-自作-javascript-の追加">7-11. 自作 JavaScript の追加</h4>
+
+<p>JavaScript を追加したければ、 <code class="language-plaintext highlighter-rouge">assets/js</code> ディレクトリ配下にファイルを作成し、 <code class="language-plaintext highlighter-rouge">_config.yml</code> の <code class="language-plaintext highlighter-rouge">head_scripts</code> に追加する。但し、この場合、 JavaScript は <code class="language-plaintext highlighter-rouge">head</code> タグ内に追加される。</p>
+
+<p><code class="language-plaintext highlighter-rouge">_config.yml</code> 内で <code class="language-plaintext highlighter-rouge">footer_scripts</code> に設定すると、 <code class="language-plaintext highlighter-rouge">footer</code> タグ内に追加されるが、 jQuery より先に取り込まれることになっているため、 jQuery を利用した JavaScript を追加したければ、 jQuery より後で取り込むようにしなければならない。<br />
+その場合、以下のように追加する。（以下は <code class="language-plaintext highlighter-rouge">my_custom.js</code> という自作スクリプトを取り込む例）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">_includes/scripts.html</code></p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{% if site.footer_scripts %}
+  {% for script in site.footer_scripts %}
+    {% if script contains "://" %}
+      {% capture script_path %}{{ script }}{% endcapture %}
+    {% else %}
+      {% capture script_path %}{{ script | relative_url }}{% endcapture %}
+    {% endif %}
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"{{ script_path }}"</span><span class="nt">&gt;&lt;/script&gt;</span>
+  {% endfor %}
+{% else %}
+  <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"{{ '/assets/js/main.min.js' | relative_url }}"</span><span class="nt">&gt;&lt;/script&gt;</span>
+  <span class="nt">&lt;script </span><span class="na">defer</span> <span class="na">src=</span><span class="s">"https://use.fontawesome.com/releases/v5.6.0/js/all.js"</span> <span class="na">integrity=</span><span class="s">"sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI"</span> <span class="na">crossorigin=</span><span class="s">"anonymous"</span><span class="nt">&gt;&lt;/script&gt;</span>
+  <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"{{ '/assets/js/my_custom.js' | relative_url }}"</span><span class="nt">&gt;&lt;/script&gt;</span>
+{% endif %}
+
+        :
+===<span class="nt">&lt;</span> <span class="nt">以下省略</span> <span class="nt">&gt;</span>===
+        :
+</code></pre></div></div>
+
+<h4 id="7-12-ナビゲーションメニューの編集">7-12. ナビゲーションメニューの編集</h4>
+
+<p>メニューに表示させたいリンクを追加する。（以下、当方の例）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">_data/navigation.yml</code></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># main links</span>
+<span class="na">main</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">title</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Archives"</span>
+    <span class="na">url  </span><span class="pi">:</span> <span class="s">/year-archive/</span>
+  <span class="pi">-</span> <span class="na">title</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Categories"</span>
+    <span class="na">url  </span><span class="pi">:</span> <span class="s">/categories/</span>
+  <span class="pi">-</span> <span class="na">title</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Tags"</span>
+    <span class="na">url  </span><span class="pi">:</span> <span class="s">/tags/</span>
+  <span class="pi">-</span> <span class="na">title</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Calendar"</span>
+    <span class="na">url  </span><span class="pi">:</span> <span class="s">https://www.mk-mode.com/rails/calendar/calendar</span>
+  <span class="pi">-</span> <span class="na">title</span><span class="pi">:</span> <span class="s2">"</span><span class="s">JMAXML"</span>
+    <span class="na">url  </span><span class="pi">:</span> <span class="s">https://www.mk-mode.com/rails/jmaxml</span>
+</code></pre></div></div>
+
+<h4 id="7-13-スタイルシートの編集">7-13. スタイルシートの編集</h4>
+
+<p>minimal-mistakes-jekyll gem の <code class="language-plaintext highlighter-rouge">assets/css/main.css</code> を当該プロジェクトの <code class="language-plaintext highlighter-rouge">assets/css</code> ディレクトリ配下に複製して、最終行に追加していく。</p>
+
+<h4 id="7-14-ヘッダ画像の追加">7-14. ヘッダ画像の追加</h4>
+
+<p>ページのヘッダ部分に画像を設定したい場合、画像ファイルを <code class="language-plaintext highlighter-rouge">/assets/images</code> ディレクトリに配置し、各記事の Markdown ファイルの Yaml Front Matter に以下のような記述を追加する。（以下、画像ファイルが <code class="language-plaintext highlighter-rouge">header.jpg</code> である例）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>header:
+  image: /assets/images/header.jpg
+</code></pre></div></div>
+
+<ul>
+  <li>トップページにヘッダ画像を追加する場合は <code class="language-plaintext highlighter-rouge">index.html</code> に。</li>
+  <li><code class="language-plaintext highlighter-rouge">image_description</code> に画像の説明を設定可能。</li>
+  <li><code class="language-plaintext highlighter-rouge">caption</code> に画像のキャプションを設定可能</li>
+</ul>
+
+<p>画像にオーバレイテキストを設定することも可能。（以下、当方の例）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>excerpt: "&lt;small&gt;当ブログは自前の Debian GNU/Linux サーバで運用。&lt;br /&gt;PC・サーバ構築等の話題が中心。&lt;/small&gt;"
+header:
+  overlay_image: /assets/images/header.jpg
+</code></pre></div></div>
+
+<h3 id="8-公開方法">8. 公開方法</h3>
+
+<p>ビルドすると <code class="language-plaintext highlighter-rouge">_site</code> ディレクトリ内に生成されるので、丸ごと公開先にアップロードすればよい。（Rsync などで）</p>
+
+<p>但し、開発環境（<code class="language-plaintext highlighter-rouge">JEKYLL_ENV</code> が <code class="language-plaintext highlighter-rouge">development</code>）としてビルドされているので、 <code class="language-plaintext highlighter-rouge">JEKYLL_ENV=production</code> としてビルドしないと不都合が出てくる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ JEKYLL_ENV=production bundle exec jekyll build
+</code></pre></div></div>
+
+<h3 id="9-その他">9. その他</h3>
+
+<ul>
+  <li>フッタにアクセスカウンタを設置しているが、別途 Rails で作成したアクセス解析処理を jQuery で非同期で実行している。</li>
+  <li>当方、記事が多く、全ての記事のビルドに時間がかかるため、プレビューで確認する際、該当の記事ファイル以外を <code class="language-plaintext highlighter-rouge">_posts</code> ディレクトリから <code class="language-plaintext highlighter-rouge">_stash</code> ディレクトリに移動し、該当の記事ファイルに問題がないことが確認できたら、 <code class="language-plaintext highlighter-rouge">_stash</code> ディレクトリ内の記事ファイルを <code class="language-plaintext highlighter-rouge">_posts</code> ディレクトリ内に戻すようにしている。（別途、 Rakefile を作成して）</li>
+  <li>その他、日常的に使用するコマンド類を Rakefile で定義するなどして効率化を図っている。</li>
+</ul>
+
+<h3 id="10-参考サイト">10. 参考サイト</h3>
+
+<p>カスタマイズ方法も含め、大抵のことは以下のサイトに記載されている。</p>
+
+<ul>
+  <li><a href="https://jekyllrb.com/" title="Jekyll">Jekyll</a></li>
+  <li><a href="https://jekylltips-ja.github.io/" title="Jekyll Tips">Jekyll Tips</a></li>
+  <li><a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/" title="Quick-Start Guide - Minimal Mistakes">Quick-Start Guide - Minimal Mistakes</a></li>
+</ul>
+
+<hr />
+
+<p>次回、 Ruby 製 CMS の Octopress の記事を Jekyll 用に移行する方法について記録します。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/css" class="page__taxonomy-item" rel="tag">CSS</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/html" class="page__taxonomy-item" rel="tag">HTML</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/javascript" class="page__taxonomy-item" rel="tag">JavaScript</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/jekyll" class="page__taxonomy-item" rel="tag">Jekyll</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/markdown" class="page__taxonomy-item" rel="tag">Markdown</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%96%E3%83%AD%E3%82%B0" class="page__taxonomy-item" rel="tag">ブログ</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-01-27T00:20:00+09:00">2019-01-27 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Jekyll+%E7%92%B0%E5%A2%83%E3%81%AE%E6%A7%8B%E7%AF%89%EF%BC%88%E3%83%86%E3%83%BC%E3%83%9E%E3%81%AF+Gem+%E5%8C%96%E3%81%95%E3%82%8C%E3%81%9F+Minimal+Mistakes%EF%BC%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2019%2F01%2F27%2Fjekyll-with-minimal-mistakes%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2019%2F01%2F27%2Fjekyll-with-minimal-mistakes%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2019%2F01%2F27%2Fjekyll-with-minimal-mistakes%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2019/01/24/fortran95-sun-moon-rise-set-meridian/" class="pagination--pager" title="Fortran - 日・月の出・南中・入時刻の計算！
+">Previous</a>
+    
+    
+      <a href="/2019/01/30/jekyll-migration-from-octopress/" class="pagination--pager" title="Jekyll - Octopress から記事ファイルの移行！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2019/01/27/jekyll-with-minimal-mistakes/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2019/01/27/jekyll-with-minimal-mistakes"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

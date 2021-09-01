@@ -1,0 +1,1023 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby - 多倍長整数の大小比較！ - mk-mode BLOG</title>
+<meta name="description" content="前回は、C++ による多桁（多倍長）整数同士の大小の比較について紹介しました。  C++ - 多倍長整数の大小比較！今回は、同じことを Ruby で試してみました。Ruby では多倍長数はメモリの許す限り使用可能ですが、配列を使った考え方も必要になる局面もあると思います。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby - 多倍長整数の大小比較！">
+<meta property="og:url" content="https://komasaru.github.io/2013/05/03/ruby-compare-big-digits/">
+
+
+  <meta property="og:description" content="前回は、C++ による多桁（多倍長）整数同士の大小の比較について紹介しました。  C++ - 多倍長整数の大小比較！今回は、同じことを Ruby で試してみました。Ruby では多倍長数はメモリの許す限り使用可能ですが、配列を使った考え方も必要になる局面もあると思います。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby - 多倍長整数の大小比較！">
+  <meta name="twitter:description" content="前回は、C++ による多桁（多倍長）整数同士の大小の比較について紹介しました。  C++ - 多倍長整数の大小比較！今回は、同じことを Ruby で試してみました。Ruby では多倍長数はメモリの許す限り使用可能ですが、配列を使った考え方も必要になる局面もあると思います。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/05/03/ruby-compare-big-digits/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-05-03T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/05/03/ruby-compare-big-digits/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby - 多倍長整数の大小比較！">
+    <meta itemprop="description" content="前回は、C++ による多桁（多倍長）整数同士の大小の比較について紹介しました。  C++ - 多倍長整数の大小比較！今回は、同じことを Ruby で試してみました。Ruby では多倍長数はメモリの許す限り使用可能ですが、配列を使った考え方も必要になる局面もあると思います。">
+    <meta itemprop="datePublished" content="May 03, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby - 多倍長整数の大小比較！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-05-03T00:20:00+09:00">2013-05-03 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>前回は、C++ による多桁（多倍長）整数同士の大小の比較について紹介しました。</p>
+
+<ul>
+  <li><a href="/2013/05/02/cpp-compare-big-digits/" title="C++ - 多倍長整数の大小比較！">C++ - 多倍長整数の大小比較！</a></li>
+</ul>
+
+<p>今回は、同じことを Ruby で試してみました。<br />
+Ruby では多倍長数はメモリの許す限り使用可能ですが、配列を使った考え方も必要になる局面もあると思います。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Linux Mint 14 Nadia (64bit) での作業を想定。</li>
+  <li>Ruby 2.0.0-p0 を使用。</li>
+</ul>
+
+<h3 id="1-考え方">1. 考え方</h3>
+
+<ul>
+  <li>整数の1桁を1個の配列をみなして考える。</li>
+  <li>今回は、符号は考慮しない。</li>
+  <li>通常、2つの整数のうち桁数が大きい方が大きな整数ではあるが、配列を使用しているため最上位の桁にゼロが格納されることもある。よって、それも考慮する。<br />
+つまり、9桁の <code class="language-plaintext highlighter-rouge">234567890</code> と10桁の <code class="language-plaintext highlighter-rouge">0123456789</code> の場合は、<code class="language-plaintext highlighter-rouge">234567890</code> &gt; <code class="language-plaintext highlighter-rouge">0123456789</code> と判定できるようにするということ。</li>
+</ul>
+
+<h3 id="2-ruby-スクリプト作成">2. Ruby スクリプト作成</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">compare_big_digits.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+</pre></td><td class="code"><pre><span class="c1">#! /usr/local/bin/ruby</span>
+<span class="c1">#*********************************************</span>
+<span class="c1"># 多倍長整数の大小比較</span>
+<span class="c1"># ( 符号は考慮しない。１桁１配列 )</span>
+<span class="c1">#*********************************************</span>
+<span class="c1">#</span>
+<span class="k">class</span> <span class="nc">CompareBigDigits</span>
+  <span class="no">D_L</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># 多倍長整数桁数 ( 左辺 )</span>
+  <span class="no">D_R</span> <span class="o">=</span> <span class="mi">1001</span>  <span class="c1"># 多倍長整数桁数 ( 右辺 )</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="c1"># 使用する被加減乗除数・加減乗除数を設定（テストなので乱数を使用）</span>
+    <span class="vi">@l</span><span class="p">,</span> <span class="vi">@r</span> <span class="o">=</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span><span class="p">,</span> <span class="no">Array</span><span class="p">.</span><span class="nf">new</span>
+    <span class="n">rnd_a</span><span class="p">,</span> <span class="n">rnd_b</span> <span class="o">=</span> <span class="no">Random</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="no">Random</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="no">D_L</span><span class="p">.</span><span class="nf">times</span> <span class="p">{</span> <span class="o">|</span><span class="n">_</span><span class="o">|</span> <span class="vi">@l</span> <span class="o">&lt;&lt;</span> <span class="nb">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="p">}</span>
+    <span class="no">D_R</span><span class="p">.</span><span class="nf">times</span> <span class="p">{</span> <span class="o">|</span><span class="n">_</span><span class="o">|</span> <span class="vi">@r</span> <span class="o">&lt;&lt;</span> <span class="nb">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="c1"># 実処理</span>
+  <span class="k">def</span> <span class="nf">proc_main</span>
+    <span class="c1"># 大小比較</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">compare</span><span class="p">(</span><span class="vi">@l</span><span class="p">,</span> <span class="vi">@r</span><span class="p">)</span>
+    <span class="c1"># 結果出力</span>
+    <span class="nb">display</span><span class="p">(</span><span class="vi">@l</span><span class="p">,</span> <span class="vi">@r</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="c1"># 大小比較</span>
+  <span class="c1">#</span>
+  <span class="c1">#   - 引数   : a(多倍長整数・左辺), b(多倍長整数・右辺)</span>
+  <span class="c1">#   - 返り値 : 1: l &gt; r</span>
+  <span class="c1">#              0: l = r</span>
+  <span class="c1">#             -1: l &lt; r</span>
+  <span class="k">def</span> <span class="nf">compare</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+    <span class="c1"># 配列サイズ取得</span>
+    <span class="n">size_l</span><span class="p">,</span> <span class="n">size_r</span> <span class="o">=</span> <span class="n">l</span><span class="p">.</span><span class="nf">size</span><span class="p">,</span> <span class="n">r</span><span class="p">.</span><span class="nf">size</span>
+    <span class="c1"># 左辺の右辺より大きい部分</span>
+    <span class="k">if</span> <span class="n">size_l</span> <span class="o">&gt;</span> <span class="n">size_r</span>
+      <span class="p">(</span><span class="n">size_l</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nf">downto</span><span class="p">(</span><span class="n">size_r</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="k">unless</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="c1"># 右辺の左辺より大きい部分</span>
+    <span class="k">if</span> <span class="n">size_l</span> <span class="o">&lt;</span> <span class="n">size_r</span>
+      <span class="p">(</span><span class="n">size_r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nf">downto</span><span class="p">(</span><span class="n">size_l</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="k">unless</span> <span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="c1"># 桁数が同じ場合か、桁数が異なる場合の桁がダブる部分</span>
+    <span class="p">([</span><span class="n">size_l</span><span class="p">,</span> <span class="n">size_r</span><span class="p">].</span><span class="nf">min</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nf">downto</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+      <span class="k">return</span>  <span class="mi">1</span> <span class="k">if</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+      <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">end</span>
+    <span class="c1"># 等しい場合</span>
+    <span class="k">return</span> <span class="mi">0</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1"># 結果出力</span>
+  <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="c1"># 左辺</span>
+    <span class="nb">puts</span> <span class="s2">"[LEFT] ="</span>
+    <span class="p">(</span><span class="no">D_L</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nf">downto</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+      <span class="nb">print</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+      <span class="nb">print</span> <span class="s2">" "</span> <span class="k">if</span> <span class="p">(</span><span class="no">D_L</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="nb">puts</span>      <span class="k">if</span> <span class="p">(</span><span class="no">D_L</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">end</span>
+    <span class="nb">puts</span>
+    <span class="c1"># 右辺</span>
+    <span class="nb">puts</span> <span class="s2">"[RIGHT] ="</span>
+    <span class="p">(</span><span class="no">D_R</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nf">downto</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+      <span class="nb">print</span> <span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+      <span class="nb">print</span> <span class="s2">" "</span> <span class="k">if</span> <span class="p">(</span><span class="no">D_R</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="nb">puts</span>      <span class="k">if</span> <span class="p">(</span><span class="no">D_R</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">end</span>
+    <span class="nb">puts</span>
+    <span class="c1"># 大小比較結果</span>
+    <span class="nb">puts</span> <span class="s2">"[LEFT] </span><span class="si">#{</span><span class="n">s</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">?</span> <span class="s2">"="</span> <span class="p">:</span> <span class="p">(</span><span class="n">s</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">?</span> <span class="s2">"&gt;"</span> <span class="p">:</span> <span class="s2">"&lt;"</span><span class="p">)</span><span class="si">}</span><span class="s2"> [RIGHT]"</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">if</span> <span class="kp">__FILE__</span> <span class="o">==</span> <span class="vg">$0</span>
+  <span class="k">begin</span>
+    <span class="c1"># 計算クラスインスタンス化</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="no">CompareBigDigits</span><span class="p">.</span><span class="nf">new</span>
+    <span class="c1"># 実処理</span>
+    <span class="n">obj</span><span class="p">.</span><span class="nf">proc_main</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"[</span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">e</span><span class="p">.</span><span class="nf">backtrace</span><span class="p">.</span><span class="nf">each</span><span class="p">{</span> <span class="o">|</span><span class="n">tr</span><span class="o">|</span> <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"</span><span class="se">\t</span><span class="si">#{</span><span class="n">tr</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/5516402" title="Gist - Ruby script to compare big digits.">Gist - Ruby script to compare big digits.</a></li>
+</ul>
+
+<h3 id="3-実行">3. 実行</h3>
+
+<p>以下は、1,000桁と1,001桁の整数の大小を比較したもの。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./compare_big_digits.rb
+[LEFT] =
+6120164926 0227028943 7489662756 6975344124 2961800452 
+7821321926 1700279704 4146880145 5623231169 8986252825 
+5419907450 5108229980 3004588698 8108361613 5383096319 
+8527332803 3754848782 8193326376 8120710920 9037526058 
+1178438953 4767180533 0479324929 8371749688 5681633252 
+0957327143 7793534501 5463915879 6929327711 6974332381 
+1399893496 8768573829 9465619243 6739444189 8927369048 
+1012747951 1770362944 2534643751 9639885653 8032025254 
+9174316027 1494799847 2915174164 8378336214 5301496956 
+7924060420 8469610227 0548452925 1445981647 6738871317 
+4962022114 6902132884 2540698072 5913240473 3752808831 
+3427338712 6554732275 7463613315 9138203669 4803368864 
+0833681333 2696755288 5774239515 2902626139 6180906473 
+5334451548 3616786066 8349662548 0341859561 8785059846 
+0323102983 1015506690 7549899939 5645132731 0289974751 
+1391606422 9382745000 7336261202 2372715820 7943707389 
+8456599966 2412561386 7631162401 5107120847 6796845245 
+9819558808 5409270648 3668892262 4809928242 9107004702 
+7503071458 2395578382 2051708990 8809364658 0558994575 
+1060831628 0814562605 3603502580 2990135693 1981353128 
+
+[RIGHT] =
+0534954258 0564515901 0909055692 2411872756 5690208707 
+9657292752 2538565614 4028277510 5482424768 8698766064 
+1677549178 1604179602 0887312582 2839202381 9755182264 
+4729383375 8585585694 3434928000 2588134747 8700277795 
+6364264470 0072589393 2750524791 4684247797 0478152905 
+4714030254 2846369911 6087259587 6511676983 8790729096 
+2292247145 1067309877 4161769909 7074088545 0741339259 
+6213687728 8442274464 3994525011 1600469522 8530729548 
+9788828577 0839878507 7097276600 2649606712 5254307252 
+5441724853 7205856860 3840866172 8225738983 0574608079 
+9699134899 9397096207 8671475077 5326478800 1576742446 
+0066025107 1307183823 7761059783 2118427317 0553585139 
+1570257644 1045009054 5134843534 4702996345 6052678332 
+4146967366 2124258158 4177027402 1556677293 8727719000 
+6135915874 6790306950 5704949471 2884599840 1551437316 
+4467952960 0851642656 9436071425 5651326319 1751655268 
+8974499964 5870255119 7338594597 0379277798 9892591416 
+1365299766 2574934674 4737372226 7953495817 4782129723 
+0038481622 0241786716 0690670149 6625606880 8529800412 
+0960595250 9352225750 1839252795 4933684959 5314081427 
+9
+[LEFT] &gt; [RIGHT]
+</code></pre></div></div>
+
+<hr />
+
+<p>簡単な内容ですが、多倍長演算を行う際に必要になることもあるでしょう。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%95%B0%E5%AD%A6" class="page__taxonomy-item" rel="tag">数学</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-05-03T00:20:00+09:00">2013-05-03 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+-+%E5%A4%9A%E5%80%8D%E9%95%B7%E6%95%B4%E6%95%B0%E3%81%AE%E5%A4%A7%E5%B0%8F%E6%AF%94%E8%BC%83%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F05%2F03%2Fruby-compare-big-digits%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F05%2F03%2Fruby-compare-big-digits%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F05%2F03%2Fruby-compare-big-digits%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/05/02/cpp-compare-big-digits/" class="pagination--pager" title="C++ - 多倍長整数の大小比較！
+">Previous</a>
+    
+    
+      <a href="/2013/05/05/cpp-add-big-float/" class="pagination--pager" title="C++ - 多倍長浮動小数点数の加減算！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/05/03/ruby-compare-big-digits/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/05/03/ruby-compare-big-digits"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

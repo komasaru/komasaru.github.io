@@ -1,0 +1,961 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>nanoc - 月別の記事一覧！ - mk-mode BLOG</title>
+<meta name="description" content="nanoc で月別の記事一覧を表示させる方法についてです。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="nanoc - 月別の記事一覧！">
+<meta property="og:url" content="https://komasaru.github.io/2013/02/04/nanoc-monthly-list/">
+
+
+  <meta property="og:description" content="nanoc で月別の記事一覧を表示させる方法についてです。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="nanoc - 月別の記事一覧！">
+  <meta name="twitter:description" content="nanoc で月別の記事一覧を表示させる方法についてです。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/02/04/nanoc-monthly-list/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-02-04T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/02/04/nanoc-monthly-list/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="nanoc - 月別の記事一覧！">
+    <meta itemprop="description" content="nanoc で月別の記事一覧を表示させる方法についてです。">
+    <meta itemprop="datePublished" content="February 04, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">nanoc - 月別の記事一覧！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-02-04T00:20:00+09:00">2013-02-04 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p><a href="http://nanoc.stoneship.org/" title="nanoc">nanoc</a> で月別の記事一覧を表示させる方法についてです。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Linux Mint 14 Nadia (64bit) での作業を想定。</li>
+  <li>nanoc 3.4.3 を使用。</li>
+  <li>Ruby 1.9.3-p362 を使用。</li>
+  <li>nanoc 用ブログヘルパー（Blogging, Rendering, LinkTo, Tagging）のインクルード設定済み。</li>
+  <li>テンプレート機能は ERB を使用。</li>
+</ul>
+
+<h3 id="1-月一覧取得メソッド作成">1. 月一覧取得メソッド作成</h3>
+
+<p>月の一覧を取得するメソッドを作成する。<br />
+当方は、<code class="language-plaintext highlighter-rouge">lib/helpers.rb</code> に以下を追加した。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">lib/helpers.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">articles_by_month</span>
+  <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="n">current_year</span> <span class="o">=</span> <span class="n">current_month</span> <span class="o">=</span> <span class="n">hash_of_year</span> <span class="o">=</span> <span class="n">items_of_the_month</span> <span class="o">=</span> <span class="kp">nil</span>
+  <span class="n">sorted_articles</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">article</span><span class="o">|</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="no">Date</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">article</span><span class="p">[</span><span class="ss">:created_at</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">current_year</span> <span class="o">!=</span> <span class="n">d</span><span class="p">.</span><span class="nf">year</span>
+      <span class="n">current_month</span> <span class="o">=</span> <span class="kp">nil</span>
+      <span class="n">current_year</span> <span class="o">=</span> <span class="n">d</span><span class="p">.</span><span class="nf">year</span>
+      <span class="n">hash_of_year</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">current_year</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">end</span>
+    <span class="k">if</span> <span class="n">current_month</span> <span class="o">!=</span> <span class="n">d</span><span class="p">.</span><span class="nf">month</span>
+      <span class="n">current_month</span> <span class="o">=</span> <span class="n">d</span><span class="p">.</span><span class="nf">month</span>
+      <span class="n">items_of_the_month</span> <span class="o">=</span> <span class="n">hash_of_year</span><span class="p">[</span><span class="n">current_month</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">end</span>
+    <span class="n">items_of_the_month</span> <span class="o">&lt;&lt;</span> <span class="n">article</span>
+  <span class="k">end</span>
+  <span class="n">result</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">mm_str_month</span><span class="p">(</span><span class="n">month</span><span class="p">)</span>
+  <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"%02d"</span><span class="p">,</span> <span class="n">month</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="2-月別一覧作成メソッド作成">2. 月別一覧作成メソッド作成</h3>
+
+<p>月別一覧ページを作成するメソッドを作成する。<br />
+当方は、<code class="language-plaintext highlighter-rouge">lib/helpers.rb</code> に以下を追加した。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">lib/helpers.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">create_monthly_archive_pages</span>
+  <span class="n">articles_by_month</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">year</span><span class="p">,</span> <span class="n">month_hash</span><span class="o">|</span>
+    <span class="n">month_hash</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">month</span><span class="p">,</span> <span class="n">articles</span><span class="o">|</span>
+      <span class="n">month_str</span> <span class="o">=</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"%02d"</span><span class="p">,</span> <span class="n">month</span><span class="p">)</span>
+      <span class="n">items</span> <span class="o">&lt;&lt;</span> <span class="o">::</span><span class="no">Nanoc3</span><span class="o">::</span><span class="no">Item</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+        <span class="s2">"&lt;%= render('_monthly_archives', :year =&gt; </span><span class="si">#{</span><span class="n">year</span><span class="si">}</span><span class="s2">, :month =&gt; </span><span class="si">#{</span><span class="n">month</span><span class="si">}</span><span class="s2">) %&gt;"</span><span class="p">,</span>
+        <span class="p">{</span> <span class="ss">:title</span> <span class="o">=&gt;</span> <span class="s2">"Archives: </span><span class="si">#{</span><span class="n">year</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">month_str</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="ss">:is_hidden</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="p">},</span>
+        <span class="s2">"/archives/</span><span class="si">#{</span><span class="n">year</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">month_str</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span>
+        <span class="ss">:binary</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+      <span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="3-月一覧テンプレート作成">3. 月一覧テンプレート作成</h3>
+
+<p>サイドバーに表示する月一覧のテンプレートを作成する。<br />
+以下は当方の例で、ファイル名は <code class="language-plaintext highlighter-rouge">layouts/_month_list.html</code> とした。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">layouts/_month_list.html</code></p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="code"><pre><span class="nt">&lt;</span><span class="err">%</span> <span class="na">articles_by_m = </span><span class="s">articles_by_month</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;ul&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">articles_by_m.keys.sort_by</span><span class="err">{|</span><span class="na">e</span><span class="err">|</span> <span class="na">-e</span><span class="err">}.</span><span class="na">each</span> <span class="na">do</span> <span class="err">|</span><span class="na">year</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">articles_by_m</span><span class="err">[</span><span class="na">year</span><span class="err">].</span><span class="na">keys.sort_by</span><span class="err">{|</span><span class="na">e</span><span class="err">|</span> <span class="na">-e</span><span class="err">}.</span><span class="na">each</span> <span class="na">do</span> <span class="err">|</span><span class="na">month</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;li&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">link_to</span><span class="err">("</span><span class="na">#</span><span class="err">{</span><span class="na">year</span><span class="err">}</span><span class="na">年#</span><span class="err">{</span><span class="na">mm_str_month</span><span class="err">(</span><span class="na">month</span><span class="err">)}</span><span class="na">月</span><span class="err">",</span> <span class="err">"/</span><span class="na">archives</span><span class="err">/</span><span class="na">#</span><span class="err">{</span><span class="na">year</span><span class="err">}/</span><span class="na">#</span><span class="err">{</span><span class="na">mm_str_month</span><span class="err">(</span><span class="na">month</span><span class="err">)}/")</span> <span class="err">%</span><span class="nt">&gt;</span>
+    (<span class="nt">&lt;</span><span class="err">%=</span> <span class="na">articles_by_m</span><span class="err">[</span><span class="na">year</span><span class="err">][</span><span class="na">month</span><span class="err">].</span><span class="na">size</span> <span class="err">%</span><span class="nt">&gt;</span>)
+  <span class="nt">&lt;/li&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/ul&gt;</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="4-テンプレート埋め込み">4. テンプレート埋め込み</h3>
+
+<p>月一覧テンプレートをサイドバーの表示させたい箇所に埋め込む。<br />
+以下は当方の例で、サイドバー用に作成しているテンプレートファイル内に埋め込んでいる。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">layouts/_sidebar.html</code></p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="code"><pre><span class="nt">&lt;h2&gt;</span>Archives<span class="nt">&lt;/h2&gt;</span>
+<span class="nt">&lt;</span><span class="err">%=</span> <span class="na">render</span><span class="err">('</span><span class="na">_month_list</span><span class="err">')</span> <span class="err">%</span><span class="nt">&gt;</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="5-月別一覧テンプレート作成">5. 月別一覧テンプレート作成</h3>
+
+<p>月別一覧ページのテンプレートを作成する。<br />
+以下は当方の例で、ファイル名は <code class="language-plaintext highlighter-rouge">layouts/_monthly_archives.html</code> とした。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">layouts/_monthly_archives.html</code></p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre><span class="nt">&lt;h1&gt;</span>Archive: <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">year</span> <span class="err">%</span><span class="nt">&gt;</span>年<span class="nt">&lt;</span><span class="err">%=</span> <span class="na">mm_str_month</span><span class="err">(</span><span class="na">month</span><span class="err">)</span> <span class="err">%</span><span class="nt">&gt;</span>月<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;ul&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">articles_by_month</span><span class="err">[</span><span class="na">year</span><span class="err">][</span><span class="na">month</span><span class="err">].</span><span class="na">each</span> <span class="na">do</span> <span class="err">|</span><span class="na">post</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"monthly-list"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">link_to</span><span class="err">(</span><span class="na">post</span><span class="err">[</span><span class="na">:title</span><span class="err">],</span> <span class="na">post.path</span><span class="err">)</span> <span class="err">%</span><span class="nt">&gt;&lt;br</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">Time.parse</span><span class="err">(</span><span class="na">post</span><span class="err">[</span><span class="na">:created_at</span><span class="err">]).</span><span class="na">strftime</span><span class="err">("%</span><span class="na">Y-</span><span class="err">%</span><span class="na">m-</span><span class="err">%</span><span class="na">d</span> <span class="err">%</span><span class="na">H:</span><span class="err">%</span><span class="na">M</span><span class="err">")</span> <span class="err">%</span><span class="nt">&gt;</span>
+    [ <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">tags_for</span><span class="err">(</span><span class="na">post</span><span class="err">,</span> <span class="err">{</span><span class="na">:base_url =</span><span class="err">&gt; </span><span class="s">'/tags/'</span><span class="err">,</span> <span class="na">:separator =</span><span class="err">&gt; </span><span class="s">', '</span><span class="err">})</span> <span class="err">%</span><span class="nt">&gt;</span> ]
+  <span class="nt">&lt;/li&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/ul&gt;</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="6-rules-編集">6. Rules 編集</h3>
+
+<p>全データロード後で、かつ、コンパイル前に実行されるのが <code class="language-plaintext highlighter-rouge">Rules</code> ファイル内の <code class="language-plaintext highlighter-rouge">preprocess</code> というメソッドである。<br />
+この <code class="language-plaintext highlighter-rouge">Rules</code> ファイルを編集する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">Rules</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="code"><pre><span class="n">preprocess</span> <span class="k">do</span>
+  <span class="n">create_monthly_archive_pages</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="7-コンパイル">7. コンパイル</h3>
+
+<p>いつものようにコンパイルする。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">Rules</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+</pre></td><td class="code"><pre><span class="err">$</span> <span class="n">nanoc</span> <span class="n">compile</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="8-確認">8. 確認</h3>
+
+<p><code class="language-plaintext highlighter-rouge">nanoc view</code> 実行後、ブラウザで確認してみる。<br />
+（以下は現時点での（調整中段階の）一例）</p>
+
+<p><img src="/images/2013/02/04/NANOC_MONTHLY_ARCHIVES.png" alt="NANOC_MONTHLY_ARCHIVES" title="NANOC_MONTHLY_ARCHIVES" /></p>
+
+<p>また、<code class="language-plaintext highlighter-rouge">output</code> ディレクトリには <code class="language-plaintext highlighter-rouge">archives</code> ディレクトリが作成され、さらに年別ディレクトリ・月別ディレクリも作成されているはずである。</p>
+
+<h3 id="9-参考サイト">9. 参考サイト</h3>
+
+<ul>
+  <li><a href="http://blog.designrecipe.jp/2010/07/25/nanoc-customize-archive/" title="Design Recipe 別館 Blog - Nanoc のカスタマイズ - 年月毎の記事のアーカイブを用意する">Design Recipe 別館 Blog - Nanoc のカスタマイズ - 年月毎の記事のアーカイブを用意する</a></li>
+</ul>
+
+<hr />
+
+<p>これで、年月別に記事一覧が管理できるようになりました。</p>
+
+<p>ちなみに、nanoc によるブログを Octopress による<a href="http://www.mk-mode.com/octopress/" title="mk-mode BLOG">メインのブログ</a>のクローンとして公開しています。</p>
+
+<ul>
+  <li><a href="http://www.mk-mode.com/nanoc/" title="mk-mode BLOG (by nanoc)">mk-mode BLOG (by nanoc)</a></li>
+</ul>
+
+<p>但し、<a href="http://www.mk-mode.com/octopress/" title="mk-mode BLOG (by Octopress)">mk-mode BLOG (by Octopress)</a>の記事を機械的に変換しているため、人知の及ばない部分もあるかと思います。ご了承下さい。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/nanoc" class="page__taxonomy-item" rel="tag">nanoc</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%96%E3%83%AD%E3%82%B0" class="page__taxonomy-item" rel="tag">ブログ</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-02-04T00:20:00+09:00">2013-02-04 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=nanoc+-+%E6%9C%88%E5%88%A5%E3%81%AE%E8%A8%98%E4%BA%8B%E4%B8%80%E8%A6%A7%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F02%2F04%2Fnanoc-monthly-list%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F02%2F04%2Fnanoc-monthly-list%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F02%2F04%2Fnanoc-monthly-list%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/02/03/nanoc-tag-list/" class="pagination--pager" title="nanoc - 記事でタグを使用！
+">Previous</a>
+    
+    
+      <a href="/2013/02/05/nanoc-display-code-by-markdown/" class="pagination--pager" title="nanoc - Markdown でコード表示！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/02/04/nanoc-monthly-list/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/02/04/nanoc-monthly-list"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

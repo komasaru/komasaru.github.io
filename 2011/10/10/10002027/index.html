@@ -1,0 +1,948 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>2038年問題！ - mk-mode BLOG</title>
+<meta name="description" content="  ** 更新履歴 **[2015-01-03 14:00] ソーススクリプト修正、Gist アップロード[2020-01-30 20:00] ソーススクリプト整形こんばんは。今日は「2038年問題」についてです。一般に C 言語では、 UNIX の仕様に基づいて時刻を 1970年01月01日00時00分00秒（UTC（世界標準時））からの経過秒数で表しています。そのうちの多くが、時刻を記録する領域として32ビット（4バイト）の符号付き整数を使用しています。すなわち、二進数で32桁分（10進数で2の32乗）の数が用意されていることになります。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="2038年問題！">
+<meta property="og:url" content="https://komasaru.github.io/2011/10/10/10002027/">
+
+
+  <meta property="og:description" content="  ** 更新履歴 **[2015-01-03 14:00] ソーススクリプト修正、Gist アップロード[2020-01-30 20:00] ソーススクリプト整形こんばんは。今日は「2038年問題」についてです。一般に C 言語では、 UNIX の仕様に基づいて時刻を 1970年01月01日00時00分00秒（UTC（世界標準時））からの経過秒数で表しています。そのうちの多くが、時刻を記録する領域として32ビット（4バイト）の符号付き整数を使用しています。すなわち、二進数で32桁分（10進数で2の32乗）の数が用意されていることになります。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="2038年問題！">
+  <meta name="twitter:description" content="  ** 更新履歴 **[2015-01-03 14:00] ソーススクリプト修正、Gist アップロード[2020-01-30 20:00] ソーススクリプト整形こんばんは。今日は「2038年問題」についてです。一般に C 言語では、 UNIX の仕様に基づいて時刻を 1970年01月01日00時00分00秒（UTC（世界標準時））からの経過秒数で表しています。そのうちの多くが、時刻を記録する領域として32ビット（4バイト）の符号付き整数を使用しています。すなわち、二進数で32桁分（10進数で2の32乗）の数が用意されていることになります。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2011/10/10/10002027/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2011-10-10T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2011/10/10/10002027/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="2038年問題！">
+    <meta itemprop="description" content="  ** 更新履歴 **[2015-01-03 14:00] ソーススクリプト修正、Gist アップロード[2020-01-30 20:00] ソーススクリプト整形こんばんは。今日は「2038年問題」についてです。一般に C 言語では、 UNIX の仕様に基づいて時刻を 1970年01月01日00時00分00秒（UTC（世界標準時））からの経過秒数で表しています。そのうちの多くが、時刻を記録する領域として32ビット（4バイト）の符号付き整数を使用しています。すなわち、二進数で32桁分（10進数で2の32乗）の数が用意されていることになります。">
+    <meta itemprop="datePublished" content="October 10, 2011">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">2038年問題！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-10-10T00:20:00+09:00">2011-10-10 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <blockquote>
+  <p>** 更新履歴 **<br />
+[2015-01-03 14:00] ソーススクリプト修正、Gist アップロード<br />
+[2020-01-30 20:00] ソーススクリプト整形</p>
+</blockquote>
+
+<p>こんばんは。</p>
+
+<p>今日は「2038年問題」についてです。</p>
+
+<p>一般に C 言語では、 UNIX の仕様に基づいて時刻を 1970年01月01日00時00分00秒（UTC（世界標準時））からの経過秒数で表しています。そのうちの多くが、時刻を記録する領域として32ビット（4バイト）の符号付き整数を使用しています。すなわち、二進数で32桁分（10進数で2の32乗）の数が用意されていることになります。</p>
+
+<!--more-->
+
+<p>但し、符号付き整数では、二進数の最上位（下位から32桁目）が <code class="language-plaintext highlighter-rouge">0</code> の場合は正の数、 <code class="language-plaintext highlighter-rouge">1</code> の場合は負の数として扱う。このため、正の数として扱える上限の数は、</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>二進数 : 01111111 11111111 11111111 11111111
+十進数 : 2,147,483,647 ( = 2の31乗 - 1 )
+</code></pre></div></div>
+
+<p>となる。</p>
+
+<p>つまり、1970年01月01日00時00分00秒 から 21億4748万3647秒 経過した 2038年1月19日3時14分07秒（UTC）、日本時間（JST）では 同12時14分07秒 までの時刻は、正の数として正常に処理することが可能だが、これを1秒でも超えると最上位が <code class="language-plaintext highlighter-rouge">1</code> の負の数となり、プログラムが誤作動する。</p>
+
+<p>こういうこと。</p>
+
+<table class="common">
+  <tr>
+    <td align="center">：</td>
+    <td align="center">：</td>
+    <td align="center">：</td>
+  </tr>
+  <tr>
+    <td>2038/01/19<br />03:14:05</td>
+    <td>01111111 11111111 11111111 11111101</td>
+    <td align="right">2,147,483,645</td>
+  </tr>
+  <tr>
+    <td>2038/01/19<br />03:14:06</td>
+    <td>01111111 11111111 11111111 11111110</td>
+    <td align="right">2,147,483,646</td>
+  </tr>
+  <tr>
+    <td>2038/01/19<br />03:14:07</td>
+    <td>01111111 11111111 11111111 11111111</td>
+    <td align="right">2,147,483,647</td>
+  </tr>
+  <tr>
+    <td style="color:red;">2038/01/19<br />03:14:08</td>
+    <td style="color:red;">10000000 00000000 00000000 00000000</td>
+    <td style="color:red;text-align:right">-2,147,483,648</td>
+  </tr>
+  <tr>
+    <td style="color:red;">2038/01/19<br />03:14:09</td>
+    <td style="color:red;">10000000 00000000 00000000 00000001</td>
+    <td style="color:red;text-align:right">-2,147,483,647</td>
+  </tr>
+  <tr>
+    <td align="center">：</td>
+    <td align="center">：</td>
+    <td align="center">：</td>
+  </tr>
+</table>
+
+<p>勘違いしやすいのは、2038年1月19日3時14分07秒（UTC）を <code class="language-plaintext highlighter-rouge">1</code> 秒越えたときは <code class="language-plaintext highlighter-rouge">0</code> でも <code class="language-plaintext highlighter-rouge">-1</code> でもなく、 <code class="language-plaintext highlighter-rouge">-2,147,483,648</code> になってしまうということ。
+つまり、2038年01月19日03時14分08秒（UTC）は 1970年01月01日00時00分00秒（UTC）から <code class="language-plaintext highlighter-rouge">2,147,483,648</code> 秒 過去ということ。</p>
+
+<p>うちは C 言語で開発してないから関係ない、なんてことは言えない。使っているパソコン自体が殆ど C 言語で作成されたプログラムで動いている。放っておくとほぼ確実に誤動作する。（32ビット環境なら）<br />
+パソコンばかりのことでもない。あらゆる電子機器について言えること。</p>
+
+<p>これは2000年問題より深刻な問題だと思う。
+早急に（と言っても、17年後までに）64ビットの符号付整数で作り直すなどの対応が必要である。
+無論、それまでには時代が変わってあらゆる事が今とは異なっていると思うが・・・</p>
+
+<p>※ちなみに Ruby は 1.9.2 以降は2038年問題に対応しているようだ。</p>
+
+<h4 id="問題の時間までの残り秒数を計算するrubyスクリプト">問題の時間までの残り秒数を計算するRubyスクリプト</h4>
+
+<p>Rubyで問題の時間までの残り秒数を計算する超簡単なスクリプトを作成してみた。<br />
+（2038-01-19 12:14:07 までは正常。2038-01-19 12:14:08 からが問題）<br />
+実行すると、</p>
+
+<ul>
+  <li>問題日時 2038-01-19 12:14:08（JST）の
+基準日時 1970-01-01 09:00:00（JST） からの経過秒数（十進数・二進数）</li>
+  <li>現在日時の
+基準日時 1970-01-01 09:00:00（JST） からの経過秒数（十進数・二進数）</li>
+  <li>残り秒数（十進数・二進数）</li>
+</ul>
+
+<p>を表示する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">problem_2038.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+</pre></td><td class="code"><pre><span class="c1">#! /usr/local/bin/ruby</span>
+<span class="c1">#</span>
+<span class="c1"># 2038年問題までの残り時間計算</span>
+<span class="c1"># ( 2038年1月19日3時14分08秒 までの残り秒数 )</span>
+<span class="c1">#</span>
+<span class="c1"># date          name            version</span>
+<span class="c1"># 2011.10.06    Masaru Koizumi  1.00 新規作成</span>
+<span class="c1"># 2015.01.03    Masaru Koizumi  1.01 Shebang string 追加等</span>
+<span class="c1"># 2020.01.30    Masaru Koizumi  1.02 ソース整形</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright(C) 2011-2020 mk-mode.com All Rights Reserved.</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1"># @param: [YYYYMMDDHHMMSS]</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1"># 2019-01-15 01:34:08 で「残り 600,000,000 秒」</span>
+<span class="c1"># 2020-02-01 00:14:08 で「残り 567,000,000 秒」</span>
+<span class="c1">#++</span>
+<span class="nb">require</span> <span class="s1">'time'</span>
+
+<span class="k">class</span> <span class="nc">Problem2038</span>
+  <span class="no">DT_2038</span> <span class="o">=</span> <span class="s2">"2038-01-19 12:14:08"</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="vi">@tm_2038</span>  <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="no">DT_2038</span><span class="p">).</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-%d %H:%M:%S"</span><span class="p">)</span>
+    <span class="vi">@sec_2038</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="no">DT_2038</span><span class="p">).</span><span class="nf">to_i</span>
+    <span class="n">tm</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">now</span>
+    <span class="n">tm</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">strptime</span><span class="p">(</span><span class="no">ARGV</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"%Y%m%d%H%M%S"</span><span class="p">)</span> <span class="k">if</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="vi">@tm_target</span>  <span class="o">=</span> <span class="n">tm</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-%d %H:%M:%S"</span><span class="p">)</span>
+    <span class="vi">@sec_target</span> <span class="o">=</span> <span class="n">tm</span><span class="p">.</span><span class="nf">to_i</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">calc</span>
+    <span class="n">sec_remain</span> <span class="o">=</span> <span class="vi">@sec_2038</span> <span class="o">-</span> <span class="vi">@sec_target</span>
+    <span class="n">str</span> <span class="o">=</span>  <span class="s2">"PROBLEM: </span><span class="si">#{</span><span class="vi">@tm_2038</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"         %13s"</span>     <span class="o">%</span> <span class="n">comma</span><span class="p">(</span><span class="vi">@sec_2038</span><span class="p">)</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"( %032d ) secs.</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="vi">@sec_2038</span><span class="p">.</span><span class="nf">to_s</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">" TARGET: </span><span class="si">#{</span><span class="vi">@tm_target</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"         %13s"</span>     <span class="o">%</span> <span class="n">comma</span><span class="p">(</span><span class="vi">@sec_target</span><span class="p">)</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"( %032d ) secs.</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="vi">@sec_target</span><span class="p">.</span><span class="nf">to_s</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"REMAING:</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"         %13s"</span>     <span class="o">%</span> <span class="n">comma</span><span class="p">(</span><span class="n">sec_remain</span><span class="p">)</span>
+    <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"( %032d ) secs."</span>   <span class="o">%</span> <span class="n">sec_remain</span><span class="p">.</span><span class="nf">to_s</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">puts</span> <span class="n">str</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"[EXCEPTION][</span><span class="si">#{</span><span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">.</span><span class="si">#{</span><span class="n">__method__</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">exit</span> <span class="mi">1</span>
+  <span class="k">end</span>
+
+<span class="kp">private</span>
+  <span class="c1"># カンマ挿入</span>
+  <span class="k">def</span> <span class="nf">comma</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">str</span><span class="p">.</span><span class="nf">to_s</span><span class="p">.</span><span class="nf">gsub</span><span class="p">(</span><span class="sr">/(\d)(?=(\d{3})+(?!\d))/</span><span class="p">,</span> <span class="s1">'\1,'</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Problem2038</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">calc</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/5c4c74071508a543088e" title="Gist - Ruby script to calc remaining seconds to the date of Problem-2038.">Gist - Ruby script to calc remaining seconds to the date of Problem-2038.</a></li>
+</ul>
+
+<hr />
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/pc-tips" class="page__taxonomy-item" rel="tag">PC_Tips</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-10-10T00:20:00+09:00">2011-10-10 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=2038%E5%B9%B4%E5%95%8F%E9%A1%8C%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2011%2F10%2F10%2F10002027%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2011%2F10%2F10%2F10002027%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2011%2F10%2F10%2F10002027%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2011/10/07/07002004/" class="pagination--pager" title="Ruby on Rails - Windowsイベントログ閲覧！
+">Previous</a>
+    
+    
+      <a href="/2011/10/12/12002046/" class="pagination--pager" title="Ruby - UNIX MBOXデータ読み込み！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2011/10/10/10002027/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2011/10/10/10002027"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,930 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>ＰＨＰ＋ＭｙＳＱＬでアクセスカウンタ！ - mk-mode BLOG</title>
+<meta name="description" content="今日は、この間自分の ホームページ にテキストファイルを使った簡単なアクセスカウンタをＰＨＰで作って稼働させてましたが、やっぱりちゃんとしたもの、つまり、同じＩＰからのアクセスはある程度制限かけたり、データベースを使って動かしたり、ということがしてみたくなり、いろいろ調べながらやってみました。導入にあたり、こちら「 DA実験室 :: PHP+MySQLのスクリプト配布 」 を参考にさせてもらいました。ご参照下さい。こちら では以下の３種類のカウンターがありますが、今回は「 カウンター３ 」を導入しました。  カウンター１単純にカウントするだけのカウンター。同ホスト連続アクセス検査用の機能も付いてます。  カウンター２カウンター１の機能に加え、昨日・今日の値もカウントできるように改良したカウンター。  カウンター３カウンター２の機能に加え、同ホスト連続アクセスの判定に制限時間を付けられます。制限時間を超えてアクセスした場合は、同ホストでもカウンターを更新します。導入記録１．サンプルソースダウンロード＆展開こちらの「 DA実験室 :: PHP+MySQLのスクリプト配布 」の ダウンロードページ から「 DACNT dacnt-2.1.zip 」をダウンロード＆展開する。２．データベース作成今回使用するテーブルを作成するためにまずＭｙＳＱＬにデータベースを作成する。コマンドプロンプトから行いました。（ｐｈｐＭｙＡｄｍｉｎを使用してもＯＫ）C:\mysql\bin&gt;mysql -u root -pEnter password: ***************Welcome to the MySQL monitor.  Commands end with ; or \g.Your MySQL connection id is 9Server version: 5.0.67-community MySQL Community Edition (GPL)Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the buffer.mysql&gt; create database mkmode;　　&lt; - - - 例として mkmode を作成Query OK, 1 row affected (0.01 sec)mysql&gt; grant all privileges on mkmode.* to ユーザ名@localhost identified by &#39;パスワード&#39;;　　&lt; - - - ユーザを作成Query OK, 0 rows affected (0.03 sec)mysql&gt; exitBye３．テーブル作成ダウンロードしたファイルの中の「 dacnt3.sql 」を使用してテーブルを作成する。当方はあらかじめ「 dacnt3.sql 」を「 C:\mysql\bin 」に置きました。コマンドプロンプトから以下のようにする。C:\mysql\bin&gt;mysql -u root -p mkmode &lt; dacnt3.sqlEnter password: ***************テーブルが作成されたか確認してみる。C:\mysql\bin&gt;mysql -u root -p mkmodeEnter password: ***************Welcome to the MySQL monitor.  Commands end with ; or \g.Your MySQL connection id is 14Server version: 5.0.67-community MySQL Community Edition (GPL)Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the buffer.mysql&gt; show tables;+------------------+| Tables_in_mkmode |+------------------+| dacounter3       |+------------------+1 row in set (0.01 sec)mysql&gt;４．レコード作成あらかじめテーブルにレコードを作成しておく。mysql&gt; INSERT INTO daCounter3 (name) VALUES (&#39;cnt&#39;);Query OK, 1 row affected (0.00 sec)mysql&gt;５．ＰＨＰソースの修正以下のＰＨＰソースを自分の環境に合わせて修正する。・「 dacnt.php 」19: $dbHost    データベースのホスト名を記述します。               通常は &#39;localhost&#39; です。22: $dbName    データベースの名前を記述します。23: $dbUser    データベースのユーザー名を記述します。24: $dbPass    データベースのパスワードを記述します。27: $timediff  GMTとの時差を秒で記述します。               日本は+9時間なので32400です。・「 dacnt3.php 」21: $tblName   使用するテーブルの名前を記述します。　　　　　　　　（実際には今回使用するテーブル「 daCounter3 」33: $interval  制限時間を秒で記述します。               標準は1800(30分)です。６．ソースのアップロード以下のソースをＷｅｂサーバ（ドキュメントルート）へアップロードする。dacnt.phpdacnt3.php７．ソース作成アクセスカウンタを埋め込むページのＰＨＰソースに以下のように記述を追加する。※今回も数字は画像を使用するので、ドキュメントルートの「 images/counter 」フォルダに「 0.gif 」～「 9.gif 」を置いています。open();// 値を読み取るだけの場合//$cnt-&gt;read(&#39;cnt&#39;);　　&lt; - - - 今回は使用しないのでコメントアウト// 値を更新する場合 (単純カウント)//$cnt-&gt;update(&#39;cnt&#39;);　　&lt; - - - 今回は使用しないのでコメントアウト// 値を更新する場合 (IPアドレスで重複検査)//$cnt-&gt;update(&#39;bbs&#39;, $REMOTE_ADDR);　　&lt; - - - 元のソースでは最近のＰＨＰでは使えないので変更$cnt-&gt;update(&#39;cnt&#39;, $_SERVER[&quot;REMOTE_ADDR&quot;]);// データベースを閉じる$cnt-&gt;close();// 値を取得して表示する例echo &#39;&lt;div&gt;総計: &#39;;echo $cnt-&gt;makeImgTag( $cnt-&gt;getCount(), 6, &#39;images/counter/%d.gif&#39;, &#39;%d&#39; );echo &#39;&lt;/div&gt;&#39;;echo &#39;&lt;div&gt;今日: &#39;;echo $cnt-&gt;makeImgTag( $cnt-&gt;getCountToday(), 6, &#39;images/counter/%d.gif&#39;, &#39;%d&#39; );echo &#39;&lt;/div&gt;&#39;;echo &#39;&lt;div&gt;昨日: &#39;;echo $cnt-&gt;makeImgTag( $cnt-&gt;getCountYeday(), 6, &#39;images/counter/%d.gif&#39;, &#39;%d&#39; );echo &#39;&lt;/div&gt;&#39;;//[テキスト形式ならこちら]//echo &#39;&lt;div&gt;総計: &#39;.$cnt-&gt;getCount().&#39;&lt;/div&gt;&#39;;//echo &#39;&lt;div&gt;今日: &#39;.$cnt-&gt;getCountToday().&#39;&lt;/div&gt;&#39;;//echo &#39;&lt;div&gt;昨日: &#39;.$cnt-&gt;getCountYeday().&#39;&lt;/div&gt;&#39;;?&gt;上記は基本です。当方はさらに手を加えてデザイン変更もしています。８．動作確認うまくいけばこんな感じにできるはず。※今回は３０分以上間をおかないと同じＩＰからのアクセスはカウントしないような設定にしています。以上で終わりのはずです。※上記の設定手順はＬｉｎｕｘでもほぼ同じにできました。とりあえず、これで様子をみてみようっと！じゃ、また。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="ＰＨＰ＋ＭｙＳＱＬでアクセスカウンタ！">
+<meta property="og:url" content="https://komasaru.github.io/2009/02/24/24001012/">
+
+
+  <meta property="og:description" content="今日は、この間自分の ホームページ にテキストファイルを使った簡単なアクセスカウンタをＰＨＰで作って稼働させてましたが、やっぱりちゃんとしたもの、つまり、同じＩＰからのアクセスはある程度制限かけたり、データベースを使って動かしたり、ということがしてみたくなり、いろいろ調べながらやってみました。導入にあたり、こちら「 DA実験室 :: PHP+MySQLのスクリプト配布 」 を参考にさせてもらいました。ご参照下さい。こちら では以下の３種類のカウンターがありますが、今回は「 カウンター３ 」を導入しました。  カウンター１単純にカウントするだけのカウンター。同ホスト連続アクセス検査用の機能も付いてます。  カウンター２カウンター１の機能に加え、昨日・今日の値もカウントできるように改良したカウンター。  カウンター３カウンター２の機能に加え、同ホスト連続アクセスの判定に制限時間を付けられます。制限時間を超えてアクセスした場合は、同ホストでもカウンターを更新します。導入記録１．サンプルソースダウンロード＆展開こちらの「 DA実験室 :: PHP+MySQLのスクリプト配布 」の ダウンロードページ から「 DACNT dacnt-2.1.zip 」をダウンロード＆展開する。２．データベース作成今回使用するテーブルを作成するためにまずＭｙＳＱＬにデータベースを作成する。コマンドプロンプトから行いました。（ｐｈｐＭｙＡｄｍｉｎを使用してもＯＫ）C:\mysql\bin&gt;mysql -u root -pEnter password: ***************Welcome to the MySQL monitor.  Commands end with ; or \g.Your MySQL connection id is 9Server version: 5.0.67-community MySQL Community Edition (GPL)Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the buffer.mysql&gt; create database mkmode;　　&lt; - - - 例として mkmode を作成Query OK, 1 row affected (0.01 sec)mysql&gt; grant all privileges on mkmode.* to ユーザ名@localhost identified by &#39;パスワード&#39;;　　&lt; - - - ユーザを作成Query OK, 0 rows affected (0.03 sec)mysql&gt; exitBye３．テーブル作成ダウンロードしたファイルの中の「 dacnt3.sql 」を使用してテーブルを作成する。当方はあらかじめ「 dacnt3.sql 」を「 C:\mysql\bin 」に置きました。コマンドプロンプトから以下のようにする。C:\mysql\bin&gt;mysql -u root -p mkmode &lt; dacnt3.sqlEnter password: ***************テーブルが作成されたか確認してみる。C:\mysql\bin&gt;mysql -u root -p mkmodeEnter password: ***************Welcome to the MySQL monitor.  Commands end with ; or \g.Your MySQL connection id is 14Server version: 5.0.67-community MySQL Community Edition (GPL)Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the buffer.mysql&gt; show tables;+------------------+| Tables_in_mkmode |+------------------+| dacounter3       |+------------------+1 row in set (0.01 sec)mysql&gt;４．レコード作成あらかじめテーブルにレコードを作成しておく。mysql&gt; INSERT INTO daCounter3 (name) VALUES (&#39;cnt&#39;);Query OK, 1 row affected (0.00 sec)mysql&gt;５．ＰＨＰソースの修正以下のＰＨＰソースを自分の環境に合わせて修正する。・「 dacnt.php 」19: $dbHost    データベースのホスト名を記述します。               通常は &#39;localhost&#39; です。22: $dbName    データベースの名前を記述します。23: $dbUser    データベースのユーザー名を記述します。24: $dbPass    データベースのパスワードを記述します。27: $timediff  GMTとの時差を秒で記述します。               日本は+9時間なので32400です。・「 dacnt3.php 」21: $tblName   使用するテーブルの名前を記述します。　　　　　　　　（実際には今回使用するテーブル「 daCounter3 」33: $interval  制限時間を秒で記述します。               標準は1800(30分)です。６．ソースのアップロード以下のソースをＷｅｂサーバ（ドキュメントルート）へアップロードする。dacnt.phpdacnt3.php７．ソース作成アクセスカウンタを埋め込むページのＰＨＰソースに以下のように記述を追加する。※今回も数字は画像を使用するので、ドキュメントルートの「 images/counter 」フォルダに「 0.gif 」～「 9.gif 」を置いています。open();// 値を読み取るだけの場合//$cnt-&gt;read(&#39;cnt&#39;);　　&lt; - - - 今回は使用しないのでコメントアウト// 値を更新する場合 (単純カウント)//$cnt-&gt;update(&#39;cnt&#39;);　　&lt; - - - 今回は使用しないのでコメントアウト// 値を更新する場合 (IPアドレスで重複検査)//$cnt-&gt;update(&#39;bbs&#39;, $REMOTE_ADDR);　　&lt; - - - 元のソースでは最近のＰＨＰでは使えないので変更$cnt-&gt;update(&#39;cnt&#39;, $_SERVER[&quot;REMOTE_ADDR&quot;]);// データベースを閉じる$cnt-&gt;close();// 値を取得して表示する例echo &#39;&lt;div&gt;総計: &#39;;echo $cnt-&gt;makeImgTag( $cnt-&gt;getCount(), 6, &#39;images/counter/%d.gif&#39;, &#39;%d&#39; );echo &#39;&lt;/div&gt;&#39;;echo &#39;&lt;div&gt;今日: &#39;;echo $cnt-&gt;makeImgTag( $cnt-&gt;getCountToday(), 6, &#39;images/counter/%d.gif&#39;, &#39;%d&#39; );echo &#39;&lt;/div&gt;&#39;;echo &#39;&lt;div&gt;昨日: &#39;;echo $cnt-&gt;makeImgTag( $cnt-&gt;getCountYeday(), 6, &#39;images/counter/%d.gif&#39;, &#39;%d&#39; );echo &#39;&lt;/div&gt;&#39;;//[テキスト形式ならこちら]//echo &#39;&lt;div&gt;総計: &#39;.$cnt-&gt;getCount().&#39;&lt;/div&gt;&#39;;//echo &#39;&lt;div&gt;今日: &#39;.$cnt-&gt;getCountToday().&#39;&lt;/div&gt;&#39;;//echo &#39;&lt;div&gt;昨日: &#39;.$cnt-&gt;getCountYeday().&#39;&lt;/div&gt;&#39;;?&gt;上記は基本です。当方はさらに手を加えてデザイン変更もしています。８．動作確認うまくいけばこんな感じにできるはず。※今回は３０分以上間をおかないと同じＩＰからのアクセスはカウントしないような設定にしています。以上で終わりのはずです。※上記の設定手順はＬｉｎｕｘでもほぼ同じにできました。とりあえず、これで様子をみてみようっと！じゃ、また。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="ＰＨＰ＋ＭｙＳＱＬでアクセスカウンタ！">
+  <meta name="twitter:description" content="今日は、この間自分の ホームページ にテキストファイルを使った簡単なアクセスカウンタをＰＨＰで作って稼働させてましたが、やっぱりちゃんとしたもの、つまり、同じＩＰからのアクセスはある程度制限かけたり、データベースを使って動かしたり、ということがしてみたくなり、いろいろ調べながらやってみました。導入にあたり、こちら「 DA実験室 :: PHP+MySQLのスクリプト配布 」 を参考にさせてもらいました。ご参照下さい。こちら では以下の３種類のカウンターがありますが、今回は「 カウンター３ 」を導入しました。  カウンター１単純にカウントするだけのカウンター。同ホスト連続アクセス検査用の機能も付いてます。  カウンター２カウンター１の機能に加え、昨日・今日の値もカウントできるように改良したカウンター。  カウンター３カウンター２の機能に加え、同ホスト連続アクセスの判定に制限時間を付けられます。制限時間を超えてアクセスした場合は、同ホストでもカウンターを更新します。導入記録１．サンプルソースダウンロード＆展開こちらの「 DA実験室 :: PHP+MySQLのスクリプト配布 」の ダウンロードページ から「 DACNT dacnt-2.1.zip 」をダウンロード＆展開する。２．データベース作成今回使用するテーブルを作成するためにまずＭｙＳＱＬにデータベースを作成する。コマンドプロンプトから行いました。（ｐｈｐＭｙＡｄｍｉｎを使用してもＯＫ）C:\mysql\bin&gt;mysql -u root -pEnter password: ***************Welcome to the MySQL monitor.  Commands end with ; or \g.Your MySQL connection id is 9Server version: 5.0.67-community MySQL Community Edition (GPL)Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the buffer.mysql&gt; create database mkmode;　　&lt; - - - 例として mkmode を作成Query OK, 1 row affected (0.01 sec)mysql&gt; grant all privileges on mkmode.* to ユーザ名@localhost identified by &#39;パスワード&#39;;　　&lt; - - - ユーザを作成Query OK, 0 rows affected (0.03 sec)mysql&gt; exitBye３．テーブル作成ダウンロードしたファイルの中の「 dacnt3.sql 」を使用してテーブルを作成する。当方はあらかじめ「 dacnt3.sql 」を「 C:\mysql\bin 」に置きました。コマンドプロンプトから以下のようにする。C:\mysql\bin&gt;mysql -u root -p mkmode &lt; dacnt3.sqlEnter password: ***************テーブルが作成されたか確認してみる。C:\mysql\bin&gt;mysql -u root -p mkmodeEnter password: ***************Welcome to the MySQL monitor.  Commands end with ; or \g.Your MySQL connection id is 14Server version: 5.0.67-community MySQL Community Edition (GPL)Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the buffer.mysql&gt; show tables;+------------------+| Tables_in_mkmode |+------------------+| dacounter3       |+------------------+1 row in set (0.01 sec)mysql&gt;４．レコード作成あらかじめテーブルにレコードを作成しておく。mysql&gt; INSERT INTO daCounter3 (name) VALUES (&#39;cnt&#39;);Query OK, 1 row affected (0.00 sec)mysql&gt;５．ＰＨＰソースの修正以下のＰＨＰソースを自分の環境に合わせて修正する。・「 dacnt.php 」19: $dbHost    データベースのホスト名を記述します。               通常は &#39;localhost&#39; です。22: $dbName    データベースの名前を記述します。23: $dbUser    データベースのユーザー名を記述します。24: $dbPass    データベースのパスワードを記述します。27: $timediff  GMTとの時差を秒で記述します。               日本は+9時間なので32400です。・「 dacnt3.php 」21: $tblName   使用するテーブルの名前を記述します。　　　　　　　　（実際には今回使用するテーブル「 daCounter3 」33: $interval  制限時間を秒で記述します。               標準は1800(30分)です。６．ソースのアップロード以下のソースをＷｅｂサーバ（ドキュメントルート）へアップロードする。dacnt.phpdacnt3.php７．ソース作成アクセスカウンタを埋め込むページのＰＨＰソースに以下のように記述を追加する。※今回も数字は画像を使用するので、ドキュメントルートの「 images/counter 」フォルダに「 0.gif 」～「 9.gif 」を置いています。open();// 値を読み取るだけの場合//$cnt-&gt;read(&#39;cnt&#39;);　　&lt; - - - 今回は使用しないのでコメントアウト// 値を更新する場合 (単純カウント)//$cnt-&gt;update(&#39;cnt&#39;);　　&lt; - - - 今回は使用しないのでコメントアウト// 値を更新する場合 (IPアドレスで重複検査)//$cnt-&gt;update(&#39;bbs&#39;, $REMOTE_ADDR);　　&lt; - - - 元のソースでは最近のＰＨＰでは使えないので変更$cnt-&gt;update(&#39;cnt&#39;, $_SERVER[&quot;REMOTE_ADDR&quot;]);// データベースを閉じる$cnt-&gt;close();// 値を取得して表示する例echo &#39;&lt;div&gt;総計: &#39;;echo $cnt-&gt;makeImgTag( $cnt-&gt;getCount(), 6, &#39;images/counter/%d.gif&#39;, &#39;%d&#39; );echo &#39;&lt;/div&gt;&#39;;echo &#39;&lt;div&gt;今日: &#39;;echo $cnt-&gt;makeImgTag( $cnt-&gt;getCountToday(), 6, &#39;images/counter/%d.gif&#39;, &#39;%d&#39; );echo &#39;&lt;/div&gt;&#39;;echo &#39;&lt;div&gt;昨日: &#39;;echo $cnt-&gt;makeImgTag( $cnt-&gt;getCountYeday(), 6, &#39;images/counter/%d.gif&#39;, &#39;%d&#39; );echo &#39;&lt;/div&gt;&#39;;//[テキスト形式ならこちら]//echo &#39;&lt;div&gt;総計: &#39;.$cnt-&gt;getCount().&#39;&lt;/div&gt;&#39;;//echo &#39;&lt;div&gt;今日: &#39;.$cnt-&gt;getCountToday().&#39;&lt;/div&gt;&#39;;//echo &#39;&lt;div&gt;昨日: &#39;.$cnt-&gt;getCountYeday().&#39;&lt;/div&gt;&#39;;?&gt;上記は基本です。当方はさらに手を加えてデザイン変更もしています。８．動作確認うまくいけばこんな感じにできるはず。※今回は３０分以上間をおかないと同じＩＰからのアクセスはカウントしないような設定にしています。以上で終わりのはずです。※上記の設定手順はＬｉｎｕｘでもほぼ同じにできました。とりあえず、これで様子をみてみようっと！じゃ、また。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/02/24/24001012/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2009-02-24T00:10:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2009/02/24/24001012/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="ＰＨＰ＋ＭｙＳＱＬでアクセスカウンタ！">
+    <meta itemprop="description" content="今日は、この間自分の ホームページ にテキストファイルを使った簡単なアクセスカウンタをＰＨＰで作って稼働させてましたが、やっぱりちゃんとしたもの、つまり、同じＩＰからのアクセスはある程度制限かけたり、データベースを使って動かしたり、ということがしてみたくなり、いろいろ調べながらやってみました。導入にあたり、こちら「 DA実験室 :: PHP+MySQLのスクリプト配布 」 を参考にさせてもらいました。ご参照下さい。こちら では以下の３種類のカウンターがありますが、今回は「 カウンター３ 」を導入しました。  カウンター１単純にカウントするだけのカウンター。同ホスト連続アクセス検査用の機能も付いてます。  カウンター２カウンター１の機能に加え、昨日・今日の値もカウントできるように改良したカウンター。  カウンター３カウンター２の機能に加え、同ホスト連続アクセスの判定に制限時間を付けられます。制限時間を超えてアクセスした場合は、同ホストでもカウンターを更新します。導入記録１．サンプルソースダウンロード＆展開こちらの「 DA実験室 :: PHP+MySQLのスクリプト配布 」の ダウンロードページ から「 DACNT dacnt-2.1.zip 」をダウンロード＆展開する。２．データベース作成今回使用するテーブルを作成するためにまずＭｙＳＱＬにデータベースを作成する。コマンドプロンプトから行いました。（ｐｈｐＭｙＡｄｍｉｎを使用してもＯＫ）C:\mysql\bin&gt;mysql -u root -pEnter password: ***************Welcome to the MySQL monitor.  Commands end with ; or \g.Your MySQL connection id is 9Server version: 5.0.67-community MySQL Community Edition (GPL)Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the buffer.mysql&gt; create database mkmode;　　&lt; - - - 例として mkmode を作成Query OK, 1 row affected (0.01 sec)mysql&gt; grant all privileges on mkmode.* to ユーザ名@localhost identified by &#39;パスワード&#39;;　　&lt; - - - ユーザを作成Query OK, 0 rows affected (0.03 sec)mysql&gt; exitBye３．テーブル作成ダウンロードしたファイルの中の「 dacnt3.sql 」を使用してテーブルを作成する。当方はあらかじめ「 dacnt3.sql 」を「 C:\mysql\bin 」に置きました。コマンドプロンプトから以下のようにする。C:\mysql\bin&gt;mysql -u root -p mkmode &lt; dacnt3.sqlEnter password: ***************テーブルが作成されたか確認してみる。C:\mysql\bin&gt;mysql -u root -p mkmodeEnter password: ***************Welcome to the MySQL monitor.  Commands end with ; or \g.Your MySQL connection id is 14Server version: 5.0.67-community MySQL Community Edition (GPL)Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the buffer.mysql&gt; show tables;+------------------+| Tables_in_mkmode |+------------------+| dacounter3       |+------------------+1 row in set (0.01 sec)mysql&gt;４．レコード作成あらかじめテーブルにレコードを作成しておく。mysql&gt; INSERT INTO daCounter3 (name) VALUES (&#39;cnt&#39;);Query OK, 1 row affected (0.00 sec)mysql&gt;５．ＰＨＰソースの修正以下のＰＨＰソースを自分の環境に合わせて修正する。・「 dacnt.php 」19: $dbHost    データベースのホスト名を記述します。               通常は &#39;localhost&#39; です。22: $dbName    データベースの名前を記述します。23: $dbUser    データベースのユーザー名を記述します。24: $dbPass    データベースのパスワードを記述します。27: $timediff  GMTとの時差を秒で記述します。               日本は+9時間なので32400です。・「 dacnt3.php 」21: $tblName   使用するテーブルの名前を記述します。　　　　　　　　（実際には今回使用するテーブル「 daCounter3 」33: $interval  制限時間を秒で記述します。               標準は1800(30分)です。６．ソースのアップロード以下のソースをＷｅｂサーバ（ドキュメントルート）へアップロードする。dacnt.phpdacnt3.php７．ソース作成アクセスカウンタを埋め込むページのＰＨＰソースに以下のように記述を追加する。※今回も数字は画像を使用するので、ドキュメントルートの「 images/counter 」フォルダに「 0.gif 」～「 9.gif 」を置いています。open();// 値を読み取るだけの場合//$cnt-&gt;read(&#39;cnt&#39;);　　&lt; - - - 今回は使用しないのでコメントアウト// 値を更新する場合 (単純カウント)//$cnt-&gt;update(&#39;cnt&#39;);　　&lt; - - - 今回は使用しないのでコメントアウト// 値を更新する場合 (IPアドレスで重複検査)//$cnt-&gt;update(&#39;bbs&#39;, $REMOTE_ADDR);　　&lt; - - - 元のソースでは最近のＰＨＰでは使えないので変更$cnt-&gt;update(&#39;cnt&#39;, $_SERVER[&quot;REMOTE_ADDR&quot;]);// データベースを閉じる$cnt-&gt;close();// 値を取得して表示する例echo &#39;&lt;div&gt;総計: &#39;;echo $cnt-&gt;makeImgTag( $cnt-&gt;getCount(), 6, &#39;images/counter/%d.gif&#39;, &#39;%d&#39; );echo &#39;&lt;/div&gt;&#39;;echo &#39;&lt;div&gt;今日: &#39;;echo $cnt-&gt;makeImgTag( $cnt-&gt;getCountToday(), 6, &#39;images/counter/%d.gif&#39;, &#39;%d&#39; );echo &#39;&lt;/div&gt;&#39;;echo &#39;&lt;div&gt;昨日: &#39;;echo $cnt-&gt;makeImgTag( $cnt-&gt;getCountYeday(), 6, &#39;images/counter/%d.gif&#39;, &#39;%d&#39; );echo &#39;&lt;/div&gt;&#39;;//[テキスト形式ならこちら]//echo &#39;&lt;div&gt;総計: &#39;.$cnt-&gt;getCount().&#39;&lt;/div&gt;&#39;;//echo &#39;&lt;div&gt;今日: &#39;.$cnt-&gt;getCountToday().&#39;&lt;/div&gt;&#39;;//echo &#39;&lt;div&gt;昨日: &#39;.$cnt-&gt;getCountYeday().&#39;&lt;/div&gt;&#39;;?&gt;上記は基本です。当方はさらに手を加えてデザイン変更もしています。８．動作確認うまくいけばこんな感じにできるはず。※今回は３０分以上間をおかないと同じＩＰからのアクセスはカウントしないような設定にしています。以上で終わりのはずです。※上記の設定手順はＬｉｎｕｘでもほぼ同じにできました。とりあえず、これで様子をみてみようっと！じゃ、また。">
+    <meta itemprop="datePublished" content="February 24, 2009">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">ＰＨＰ＋ＭｙＳＱＬでアクセスカウンタ！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2009-02-24T00:10:00+09:00">2009-02-24 00:10</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>今日は、
+この間自分の <a href="http://www.mk-mode.com/rails/" title="ホームページ">ホームページ</a> にテキストファイルを使った簡単なアクセスカウンタをＰＨＰで作って稼働させてましたが、
+やっぱりちゃんとしたもの、つまり、同じＩＰからのアクセスはある程度制限かけたり、データベースを使って動かしたり、ということがしてみたくなり、いろいろ調べながらやってみました。</p>
+
+<p>導入にあたり、こちら「 <a href="http://www.darkangel.jp/" title="DA実験室 :: PHP+MySQLのスクリプト配布">DA実験室 :: PHP+MySQLのスクリプト配布</a> 」 を参考にさせてもらいました。
+ご参照下さい。</p>
+
+<p><a href="http://www.darkangel.jp/" title="こちら">こちら</a> では以下の３種類のカウンターがありますが、
+今回は「 カウンター３ 」を導入しました。</p>
+
+<ul>
+  <li><strong>カウンター１</strong><br />
+単純にカウントするだけのカウンター。<br />
+同ホスト連続アクセス検査用の機能も付いてます。</li>
+  <li><strong>カウンター２</strong><br />
+カウンター１の機能に加え、昨日・今日の値もカウントできるように<br />
+改良したカウンター。</li>
+  <li><strong>カウンター３</strong><br />
+カウンター２の機能に加え、同ホスト連続アクセスの判定に<br />
+制限時間を付けられます。制限時間を超えてアクセスした場合は、<br />
+同ホストでもカウンターを更新します。</li>
+</ul>
+
+<h3 id="導入記録">導入記録</h3>
+
+<h4 id="１サンプルソースダウンロード展開">１．サンプルソースダウンロード＆展開</h4>
+
+<p>こちらの「 <a href="http://www.darkangel.jp/" title="DA実験室 :: PHP+MySQLのスクリプト配布">DA実験室 :: PHP+MySQLのスクリプト配布</a> 」の <a href="http://www.darkangel.jp/?m=66&amp;c=dl&amp;n=dl_cnt" title="ダウンロードページ">ダウンロードページ</a> から「 DACNT dacnt-2.1.zip 」をダウンロード＆展開する。</p>
+
+<h4 id="２データベース作成">２．データベース作成</h4>
+
+<p>今回使用するテーブルを作成するためにまずＭｙＳＱＬにデータベースを作成する。
+コマンドプロンプトから行いました。
+（ｐｈｐＭｙＡｄｍｉｎを使用してもＯＫ）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>C:\mysql\bin&gt;mysql -u root -p
+Enter password: ***************
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 9
+Server version: 5.0.67-community MySQL Community Edition (GPL)
+
+Type 'help;' or '\h' for help. Type '\c' to clear the buffer.
+
+mysql&gt; create database mkmode;　　&lt; - - - 例として mkmode を作成
+Query OK, 1 row affected (0.01 sec)
+
+mysql&gt; grant all privileges on mkmode.* to ユーザ名@localhost identified by 'パスワード';　　&lt; - - - ユーザを作成
+Query OK, 0 rows affected (0.03 sec)
+
+mysql&gt; exit
+Bye
+</code></pre></div></div>
+
+<h4 id="３テーブル作成">３．テーブル作成</h4>
+
+<p>ダウンロードしたファイルの中の「 dacnt3.sql 」を使用してテーブルを作成する。
+当方はあらかじめ「 dacnt3.sql 」を「 C:\mysql\bin 」に置きました。
+コマンドプロンプトから以下のようにする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>C:\mysql\bin&gt;mysql -u root -p mkmode &lt; dacnt3.sql
+Enter password: ***************
+</code></pre></div></div>
+
+<p>テーブルが作成されたか確認してみる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>C:\mysql\bin&gt;mysql -u root -p mkmode
+Enter password: ***************
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 14
+Server version: 5.0.67-community MySQL Community Edition (GPL)
+
+Type 'help;' or '\h' for help. Type '\c' to clear the buffer.
+
+mysql&gt; show tables;
++------------------+
+| Tables_in_mkmode |
++------------------+
+| dacounter3       |
++------------------+
+1 row in set (0.01 sec)
+
+mysql&gt;
+</code></pre></div></div>
+
+<h4 id="４レコード作成">４．レコード作成</h4>
+
+<p>あらかじめテーブルにレコードを作成しておく。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; INSERT INTO daCounter3 (name) VALUES ('cnt');
+Query OK, 1 row affected (0.00 sec)
+
+mysql&gt;
+</code></pre></div></div>
+
+<h4 id="５ｐｈｐソースの修正">５．ＰＨＰソースの修正</h4>
+
+<p>以下のＰＨＰソースを自分の環境に合わせて修正する。</p>
+
+<p>・「 dacnt.php 」</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>19: $dbHost    データベースのホスト名を記述します。
+               通常は 'localhost' です。
+22: $dbName    データベースの名前を記述します。
+23: $dbUser    データベースのユーザー名を記述します。
+24: $dbPass    データベースのパスワードを記述します。
+27: $timediff  GMTとの時差を秒で記述します。
+               日本は+9時間なので32400です。
+</code></pre></div></div>
+
+<p>・「 dacnt3.php 」</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>21: $tblName   使用するテーブルの名前を記述します。
+　　　　　　　　（実際には今回使用するテーブル「 daCounter3 」
+33: $interval  制限時間を秒で記述します。
+               標準は1800(30分)です。
+</code></pre></div></div>
+
+<h4 id="６ソースのアップロード">６．ソースのアップロード</h4>
+
+<p>以下のソースをＷｅｂサーバ（ドキュメントルート）へアップロードする。
+dacnt.php
+dacnt3.php</p>
+
+<h4 id="７ソース作成">７．ソース作成</h4>
+
+<p>アクセスカウンタを埋め込むページのＰＨＰソースに以下のように記述を追加する。
+※今回も数字は画像を使用するので、
+ドキュメントルートの「 images/counter 」フォルダに
+「 0.gif 」～「 9.gif 」を置いています。</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">open</span><span class="p">();</span>
+
+<span class="c1">// 値を読み取るだけの場合</span>
+<span class="c1">//$cnt-&gt;read('cnt');　　&lt; - - - 今回は使用しないのでコメントアウト</span>
+
+<span class="c1">// 値を更新する場合 (単純カウント)</span>
+<span class="c1">//$cnt-&gt;update('cnt');　　&lt; - - - 今回は使用しないのでコメントアウト</span>
+
+<span class="c1">// 値を更新する場合 (IPアドレスで重複検査)</span>
+<span class="c1">//$cnt-&gt;update('bbs', $REMOTE_ADDR);　　&lt; - - - 元のソースでは最近のＰＨＰでは使えないので変更</span>
+<span class="nv">$cnt</span><span class="o">-&gt;</span><span class="nf">update</span><span class="p">(</span><span class="s1">'cnt'</span><span class="p">,</span> <span class="nv">$_SERVER</span><span class="p">[</span><span class="s2">"REMOTE_ADDR"</span><span class="p">]);</span>
+
+<span class="c1">// データベースを閉じる</span>
+<span class="nv">$cnt</span><span class="o">-&gt;</span><span class="nf">close</span><span class="p">();</span>
+
+<span class="c1">// 値を取得して表示する例</span>
+<span class="k">echo</span> <span class="s1">'
+&lt;div&gt;総計: '</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nv">$cnt</span><span class="o">-&gt;</span><span class="nf">makeImgTag</span><span class="p">(</span> <span class="nv">$cnt</span><span class="o">-&gt;</span><span class="nf">getCount</span><span class="p">(),</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">'images/counter/%d.gif'</span><span class="p">,</span> <span class="s1">'%d'</span> <span class="p">);</span>
+<span class="k">echo</span> <span class="s1">'&lt;/div&gt;
+'</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s1">'
+&lt;div&gt;今日: '</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nv">$cnt</span><span class="o">-&gt;</span><span class="nf">makeImgTag</span><span class="p">(</span> <span class="nv">$cnt</span><span class="o">-&gt;</span><span class="nf">getCountToday</span><span class="p">(),</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">'images/counter/%d.gif'</span><span class="p">,</span> <span class="s1">'%d'</span> <span class="p">);</span>
+<span class="k">echo</span> <span class="s1">'&lt;/div&gt;
+'</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s1">'
+&lt;div&gt;昨日: '</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nv">$cnt</span><span class="o">-&gt;</span><span class="nf">makeImgTag</span><span class="p">(</span> <span class="nv">$cnt</span><span class="o">-&gt;</span><span class="nf">getCountYeday</span><span class="p">(),</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">'images/counter/%d.gif'</span><span class="p">,</span> <span class="s1">'%d'</span> <span class="p">);</span>
+<span class="k">echo</span> <span class="s1">'&lt;/div&gt;
+'</span><span class="p">;</span>
+<span class="c1">//[テキスト形式ならこちら]</span>
+<span class="c1">//echo '</span>
+<span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span><span class="n">総計</span><span class="o">:</span> <span class="s1">'.$cnt-&gt;getCount().'</span><span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="s1">';
+//echo '</span>
+<span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span><span class="n">今日</span><span class="o">:</span> <span class="s1">'.$cnt-&gt;getCountToday().'</span><span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="s1">';
+//echo '</span>
+<span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span><span class="n">昨日</span><span class="o">:</span> <span class="s1">'.$cnt-&gt;getCountYeday().'</span><span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="err">'</span><span class="p">;</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+
+<p>上記は基本です。
+当方はさらに手を加えてデザイン変更もしています。</p>
+
+<h4 id="８動作確認">８．動作確認</h4>
+
+<p>うまくいけばこんな感じにできるはず。
+※今回は３０分以上間をおかないと同じＩＰからのアクセスはカウントしないような設定にしています。</p>
+
+<p><img src="/images/2009/02/php_mysql_counter.jpg" alt="php_mysql_counter" title="php_mysql_counter" /></p>
+
+<hr />
+
+<p>以上で終わりのはずです。</p>
+
+<p>※上記の設定手順はＬｉｎｕｘでもほぼ同じにできました。</p>
+
+<p>とりあえず、これで様子をみてみようっと！</p>
+
+<p>じゃ、また。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/mysql" class="page__taxonomy-item" rel="tag">MySQL</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/php" class="page__taxonomy-item" rel="tag">PHP</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/web%E3%82%B5%E3%82%A4%E3%83%88" class="page__taxonomy-item" rel="tag">Webサイト</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2009-02-24T00:10:00+09:00">2009-02-24 00:10</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%EF%BC%B0%EF%BC%A8%EF%BC%B0%EF%BC%8B%EF%BC%AD%EF%BD%99%EF%BC%B3%EF%BC%B1%EF%BC%AC%E3%81%A7%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E3%82%AB%E3%82%A6%E3%83%B3%E3%82%BF%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F02%2F24%2F24001012%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F02%2F24%2F24001012%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F02%2F24%2F24001012%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2009/02/23/23001030/" class="pagination--pager" title="ＰＨＰでアクセスカウンタ！
+">Previous</a>
+    
+    
+      <a href="/2009/02/25/25002015/" class="pagination--pager" title="ＰＨＰでＣＳＶ読み込み！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2009/02/24/24001012/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2009/02/24/24001012"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,914 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>MySQL - InnoDB チューニング！ - mk-mode BLOG</title>
+<meta name="description" content="当方、今まで MySQL での膨大なデータ量のデータベース管理では、高速化重視でストレージエンジンを MyISAM に設定して運用していました。しかし、更新処理が多いデータベースでしたので、考え方を安全・整合性重視の InnoDB に戻しました。当然ながら、InnoDB は安全性重視のためデフォルトの設定では更新箇所が多くなる等の理由で MyISAM に比べて速度が遅いです。InnoDB の場合、チューニングして使用するのが半ば常識でもありますし。。。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="MySQL - InnoDB チューニング！">
+<meta property="og:url" content="https://komasaru.github.io/2013/05/27/mysql-innodb-chuning/">
+
+
+  <meta property="og:description" content="当方、今まで MySQL での膨大なデータ量のデータベース管理では、高速化重視でストレージエンジンを MyISAM に設定して運用していました。しかし、更新処理が多いデータベースでしたので、考え方を安全・整合性重視の InnoDB に戻しました。当然ながら、InnoDB は安全性重視のためデフォルトの設定では更新箇所が多くなる等の理由で MyISAM に比べて速度が遅いです。InnoDB の場合、チューニングして使用するのが半ば常識でもありますし。。。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="MySQL - InnoDB チューニング！">
+  <meta name="twitter:description" content="当方、今まで MySQL での膨大なデータ量のデータベース管理では、高速化重視でストレージエンジンを MyISAM に設定して運用していました。しかし、更新処理が多いデータベースでしたので、考え方を安全・整合性重視の InnoDB に戻しました。当然ながら、InnoDB は安全性重視のためデフォルトの設定では更新箇所が多くなる等の理由で MyISAM に比べて速度が遅いです。InnoDB の場合、チューニングして使用するのが半ば常識でもありますし。。。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/05/27/mysql-innodb-chuning/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-05-27T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/05/27/mysql-innodb-chuning/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="MySQL - InnoDB チューニング！">
+    <meta itemprop="description" content="当方、今まで MySQL での膨大なデータ量のデータベース管理では、高速化重視でストレージエンジンを MyISAM に設定して運用していました。しかし、更新処理が多いデータベースでしたので、考え方を安全・整合性重視の InnoDB に戻しました。当然ながら、InnoDB は安全性重視のためデフォルトの設定では更新箇所が多くなる等の理由で MyISAM に比べて速度が遅いです。InnoDB の場合、チューニングして使用するのが半ば常識でもありますし。。。">
+    <meta itemprop="datePublished" content="May 27, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">MySQL - InnoDB チューニング！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-05-27T00:20:00+09:00">2013-05-27 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>当方、今まで MySQL での膨大なデータ量のデータベース管理では、高速化重視でストレージエンジンを MyISAM に設定して運用していました。<br />
+しかし、更新処理が多いデータベースでしたので、考え方を安全・整合性重視の InnoDB に戻しました。</p>
+
+<p>当然ながら、InnoDB は安全性重視のためデフォルトの設定では更新箇所が多くなる等の理由で MyISAM に比べて速度が遅いです。<br />
+InnoDB の場合、チューニングして使用するのが半ば常識でもありますし。。。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>MySQL 5.5.31 での作業を想定。<br />
+（5.1 系や 5.6 系、MariaDB でもだいたい同じであるが、若干異なる部分もある）</li>
+  <li>ストレージエンジン InnoDB の仕組みについてある程度理解できている。</li>
+  <li>使用するマシンの搭載メモリは 4GB.</li>
+</ul>
+
+<h3 id="1-設定サンプル">1. 設定サンプル</h3>
+
+<p>当方の設定例を掲載する。<br />
+以下は、ダンプファイルインポート時に高速化するための設定（InnoDB 関連部分のみ抜粋）。通常使用時は、コメントを参考に変更する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/mysql/my.cnf</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+</pre></td><td class="code"><pre><span class="c"># InnoDBデータファイルのパス</span>
+innodb_data_file_path <span class="o">=</span> ibdata1:1G:autoextend
+
+<span class="c"># InnoDBテーブルスペースをテーブル単位で作成</span>
+innodb_file_per_table
+
+<span class="c"># InnoDBテーブルスペース自動拡張サイズ</span>
+innodb_autoextend_increment <span class="o">=</span> 64
+
+<span class="c"># InnoDBのデータやインデックスをキャッシュするメモリ領域</span>
+innodb_buffer_pool_size <span class="o">=</span> 1G
+
+<span class="c"># InnoDBの内部データなどを保持するための領域</span>
+innodb_additional_mem_pool_size <span class="o">=</span> 20M
+
+<span class="c"># InnoDBの書込み要求に使用されるバックグラウンドスレッドの数</span>
+innodb_write_io_threads <span class="o">=</span> 8
+
+<span class="c"># InnoDBの読取り要求に使用されるバックグラウンドスレッドの数</span>
+innodb_read_io_threads <span class="o">=</span> 8
+
+<span class="c"># InnoDBの更新ログを記録するメモリ領域</span>
+innodb_log_buffer_size <span class="o">=</span> 32  <span class="c"># 通常時:8程度, データインポート時:32程度</span>
+
+<span class="c"># InnoDBの更新ログを記録するディスク上のファイル</span>
+innodb_log_file_size <span class="o">=</span> 256M
+
+<span class="c"># flush logの設定(0:なし、1:ディスク、2:メモリ、)</span>
+innodb_flush_log_at_trx_commit <span class="o">=</span> 2  <span class="c"># 通常時:1(デフォルト), データインポート時:2 or 0</span>
+
+<span class="c"># ダブルライトバッファへの書き込みをスキップ</span>
+skip_innodb_doublewrite  <span class="c"># データインポート時のみ指定(通常時は指定しない)</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>次項より各項目についての説明をする。</p>
+
+<h4 id="1-1-innodb_data_file_path-について">1-1. innodb_data_file_path について</h4>
+
+<p>InnoDBデータファイルのパス・初期サイズを <code class="language-plaintext highlighter-rouge">file_name:file_size[:autoextend[:max:max_file_size]]</code> で指定する。<br />
+明示的に指定しなければ、<code class="language-plaintext highlighter-rouge">ibdata1:10M:autoextend</code> を指定したことになる。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">autoextend</code> :テーブルスペースに空き領域が無くなったら自動で拡張する。</li>
+  <li><code class="language-plaintext highlighter-rouge">max:max_file_size</code> :自動拡張データファイルの最大値。</li>
+</ul>
+
+<p>デフォルトのままだと、すぐに 10M を使い尽くしてしまい自動拡張が発生してしまう。<br />
+データファイルの大きさが予め分かる場合は、余裕を持った値を設定しおけば自動拡張が発生せず高速化につながる。<br />
+ただし、膨大なデータベースであったり、テーブルが多数あるようなデータベースなら、次項のようにテーブル単位でテーブルスペースを作成するように設定するほうがパフォーマンスがよくなる。</p>
+
+<h4 id="1-2-innodb_file_per_table-について">1-2. innodb_file_per_table について</h4>
+
+<p>テーブルスペースをテーブル単位で作成する。<br />
+この項目を設定しない場合は、全てのテーブルスペースが１つにまとまってしまう。<br />
+膨大なデータベースであったり、テーブルが多数あるようなデータベースなら、テーブル単位でテーブルスペースを作成するように設定するほうがパフォーマンスがよくなるし、扱いやすい。<br />
+ただし、運用の途中でこの設定を行った場合は、以降に作成したテーブルのみが別のテーブルスペースになるので注意！（既存のテーブルについても適用させるなら、一旦データをエクポートしておいて、データベースを作り直し、再度データをインポートする、というような作業が必要になる）</p>
+
+<h4 id="1-3-innodb_autoextend_increment-について">1-3. innodb_autoextend_increment について</h4>
+
+<p>InnoDBデータファイル拡張時のサイズを MB 単位で指定する。<br />
+明示的に指定しなければ、<code class="language-plaintext highlighter-rouge">8</code> を指定したことになる。<br />
+通常、前述の <code class="language-plaintext highlighter-rouge">innodb_data_file_path</code> とセットで指定する。</p>
+
+<h4 id="1-4-innodb_buffer_pool_size-について">1-4. innodb_buffer_pool_size について</h4>
+
+<p>InnoDBのデータやインデックスをキャッシュするメモリ領域サイズを指定する。<br />
+通常、搭載メモリの50～80%程度を指定するが、データベースサーバ以外の環境ではシステムに不具合が出ない程度に小さく設定する方がよいようだ。</p>
+
+<h4 id="1-5-innodb_additional_mem_pool_size-について">1-5. innodb_additional_mem_pool_size について</h4>
+
+<p>内部データなどを保持するための領域。<br />
+大量に割り当てる必要もない。不足した場合にはエラーログに警告メッセージが出力される。</p>
+
+<h4 id="1-7-innodb_write_io_threads-について">1-7. innodb_write_io_threads について</h4>
+
+<p>InnoDBの書込み要求に使用されるバックグラウンドスレッドの数を指定する。</p>
+
+<h4 id="1-8-innodb_read_io_threads-について">1-8. innodb_read_io_threads について</h4>
+
+<p>InnoDBの読取り要求に使用されるバックグラウンドスレッドの数を指定する。</p>
+
+<h4 id="1-5-innodb_log_buffer_size-について">1-5. innodb_log_buffer_size について</h4>
+
+<p>InnoDBの更新ログを記録するメモリ領域サイズを指定する。<br />
+通常、バッファはトランザクションがコミットされる時か毎秒ディスクにフラッシュされるので、あまり大きく設定する必要はない。<br />
+データインポート時には、大きく設定しておくと高速できるようだ。</p>
+
+<h4 id="1-6-innodb_log_file_size-について">1-6. innodb_log_file_size について</h4>
+
+<p>InnoDBの更新ログを記録するディスク上のファイルサイズを指定する。<br />
+<code class="language-plaintext highlighter-rouge">1MB &lt; innodb_log_file_size &lt; innodb_buffer_pool_size / innodb_log_files_in_group(Default:2) &lt; 4GB(32bit環境の場合)</code> になるように設定するといいらしい。<br />
+innodb_log_file が一杯になると、メモリ上の innodb_buffer_pool 内の更新される部分のデータを、ディスク上のInnoDBデータファイルに書き込む仕組みになっているので、innodb_log_buffer_size と併せて調整することでパフォーマンスが向上する。<br />
+innodb_buffer_pool_size の４分の１程度の値がよいだろうか？また、ログファイルのサイズを大きくすればするほど、クラッシュリカバリに長時間を要してしまうので注意する！</p>
+
+<p>また、この innodb_log_file_size の値を変更した場合は、古いログファイル(“ib_logfile0”, “ib_logfile1”)を削除しないと、MySQL の起動に失敗するので注意する！</p>
+
+<h4 id="1-7-innodb_flush_log_at_trx_commit-について">1-7. innodb_flush_log_at_trx_commit について</h4>
+
+<p>flush logの設定を行う。<br />
+明示的に指定しなければ、<code class="language-plaintext highlighter-rouge">1</code> を指定したことになる。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">0</code> ・・・ メモリ上のログバッファは１秒に１回ディスク上のログファイルに書き込まれる。フラッシュはログファイル上で行われるが、トランザクションコミットの際には何も行われない。</li>
+  <li><code class="language-plaintext highlighter-rouge">1</code> ・・・ 各トランザクションコミットの時にログファイルに書き込まれ、フラッシュはログファイル上で行われる。</li>
+  <li><code class="language-plaintext highlighter-rouge">2</code> ・・・ メモリ上のログバッファはコミット毎にログファイルに書き込まれるが、フラッシュはそこでは行われない。しかし、この時もログファイル上でのフラッシュは１秒に１回行われる。１秒に１回のフラッシュは、処理スケジュールの発行のため100%保証されたものではないということに注意する。</li>
+</ul>
+
+<p>通常は、<code class="language-plaintext highlighter-rouge">1</code> でよいが、データインポートの高速化が要求される場面では <code class="language-plaintext highlighter-rouge">0</code> か <code class="language-plaintext highlighter-rouge">2</code> にするのがよいだろう。</p>
+
+<h4 id="1-8-skip_innodb_doublewrite-について">1-8. skip_innodb_doublewrite について</h4>
+
+<p>ダブルライトバッファへの書き込みをスキップする場合に指定する。<br />
+デフォルトでは、InnoDBは全てのデータを２回書き込むようになっている。１回目はダブルライトバッファへ、２回目は実際のデータファイルへ。<br />
+データインポート等で安全性より高速性を重視する場合には、ダブルライトバッファへの書き込みをスキップする設定にする。</p>
+
+<h3 id="2-参考サイト">2. 参考サイト</h3>
+
+<ul>
+  <li><a href="http://dev.mysql.com/doc/refman/5.5/en/innodb-configuration.html" title="MySQL :: MySQL 5.5 Reference Manual :: 14.3.2 Configuring InnoDB">MySQL :: MySQL 5.5 Reference Manual :: 14.3.2 Configuring InnoDB</a></li>
+</ul>
+
+<hr />
+
+<p>ダンプデータインポート時、MyISAM で５分程度かかっていたものが、チューニングしていない InnoDB だと何時間もかかっていました。<br />
+チューニングすることで MyISAM とほぼ変わらない時間でダンプデータインポートが完了しました。（速度は実測してないが体感で）</p>
+
+<p>一方通常使用時は、ダンプデータインポート時に比べ格段にレコード更新の量が少ないので、今のところ全く不具合は感じていません。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/mysql" class="page__taxonomy-item" rel="tag">MySQL</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-05-27T00:20:00+09:00">2013-05-27 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=MySQL+-+InnoDB+%E3%83%81%E3%83%A5%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F05%2F27%2Fmysql-innodb-chuning%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F05%2F27%2Fmysql-innodb-chuning%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F05%2F27%2Fmysql-innodb-chuning%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/05/25/mysql-output-dump/" class="pagination--pager" title="MySQL - テーブル定義/データのみダンプ出力！
+">Previous</a>
+    
+    
+      <a href="/2013/05/28/mysql-innodb-tablespace-for-a-table/" class="pagination--pager" title="MySQL - InnoDB データファイルをテーブル単位に変更！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/05/27/mysql-innodb-chuning/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/05/27/mysql-innodb-chuning"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

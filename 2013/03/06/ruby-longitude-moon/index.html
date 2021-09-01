@@ -1,0 +1,1488 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby - 月黄経計算！ - mk-mode BLOG</title>
+<meta name="description" content="前回は、グレゴリオ暦（Y年m月d日 H時M分S秒）から太陽の黄経を計算する Ruby スクリプトの紹介しました。  Ruby - 太陽黄経計算！今回は、同様にグレゴリオ暦（Y年m月d日 H時M分S秒）から月の黄経を計算する Ruby スクリプトの紹介です。月黄経とは、旧暦の計算等に使用する天球上の月の経度のことです。当然、地球・月の公転軌道が真円でないため、単純な計算にはなりません。天文学における摂動という概念も出てきます。（力学における摂動は異なります）今回紹介するのは、当方サイトの旧暦計算等で使用しているスクリプトから月黄経計算部分のみ抜粋した形となっています。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby - 月黄経計算！">
+<meta property="og:url" content="https://komasaru.github.io/2013/03/06/ruby-longitude-moon/">
+
+
+  <meta property="og:description" content="前回は、グレゴリオ暦（Y年m月d日 H時M分S秒）から太陽の黄経を計算する Ruby スクリプトの紹介しました。  Ruby - 太陽黄経計算！今回は、同様にグレゴリオ暦（Y年m月d日 H時M分S秒）から月の黄経を計算する Ruby スクリプトの紹介です。月黄経とは、旧暦の計算等に使用する天球上の月の経度のことです。当然、地球・月の公転軌道が真円でないため、単純な計算にはなりません。天文学における摂動という概念も出てきます。（力学における摂動は異なります）今回紹介するのは、当方サイトの旧暦計算等で使用しているスクリプトから月黄経計算部分のみ抜粋した形となっています。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby - 月黄経計算！">
+  <meta name="twitter:description" content="前回は、グレゴリオ暦（Y年m月d日 H時M分S秒）から太陽の黄経を計算する Ruby スクリプトの紹介しました。  Ruby - 太陽黄経計算！今回は、同様にグレゴリオ暦（Y年m月d日 H時M分S秒）から月の黄経を計算する Ruby スクリプトの紹介です。月黄経とは、旧暦の計算等に使用する天球上の月の経度のことです。当然、地球・月の公転軌道が真円でないため、単純な計算にはなりません。天文学における摂動という概念も出てきます。（力学における摂動は異なります）今回紹介するのは、当方サイトの旧暦計算等で使用しているスクリプトから月黄経計算部分のみ抜粋した形となっています。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/03/06/ruby-longitude-moon/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-03-06T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/03/06/ruby-longitude-moon/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby - 月黄経計算！">
+    <meta itemprop="description" content="前回は、グレゴリオ暦（Y年m月d日 H時M分S秒）から太陽の黄経を計算する Ruby スクリプトの紹介しました。  Ruby - 太陽黄経計算！今回は、同様にグレゴリオ暦（Y年m月d日 H時M分S秒）から月の黄経を計算する Ruby スクリプトの紹介です。月黄経とは、旧暦の計算等に使用する天球上の月の経度のことです。当然、地球・月の公転軌道が真円でないため、単純な計算にはなりません。天文学における摂動という概念も出てきます。（力学における摂動は異なります）今回紹介するのは、当方サイトの旧暦計算等で使用しているスクリプトから月黄経計算部分のみ抜粋した形となっています。">
+    <meta itemprop="datePublished" content="March 06, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby - 月黄経計算！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-03-06T00:20:00+09:00">2013-03-06 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>前回は、グレゴリオ暦（Y年m月d日 H時M分S秒）から太陽の黄経を計算する Ruby スクリプトの紹介しました。</p>
+
+<ul>
+  <li><a href="/2013/03/04/ruby-longitude-sun/" title="Ruby - 太陽黄経計算！">Ruby - 太陽黄経計算！</a></li>
+</ul>
+
+<p>今回は、同様にグレゴリオ暦（Y年m月d日 H時M分S秒）から月の黄経を計算する Ruby スクリプトの紹介です。</p>
+
+<p>月黄経とは、旧暦の計算等に使用する天球上の月の経度のことです。</p>
+
+<p>当然、地球・月の公転軌道が真円でないため、単純な計算にはなりません。<br />
+天文学における摂動という概念も出てきます。（力学における摂動は異なります）</p>
+
+<p>今回紹介するのは、当方サイトの旧暦計算等で使用しているスクリプトから月黄経計算部分のみ抜粋した形となっています。</p>
+
+<!--more-->
+
+<blockquote>
+  <p>【2016-06-09 追記】<br />
+RubyGems ライブラリ <a href="https://rubygems.org/gems/mk_calendar" title="mk_calendar - RubyGems.org">mk_calendar - RubyGems.org</a>（or <a href="https://github.com/komasaru/mk_calendar" title="komasaru/mk_calendar - GitHub">komasaru/mk_calendar - GitHub</a>） を作成しました。<br />
+多少の改修を施したということもあり、 <a href="https://github.com/komasaru/Calendar" title="komasaru/Calendar - GitHub">komasaru/Calendar · GitHub</a> で公開していた Ruby スクリプトは削除しました。<br />
+【追記ここまで】</p>
+</blockquote>
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Linux Mint 14 Nadia (64bit), Ruby 1.9.3-p392 で作成、 1.9.3-p392, 2.0.0-p0 で動作確認。</li>
+</ul>
+
+<h3 id="1-概要">1. 概要</h3>
+
+<p>月黄経を計算する大まかな流れは以下のとおり。</p>
+
+<ol>
+  <li>グレゴリオ暦からユリウス通日を計算。<br />
+ユリウス通日については、過去記事もご参考に。-&gt; <a href="http://www.mk-mode.com/octopress/2011/09/22/22002000/" title="ユリウス通日から">* 日数計算の方法！ - mk-mode BLOG</a></li>
+  <li>ユリウス通日から月黄経計算用の摂動項を計算。</li>
+  <li>ユリウス通日から月黄経計算用の比例項を計算。</li>
+  <li>摂動項・比例項から月黄経計算。</li>
+</ol>
+
+<p>今回は Ruby スクリプトの紹介なので、ここでは摂動等の詳細は説明しません。<br />
+「摂動」とは互いの惑星の重力により軌道が乱れるということ、という事だけに留めておく。</p>
+
+<h3 id="2-ruby-スクリプト作成">2. Ruby スクリプト作成</h3>
+
+<p>作成した Ruby スクリプトは以下のとおり。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">calc_longitude_moon.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+</pre></td><td class="code"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#=月黄経計算スクリプト</span>
+<span class="c1"># （グレゴリオ暦から月黄経を計算する）</span>
+<span class="c1">#</span>
+<span class="c1"># date          name            version</span>
+<span class="c1"># 2013.02.19    mk-mode         1.00 新規作成</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright(C) 2013 mk-mode.com All Rights Reserved.</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1"># 引数 : 計算日時(グレゴリオ暦)</span>
+<span class="c1">#          書式：YYYYMMDD or YYYYMMDDHHMMSS</span>
+<span class="c1">#          無指定なら現在(システム日時)と判断。</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="nb">require</span> <span class="s1">'date'</span>
+
+<span class="c1"># 円周率の定義</span>
+<span class="no">PI</span> <span class="o">=</span> <span class="mf">3.141592653589793238462</span>
+<span class="c1"># （角度の）度からラジアンに変換する係数の定義</span>
+<span class="no">K</span> <span class="o">=</span> <span class="no">PI</span> <span class="o">/</span> <span class="mf">180.0</span>
+
+<span class="c1">#============</span>
+<span class="c1"># 計算クラス</span>
+<span class="c1">#============</span>
+<span class="k">class</span> <span class="nc">CalcLongitudeSun</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+    <span class="vi">@year</span>  <span class="o">=</span> <span class="n">dt</span><span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="vi">@month</span> <span class="o">=</span> <span class="n">dt</span><span class="p">[</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="vi">@day</span>   <span class="o">=</span> <span class="n">dt</span><span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="vi">@hour</span>  <span class="o">=</span> <span class="n">dt</span><span class="p">[</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="vi">@min</span>   <span class="o">=</span> <span class="n">dt</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="vi">@sec</span>   <span class="o">=</span> <span class="n">dt</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 年月日(グレゴリオ暦)からユリウス日(JD)を計算する</span>
+  <span class="c1">#</span>
+  <span class="c1">#   フリーゲルの公式を使用する</span>
+  <span class="c1">#   [ JD ] = int( 365.25 × year )</span>
+  <span class="c1">#          + int( year / 400 )</span>
+  <span class="c1">#          - int( year / 100 )</span>
+  <span class="c1">#          + int( 30.59 ( month - 2 ) )</span>
+  <span class="c1">#          + day</span>
+  <span class="c1">#          + 1721088</span>
+  <span class="c1">#   ※上記の int( x ) は厳密には、x を超えない最大の整数</span>
+  <span class="c1">#     ( ちなみに、[ 準JD ]を求めるなら + 1721088 が - 678912 となる )</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">gc_to_jd</span>
+    <span class="k">begin</span>
+      <span class="c1"># 1月,2月は前年の13月,14月とする</span>
+      <span class="k">if</span> <span class="vi">@month</span> <span class="o">&lt;</span> <span class="mi">3</span>
+        <span class="vi">@year</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="vi">@month</span> <span class="o">+=</span> <span class="mi">12</span>
+      <span class="k">end</span>
+
+      <span class="c1"># 日付(整数)部分計算</span>
+      <span class="vi">@jd</span>  <span class="o">=</span> <span class="p">(</span><span class="mf">365.25</span> <span class="o">*</span> <span class="vi">@year</span><span class="p">).</span><span class="nf">truncate</span>
+      <span class="vi">@jd</span> <span class="o">+=</span> <span class="p">(</span><span class="vi">@year</span> <span class="o">/</span> <span class="mf">400.0</span><span class="p">).</span><span class="nf">truncate</span>
+      <span class="vi">@jd</span> <span class="o">-=</span> <span class="p">(</span><span class="vi">@year</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">).</span><span class="nf">truncate</span>
+      <span class="vi">@jd</span> <span class="o">+=</span> <span class="p">(</span><span class="mf">30.59</span> <span class="o">*</span> <span class="p">(</span><span class="vi">@month</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)).</span><span class="nf">truncate</span>
+      <span class="vi">@jd</span> <span class="o">+=</span> <span class="vi">@day</span>
+      <span class="vi">@jd</span> <span class="o">+=</span> <span class="mi">1721088</span>
+
+      <span class="c1"># 時間(小数)部分計算</span>
+      <span class="n">t</span>  <span class="o">=</span> <span class="vi">@sec</span> <span class="o">/</span> <span class="mf">3600.0</span>
+      <span class="n">t</span> <span class="o">+=</span> <span class="vi">@min</span> <span class="o">/</span> <span class="mf">60.0</span>
+      <span class="n">t</span> <span class="o">+=</span> <span class="vi">@hour</span>
+      <span class="n">t</span>  <span class="o">=</span> <span class="n">t</span> <span class="o">/</span> <span class="mf">24.0</span>
+
+      <span class="vi">@jd</span> <span class="o">+=</span> <span class="n">t</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="n">str_msg</span> <span class="o">=</span> <span class="s2">"[EXCEPTION]["</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">name</span> <span class="o">+</span> <span class="s2">".gc_to_jd] "</span> <span class="o">+</span> <span class="n">e</span><span class="p">.</span><span class="nf">to_s</span>
+      <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span> <span class="n">str_msg</span>
+      <span class="nb">exit</span> <span class="mi">1</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 月の黄経 λmoon 計算</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_longitude_moon</span>
+    <span class="k">begin</span>
+      <span class="c1"># 時刻引数を分解</span>
+      <span class="n">tm1</span> <span class="o">=</span> <span class="vi">@jd</span><span class="p">.</span><span class="nf">truncate</span>                <span class="c1"># 整数部分</span>
+      <span class="n">tm2</span> <span class="o">=</span> <span class="vi">@jd</span> <span class="o">-</span> <span class="n">tm1</span>                   <span class="c1"># 小数部分</span>
+      <span class="n">tm2</span> <span class="o">-=</span> <span class="mf">9.0</span><span class="o">/</span><span class="mf">24.0</span>                   <span class="c1"># JST ==&gt; DT （補正時刻=0.0sec と仮定して計算）</span>
+      <span class="n">t</span>  <span class="o">=</span> <span class="p">(</span><span class="n">tm2</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="mf">36525.0</span>        <span class="c1"># 36525は1年365日と1/4を現す数値</span>
+      <span class="n">t</span> <span class="o">+=</span> <span class="p">(</span><span class="n">tm1</span> <span class="o">-</span> <span class="mf">2451545.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">36525.0</span>  <span class="c1"># 2451545は基点までのユリウス日</span>
+
+      <span class="c1"># 摂動項の計算</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">2322131.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">191.0</span> <span class="p">)</span>
+      <span class="n">th</span>  <span class="o">=</span> <span class="mf">0.0003</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span>   <span class="mf">4067.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">70.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0003</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">549197.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">220.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0003</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1808933.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">58.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0003</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">349472.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">337.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0003</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">381404.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">354.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0003</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">958465.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">340.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0003</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span>  <span class="mf">12006.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">187.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0004</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span>  <span class="mf">39871.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">223.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0004</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">509131.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">242.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0005</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1745069.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">24.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0005</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1908795.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">90.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0005</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">2258267.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">156.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0006</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">111869.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">38.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0006</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span>  <span class="mf">27864.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">127.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0007</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">485333.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">186.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0007</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">405201.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">50.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0007</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">790672.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">114.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0007</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1403732.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">98.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0008</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">858602.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">129.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0009</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1920802.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">186.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0011</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1267871.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">249.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0012</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1856938.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">152.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0016</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">401329.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">274.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0018</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">341337.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">16.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0021</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span>  <span class="mf">71998.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">85.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0021</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">990397.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">357.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0021</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">818536.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">151.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0022</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">922466.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">163.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0023</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span>  <span class="mf">99863.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">122.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0024</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1379739.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">17.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0026</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">918399.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">182.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0027</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span>   <span class="mf">1934.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">145.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0028</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">541062.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">259.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0037</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1781068.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">21.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0038</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span>    <span class="mf">133.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">29.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0040</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1844932.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">56.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0040</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1331734.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">283.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0040</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">481266.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">205.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0050</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span>  <span class="mf">31932.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">107.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0052</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">926533.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">323.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0068</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">449334.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">188.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0079</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">826671.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">111.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0085</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1431597.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">315.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0100</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1303870.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">246.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0107</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">489205.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">142.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0110</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1443603.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">52.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0125</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span>  <span class="mf">75870.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">41.0</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0154</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">513197.9</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">222.5</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0304</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">445267.1</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">27.9</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0347</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">441199.8</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">47.4</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0409</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">854535.2</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">148.2</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0458</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">1367733.1</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">280.7</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0533</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">377336.3</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">13.2</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0571</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span>  <span class="mf">63863.5</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">124.2</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.0588</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">966404.0</span>  <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">276.5</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.1144</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span>  <span class="mf">35999.05</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">87.53</span><span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.1851</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">954397.74</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">179.93</span><span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.2136</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">890534.22</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">145.7</span> <span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">0.6583</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span> <span class="mf">413335.35</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span>  <span class="mf">10.74</span><span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">1.2740</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">477198.868</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">44.963</span><span class="p">)</span>
+      <span class="n">th</span> <span class="o">+=</span> <span class="mf">6.2888</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="no">K</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+
+      <span class="c1"># 比例項の計算</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="mf">481267.8809</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+      <span class="n">ang</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="n">ang</span> <span class="o">+</span> <span class="mf">218.3162</span><span class="p">)</span>
+
+      <span class="c1"># 月黄経</span>
+      <span class="vi">@th</span>  <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="n">th</span> <span class="o">+</span> <span class="n">ang</span><span class="p">)</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="n">str_msg</span> <span class="o">=</span> <span class="s2">"[EXCEPTION]["</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">name</span> <span class="o">+</span> <span class="s2">".get_longitude_moon] "</span> <span class="o">+</span> <span class="n">e</span><span class="p">.</span><span class="nf">to_s</span>
+      <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span> <span class="n">str_msg</span>
+      <span class="nb">exit</span> <span class="mi">1</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 角度の正規化</span>
+  <span class="c1"># ( すなわち引数の範囲を ０≦θ＜３６０ にする )</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">normalize_angle</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+    <span class="k">begin</span>
+      <span class="k">if</span> <span class="n">angle</span> <span class="o">&lt;</span> <span class="mi">0</span>
+        <span class="n">angle1</span>  <span class="o">=</span> <span class="n">angle</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">angle2</span>  <span class="o">=</span> <span class="p">(</span><span class="n">angle1</span> <span class="o">/</span> <span class="mf">360.0</span><span class="p">).</span><span class="nf">truncate</span>
+        <span class="n">angle1</span> <span class="o">-=</span> <span class="mi">360</span> <span class="o">*</span> <span class="n">angle2</span>
+        <span class="n">angle1</span>  <span class="o">=</span> <span class="mi">360</span> <span class="o">-</span> <span class="n">angle1</span>
+      <span class="k">else</span>
+        <span class="n">angle1</span>  <span class="o">=</span> <span class="p">(</span><span class="n">angle</span> <span class="o">/</span> <span class="mf">360.0</span><span class="p">).</span><span class="nf">truncate</span>
+        <span class="n">angle1</span>  <span class="o">=</span> <span class="n">angle</span> <span class="o">-</span> <span class="mf">360.0</span> <span class="o">*</span> <span class="n">angle1</span>
+      <span class="k">end</span>
+
+      <span class="k">return</span> <span class="n">angle1</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="n">str_msg</span> <span class="o">=</span> <span class="s2">"[EXCEPTION]["</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">name</span> <span class="o">+</span> <span class="s2">".normalize_angle] "</span> <span class="o">+</span> <span class="n">e</span><span class="p">.</span><span class="nf">to_s</span>
+      <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span> <span class="n">str_msg</span>
+      <span class="nb">exit</span> <span class="mi">1</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1"># 月黄経取得</span>
+  <span class="k">def</span> <span class="nf">get_longitude_moon</span>
+    <span class="k">return</span> <span class="vi">@th</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">#============</span>
+<span class="c1"># 引数クラス</span>
+<span class="c1">#============</span>
+<span class="k">class</span> <span class="nc">Arg</span>
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="vi">@dt</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y%m%d%H%M%S"</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c1"># 引数チェック</span>
+  <span class="k">def</span> <span class="nf">check</span>
+    <span class="k">begin</span>
+      <span class="k">return</span> <span class="kp">true</span> <span class="k">if</span> <span class="no">ARGV</span><span class="p">.</span><span class="nf">size</span> <span class="o">==</span> <span class="mi">0</span>
+
+      <span class="c1"># 正規チェック (  8桁の半角数字 )</span>
+      <span class="k">if</span>  <span class="sr">/^\d{8}$/</span> <span class="o">=~</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="vi">@dt</span> <span class="o">=</span> <span class="s2">"</span><span class="si">#{</span><span class="no">ARGV</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">000000"</span>
+      <span class="c1"># 正規チェック ( 14桁の半角数字 )</span>
+      <span class="k">elsif</span> <span class="sr">/^\d{14}$/</span> <span class="o">=~</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="vi">@dt</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">else</span>
+        <span class="nb">puts</span> <span class="s2">"引数指定 : [ 半角数字(8桁) | 半角数字(14桁) ] "</span>
+        <span class="k">return</span> <span class="kp">false</span>
+      <span class="k">end</span>
+
+      <span class="c1"># 日付妥当性チェック</span>
+      <span class="n">year</span>  <span class="o">=</span> <span class="vi">@dt</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">].</span><span class="nf">to_i</span>
+      <span class="n">month</span> <span class="o">=</span> <span class="vi">@dt</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+      <span class="n">day</span>   <span class="o">=</span> <span class="vi">@dt</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+      <span class="k">if</span> <span class="o">!</span><span class="no">Date</span><span class="p">.</span><span class="nf">valid_date?</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">)</span>
+        <span class="nb">puts</span> <span class="s2">"引数指定 : 妥当な日付ではありません。"</span>
+        <span class="k">return</span> <span class="kp">false</span>
+      <span class="k">end</span>
+
+      <span class="c1"># 時刻妥当性チェック</span>
+      <span class="k">unless</span> <span class="sr">/^([01][0-9]|2[0-3])[0-5][0-9][0-5][0-9]$/</span> <span class="o">=~</span><span class="vi">@dt</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>
+        <span class="nb">puts</span> <span class="s2">"引数指定 : 妥当な時刻ではありません。"</span>
+        <span class="k">return</span> <span class="kp">false</span>
+      <span class="k">end</span>
+
+      <span class="k">return</span> <span class="kp">true</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="n">str_msg</span> <span class="o">=</span> <span class="s2">"[EXCEPTION]["</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">name</span> <span class="o">+</span> <span class="s2">".check] "</span> <span class="o">+</span> <span class="n">e</span><span class="p">.</span><span class="nf">to_s</span>
+      <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span> <span class="n">str_msg</span>
+      <span class="nb">exit</span> <span class="mi">1</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1"># 日時取得</span>
+  <span class="k">def</span> <span class="nf">get_dt</span>
+    <span class="k">return</span> <span class="vi">@dt</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">################</span>
+
+<span class="c1">####  MAIN  ####</span>
+
+<span class="c1">################</span>
+<span class="k">begin</span>
+  <span class="c1"># 引数チェック ( エラーなら終了 )</span>
+  <span class="n">obj_arg</span> <span class="o">=</span> <span class="no">Arg</span><span class="p">.</span><span class="nf">new</span>
+  <span class="nb">exit</span> <span class="k">unless</span> <span class="n">obj_arg</span><span class="p">.</span><span class="nf">check</span>
+
+  <span class="c1"># 計算対象日付設定</span>
+  <span class="n">dt</span> <span class="o">=</span> <span class="n">obj_arg</span><span class="p">.</span><span class="nf">get_dt</span>
+
+  <span class="c1"># 計算クラスインスタンス化</span>
+  <span class="n">obj_calc</span> <span class="o">=</span> <span class="no">CalcLongitudeSun</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+
+  <span class="c1"># グレゴリオ暦からユリウス通日を計算</span>
+  <span class="n">obj_calc</span><span class="p">.</span><span class="nf">gc_to_jd</span>
+
+  <span class="c1"># ユリウス通日から黄経(月)を計算</span>
+  <span class="n">obj_calc</span><span class="p">.</span><span class="nf">calc_longitude_moon</span>
+
+  <span class="c1"># 計算結果出力</span>
+  <span class="n">str</span>  <span class="o">=</span> <span class="s2">"</span><span class="si">#{</span><span class="n">dt</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="n">dt</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="n">dt</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">dt</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">:</span><span class="si">#{</span><span class="n">dt</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">:</span><span class="si">#{</span><span class="n">dt</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> "</span>
+  <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s2">"の月黄経 = </span><span class="si">#{</span><span class="n">obj_calc</span><span class="p">.</span><span class="nf">get_longitude_moon</span><span class="si">}</span><span class="s2">°"</span>
+  <span class="nb">puts</span> <span class="n">str</span>
+<span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+  <span class="n">str_msg</span> <span class="o">=</span> <span class="s2">"[EXCEPTION] "</span> <span class="o">+</span> <span class="n">e</span><span class="p">.</span><span class="nf">to_s</span>
+  <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span> <span class="n">str_msg</span>
+  <span class="nb">exit</span> <span class="mi">1</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="3-ruby-スクリプト実行">3. Ruby スクリプト実行</h3>
+
+<p>引数に8桁数字（YYYYMMDD 形式）か14桁数字（YYYYMMDDHHMMSS）を指定して、実行する。<br />
+（引数を指定しなければ、現在日時（システム日時）と判断する）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ruby calc_longitude_moon.rb 20130301120000
+2013-03-01 12:00:00 の月黄経 = 201.60973997507412°
+</code></pre></div></div>
+
+<h3 id="4-参考文献">4. 参考文献</h3>
+
+<p>摂動項・比例項の計算に使用する定数等、大変参考になる書籍です。</p>
+
+<hr />
+
+<p>当方、カレンダー作成や旧暦計算の Ruby スクリプトを作成してい使用していましたが、任意の日時の月黄経を計算するだけのスクリプトを作成していなかったので、今回作成した次第です。</p>
+
+<p>ちなみに、当方サイトのカレンダーはこちら。</p>
+
+<ul>
+  <li><a href="http://www.mk-mode.com/rails/calendar/calendar" title="mk-mode SITE : カレンダー（月間）">mk-mode SITE : カレンダー（月間）</a></li>
+</ul>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">カレンダー</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-03-06T00:20:00+09:00">2013-03-06 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+-+%E6%9C%88%E9%BB%84%E7%B5%8C%E8%A8%88%E7%AE%97%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F03%2F06%2Fruby-longitude-moon%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F03%2F06%2Fruby-longitude-moon%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F03%2F06%2Fruby-longitude-moon%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/03/04/ruby-longitude-sun/" class="pagination--pager" title="Ruby - 太陽黄経計算！
+">Previous</a>
+    
+    
+      <a href="/2013/03/08/ruby-moonage/" class="pagination--pager" title="Ruby - 月齢計算！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/03/06/ruby-longitude-moon/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/03/06/ruby-longitude-moon"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

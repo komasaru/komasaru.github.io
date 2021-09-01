@@ -1,0 +1,929 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Fortran - 2 つの配列から単回帰直線計算！ - mk-mode BLOG</title>
+<meta name="description" content="Fortran 95 で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰直線を計算する方法についての記録です。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Fortran - 2 つの配列から単回帰直線計算！">
+<meta property="og:url" content="https://komasaru.github.io/2019/04/02/fortran95-regression-line/">
+
+
+  <meta property="og:description" content="Fortran 95 で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰直線を計算する方法についての記録です。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Fortran - 2 つの配列から単回帰直線計算！">
+  <meta name="twitter:description" content="Fortran 95 で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰直線を計算する方法についての記録です。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2019/04/02/fortran95-regression-line/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2019-04-02T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2019/04/02/fortran95-regression-line/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Fortran - 2 つの配列から単回帰直線計算！">
+    <meta itemprop="description" content="Fortran 95 で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰直線を計算する方法についての記録です。">
+    <meta itemprop="datePublished" content="April 02, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Fortran - 2 つの配列から単回帰直線計算！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-04-02T00:20:00+09:00">2019-04-02 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Fortran 95 で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰直線を計算する方法についての記録です。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>LMDE 3 (Linux Mint Debian Edition 3; 64bit) での作業を想定。</li>
+  <li>GCC 6.3.0 (GFortran 6.3.0) でのコンパイルを想定。</li>
+</ul>
+
+<h3 id="1-アルゴリズムについて">1. アルゴリズムについて</h3>
+
+<p>当ブログ過去記事を参照のこと。</p>
+
+<ul>
+  <li><a href="/2014/11/05/ruby-simple-linear-regression-line" title="Ruby - Array クラス拡張で単回帰直線計算！">Ruby - Array クラス拡張で単回帰直線計算！</a></li>
+  <li><a href="/2018/05/02/python-regression-line-computation" title="Python - 2 つの list から単回帰直線計算！">Python - 2 つの list から単回帰直線計算！</a></li>
+</ul>
+
+<h3 id="2-ソースコードの作成">2. ソースコードの作成</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">regression_line.f95</code></p>
+
+<figure class="highlight"><pre><code class="language-fortran" data-lang="fortran"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+</pre></td><td class="code"><pre><span class="c1">!****************************************************</span><span class="w">
+</span><span class="c1">! 単回帰直線計算</span><span class="w">
+</span><span class="c1">!</span><span class="w">
+</span><span class="c1">!   date          name            version</span><span class="w">
+</span><span class="c1">!   2018.12.18    mk-mode.com     1.00 新規作成</span><span class="w">
+</span><span class="c1">!</span><span class="w">
+</span><span class="c1">! Copyright(C) 2018 mk-mode.com All Rights Reserved.</span><span class="w">
+</span><span class="c1">!****************************************************</span><span class="w">
+</span><span class="c1">!</span><span class="w">
+</span><span class="k">module</span><span class="w"> </span><span class="n">const</span><span class="w">
+  </span><span class="c1">! SP: 単精度(4), DP: 倍精度(8)</span><span class="w">
+  </span><span class="kt">integer</span><span class="p">,</span><span class="w">     </span><span class="k">parameter</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">SP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">kind</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="w">
+  </span><span class="kt">integer</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">DP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">selected_real_kind</span><span class="p">(</span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">precision</span><span class="p">(</span><span class="mf">1.0_SP</span><span class="p">))</span><span class="w">
+</span><span class="k">end</span><span class="w"> </span><span class="k">module</span><span class="w"> </span><span class="n">const</span><span class="w">
+
+</span><span class="k">module</span><span class="w"> </span><span class="n">comp</span><span class="w">
+  </span><span class="k">use</span><span class="w"> </span><span class="n">const</span><span class="w">
+  </span><span class="k">implicit</span><span class="w"> </span><span class="k">none</span><span class="w">
+  </span><span class="k">private</span><span class="w">
+  </span><span class="k">public</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">calc_reg_line</span><span class="w">
+
+</span><span class="k">contains</span><span class="w">
+  </span><span class="c1">! 単回帰直線計算</span><span class="w">
+  </span><span class="c1">!</span><span class="w">
+  </span><span class="c1">! :param(in)  real(8) x(:): 説明変数配列</span><span class="w">
+  </span><span class="c1">! :param(in)  real(8) y(:): 目的変数配列</span><span class="w">
+  </span><span class="c1">! :param(out) real(8)    a: 切片</span><span class="w">
+  </span><span class="c1">! :param(out) real(8)    b: 傾き</span><span class="w">
+  </span><span class="k">subroutine</span><span class="w"> </span><span class="n">calc_reg_line</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w">
+    </span><span class="k">implicit</span><span class="w"> </span><span class="k">none</span><span class="w">
+    </span><span class="kt">real</span><span class="p">(</span><span class="n">DP</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="k">in</span><span class="p">)</span><span class="w">  </span><span class="p">::</span><span class="w"> </span><span class="n">x</span><span class="p">(:),</span><span class="w"> </span><span class="n">y</span><span class="p">(:)</span><span class="w">
+    </span><span class="kt">real</span><span class="p">(</span><span class="n">DP</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="k">out</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w">
+    </span><span class="kt">integer</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span><span class="w"> </span><span class="p">::</span><span class="w"> </span><span class="n">size_x</span><span class="p">,</span><span class="w"> </span><span class="n">size_y</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w">
+    </span><span class="kt">real</span><span class="p">(</span><span class="n">DP</span><span class="p">)</span><span class="w">    </span><span class="p">::</span><span class="w"> </span><span class="n">sum_x</span><span class="p">,</span><span class="w"> </span><span class="n">sum_y</span><span class="p">,</span><span class="w"> </span><span class="n">sum_xx</span><span class="p">,</span><span class="w"> </span><span class="n">sum_xy</span><span class="w">
+
+    </span><span class="n">size_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">size</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
+    </span><span class="n">size_y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">size</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">size_x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="ow">.or.</span><span class="w"> </span><span class="n">size_y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+      </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">"[ERROR] array size == 0"</span><span class="w">
+      </span><span class="k">stop</span><span class="w">
+    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">size_x</span><span class="w"> </span><span class="p">/</span><span class="o">=</span><span class="w"> </span><span class="n">size_y</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w">
+      </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">"[ERROR] size(X) != size(Y)"</span><span class="w">
+      </span><span class="k">stop</span><span class="w">
+    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="w">
+
+    </span><span class="n">sum_x</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
+    </span><span class="n">sum_y</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="nb">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w">
+    </span><span class="n">sum_xx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w">
+    </span><span class="n">sum_xy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w">
+    </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">sum_xx</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sum_y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">sum_xy</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sum_x</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span><span class="w">
+    </span><span class="p">&amp;</span><span class="w"> </span><span class="p">/</span><span class="w"> </span><span class="p">(</span><span class="n">size_x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sum_xx</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">sum_x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sum_x</span><span class="p">)</span><span class="w">
+    </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">size_x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sum_xy</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">sum_x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sum_y</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span><span class="w">
+    </span><span class="p">&amp;</span><span class="w"> </span><span class="p">/</span><span class="w"> </span><span class="p">(</span><span class="n">size_x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sum_xx</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">sum_x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sum_x</span><span class="p">)</span><span class="w">
+  </span><span class="k">end</span><span class="w"> </span><span class="k">subroutine</span><span class="w"> </span><span class="n">calc_reg_line</span><span class="w">
+</span><span class="k">end</span><span class="w"> </span><span class="k">module</span><span class="w"> </span><span class="n">comp</span><span class="w">
+
+</span><span class="k">program</span><span class="w"> </span><span class="n">regression_line</span><span class="w">
+  </span><span class="k">use</span><span class="w"> </span><span class="n">const</span><span class="w">
+  </span><span class="k">use</span><span class="w"> </span><span class="n">comp</span><span class="w">
+  </span><span class="k">implicit</span><span class="w"> </span><span class="k">none</span><span class="w">
+  </span><span class="kt">real</span><span class="p">(</span><span class="n">DP</span><span class="p">)</span><span class="w">    </span><span class="p">::</span><span class="w"> </span><span class="n">x</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="w"> </span><span class="n">y</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w">
+
+  </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(/</span><span class="mi">107</span><span class="p">,</span><span class="w"> </span><span class="mi">336</span><span class="p">,</span><span class="w"> </span><span class="mi">233</span><span class="p">,</span><span class="w"> </span><span class="mi">82</span><span class="p">,</span><span class="w"> </span><span class="mi">61</span><span class="p">,</span><span class="w"> </span><span class="mi">378</span><span class="p">,</span><span class="w"> </span><span class="mi">129</span><span class="p">,</span><span class="w"> </span><span class="mi">313</span><span class="p">,</span><span class="w"> </span><span class="mi">142</span><span class="p">,</span><span class="w"> </span><span class="mi">428</span><span class="p">/)</span><span class="w">
+  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(/</span><span class="mi">286</span><span class="p">,</span><span class="w"> </span><span class="mi">851</span><span class="p">,</span><span class="w"> </span><span class="mi">589</span><span class="p">,</span><span class="w"> </span><span class="mi">389</span><span class="p">,</span><span class="w"> </span><span class="mi">158</span><span class="p">,</span><span class="w"> </span><span class="mi">1037</span><span class="p">,</span><span class="w"> </span><span class="mi">463</span><span class="p">,</span><span class="w"> </span><span class="mi">563</span><span class="p">,</span><span class="w"> </span><span class="mi">372</span><span class="p">,</span><span class="w"> </span><span class="mi">1020</span><span class="p">/)</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(A, 10F8.2, A)'</span><span class="p">,</span><span class="w"> </span><span class="s2">"説明変数 X = ("</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="s2">")"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(A, 10F8.2, A)'</span><span class="p">,</span><span class="w"> </span><span class="s2">"目的変数 Y = ("</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="s2">")"</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(A)'</span><span class="p">,</span><span class="w"> </span><span class="s2">"---"</span><span class="w">
+  </span><span class="k">call</span><span class="w"> </span><span class="n">calc_reg_line</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(A, F12.8)'</span><span class="p">,</span><span class="w"> </span><span class="s2">"切片 a = "</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w">
+  </span><span class="k">print</span><span class="w"> </span><span class="s1">'(A, F12.8)'</span><span class="p">,</span><span class="w"> </span><span class="s2">"傾き b = "</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w">
+</span><span class="k">end</span><span class="w"> </span><span class="k">program</span><span class="w"> </span><span class="n">regression_line</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/f1e76fc44cd650298e2e9485620533ed" title="Gist - Fortran 95 source code to compute a simple linear regression line.">Gist - Fortran 95 source code to compute a simple linear regression line.</a></li>
+</ul>
+
+<h3 id="3-ソースコードのコンパイル">3. ソースコードのコンパイル</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ gfortran -o regression_line regression_line.f95
+</code></pre></div></div>
+
+<h3 id="4-動作確認">4. 動作確認</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./regression_line
+説明変数 X = (  107.00  336.00  233.00   82.00   61.00  378.00  129.00  313.00  142.00  428.00)
+目的変数 Y = (  286.00  851.00  589.00  389.00  158.00 1037.00  463.00  563.00  372.00 1020.00)
+---
+切片 a =  99.07475877
+傾き b =   2.14452350
+</code></pre></div></div>
+
+<p>参考までに、上記スクリプトで使用した2変量の各点と作成された単回帰直線を gnuplot で描画してみた。</p>
+
+<p><img src="/images/2019/04/02/REGRESSION_LINE.png" alt="REGRESSION_LINE" title="REGRESSION_LINE" /></p>
+
+<hr />
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/fortran" class="page__taxonomy-item" rel="tag">Fortran</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%95%B0%E5%AD%A6" class="page__taxonomy-item" rel="tag">数学</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-04-02T00:20:00+09:00">2019-04-02 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Fortran+-+2+%E3%81%A4%E3%81%AE%E9%85%8D%E5%88%97%E3%81%8B%E3%82%89%E5%8D%98%E5%9B%9E%E5%B8%B0%E7%9B%B4%E7%B7%9A%E8%A8%88%E7%AE%97%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2019%2F04%2F02%2Ffortran95-regression-line%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2019%2F04%2F02%2Ffortran95-regression-line%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2019%2F04%2F02%2Ffortran95-regression-line%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2019/04/01/blog-access/" class="pagination--pager" title="2019年3月 - OS・ブラウザ別アクセス状況！【自動集計】
+">Previous</a>
+    
+    
+      <a href="/2019/04/05/fortran95-multiple-regression-equation/" class="pagination--pager" title="Fortran - 重回帰式計算（説明変数2個）！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2019/04/02/fortran95-regression-line/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2019/04/02/fortran95-regression-line"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

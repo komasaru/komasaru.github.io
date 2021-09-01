@@ -1,0 +1,1351 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>2019年 - ツイート集計！ - mk-mode BLOG</title>
+<meta name="description" content="改めまして、旧年明けまして、新年おめでとうございます。2019年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。（今回から投稿元別のツイート数も集計しております）当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Ruby + Twitter API で本家からデータを取得して保存）ほとんど SQL で集計可能でしたが、品詞・単語別の集計は形態素解析エンジン MeCab を使用しました。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="2019年 - ツイート集計！">
+<meta property="og:url" content="https://komasaru.github.io/2020/01/02/tweet-summary-2019/">
+
+
+  <meta property="og:description" content="改めまして、旧年明けまして、新年おめでとうございます。2019年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。（今回から投稿元別のツイート数も集計しております）当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Ruby + Twitter API で本家からデータを取得して保存）ほとんど SQL で集計可能でしたが、品詞・単語別の集計は形態素解析エンジン MeCab を使用しました。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="2019年 - ツイート集計！">
+  <meta name="twitter:description" content="改めまして、旧年明けまして、新年おめでとうございます。2019年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。（今回から投稿元別のツイート数も集計しております）当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Ruby + Twitter API で本家からデータを取得して保存）ほとんど SQL で集計可能でしたが、品詞・単語別の集計は形態素解析エンジン MeCab を使用しました。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2020/01/02/tweet-summary-2019/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2020-01-02T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2020/01/02/tweet-summary-2019/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="2019年 - ツイート集計！">
+    <meta itemprop="description" content="改めまして、旧年明けまして、新年おめでとうございます。2019年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。（今回から投稿元別のツイート数も集計しております）当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Ruby + Twitter API で本家からデータを取得して保存）ほとんど SQL で集計可能でしたが、品詞・単語別の集計は形態素解析エンジン MeCab を使用しました。">
+    <meta itemprop="datePublished" content="January 02, 2020">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">2019年 - ツイート集計！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-01-02T00:20:00+09:00">2020-01-02 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>改めまして、旧年明けまして、新年おめでとうございます。</p>
+
+<p>2019年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。（今回から投稿元別のツイート数も集計しております）</p>
+
+<p>当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Ruby + Twitter API で本家からデータを取得して保存）</p>
+
+<p>ほとんど SQL で集計可能でしたが、品詞・単語別の集計は形態素解析エンジン MeCab を使用しました。</p>
+
+<!--more-->
+
+<p>集計内容は以下のとおり。</p>
+
+<ol>
+  <li>月別ツイート数</li>
+  <li>曜日別ツイート数</li>
+  <li>時間別ツイート数</li>
+  <li>投稿元別ツイート数</li>
+  <li>文字数別ツイート数</li>
+  <li>1日当たりツイート数別集計</li>
+  <li>品詞別出現回数</li>
+  <li>単語別出現回数</li>
+</ol>
+
+<h3 id="1-月別ツイート数">1. 月別ツイート数</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[ 年  月 ]  [件数]  [ 比 率 ]
+2019年01月     496  (  6.99%)
+2019年02月     408  (  5.75%)
+2019年03月     628  (  8.85%)
+2019年04月     529  (  7.45%)
+2019年05月     681  (  9.59%)
+2019年06月     554  (  7.80%)
+2019年07月     593  (  8.35%)
+2019年08月     913  ( 12.86%)
+2019年09月     715  ( 10.07%)
+2019年10月     621  (  8.75%)
+2019年11月     453  (  6.38%)
+2019年12月     509  (  7.17%)
+[ 合  計 ]   7,100  (100.00%)
+</code></pre></div></div>
+
+<p>大体、月 400 〜 700 ツイートだが、夏季は少し多めだった。<br />
+台風関連のリツイートでしょう。</p>
+
+<h3 id="2-曜日別ツイート数">2. 曜日別ツイート数</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[ 曜  日 ]  [件数]  [ 比 率 ]
+  日曜日       941  ( 13.25%)
+  月曜日       980  ( 13.80%)
+  火曜日       993  ( 13.99%)
+  水曜日     1,007  ( 14.18%)
+  木曜日     1,202  ( 16.93%)
+  金曜日     1,023  ( 14.41%)
+  土曜日       954  ( 13.44%)
+[ 合  計 ]   7,100  (100.00%)
+</code></pre></div></div>
+
+<p>ほぼ平均的だが、木曜日だけが少し多めだった。<br />
+（ちなみに、2018年は金曜日が少し多めだった）</p>
+
+<h3 id="3-時間別ツイート数">3. 時間別ツイート数</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[ 時  間 ]  [件数]  [ 比 率 ]
+  00時台     1,011  ( 14.24%)
+  01時台        65  (  0.92%)
+  02時台        60  (  0.85%)
+  03時台        67  (  0.94%)
+  04時台       109  (  1.54%)
+  05時台       145  (  2.04%)
+  06時台        89  (  1.25%)
+  07時台       107  (  1.51%)
+  08時台       126  (  1.77%)
+  09時台       168  (  2.37%)
+  10時台       170  (  2.39%)
+  11時台       129  (  1.82%)
+  12時台       484  (  6.82%)
+  13時台       112  (  1.58%)
+  14時台       154  (  2.17%)
+  15時台       162  (  2.28%)
+  16時台       234  (  3.30%)
+  17時台       148  (  2.08%)
+  18時台     1,498  ( 21.10%)
+  19時台       870  ( 12.25%)
+  20時台       582  (  8.20%)
+  21時台       252  (  3.55%)
+  22時台       172  (  2.42%)
+  23時台       186  (  2.62%)
+[ 合  計 ]   7,100  (100.00%)
+</code></pre></div></div>
+
+<p>通常のツイートは、自身の生活スタイルの関係で18〜20時台が多くなる。<br />
+00時台、12時台は Bot によるツイートがほとんど。</p>
+
+<h3 id="4-投稿元別ツイート数">4. 投稿元別ツイート数</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[ 投稿元              ]  [件数]  [ 比 率 ]
+  mk-mode BOT             5,289  ( 74.49%)
+  TwitVim                   945  ( 13.31%)
+  TweetDeck                 374  (  5.27%)
+  Twitter Web Client        319  (  4.49%)
+  IFTTT                     127  (  1.79%)
+  Twitter Web App            25  (  0.35%)
+  Twitter for Android        21  (  0.30%)
+[ 合  計 ]                7,100  (100.00%)
+</code></pre></div></div>
+
+<p>Bot 以外では、生活スタイルの関係でテキストエディタの Vim からツイートすることが最も多い。<br />
+この私用アカウントでは、出先（携帯端末等）からツイートすることはほとんどない。</p>
+
+<h3 id="5-文字数別ツイート数">5. 文字数別ツイート数</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[ 文字数 ]  [件数]  [ 比 率 ]
+ 〜 10文字       3  (  0.04%)
+ 〜 20文字       7  (  0.10%)
+ 〜 30文字      33  (  0.46%)
+ 〜 40文字      72  (  1.01%)
+ 〜 50文字     128  (  1.80%)
+ 〜 60文字     264  (  3.72%)
+ 〜 70文字     455  (  6.41%)
+ 〜 80文字     761  ( 10.72%)
+ 〜 90文字     490  (  6.90%)
+ 〜100文字     285  (  4.01%)
+ 〜110文字     340  (  4.79%)
+ 〜120文字   1,823  ( 25.68%)
+ 〜130文字     366  (  5.15%)
+ 〜140文字   2,054  ( 28.93%)
+ 〜150文字       4  (  0.06%)
+ 〜160文字       3  (  0.04%)
+ 〜170文字       1  (  0.01%)
+ 〜180文字       8  (  0.11%)
+ 〜200文字       2  (  0.03%)
+ 〜220文字       1  (  0.01%)
+[ 合  計 ]   7,100  (100.00%)
+</code></pre></div></div>
+
+<p>文字数の少なすぎるツイートはほとんどなく、70字超のツイートが多い。<br />
+2017年途中から280文字までツイートできる仕様になっている（正確には、全角文字や半角ｶﾀｶﾅ等は1文字を2文字換算）が、 Twitter API でツイートを取得した時点で140文字に切り捨てられているため、多くの140文字超のツイートは全て140文字として集計している。<br />
+それでも140文字を超えるツイートが存在するのは、ツイート時に BitLy 短縮の URL だったのが Twitter API で取得し直すと Twitter 標準の t.co 短縮になり文字数が増えるため、または、その他。</p>
+
+<h3 id="6-1日当たりツイート数別集計">6. 1日当たりツイート数別集計</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[ Tweets ]  [日数]  [ 比 率 ]
+     2           1  (  0.28%)
+     4           1  (  0.28%)
+     5           1  (  0.28%)
+     7           1  (  0.28%)
+     8           1  (  0.28%)
+     9           8  (  2.20%)
+    10           9  (  2.48%)
+    11          15  (  4.13%)
+    12          10  (  2.75%)
+    13          15  (  4.13%)
+    14          21  (  5.79%)
+    15          24  (  6.61%)
+    16          22  (  6.06%)
+    17          27  (  7.44%)
+    18          20  (  5.51%)
+    19          31  (  8.54%)
+    20          22  (  6.06%)
+    21          18  (  4.96%)
+    22          15  (  4.13%)
+    23          19  (  5.23%)
+    24           9  (  2.48%)
+    25          11  (  3.03%)
+    26          12  (  3.31%)
+    27           9  (  2.48%)
+    28           5  (  1.38%)
+    29           6  (  1.65%)
+    30           5  (  1.38%)
+    31           4  (  1.10%)
+    32           7  (  1.93%)
+    34           2  (  0.55%)
+    36           1  (  0.28%)
+    37           1  (  0.28%)
+    38           1  (  0.28%)
+    39           3  (  0.83%)
+    43           1  (  0.28%)
+    44           1  (  0.28%)
+    46           1  (  0.28%)
+    47           1  (  0.28%)
+    48           1  (  0.28%)
+    51           1  (  0.28%)
+[ 合  計 ]     363  (100.00%)
+</code></pre></div></div>
+
+<p>1日に10〜20回強ツイートすることが多かったようだ。また、Bot による日次ツイートがあるので1回もツイートしなかった日はなかった。<br />
+（2019年はサーバを正常に稼働できない期間があったが、 Bot ツイートはできなくとも、手動のツイートはあった）<br />
+（ちなみに、1回もツイートしなかった日は、2011年7月7日のアカウント開設以来1日もない）</p>
+
+<h3 id="7-品詞別出現回数">7. 品詞別出現回数</h3>
+
+<p>形態素解析エンジン MeCab を使用して品詞別に集計してみた。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[ 品詞   ]  [ 出現回数 ]
+  名詞         193,113
+  記号         110,207
+  助詞          28,705
+  動詞           9,443
+  助動詞         5,059
+  接頭詞         2,643
+  形容詞         1,353
+  副詞           1,046
+  連体詞           415
+  接続詞           391
+  感動詞           195
+  フィラー           7
+  その他             1
+[ 合  計 ]     352,578 語
+</code></pre></div></div>
+
+<p>当然ながら、名詞や記号が多い。フィラーとは「えーと」、「あのー」のような、文と文の間を埋めるような単語のこと。<br />
+いつもながら、全体的に「こういうものなんだ」と実感する程度。</p>
+
+<h3 id="8-単語別出現回数">8. 単語別出現回数</h3>
+
+<p>1年間に出現した単語を集計してみた。（100回以上出現した単語を掲載）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[ 単語               ]  [ 品詞   ]  [ 出現回数 ]
+  #                       記号          11,574
+  :                       記号          11,373
+  .                       記号           8,923
+  の                      助詞           8,145
+  /                       記号           7,447
+  t                       名詞           6,674
+  https                   名詞           6,573
+  ://                     記号           6,489
+  co                      名詞           6,403
+  ：                      記号           6,366
+  、                      記号           5,679
+  （                      記号           5,248
+  ）                      記号           5,216
+  【                      記号           4,610
+  。                      記号           3,816
+  に                      助詞           3,070
+  00                      名詞           2,903
+  が                      助詞           2,823
+  @                       記号           2,778
+  ]                       記号           2,745
+  ※                      記号           2,721
+  RT                      名詞           2,637
+  は                      助詞           2,509
+  】                      記号           2,397
+  】[                     記号           2,182
+  -                       記号           2,164
+  松江                    名詞           2,161
+  *                       記号           2,110
+  matsue                  名詞           2,097
+  0                       名詞           2,097
+  6                       名詞           1,940
+  E                       名詞           1,926
+  て                      助詞           1,890
+  現在                    名詞           1,888
+  Japan                   名詞           1,880
+  災害                    名詞           1,842
+  た                      助動詞         1,833
+  で                      助詞           1,783
+  ・                      記号           1,638
+  消防                    名詞           1,630
+  月                      名詞           1,626
+  Mk                      名詞           1,624
+  松江市消防本部          名詞           1,600
+  t99                     名詞           1,598
+  し                      動詞           1,596
+  h                       名詞           1,582
+  を                      助詞           1,579
+  DH                      名詞           1,552
+  563                     名詞           1,552
+  sVLKZ                   名詞           1,551
+  NJK                     名詞           1,551
+  発生                    名詞           1,514
+  情報                    名詞           1,340
+  Matsue                  名詞           1,329
+  1                       名詞           1,307
+  と                      助詞           1,258
+  …                      記号           1,150
+  (                       記号           1,142
+  日                      名詞           1,124
+  「                      記号           1,073
+  」                      記号           1,048
+  32                      名詞           1,011
+  )                       記号           1,005
+  頃                      名詞             995
+  救急                    名詞             989
+  支援                    名詞             986
+  °                      記号             980
+  -1                      名詞             976
+  Shimane                 名詞             917
+  確認                    名詞             913
+  備忘録                  名詞             896
+  Wn                      名詞             887
+  から                    助詞             850
+  10                      名詞             838
+  検知                    名詞             780
+  分                      名詞             755
+  以外                    名詞             752
+  2019年                  名詞             750
+  12                      名詞             749
+  MLAT                    名詞             745
+  定期                    名詞             732
+  便                      名詞             730
+  →                      記号             729
+  入                      接頭詞           728
+  南中                    名詞             722
+  ▼                      記号             718
+  3                       名詞             709
+  気象庁                  名詞             705
+  航空機                  名詞             679
+  ［                      記号             677
+  ］                      記号             677
+  5                       名詞             675
+  -2                      名詞             671
+  BJ                      名詞             669
+  今日                    名詞             660
+  いる                    動詞             646
+  松江市                  名詞             626
+  T-4                     名詞             626
+  も                      助詞             621
+  島根県                  名詞             621
+  7                       名詞             605
+  ^M                      記号             597
+  05                      名詞             586
+  11                      名詞             569
+  [                       記号             566
+  16                      名詞             543
+  17                      名詞             542
+  06                      名詞             542
+  09                      名詞             538
+  2                       名詞             537
+  B                       名詞             532
+  落雷                    名詞             527
+  な                      助動詞           517
+  ADS                     名詞             517
+  18                      名詞             515
+  14                      名詞             510
+  する                    動詞             509
+  ない                    助動詞           499
+  15                      名詞             498
+  41                      名詞             494
+  に関する                助詞             488
+  N                       名詞             485
+  ぶり                    名詞             476
+  07                      名詞             473
+  い                      動詞             470
+  19                      名詞             467
+  02                      名詞             462
+  以来                    名詞             462
+  01                      名詞             446
+  〜                      記号             442
+  位置                    名詞             441
+  中国地方                名詞             441
+  08                      名詞             438
+  ！                      記号             436
+  04                      名詞             431
+  13                      名詞             428
+  03                      名詞             421
+  G                       名詞             415
+  20                      名詞             412
+  🔶                      名詞             409
+  速度                    名詞             407
+  なる                    動詞             407
+  高度                    名詞             397
+  50                      名詞             395
+  s                       名詞             393
+  ,                       記号             392
+  さ                      動詞             391
+  8                       名詞             388
+  や                      助詞             385
+  松江市内                名詞             383
+  ﾟ                      名詞             382
+  よう                    名詞             379
+  こと                    名詞             375
+  旧暦                    名詞             374
+  再                      接頭詞           370
+  日の出                  名詞             369
+  大雨                    名詞             369
+  C                       名詞             367
+  出                      動詞             366
+  BKUgh                   名詞             366
+  正午                    名詞             365
+  21                      名詞             364
+  4                       名詞             363
+  干支                    名詞             362
+  月齢                    名詞             361
+  さ                      名詞             360
+  六曜                    名詞             359
+  BL                      名詞             359
+  OG                      名詞             359
+  T                       名詞             358
+  れ                      動詞             354
+  注意                    名詞             353
+  ください                動詞             344
+  OO                      名詞             338
+  気象情報                名詞             337
+  9                       名詞             336
+  ね                      助詞             335
+  JA                      名詞             332
+  Vh                      名詞             332
+  にかけて                助詞             329
+  ので                    助詞             323
+  ---                     記号             323
+  約                      接頭詞           321
+  23                      名詞             308
+  22                      名詞             307
+  345K                    名詞             305
+  CB                      名詞             305
+  中                      名詞             301
+  ある                    動詞             300
+  ^M^M                    記号             296
+  だ                      助動詞           296
+  51                      名詞             294
+  18時                    名詞             292
+  距離                    名詞             290
+  の                      名詞             287
+  明日                    名詞             287
+  です                    助動詞           279
+  まで                    助詞             273
+  空自                    名詞             272
+  突風                    名詞             271
+  気温                    名詞             270
+  31                      名詞             269
+  shimane                 名詞             260
+  など                    助詞             260
+  機                      名詞             258
+  美保                    名詞             257
+  40                      名詞             254
+  36                      名詞             253
+  終了                    名詞             247
+  30                      名詞             242
+  発表                    名詞             239
+  か                      助詞             239
+  害                      名詞             239
+  33                      名詞             233
+  等                      名詞             232
+  通過                    名詞             230
+  第                      接頭詞           227
+  う                      助動詞           226
+  なっ                    動詞             226
+  町                      名詞             226
+  Fortran                 名詞             225
+  34                      名詞             225
+  25                      名詞             220
+  2019                    名詞             217
+  No.                     接頭詞           217
+  ？                      記号             216
+  土砂災害                名詞             214
+  35                      名詞             213
+  P                       名詞             212
+  計算                    名詞             211
+  直線                    名詞             210
+  55                      名詞             210
+  より                    助詞             210
+  ISS                     名詞             209
+  西                      名詞             209
+  機体                    名詞             209
+  最高気温                名詞             209
+  tottori                 名詞             208
+  で                      助動詞           208
+  Tottori                 名詞             207
+  警戒                    名詞             206
+  46                      名詞             201
+  回帰                    名詞             201
+  方位角                  名詞             198
+  ft                      名詞             198
+  きぼう                  名詞             197
+  日時                    名詞             197
+  仰角                    名詞             197
+  Fr                      名詞             195
+  SQUAWK                  名詞             195
+  震源                    名詞             194
+  便名                    名詞             191
+  台風                    名詞             187
+  東                      名詞             186
+  浸水                    名詞             185
+  という                  助詞             183
+  37                      名詞             181
+  なるほど                感動詞           180
+  ます                    助動詞           180
+  内                      名詞             178
+  低                      形容詞           176
+  38                      名詞             176
+  ／                      記号             176
+  45                      名詞             175
+  以上                    名詞             174
+  現時点                  名詞             174
+  68                      名詞             173
+  52                      名詞             171
+  56                      名詞             171
+  でしょ                  助動詞           170
+  24                      名詞             167
+  警報                    名詞             166
+  北東                    名詞             164
+  その                    連体詞           163
+  ため                    名詞             163
+  88                      名詞             161
+  火災                    名詞             160
+  ?                       記号             160
+  無                      接頭詞           159
+  54                      名詞             156
+  南西                    名詞             156
+  丁目                    名詞             156
+  最低気温                名詞             154
+  39                      名詞             154
+  26                      名詞             153
+  未満                    名詞             153
+  東部                    名詞             153
+  27                      名詞             152
+  Ruby                    名詞             152
+  れる                    動詞             152
+  53                      名詞             150
+  あり                    動詞             149
+  44                      名詞             147
+  日赤                    名詞             146
+  練習                    名詞             146
+  ??                      記号             144
+  48                      名詞             143
+  42                      名詞             143
+  58                      名詞             142
+  28                      名詞             142
+  降ひょう                名詞             141
+  高さ                    名詞             140
+  59                      名詞             140
+  qGyCufoOL               名詞             140
+  まし                    助動詞           139
+  及び                    接続詞           137
+  令和元年                名詞             137
+  〃                      記号             136
+  データ                  名詞             135
+  29                      名詞             134
+  57                      名詞             134
+  47                      名詞             134
+  報                      名詞             134
+  今後                    名詞             132
+  人                      名詞             132
+  それ                    名詞             131
+  １                      名詞             130
+  可能性                  名詞             129
+  BLOG                    名詞             128
+  　                      記号             128
+  37km                    名詞             127
+  目視確認                名詞             127
+  だっ                    助動詞           126
+  お                      接頭詞           122
+  北                      名詞             122
+  No.1                    名詞             121
+  へ                      助詞             120
+  状態                    名詞             120
+  所有                    名詞             119
+  心構え                  名詞             117
+  高める                  動詞             117
+  7700                    名詞             116
+  竜巻                    名詞             116
+  緊急事態                名詞             115
+  もの                    名詞             114
+  水                      名詞             114
+  最大震度                名詞             114
+  ない                    形容詞           114
+  規模                    名詞             112
+  43                      名詞             112
+  不安定                  名詞             112
+  |                       記号             111
+  1回                     名詞             111
+  ygEY                    名詞             111
+  -3                      名詞             110
+  5052                    名詞             110
+  49                      名詞             110
+  降水量                  名詞             110
+  大気                    名詞             110
+  土                      名詞             109
+  23日                    名詞             109
+  避難                    名詞             109
+  予想                    名詞             108
+  注意報                  名詞             108
+  警戒レベル              名詞             108
+  W                       名詞             107
+  利用                    名詞             106
+  木                      名詞             105
+  金                      名詞             105
+  危険度                  名詞             105
+  ⬇                      名詞             105
+  火                      名詞             104
+  救助                    名詞             104
+  5054                    名詞             104
+  131                     名詞             103
+  10km                    名詞             103
+  輸送機                  名詞             103
+  単                      接頭詞           103
+  激しい                  形容詞           102
+  数                      名詞             102
+  71                      名詞             102
+  自火                    名詞             101
+  鳴動                    名詞             101
+  深さ                    名詞             100
+  Debian                  名詞             100
+  :                        :                :
+  :                        :                :
+  :                        :                :
+[ 合  計 ]                             352,578 語
+</code></pre></div></div>
+
+<p>2019年は半角記号の <code class="language-plaintext highlighter-rouge">#</code>, <code class="language-plaintext highlighter-rouge">:</code>, <code class="language-plaintext highlighter-rouge">.</code>, <code class="language-plaintext highlighter-rouge">/</code> や全角ひらがなの <code class="language-plaintext highlighter-rouge">の</code> が多かった。</p>
+
+<hr />
+
+<p>単純に数を集計するだけではなく、形態素解析を利用して集計するのも面白いものです。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/mariadb" class="page__taxonomy-item" rel="tag">MariaDB</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/mecab" class="page__taxonomy-item" rel="tag">MeCab</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/mysql" class="page__taxonomy-item" rel="tag">MySQL</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/twitter" class="page__taxonomy-item" rel="tag">Twitter</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/sns" class="page__taxonomy-item" rel="tag">SNS</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-01-02T00:20:00+09:00">2020-01-02 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=2019%E5%B9%B4+-+%E3%83%84%E3%82%A4%E3%83%BC%E3%83%88%E9%9B%86%E8%A8%88%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2020%2F01%2F02%2Ftweet-summary-2019%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2020%2F01%2F02%2Ftweet-summary-2019%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2020%2F01%2F02%2Ftweet-summary-2019%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2020/01/01/blog-access/" class="pagination--pager" title="2019年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）
+">Previous</a>
+    
+    
+      <a href="/2020/01/05/debian-10-python-3-7-installation-by-src/" class="pagination--pager" title="Debian 10 (buster) - Python 3.7 インストール（ソースビルド）！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2020/01/02/tweet-summary-2019/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2020/01/02/tweet-summary-2019"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

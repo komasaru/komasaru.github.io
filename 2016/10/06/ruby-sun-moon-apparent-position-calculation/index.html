@@ -1,0 +1,1773 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby - JPL DE430 データから太陽・月の視位置を計算！ - mk-mode BLOG</title>
+<meta name="description" content="NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している太陽・月・惑星の暦の最新版 DE430 からデータを取得し、太陽と月の視位置を高精度で計算してみました。  【2016-10-10 追記】以下で紹介の Ruby スクリプトを gem ライブラリにしました。mk_apos - RubyGems.org もご参照ください。【追記ここまで】">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby - JPL DE430 データから太陽・月の視位置を計算！">
+<meta property="og:url" content="https://komasaru.github.io/2016/10/06/ruby-sun-moon-apparent-position-calculation/">
+
+
+  <meta property="og:description" content="NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している太陽・月・惑星の暦の最新版 DE430 からデータを取得し、太陽と月の視位置を高精度で計算してみました。  【2016-10-10 追記】以下で紹介の Ruby スクリプトを gem ライブラリにしました。mk_apos - RubyGems.org もご参照ください。【追記ここまで】">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby - JPL DE430 データから太陽・月の視位置を計算！">
+  <meta name="twitter:description" content="NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している太陽・月・惑星の暦の最新版 DE430 からデータを取得し、太陽と月の視位置を高精度で計算してみました。  【2016-10-10 追記】以下で紹介の Ruby スクリプトを gem ライブラリにしました。mk_apos - RubyGems.org もご参照ください。【追記ここまで】">
+  <meta name="twitter:url" content="https://komasaru.github.io/2016/10/06/ruby-sun-moon-apparent-position-calculation/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2016-10-06T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2016/10/06/ruby-sun-moon-apparent-position-calculation/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby - JPL DE430 データから太陽・月の視位置を計算！">
+    <meta itemprop="description" content="NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している太陽・月・惑星の暦の最新版 DE430 からデータを取得し、太陽と月の視位置を高精度で計算してみました。  【2016-10-10 追記】以下で紹介の Ruby スクリプトを gem ライブラリにしました。mk_apos - RubyGems.org もご参照ください。【追記ここまで】">
+    <meta itemprop="datePublished" content="October 06, 2016">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby - JPL DE430 データから太陽・月の視位置を計算！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-10-06T00:20:00+09:00">2016-10-06 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>NASA の機関である JPL(Jet Propulsion Laboratory) が惑星探査用に編纂・発行している太陽・月・惑星の暦の最新版 DE430 からデータを取得し、太陽と月の視位置を高精度で計算してみました。</p>
+
+<blockquote>
+  <p>【2016-10-10 追記】<br />
+以下で紹介の Ruby スクリプトを gem ライブラリにしました。<br />
+<a href="https://rubygems.org/gems/mk_apos" title="mk_apos - RubyGems.org">mk_apos - RubyGems.org</a> もご参照ください。<br />
+【追記ここまで】</p>
+</blockquote>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Ruby 2.3.1-p112 での作業を想定。</li>
+  <li>以下の自作 RubyGems ライブラリをインストールしておく。
+    <ul>
+      <li>ICRS 座標取得には <a href="https://rubygems.org/gems/eph_jpl" title="RubyGems - eph_jpl">eph_jpl</a> を使用する。</li>
+      <li>バイアス・歳差・章動適用には <a href="https://rubygems.org/gems/eph_bpn" title="RubyGems - eph_bpn">eph_bpn</a> を使用する。</li>
+      <li>時刻系変換には <a href="https://rubygems.org/gems/mk_time" title="RubyGems - mk_time">mk_time</a> を使用する。</li>
+      <li>座標系変換には <a href="https://rubygems.org/gems/mk_coord" title="RubyGems - mk_coord">mk_coord</a> を使用する。</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="1-事前準備">1. 事前準備</h3>
+
+<p>JPL DE430 のデータを使用するので、バイナリデータ “linux_p1550p2650.430” を<a href="ftp://ssd.jpl.nasa.gov/pub/eph/planets/Linux/de430/">こちら</a>から取得し “JPLEPH” とリネームして適当なディレクトリに配置しておく。</p>
+
+<p>ただし、このバイナリファイルはサイズが大きいので、必要な年代のテキストデータのみをマージ＆バイナリ化してもよい。（参考：<a href="/2016/04/18/merging-jpl-data/" title="JPL 天文暦データのバイナリ化！">JPL 天文暦データのバイナリ化！</a>）</p>
+
+<h3 id="2-ruby-スクリプトの作成">2. Ruby スクリプトの作成</h3>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">FILE_BIN</code> の値は、 “JPLEPH” の配置場所に合わせて編集すること。</li>
+  <li>重力の大きい太陽・木星・土星・天王星・海王星の重力場による光の曲がりは考慮していない。（太陽や月の視位置計算には影響がないと判断したので）</li>
+</ul>
+
+<p>File: <code class="language-plaintext highlighter-rouge">apparent_sun_moon_jpl.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+</pre></td><td class="code"><pre><span class="c1">#! /usr/local/bin/ruby</span>
+<span class="c1"># coding: utf-8</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1">#= 太陽・月の視位置計算</span>
+<span class="c1">#</span>
+<span class="c1">#  * JPLEPH(JPL の DE430 バイナリデータ)読み込み、視位置を計算する</span>
+<span class="c1">#    - ICRS 座標取得には自作 RubyGems ライブラリ eph_jpl を使用する</span>
+<span class="c1">#    - バイアス・歳差・章動適用には自作 RubyGems ライブラリ eph_bpn を使用する</span>
+<span class="c1">#    - 時刻系変換には自作 RubyGems ライブラリ mk_time を使用する</span>
+<span class="c1">#    - 座標系変換には自作 RubyGems ライブラリ mk_coord を使用する</span>
+<span class="c1">#</span>
+<span class="c1"># date          name            version</span>
+<span class="c1"># 2016.08.23    mk-mode.com     1.00 新規作成</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright(C) 2016 mk-mode.com All Rights Reserved.</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1"># 引数 : 日時(JST)</span>
+<span class="c1">#          書式：YYYYMMDD or YYYYMMDDHHMMSS</span>
+<span class="c1">#          無指定なら現在(システム日時)と判断。</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1">#++</span>
+<span class="nb">require</span> <span class="s1">'date'</span>
+<span class="nb">require</span> <span class="s1">'eph_bpn'</span>   <span class="c1"># 自作ライブラリ</span>
+<span class="nb">require</span> <span class="s1">'eph_jpl'</span>   <span class="c1"># 自作ライブラリ</span>
+<span class="nb">require</span> <span class="s1">'mk_coord'</span>  <span class="c1"># 自作ライブラリ</span>
+<span class="nb">require</span> <span class="s1">'mk_time'</span>   <span class="c1"># 自作ライブラリ</span>
+
+<span class="k">class</span> <span class="nc">ApparentSunMoon</span>
+  <span class="no">USAGE</span>      <span class="o">=</span> <span class="s2">"[USAGE] ./apparent_sun_moon.rb [YYYYMMDD|YYYYMMDDHHMMSS]"</span>
+  <span class="no">MSG_ERR_1</span>  <span class="o">=</span> <span class="s2">"[ERROR] Newton method error!"</span>
+  <span class="no">JST_OFFSET</span> <span class="o">=</span> <span class="mi">9</span>             <span class="c1"># JST - UTC</span>
+  <span class="no">FILE_BIN</span>   <span class="o">=</span> <span class="s2">"JPLEPH"</span>      <span class="c1"># JPL バイナリデータ</span>
+  <span class="no">AU</span>         <span class="o">=</span> <span class="mi">149597870700</span>  <span class="c1"># 1天文単位 (m)</span>
+  <span class="no">C</span>          <span class="o">=</span> <span class="mi">299792458</span>     <span class="c1"># 光速 (m/s)</span>
+  <span class="no">DAYSEC</span>     <span class="o">=</span> <span class="mi">86400</span>         <span class="c1"># 1日の秒数</span>
+  <span class="no">BODIES</span>     <span class="o">=</span> <span class="p">{</span><span class="ss">earth: </span><span class="mi">3</span><span class="p">,</span> <span class="ss">moon: </span><span class="mi">10</span><span class="p">,</span> <span class="ss">sun: </span><span class="mi">11</span><span class="p">}</span>  <span class="c1"># 天体名と JPL での天体番号</span>
+  <span class="no">DEBUG</span>      <span class="o">=</span> <span class="kp">false</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 初期処理</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  &lt;none&gt;</span>
+  <span class="c1"># @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="c1"># === t1(= TDB), t2(= TDB) における位置・速度（ICRS 座標）用Hash</span>
+    <span class="vi">@icrs_1</span><span class="p">,</span> <span class="vi">@icrs_2</span> <span class="o">=</span> <span class="no">Hash</span><span class="p">.</span><span class="nf">new</span><span class="p">,</span> <span class="no">Hash</span><span class="p">.</span><span class="nf">new</span>
+    <span class="c1"># === 視位置を求めたい時刻 t2 (= JST; 日本標準時) の決定</span>
+    <span class="vi">@t_2_jst</span> <span class="o">=</span> <span class="n">get_arg</span>
+    <span class="c1"># === 時刻 t2 の変換（JST（日本標準時） -&gt; UTC（協定世界時））</span>
+    <span class="vi">@t_2_utc</span> <span class="o">=</span> <span class="n">jst2utc</span><span class="p">(</span><span class="vi">@t_2_jst</span><span class="p">)</span>
+    <span class="c1"># === 時刻 t2 の変換（UTC（協定世界時） -&gt; TDB（太陽系力学時））</span>
+    <span class="vi">@t_2</span> <span class="o">=</span> <span class="n">utc2tdb</span><span class="p">(</span><span class="vi">@t_2_utc</span><span class="p">)</span>
+    <span class="c1"># === 時刻 t2 のユリウス日</span>
+    <span class="vi">@jd_2</span> <span class="o">=</span> <span class="n">get_jd</span><span class="p">(</span><span class="vi">@t_2</span><span class="p">)</span>
+    <span class="c1"># === 時刻 t2(= TDB) におけるの位置・速度（ICRS 座標）の計算 (地球, 月, 太陽)</span>
+    <span class="no">BODIES</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">|</span> <span class="vi">@icrs_2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_icrs</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="vi">@jd_2</span><span class="p">)</span> <span class="p">}</span>
+    <span class="c1"># === 時刻 t2(= TDB) における地球と太陽・月の距離</span>
+    <span class="vi">@r_e</span> <span class="o">=</span> <span class="n">get_r_e</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 主処理</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  &lt;none&gt;</span>
+  <span class="c1"># @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">exec</span>
+    <span class="n">disp_init</span>
+    <span class="vi">@eq_pol_s</span><span class="p">,</span> <span class="vi">@ec_pol_s</span> <span class="o">=</span> <span class="n">calc_sun</span>
+    <span class="vi">@eq_pol_m</span><span class="p">,</span> <span class="vi">@ec_pol_m</span> <span class="o">=</span> <span class="n">calc_moon</span>
+    <span class="n">disp_result</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s2">"[</span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">msg</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="nf">backtrace</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">tr</span><span class="o">|</span> <span class="s2">"</span><span class="se">\t</span><span class="si">#{</span><span class="n">tr</span><span class="si">}</span><span class="s2">"</span><span class="p">}.</span><span class="nf">join</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="n">msg</span>
+    <span class="nb">exit</span> <span class="mi">1</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 視位置計算（太陽）</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  &lt;none&gt;</span>
+  <span class="c1"># @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_sun</span>
+    <span class="c1"># === 太陽が光を発した時刻 t1(JD) の計算</span>
+    <span class="n">t_1_jd</span> <span class="o">=</span> <span class="n">calc_t1</span><span class="p">(</span><span class="ss">:sun</span><span class="p">,</span> <span class="vi">@t_2</span><span class="p">)</span>
+    <span class="c1"># === 時刻 t1(= TDB) におけるの位置・速度（ICRS 座標）の計算 (地球, 月, 太陽)</span>
+    <span class="no">BODIES</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">|</span> <span class="vi">@icrs_1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_icrs</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">t_1_jd</span><span class="p">)</span> <span class="p">}</span>
+    <span class="c1"># === 時刻 t2 における地球重心から時刻 t1 における太陽への方向ベクトルの計算</span>
+    <span class="n">v_12</span> <span class="o">=</span> <span class="n">calc_unit_vector</span><span class="p">(</span><span class="vi">@icrs_2</span><span class="p">[</span><span class="ss">:earth</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="vi">@icrs_1</span><span class="p">[</span><span class="ss">:sun</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+    <span class="c1"># === GCRS 座標系: 光行差の補正（方向ベクトルの Lorentz 変換）</span>
+    <span class="n">dd</span> <span class="o">=</span> <span class="n">conv_lorentz</span><span class="p">(</span><span class="n">v_12</span><span class="p">)</span>
+    <span class="n">pos_sun</span> <span class="o">=</span> <span class="n">calc_pos</span><span class="p">(</span><span class="n">dd</span><span class="p">,</span> <span class="vi">@r_e</span><span class="p">[</span><span class="ss">:sun</span><span class="p">])</span>
+    <span class="c1"># === 瞬時の真座標系: GCRS への bias &amp; precession（歳差） &amp; nutation（章動）の適用</span>
+    <span class="n">bpn</span> <span class="o">=</span> <span class="no">EphBpn</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="vi">@t_2</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y%m%d%H%M%S"</span><span class="p">))</span>
+    <span class="n">pos_sun_bpn</span> <span class="o">=</span> <span class="n">bpn</span><span class="p">.</span><span class="nf">apply_bpn</span><span class="p">(</span><span class="n">pos_sun</span><span class="p">)</span>
+<span class="k">if</span> <span class="no">DEBUG</span>
+    <span class="nb">puts</span> <span class="s2">"---"</span>
+    <span class="nb">puts</span> <span class="s2">"* ICRS@t2 = </span><span class="si">#{</span><span class="vi">@icrs_2</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* 時刻 t2 における地球と太陽・月の距離 r_e</span><span class="se">\n</span><span class="s2">  = </span><span class="si">#{</span><span class="vi">@r_e</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* 太陽が光を発した時刻 t1(JD)</span><span class="se">\n</span><span class="s2">  = </span><span class="si">#{</span><span class="n">t_1_jd</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* ICRS@t1</span><span class="se">\n</span><span class="s2">  = </span><span class="si">#{</span><span class="vi">@icrs_1</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* 時刻 t2 における地球重心から時刻 t1 における太陽への方向ベクトル v_12</span><span class="se">\n</span><span class="s2">  = </span><span class="si">#{</span><span class="n">v_12</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* 光行差補正後（方向ベクトルの Lorentz 変換） dd</span><span class="se">\n</span><span class="s2">  = </span><span class="si">#{</span><span class="n">dd</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* 太陽位置（GCRS 座標系）"</span>
+    <span class="nb">puts</span> <span class="s2">"  = </span><span class="si">#{</span><span class="n">pos_sun</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* 太陽位置（瞬時の真座標系）"</span>
+    <span class="nb">puts</span> <span class="s2">"  = </span><span class="si">#{</span><span class="n">pos_sun_bpn</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+    <span class="c1"># === 座標変換</span>
+    <span class="n">eq_pol_s</span>  <span class="o">=</span> <span class="no">MkCoord</span><span class="p">.</span><span class="nf">rect2pol</span><span class="p">(</span><span class="n">pos_sun_bpn</span><span class="p">)</span>
+    <span class="n">ec_rect_s</span> <span class="o">=</span> <span class="no">MkCoord</span><span class="p">.</span><span class="nf">rect_eq2ec</span><span class="p">(</span><span class="n">pos_sun_bpn</span><span class="p">,</span> <span class="n">bpn</span><span class="p">.</span><span class="nf">eps</span><span class="p">)</span>
+    <span class="n">ec_pol_s</span>  <span class="o">=</span> <span class="no">MkCoord</span><span class="p">.</span><span class="nf">rect2pol</span><span class="p">(</span><span class="n">ec_rect_s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">eq_pol_s</span><span class="p">,</span> <span class="n">ec_pol_s</span><span class="p">]</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 視位置計算（月）</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  &lt;none&gt;</span>
+  <span class="c1"># @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_moon</span>
+    <span class="c1"># === 月が光を発した時刻 t1(jd) の計算</span>
+    <span class="n">t_1_jd</span> <span class="o">=</span> <span class="n">calc_t1</span><span class="p">(</span><span class="ss">:moon</span><span class="p">,</span> <span class="vi">@t_2</span><span class="p">)</span>
+    <span class="c1"># === 時刻 t1(= TDB) におけるの位置・速度（ICRS 座標）の計算 (地球, 月, 太陽)</span>
+    <span class="no">BODIES</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">|</span> <span class="vi">@icrs_1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_icrs</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">t_1_jd</span><span class="p">)</span> <span class="p">}</span>
+    <span class="c1"># === 時刻 t2 における地球重心から時刻 t1 における月への方向ベクトルの計算</span>
+    <span class="n">v_12</span> <span class="o">=</span> <span class="n">calc_unit_vector</span><span class="p">(</span><span class="vi">@icrs_2</span><span class="p">[</span><span class="ss">:earth</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="vi">@icrs_1</span><span class="p">[</span><span class="ss">:moon</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+    <span class="c1"># === GCRS 座標系: 光行差の補正（方向ベクトルの Lorentz 変換）</span>
+    <span class="n">dd</span> <span class="o">=</span> <span class="n">conv_lorentz</span><span class="p">(</span><span class="n">v_12</span><span class="p">)</span>
+    <span class="n">pos_moon</span> <span class="o">=</span> <span class="n">calc_pos</span><span class="p">(</span><span class="n">dd</span><span class="p">,</span> <span class="vi">@r_e</span><span class="p">[</span><span class="ss">:moon</span><span class="p">])</span>
+    <span class="c1"># === 瞬時の真座標系: GCRS への bias &amp; precession（歳差） &amp; nutation（章動）の適用</span>
+    <span class="n">bpn</span> <span class="o">=</span> <span class="no">EphBpn</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="vi">@t_2</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y%m%d%H%M%S"</span><span class="p">))</span>
+    <span class="n">pos_moon_bpn</span> <span class="o">=</span> <span class="n">bpn</span><span class="p">.</span><span class="nf">apply_bpn</span><span class="p">(</span><span class="n">pos_moon</span><span class="p">)</span>
+<span class="k">if</span> <span class="no">DEBUG</span>
+    <span class="nb">puts</span> <span class="s2">"---"</span>
+    <span class="nb">puts</span> <span class="s2">"* ICRS@t2 = </span><span class="si">#{</span><span class="vi">@icrs_2</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* 時刻 t2 における地球と太陽・月との距離 r_e</span><span class="se">\n</span><span class="s2">  = </span><span class="si">#{</span><span class="vi">@r_e</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* 月が光を発した時刻 t1(JD)</span><span class="se">\n</span><span class="s2">  = </span><span class="si">#{</span><span class="n">t_1_jd</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* ICRS@t1</span><span class="se">\n</span><span class="s2">  = </span><span class="si">#{</span><span class="vi">@icrs_1</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* 時刻 t2 における地球重心から時刻 t1 における月への方向ベクトル v_12</span><span class="se">\n</span><span class="s2">  = </span><span class="si">#{</span><span class="n">v_12</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* 光行差補正後（方向ベクトルの Lorentz 変換） dd</span><span class="se">\n</span><span class="s2">  = </span><span class="si">#{</span><span class="n">dd</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* 月位置（GCRS 座標系）"</span>
+    <span class="nb">puts</span> <span class="s2">"  = </span><span class="si">#{</span><span class="n">pos_moon</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"* 月位置（瞬時の真座標系）"</span>
+    <span class="nb">puts</span> <span class="s2">"  = </span><span class="si">#{</span><span class="n">pos_moon_bpn</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+    <span class="c1"># === 座標変換</span>
+    <span class="n">eq_pol_m</span>  <span class="o">=</span> <span class="no">MkCoord</span><span class="p">.</span><span class="nf">rect2pol</span><span class="p">(</span><span class="n">pos_moon_bpn</span><span class="p">)</span>
+    <span class="n">ec_rect_m</span> <span class="o">=</span> <span class="no">MkCoord</span><span class="p">.</span><span class="nf">rect_eq2ec</span><span class="p">(</span><span class="n">pos_moon_bpn</span><span class="p">,</span> <span class="n">bpn</span><span class="p">.</span><span class="nf">eps</span><span class="p">)</span>
+    <span class="n">ec_pol_m</span>  <span class="o">=</span> <span class="no">MkCoord</span><span class="p">.</span><span class="nf">rect2pol</span><span class="p">(</span><span class="n">ec_rect_m</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">eq_pol_m</span><span class="p">,</span> <span class="n">ec_pol_m</span><span class="p">]</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># ICRS 座標取得</span>
+  <span class="c1">#</span>
+  <span class="c1"># * JPL DE430 データを自作 RubyGems ライブラリ eph_jpl を使用して取得。</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  target  (対象天体(Symbol))</span>
+  <span class="c1"># @param:  jd      (ユリウス日(Numeric))</span>
+  <span class="c1"># @return: [</span>
+  <span class="c1">#   pos_x, pos_y, pos_z,</span>
+  <span class="c1">#   vel_x, vel_y, vel_z</span>
+  <span class="c1"># ]                (位置・速度(Array), 単位: AU, AU/day)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_icrs</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">jd</span><span class="p">)</span>
+    <span class="k">return</span> <span class="no">EphJpl</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">FILE_BIN</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="n">jd</span><span class="p">).</span><span class="nf">calc</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 引数取得</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  &lt;none&gt;</span>
+  <span class="c1"># @return: JST(Time Object)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_arg</span>
+    <span class="k">unless</span> <span class="n">arg</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">.</span><span class="nf">shift</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">now</span>
+      <span class="k">return</span> <span class="no">Time</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="nf">year</span><span class="p">,</span> <span class="n">t</span><span class="p">.</span><span class="nf">month</span><span class="p">,</span> <span class="n">t</span><span class="p">.</span><span class="nf">day</span><span class="p">,</span> <span class="n">t</span><span class="p">.</span><span class="nf">hour</span><span class="p">,</span> <span class="n">t</span><span class="p">.</span><span class="nf">min</span><span class="p">,</span> <span class="n">t</span><span class="p">.</span><span class="nf">sec</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="p">(</span><span class="nb">puts</span> <span class="no">USAGE</span><span class="p">;</span> <span class="nb">exit</span> <span class="mi">0</span><span class="p">)</span> <span class="k">unless</span> <span class="n">arg</span> <span class="o">=~</span> <span class="sr">/^\d{8}$|^\d{14}$/</span>
+    <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span> <span class="o">=</span> <span class="n">arg</span><span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">].</span><span class="nf">to_i</span><span class="p">,</span> <span class="n">arg</span><span class="p">[</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span><span class="p">,</span> <span class="n">arg</span><span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="n">hour</span><span class="p">,</span> <span class="n">min</span><span class="p">,</span>   <span class="n">sec</span> <span class="o">=</span> <span class="n">arg</span><span class="p">[</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span><span class="p">,</span> <span class="n">arg</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span><span class="p">,</span> <span class="n">arg</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="p">(</span><span class="nb">puts</span> <span class="no">USAGE</span><span class="p">;</span> <span class="nb">exit</span> <span class="mi">0</span><span class="p">)</span> <span class="k">unless</span> <span class="no">Date</span><span class="p">.</span><span class="nf">valid_date?</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">)</span>
+    <span class="p">(</span><span class="nb">puts</span> <span class="no">USAGE</span><span class="p">;</span> <span class="nb">exit</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">hour</span> <span class="o">&gt;</span> <span class="mi">23</span> <span class="o">||</span> <span class="n">min</span> <span class="o">&gt;</span> <span class="mi">59</span> <span class="o">||</span> <span class="n">sec</span> <span class="o">&gt;</span> <span class="mi">59</span>
+    <span class="k">return</span> <span class="no">Time</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">min</span><span class="p">,</span> <span class="n">sec</span><span class="p">)</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># JST -&gt; UTC</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  jst  (Time Object)</span>
+  <span class="c1"># @return: utc  (Time Object)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">jst2utc</span><span class="p">(</span><span class="n">jst</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jst</span> <span class="o">-</span> <span class="no">JST_OFFSET</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># UTC -&gt; TDB</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  utc  (Time Object)</span>
+  <span class="c1"># @return: tdb  (Time Object)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">utc2tdb</span><span class="p">(</span><span class="n">utc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="no">MkTime</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">utc</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y%m%d%H%M%S"</span><span class="p">)).</span><span class="nf">tdb</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># ユリウス日取得</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  t   (Time Object)</span>
+  <span class="c1"># @return: jd  (Julian Day(Numeric))</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_jd</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="no">MkTime</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y%m%d%H%M%S"</span><span class="p">)).</span><span class="nf">jd</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># t2(= TDB) における地球と太陽・月の距離</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  &lt;none&gt;</span>
+  <span class="c1"># @return: r_e  (地球と太陽・月の距離(Hash))</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">get_r_e</span>
+    <span class="n">r_e</span> <span class="o">=</span> <span class="no">Hash</span><span class="p">.</span><span class="nf">new</span>
+
+    <span class="k">begin</span>
+      <span class="vi">@icrs_2</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">|</span>
+        <span class="k">next</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="ss">:earth</span>
+        <span class="n">r_e</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc_dist</span><span class="p">(</span><span class="vi">@icrs_2</span><span class="p">[</span><span class="ss">:earth</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+      <span class="k">end</span>
+      <span class="k">return</span> <span class="n">r_e</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 天体Aを中心とした場合の天体Bの位置計算</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  pos_a  (位置ベクトル(天体A))</span>
+  <span class="c1"># @param:  pos_b  (位置ベクトル(天体B))</span>
+  <span class="c1"># @return: pos    (位置ベクトル)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_pos_ab</span><span class="p">(</span><span class="n">pos_a</span><span class="p">,</span> <span class="n">pos_b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">2</span><span class="p">).</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">pos_b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos_a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">}</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 天体Aと天体Bの距離計算</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:   pos_a  (位置ベクトル)</span>
+  <span class="c1"># @param:   pos_a  (位置ベクトル)</span>
+  <span class="c1"># @return:  r      (距離)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_dist</span><span class="p">(</span><span class="n">pos_a</span><span class="p">,</span> <span class="n">pos_b</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span>  <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">2</span><span class="p">).</span><span class="nf">inject</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">sum</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span> <span class="n">sum</span> <span class="o">+</span> <span class="p">(</span><span class="n">pos_b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span><span class="n">pos_a</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">}</span>
+    <span class="k">return</span> <span class="no">Math</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 対象天体が光を発した時刻 t1 の計算（太陽・月専用）</span>
+  <span class="c1">#</span>
+  <span class="c1"># * 計算式： c * (t2 - t1) = r12  (但し、 c: 光の速度。 Newton 法で近似）</span>
+  <span class="c1"># * 太陽・月専用なので、太陽・木星・土星・天王星・海王星の重力場による</span>
+  <span class="c1">#   光の曲がりは非考慮。</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  target  (対象天体(Symbol))</span>
+  <span class="c1"># @param:  tdb     (Time Object(観測時刻;TDB))</span>
+  <span class="c1"># @return: t_1     (Time Ojbect)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_t1</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">tdb</span><span class="p">)</span>
+    <span class="n">t_1</span> <span class="o">=</span> <span class="no">MkTime</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">tdb</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y%m%d%H%M%S"</span><span class="p">)).</span><span class="nf">jd</span>
+    <span class="n">t_2</span> <span class="o">=</span> <span class="n">t_1</span>
+    <span class="n">pv_1</span> <span class="o">=</span> <span class="vi">@icrs_2</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">df</span> <span class="o">&gt;</span> <span class="mf">1.0e-10</span>
+      <span class="n">r_12</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">2</span><span class="p">).</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">pv_1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="vi">@icrs_2</span><span class="p">[</span><span class="ss">:earth</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="p">}</span>
+      <span class="n">r_12_d</span> <span class="o">=</span> <span class="n">calc_dist</span><span class="p">(</span><span class="n">pv_1</span><span class="p">,</span> <span class="vi">@icrs_2</span><span class="p">[</span><span class="ss">:earth</span><span class="p">])</span>
+      <span class="n">df</span> <span class="o">=</span> <span class="p">(</span><span class="no">C</span> <span class="o">*</span> <span class="no">DAYSEC</span> <span class="o">/</span> <span class="no">AU</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">t_2</span> <span class="o">-</span> <span class="n">t_1</span><span class="p">)</span> <span class="o">-</span> <span class="n">r_12_d</span>
+      <span class="n">df_wk</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">2</span><span class="p">).</span><span class="nf">inject</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span> <span class="n">s</span> <span class="o">+</span> <span class="n">r_12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="vi">@icrs_2</span><span class="p">[</span><span class="n">target</span><span class="p">][</span><span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="p">}</span>
+      <span class="n">df</span> <span class="o">/=</span> <span class="p">((</span><span class="no">C</span> <span class="o">*</span> <span class="no">DAYSEC</span> <span class="o">/</span> <span class="no">AU</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">df_wk</span><span class="p">)</span> <span class="o">/</span> <span class="n">r_12_d</span><span class="p">)</span>
+      <span class="n">t_1</span> <span class="o">+=</span> <span class="n">df</span>
+      <span class="n">m</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">raise</span> <span class="no">MSG_ERR_1</span> <span class="k">if</span> <span class="n">m</span> <span class="o">&gt;</span> <span class="mi">10</span>
+      <span class="n">pv_1</span> <span class="o">=</span> <span class="n">get_icrs</span><span class="p">(</span><span class="no">BODIES</span><span class="p">[</span><span class="n">target</span><span class="p">],</span> <span class="n">t_1</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">t_1</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 天体Aから見た天体Bの方向ベクトル計算（太陽・月専用）</span>
+  <span class="c1">#</span>
+  <span class="c1"># * 太陽・月専用なので、太陽・木星・土星・天王星・海王星の重力場による</span>
+  <span class="c1">#   光の曲がりは非考慮。</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:   pos_a  (位置ベクトル(天体A))</span>
+  <span class="c1"># @param:   pos_b  (位置ベクトル(天体B))</span>
+  <span class="c1"># @return:  vec    (方向(単位)ベクトル)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_unit_vector</span><span class="p">(</span><span class="n">pos_a</span><span class="p">,</span> <span class="n">pos_b</span><span class="p">)</span>
+    <span class="n">vec</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+    <span class="k">begin</span>
+      <span class="n">w</span> <span class="o">=</span> <span class="n">calc_dist</span><span class="p">(</span><span class="n">pos_a</span><span class="p">,</span> <span class="n">pos_b</span><span class="p">)</span>
+      <span class="n">vec</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">2</span><span class="p">).</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">pos_b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos_a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">}</span>
+      <span class="k">return</span> <span class="n">vec</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">v</span><span class="o">|</span> <span class="n">v</span> <span class="o">/</span> <span class="n">w</span> <span class="p">}</span> <span class="k">unless</span> <span class="n">w</span> <span class="o">==</span> <span class="mf">0.0</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="k">raise</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 光行差の補正（方向ベクトルの Lorentz 変換）</span>
+  <span class="c1">#</span>
+  <span class="c1"># * vec_dd = f * vec_d + (1 + g / (1 + f)) * vec_v</span>
+  <span class="c1">#   但し、 f = vec_v * vec_d  (ベクトル内積)</span>
+  <span class="c1">#          g = sqrt(1 - v^2)  (v: 速度)</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  v_d   (方向（単位）ベクトル)</span>
+  <span class="c1"># @return: v_dd  (補正後ベクトル)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">conv_lorentz</span><span class="p">(</span><span class="n">vec_d</span><span class="p">)</span>
+    <span class="n">vec_v</span> <span class="o">=</span> <span class="vi">@icrs_2</span><span class="p">[</span><span class="ss">:earth</span><span class="p">][</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">].</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">v</span><span class="o">|</span> <span class="p">(</span><span class="n">v</span> <span class="o">/</span> <span class="no">DAYSEC</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="no">C</span> <span class="o">/</span> <span class="no">AU</span><span class="p">.</span><span class="nf">to_f</span><span class="p">)</span> <span class="p">}</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">inner_prod</span><span class="p">(</span><span class="n">vec_v</span><span class="p">,</span> <span class="n">vec_d</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="no">Math</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">calc_velocity</span><span class="p">(</span><span class="n">vec_v</span><span class="p">))</span>
+    <span class="n">vec_dd_1</span> <span class="o">=</span> <span class="n">vec_d</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">d</span><span class="o">|</span> <span class="n">d</span> <span class="o">*</span> <span class="n">f</span> <span class="p">}</span>
+    <span class="n">vec_dd_2</span> <span class="o">=</span> <span class="n">vec_v</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">v</span><span class="o">|</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">g</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">f</span><span class="p">))</span> <span class="o">*</span> <span class="n">v</span> <span class="p">}</span>
+    <span class="n">vec_dd</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">2</span><span class="p">).</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">vec_dd_1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">vec_dd_2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">}.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">g</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">return</span> <span class="n">vec_dd</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 単位（方向）ベクトルと距離から位置ベクトルを計算</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  d    (単位（方向）ベクトル)</span>
+  <span class="c1"># @param:  r    (距離)</span>
+  <span class="c1"># @return  pos  (位置ベクトル)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_pos</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">d</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span> <span class="o">*</span> <span class="n">r</span> <span class="p">}</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># ベクトルの外積</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  a  (ベクトル)</span>
+  <span class="c1"># @param:  b  (ベクトル)</span>
+  <span class="c1"># @return: w  (ベクトル)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">cross_prod</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span>
+      <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+      <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+      <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">]</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># ベクトルの内積</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  a  (ベクトル)</span>
+  <span class="c1"># @param:  b  (ベクトル)</span>
+  <span class="c1"># @return: w  (スカラー(内積の値))</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">inner_prod</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">2</span><span class="p">).</span><span class="nf">inject</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span> <span class="n">s</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">}</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 天体の速度ベクトルから実際の速度を計算</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:   vec  (ベクトル)</span>
+  <span class="c1"># @return:  v    (速度)</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">calc_velocity</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">vec</span><span class="p">.</span><span class="nf">inject</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span> <span class="n">s</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">i</span> <span class="p">}</span>
+    <span class="k">return</span> <span class="no">Math</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 結果出力（時刻パラメータ）</span>
+  <span class="c1">#</span>
+  <span class="c1"># @param:  &lt;none&gt;</span>
+  <span class="c1"># @return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">disp_init</span>
+    <span class="nb">print</span> <span class="s2">"* 計算対象時刻 t2(JST) = "</span>
+    <span class="nb">puts</span> <span class="vi">@t_2_jst</span><span class="p">.</span><span class="nf">instance_eval</span> <span class="p">{</span> <span class="s1">'%s.%03d'</span> <span class="o">%</span> <span class="p">[</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%Y-%m-%d %H:%M:%S'</span><span class="p">),</span> <span class="p">(</span><span class="n">usec</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">).</span><span class="nf">round</span><span class="p">]</span> <span class="p">}</span>
+    <span class="nb">print</span> <span class="s2">"                 (UTC) = "</span>
+    <span class="nb">puts</span> <span class="vi">@t_2_utc</span><span class="p">.</span><span class="nf">instance_eval</span> <span class="p">{</span> <span class="s1">'%s.%03d'</span> <span class="o">%</span> <span class="p">[</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%Y-%m-%d %H:%M:%S'</span><span class="p">),</span> <span class="p">(</span><span class="n">usec</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">).</span><span class="nf">round</span><span class="p">]</span> <span class="p">}</span>
+    <span class="nb">print</span> <span class="s2">"                 (TDB) = "</span>
+    <span class="nb">puts</span> <span class="vi">@t_2</span><span class="p">.</span><span class="nf">instance_eval</span> <span class="p">{</span> <span class="s1">'%s.%03d'</span> <span class="o">%</span> <span class="p">[</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%Y-%m-%d %H:%M:%S'</span><span class="p">),</span> <span class="p">(</span><span class="n">usec</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">).</span><span class="nf">round</span><span class="p">]</span> <span class="p">}</span>
+    <span class="nb">puts</span> <span class="s2">"                  (JD) = </span><span class="si">#{</span><span class="vi">@jd_2</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+
+  <span class="c1">#=========================================================================</span>
+  <span class="c1"># 結果出力（計算結果）</span>
+  <span class="c1">#</span>
+  <span class="c1"># param:  &lt;none&gt;</span>
+  <span class="c1"># return: &lt;none&gt;</span>
+  <span class="c1">#=========================================================================</span>
+  <span class="k">def</span> <span class="nf">disp_result</span>
+    <span class="nb">puts</span> <span class="s2">"* 視位置（太陽）"</span>
+    <span class="nb">printf</span><span class="p">(</span><span class="s2">"  = [赤経: %14.10f rad, 赤緯: %14.10f rad]</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@eq_pol_s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="vi">@eq_pol_s</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="nb">printf</span><span class="p">(</span><span class="s2">"  = [赤経: %14.10f deg, 赤緯: %14.10f deg]</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@eq_pol_s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="no">PI</span><span class="p">,</span> <span class="vi">@eq_pol_s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="no">PI</span><span class="p">)</span>
+    <span class="nb">printf</span><span class="p">(</span><span class="s2">"  = [黄経: %14.10f rad, 黄緯: %14.10f rad]</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@ec_pol_s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="vi">@ec_pol_s</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="nb">printf</span><span class="p">(</span><span class="s2">"  = [黄経: %14.10f deg, 黄緯: %14.10f deg]</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@ec_pol_s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="no">PI</span><span class="p">,</span> <span class="vi">@ec_pol_s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="no">PI</span><span class="p">)</span>
+    <span class="nb">puts</span> <span class="s2">"* 視位置（月）"</span>
+    <span class="nb">printf</span><span class="p">(</span><span class="s2">"  = [赤経: %14.10f rad, 赤緯: %14.10f rad]</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@eq_pol_m</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="vi">@eq_pol_m</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="nb">printf</span><span class="p">(</span><span class="s2">"  = [赤経: %14.10f deg, 赤緯: %14.10f deg]</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@eq_pol_m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="no">PI</span><span class="p">,</span> <span class="vi">@eq_pol_m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="no">PI</span><span class="p">)</span>
+    <span class="nb">printf</span><span class="p">(</span><span class="s2">"  = [黄経: %14.10f rad, 黄緯: %14.10f rad]</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@ec_pol_m</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="vi">@ec_pol_m</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="nb">printf</span><span class="p">(</span><span class="s2">"  = [黄経: %14.10f deg, 黄緯: %14.10f deg]</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@ec_pol_m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="no">PI</span><span class="p">,</span> <span class="vi">@ec_pol_m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="no">PI</span><span class="p">)</span>
+    <span class="nb">puts</span> <span class="s2">"* 視黄経差（太陽 - 月）"</span>
+    <span class="nb">printf</span><span class="p">(</span><span class="s2">"  = %15.10f rad</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@ec_pol_s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="vi">@ec_pol_m</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">printf</span><span class="p">(</span><span class="s2">"  = %15.10f deg</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@ec_pol_s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="no">PI</span> <span class="o">-</span> <span class="vi">@ec_pol_m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="no">PI</span><span class="p">)</span>
+    <span class="nb">puts</span> <span class="s2">"* 距離（太陽）"</span>
+    <span class="nb">printf</span><span class="p">(</span><span class="s2">"  = %.10f AU = %.2f km</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@ec_pol_s</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="vi">@ec_pol_s</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="no">AU</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span>
+    <span class="nb">puts</span> <span class="s2">"* 距離（月）"</span>
+    <span class="nb">printf</span><span class="p">(</span><span class="s2">"  = %.10f AU = %.2f km</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="vi">@ec_pol_m</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="vi">@ec_pol_m</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="no">AU</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">ApparentSunMoon</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">exec</span> <span class="k">if</span> <span class="kp">__FILE__</span> <span class="o">==</span> <span class="vg">$0</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>（いつもなら GitHub Gist にソーススクリプトを掲載するが、今回のスクリプトは近いうちに RubyGems ライブラリ化する予定なので Gist には掲載しない）</p>
+
+<h3 id="3-ruby-スクリプトの実行">3. Ruby スクリプトの実行</h3>
+
+<p>コマンドライン引数に日時(JST)を <code class="language-plaintext highlighter-rouge">YYYYMMDD</code> or <code class="language-plaintext highlighter-rouge">YYYYMMDDHHMMSS</code> の書式で指定指定実行する。（指定しない場合はシステム時刻を JST とみなす）<br />
+以下は 2017年02月26日23時58分22秒（視黄経差が 0.0 に近づく日時） の例。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./apparent_sun_moon_jpl.rb 20170226235822
+* 計算対象時刻 t2(JST) = 2017-02-26 23:58:22.000
+                 (UTC) = 2017-02-26 14:58:22.000
+                 (TDB) = 2017-02-26 14:59:31.184
+                  (JD) = 2457811.124664352
+* 視位置（太陽）
+  = [赤経:   5.9314958658 rad, 赤緯:  -0.1482278532 rad]
+  = [赤経: 339.8496793121 deg, 赤緯:  -8.4928303972 deg]
+  = [黄経:   5.9027352417 rad, 黄緯:   0.0000119199 rad]
+  = [黄経: 338.2018169337 deg, 黄緯:   0.0006829627 deg]
+* 視位置（月）
+  = [赤経:   5.9344195445 rad, 赤緯:  -0.1554065421 rad]
+  = [赤経: 340.0171937614 deg, 赤緯:  -8.9041389710 deg]
+  = [黄経:   5.9027340610 rad, 黄緯:  -0.0077266797 rad]
+  = [黄経: 338.2017492834 deg, 黄緯:  -0.4427061343 deg]
+* 視黄経差（太陽 - 月）
+  =    0.0000011807 rad
+  =    0.0000676503 deg
+* 距離（太陽）
+  = 0.9902304257 AU = 148136363.19 km
+* 距離（月）
+  = 0.0025279553 AU = 378176.74 km
+</code></pre></div></div>
+
+<h3 id="4-計算結果の検証">4. 計算結果の検証</h3>
+
+<p>太陽の視位置については「<a href="http://eco.mtk.nao.ac.jp/cgi-bin/koyomi/cande/sun.cgi" title="太陽の地心座標 - 国立天文台暦計算室">太陽の地心座標 - 国立天文台暦計算室</a>」、月の視位置については「<a href="http://eco.mtk.nao.ac.jp/cgi-bin/koyomi/cande/moon.cgi" title="月の地心座標 - 国立天文台暦計算室">月の地心座標 - 国立天文台暦計算室</a>」で計算した結果と比較してみる。</p>
+
+<p>今回の例の場合、太陽の視黄緯以外は 1/1000〜1/100000 の精度で、太陽の視黄緯は 1/100 の精度で一致した。（単位：「度」）</p>
+
+<p>そして、何よりも、視黄経差（太陽 - 月）が「2017年02月26日23時58分」に 0.0 に最も近づいたことで、精度が高いと判断できる。</p>
+
+<p>なぜなら、視黄経差が 0.0 になる瞬間は「旧暦」を生成する際に非常に重要になるからで、「2017年の2月に訪れる旧暦の1日は、26日か27日か？」という問題も出てくるほど。<br />
+実際、<a href="http://eco.mtk.nao.ac.jp/cgi-bin/koyomi/cande/phenomena_p.cgi">国立天文台の計算</a>では、その頃の新月（朔）は 26日23時58分とされており、旧暦の1日は「26日」である。<br />
+（精度の低いアルゴリズムで計算すると、新月の瞬間が「27日」になってしまう）</p>
+
+<h3 id="5-参考サイト">5. 参考サイト</h3>
+
+<ul>
+  <li><a href="http://www.nao.ac.jp/contents/about-naoj/reports/report-naoj/11-34-2.pdf" title="暦象年表の改訂について - 国立天文台">暦象年表の改訂について（国立天文台）（PDF 1.7MB）</a></li>
+  <li><a href="https://rubygems.org/gems/eph_jpl" title="RubyGems - eph_jpl">RubyGems - eph_jpl</a></li>
+  <li><a href="https://rubygems.org/gems/eph_bpn" title="RubyGems - eph_bpn">RubyGems - eph_bpn</a></li>
+  <li><a href="https://rubygems.org/gems/mk_time" title="RubyGems - mk_time">RubyGems - mk_time</a></li>
+  <li><a href="https://rubygems.org/gems/mk_coord" title="RubyGems - mk_coord">RubyGems - mk_coord</a></li>
+  <li><a href="http://eco.mtk.nao.ac.jp/cgi-bin/koyomi/cande/sun.cgi" title="太陽の地心座標 - 国立天文台暦計算室">太陽の地心座標 - 国立天文台暦計算室</a></li>
+  <li><a href="http://eco.mtk.nao.ac.jp/cgi-bin/koyomi/cande/moon.cgi" title="月の地心座標 - 国立天文台暦計算室">月の地心座標 - 国立天文台暦計算室</a></li>
+</ul>
+
+<hr />
+
+<p>これで、精度の高くないアルゴリズムで計算していた際に発生していた旧暦がズレて都度調整していた問題が解消されます。</p>
+
+<p>近いうちに、今回のスクリプト自体も RubyGems ライブラリ化し、カレンダー計算に利用したいと考えております。</p>
+
+<p>※当記事「執筆」時点では RubyGems ラリブラリ化は実現していませんでしたが、当記事「公開」時点では実現しています。次回、公開する予定。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">カレンダー</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%9A%A6-%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">暦・カレンダー</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-10-06T00:20:00+09:00">2016-10-06 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+-+JPL+DE430+%E3%83%87%E3%83%BC%E3%82%BF%E3%81%8B%E3%82%89%E5%A4%AA%E9%99%BD%E3%83%BB%E6%9C%88%E3%81%AE%E8%A6%96%E4%BD%8D%E7%BD%AE%E3%82%92%E8%A8%88%E7%AE%97%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2016%2F10%2F06%2Fruby-sun-moon-apparent-position-calculation%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2016%2F10%2F06%2Fruby-sun-moon-apparent-position-calculation%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2016%2F10%2F06%2Fruby-sun-moon-apparent-position-calculation%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2016/10/02/mysql-mroonga-memory-mapping-error/" class="pagination--pager" title="MySQL - Mroonga でメモリマッピングエラー！
+">Previous</a>
+    
+    
+      <a href="/2016/10/10/ruby-sun-moon-apparent-position-calculation-by-my-gem/" class="pagination--pager" title="Ruby - JPL DE430 データから太陽・月の視位置を計算（by 自作 gem ライブラリ）！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2016/10/06/ruby-sun-moon-apparent-position-calculation/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2016/10/06/ruby-sun-moon-apparent-position-calculation"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

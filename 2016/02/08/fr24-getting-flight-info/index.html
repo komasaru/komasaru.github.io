@@ -1,0 +1,835 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>JSON - Flightradar24 から飛行中の航空機情報を取得！ - mk-mode BLOG</title>
+<meta name="description" content="航空機の運行状況をリアルタイムで確認できる Web サイト Flightradar24.com から、現在飛行中の航空機の情報を領域を指定して取得する方法についての備忘録です。空港情報一覧や航空会社一覧の取得については前々回や前回の記事をご参照ください。  Ruby - Flightradar24 から空港情報一覧取得！  Ruby - Flightradar24 から航空会社情報一覧取得！">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="JSON - Flightradar24 から飛行中の航空機情報を取得！">
+<meta property="og:url" content="https://komasaru.github.io/2016/02/08/fr24-getting-flight-info/">
+
+
+  <meta property="og:description" content="航空機の運行状況をリアルタイムで確認できる Web サイト Flightradar24.com から、現在飛行中の航空機の情報を領域を指定して取得する方法についての備忘録です。空港情報一覧や航空会社一覧の取得については前々回や前回の記事をご参照ください。  Ruby - Flightradar24 から空港情報一覧取得！  Ruby - Flightradar24 から航空会社情報一覧取得！">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="JSON - Flightradar24 から飛行中の航空機情報を取得！">
+  <meta name="twitter:description" content="航空機の運行状況をリアルタイムで確認できる Web サイト Flightradar24.com から、現在飛行中の航空機の情報を領域を指定して取得する方法についての備忘録です。空港情報一覧や航空会社一覧の取得については前々回や前回の記事をご参照ください。  Ruby - Flightradar24 から空港情報一覧取得！  Ruby - Flightradar24 から航空会社情報一覧取得！">
+  <meta name="twitter:url" content="https://komasaru.github.io/2016/02/08/fr24-getting-flight-info/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2016-02-08T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2016/02/08/fr24-getting-flight-info/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="JSON - Flightradar24 から飛行中の航空機情報を取得！">
+    <meta itemprop="description" content="航空機の運行状況をリアルタイムで確認できる Web サイト Flightradar24.com から、現在飛行中の航空機の情報を領域を指定して取得する方法についての備忘録です。空港情報一覧や航空会社一覧の取得については前々回や前回の記事をご参照ください。  Ruby - Flightradar24 から空港情報一覧取得！  Ruby - Flightradar24 から航空会社情報一覧取得！">
+    <meta itemprop="datePublished" content="February 08, 2016">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">JSON - Flightradar24 から飛行中の航空機情報を取得！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-02-08T00:20:00+09:00">2016-02-08 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>航空機の運行状況をリアルタイムで確認できる Web サイト <a href="http://www.flightradar24.com" title="Flightradar24.com - Live flight tracker!">Flightradar24.com</a> から、現在飛行中の航空機の情報を領域を指定して取得する方法についての備忘録です。</p>
+
+<p>空港情報一覧や航空会社一覧の取得については前々回や前回の記事をご参照ください。</p>
+
+<ul>
+  <li><a href="/2016/02/06/ruby-getting-airport-list-from-fr24/" title="Ruby - Flightradar24 から空港情報一覧取得！">Ruby - Flightradar24 から空港情報一覧取得！</a></li>
+  <li><a href="/2016/02/07/ruby-getting-airline-list-from-fr24/" title="Ruby - Flightradar24 から航空会社情報一覧取得！">Ruby - Flightradar24 から航空会社情報一覧取得！</a></li>
+</ul>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>取得するデータは JSON 形式なので、JSON の基本的な知識があること。</li>
+  <li>全ての航空機を取得できる訳ではない。<br />
+（受信した ADS-B 等の信号を Flightradar24 へ提供する有志（いわゆる Feeder）が存在しない地域や、航空機から発信される信号が弱い場合などは情報が提供されないこともある。元々信号を発信していない航空機も当然ながら存在する）</li>
+  <li>以下で紹介するのは、自分で Web ブラウザを使用して取得する方法。<br />
+（当方は、実際には Ruby スクリプトを作成して使用している）</li>
+</ul>
+
+<h3 id="1-ロードバランササーバ名の取得">1. ロードバランササーバ名の取得</h3>
+
+<p>ブラウザで URL <code class="language-plaintext highlighter-rouge">http://www.flightradar24.com/balance.json</code> にアクセスして JSON データを取得する。</p>
+
+<p>次のような JSON データが取得できる。<br />
+ロードバランサが複数存在すれば、複数取得できる。<code class="language-plaintext highlighter-rouge">1000</code> は優先度のようなもので、複数存在する場合は全部加算して <code class="language-plaintext highlighter-rouge">1000</code> になるようになっているはず。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{"data.flightradar24.com":1000}
+</code></pre></div></div>
+
+<h3 id="2-飛行情報の取得">2. 飛行情報の取得</h3>
+
+<p>ブラウザで次の URL <code class="language-plaintext highlighter-rouge">http://[load_balancer]/zones/fcgi/feed.js?bounds=[bounds]&amp;adsb=1&amp;mlat=1&amp;faa=1&amp;flarm=1&amp;estimated=1&amp;air=1&amp;gnd=1&amp;vehicles=1&amp;gliders=1&amp;array=1</code> にアクセスして JSON データを取得する。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">load_balancer</code> は、前項で取得したロードバランサのサーバ名。</li>
+  <li><code class="language-plaintext highlighter-rouge">bounds</code> は、取得したい領域（緯度（北）・緯度（南）・経度（西）・緯度（東））を設定するためのもの。設定しなければ全てのデータが対象。<br />
+（例： <code class="language-plaintext highlighter-rouge">35.57,35.38,132.96,133.20</code>）
+    <blockquote>
+      <p>【2018-12-11 追記】<br />
+  <strong>※但し、この API では1度に最大1,500件しか取得できないので、1,500件以上にならないよう <code class="language-plaintext highlighter-rouge">bounds</code> を指定して取得するのが賢明。</strong><br />
+ 【追記ここまで】</p>
+    </blockquote>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">adsb=1</code>, <code class="language-plaintext highlighter-rouge">mlat=1</code>, <code class="language-plaintext highlighter-rouge">faa=1</code>, <code class="language-plaintext highlighter-rouge">flarm=1</code>, <code class="language-plaintext highlighter-rouge">estimated=1</code> は、 ADS-B, MLAT, FAA, FLARM, Estimated 信号を受信するための設定。</li>
+  <li><code class="language-plaintext highlighter-rouge">air=1</code>, <code class="language-plaintext highlighter-rouge">gnd=1</code>, <code class="language-plaintext highlighter-rouge">vehicles=1</code>, <code class="language-plaintext highlighter-rouge">gliders=1</code> は、航空機（上空?）、航空機（地上?）、地上走行車、グライダーの信号を受信するための設定(?)。</li>
+  <li><code class="language-plaintext highlighter-rouge">array=1</code> は、 <code class="language-plaintext highlighter-rouge">aircraft</code> 項目内に配列で取得するためのオプション。</li>
+</ul>
+
+<h3 id="3-取得情報の確認">3. 取得情報の確認</h3>
+
+<p>以下は、 <code class="language-plaintext highlighter-rouge">http://data.flightradar24.com/zones/fcgi/feed.js?bounds=35.6,34.2,131.55,133.55&amp;adsb=1&amp;mlat=1&amp;faa=1&amp;flarm=1&amp;estimated=1&amp;air=1&amp;gnd=1&amp;vehicles=1&amp;gliders=1&amp;array=1</code> で取得したデータ。（見やすいように整形している）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  "full_count":7841,
+  "version":5,
+  "copyright":"The contents of this file and all derived data are the property of Flightradar24 AB for use exclusively by its products and applications. Using, modifying or redistributing the data without the prior written permission of Flightradar24 AB is not allowed and may result in prosecutions.",
+  "aircraft":[
+    ["8b13efc","862D94",34.2681,132.5959,252,40000,320,"2010","F-RJOH1","B763","JA657J",1454302287,"HND","NGS","JL609",0,0,"JAL609",0],
+    ["8b13fd4","86D2EE",34.5986,132.8036,255,40000,356,"1776","F-RJOH1","B788","JA818A",1454302287,"HND","FUK","NH253",0,0,"ANA253",0],
+    ["8b1438d","850E15",34.5947,131.7789,236,35425,308,"0464","T-MLAT5","B735","JA305K",1454302289,"SDJ","FUK","NH1276",0,-1920,"",0]
+  ]
+}
+</code></pre></div></div>
+
+<p>飛行中の航空機の情報は <code class="language-plaintext highlighter-rouge">aircraft</code> 項目内で、<code class="language-plaintext highlighter-rouge">[</code> と <code class="language-plaintext highlighter-rouge">]</code> で囲まれた部分が１機分の情報。</p>
+
+<p>各項目の意味は以下のとおり。（左から順に）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  "8b13efc"   #  0: ID
+  "862D94"    #  1: SSR mode S コード
+  34.2681     #  2: 緯度（単位：度(degree)）
+  132.5959    #  3: 経度（単位：度(degree)）
+  252         #  4: 進行方向（単位：度(degree)、0 度が北で時計回りに)
+  40000       #  5: 飛行高度（単位：フィート(feet)）
+  600         #  6: スピード（単位：ノット(knot)）
+  "2010"      #  7: squawk（トランスポンダーに設定される識別信号4桁）
+  "F-RJOH1"   #  8: 受信レーダ
+  "B763"      #  9: 機体種別
+  "JA657J"    # 10: 便名（ICAO コード）
+  1454302287  # 11: 時刻（Unix 時間）
+  "HND"       # 12: 出発空港（IATA コード）
+  "NGS"       # 13: 到着空港（IATA コード）
+  "JL609"     # 14: 便名（IATA コード）
+  0           # 15: ?
+  0           # 16: ?
+  "JAL609"    # 17: コールサイン（ICAO コード）
+  0           # 18: ?
+</code></pre></div></div>
+
+<h3 id="4-参考サイト">4. 参考サイト</h3>
+
+<ul>
+  <li>~<del><a href="http://blog.cykey.ca/post/88174516880/analyzing-flightradar24s-internal-api-structure" title="Cykey's blog — Analyzing Flightradar24's internal API structure">Cykey’s blog — Analyzing Flightradar24’s internal API structure</a></del>~</li>
+</ul>
+
+<p>Web 検索するとリアルタイム飛行情報を取得する方法についてある程度はヒットしますが、その９割くらいは情報が古い。（上記のサイトも、参考にはなるが内容が古い）</p>
+
+<hr />
+
+<p>当方はこの仕組みを Ruby で実装（自宅を含む領域を指定）して使用しています。（実際には定期実行して取得＆記録。場合によっては、指定領域内に航空機が侵入した場合にツイートすることも考えている）</p>
+
+<p>ADS-B 信号を受信することはそう難しいことでもないので、自分も Feeder になってみても良いかと感じている。（気が向いたら）</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/json" class="page__taxonomy-item" rel="tag">JSON</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-02-08T00:20:00+09:00">2016-02-08 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=JSON+-+Flightradar24+%E3%81%8B%E3%82%89%E9%A3%9B%E8%A1%8C%E4%B8%AD%E3%81%AE%E8%88%AA%E7%A9%BA%E6%A9%9F%E6%83%85%E5%A0%B1%E3%82%92%E5%8F%96%E5%BE%97%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2016%2F02%2F08%2Ffr24-getting-flight-info%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2016%2F02%2F08%2Ffr24-getting-flight-info%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2016%2F02%2F08%2Ffr24-getting-flight-info%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2016/02/07/ruby-getting-airline-list-from-fr24/" class="pagination--pager" title="Ruby - Flightradar24 から航空会社情報一覧取得！
+">Previous</a>
+    
+    
+      <a href="/2016/02/12/linux-bash-delete-old-files/" class="pagination--pager" title="Linux - bash で古いファイルの削除！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2016/02/08/fr24-getting-flight-info/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2016/02/08/fr24-getting-flight-info"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,926 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>ホームページでスライドショー！ - mk-mode BLOG</title>
+<meta name="description" content="今日は ホームページ の方をかまってみました。今までは自分の ホームページ で公開している画像はそのまま貼り付けているだけでしたが、ＷｏｒｄＰｒｅｓｓに導入したプラグイン「 LightBox2 」と同じように、サムネイルをクリックすると画像が大きくなるようにしたくなり、ググりながら調べて導入しました。スライドショーもできるやつでした。（ＪａｖａＳｃｒｉｐｔでうごくやつです）その名は「 Lightbox JS v2.0 」です。導入記録１．アーカイブファイルのダウンロードこちら（ http://www.huddletogether.com/projects/lightbox2/ ）の「 Download 」からＺＩＰファイルをダウンロードする。※当記事執筆時点では「 lightbox2.04.zip 」が最新でした。２．アーカイブファイルの展開先ほどダウンロードしたＺＩＰファイルを展開する。以下のようなファイルが格納されているはずです。│  index.html│├─css│      lightbox.css│├─images│      bullet.gif│      close.gif│      closelabel.gif│      donate-button.gif│      download-icon.gif│      image-1.jpg│      loading.gif│      nextlabel.gif│      prevlabel.gif│      thumb-1.jpg│└─js        builder.js        effects.js        lightbox.js        prototype.js        scriptaculous.js３．ファイルのコピー展開したファイルをＷｅｂサーバへアップロードする。※当方の場合、ドキュメントルート直下に「 css 」、「 images 」、「 js 」をフォルダを作り、さらに「 images 」、「 js 」は他の画像ファイルや JavaScript と区別するために「 lightbox 」用のフォルダを作ってそこへファイルをコピーしました。展開してできた index.html、thumb-1.jpg は不要。├─css│      lightbox.css├─images│  └─lightbox│          bullet.gif│          close.gif│          closelabel.gif│          donate-button.gif│          download-icon.gif│          image-1.jpg│          loading.gif│          nextlabel.gif│          prevlabel.gif│          thumb-1.jpg│└─js    └─lightbox            builder.js            effects.js            lightbox.js            prototype.js            scriptaculous.js４．画像ファイルの準備元画像の他に元画像のサムネイル用画像を準備してＷｅｂサーバに配置しておきます。※当方ではドキュメントルート配下に「 images 」フォルダを作成しそちらに配置。５．画像ファイルの準備（その２）lightbox2.04.zip を展開してできたＣＳＳファイルそのままでは、ブラウザ上ではエラーはでないものの、Ｗ３Ｃ − ＣＳＳ のチェックでエラーとなってしまうので、以下の「７」のように修正したが、そこで使用する画像「 blank.gif 」が lightbox2.04.zip には存在しません。lightbox2.03.zip を別途ダウンロード・展開して「 blank.gif 」をＷｅｂサーバにアップロードしました。※「 lightbox2.04.zip 」はまだバグがあるみたい！？６．ＪａｖａＳｃｒｉｐｔの修正※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。当方のように別途フォルダを作成した場合のみ修正が必要です。lightbox.jsを以下のように修正（以下は当方の場合）fileLoadingImage:        &#39;images/loading.gif&#39;,fileBottomNavCloseImage: &#39;images/closelabel.gif&#39;,　　↓fileLoadingImage:        &#39;images/lightbox/loading.gif&#39;,fileBottomNavCloseImage: &#39;images/lightbox/closelabel.gif&#39;,７．ＣＳＳの修正※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。当方のように別途フォルダを作成した場合のみ修正が必要です。lightbox.cssを以下のように修正（以下は当方の場合）#prevLink:hover, #prevLink:visited:hover { background: url(../images/prevlabel.gif) left 15% no-repeat; }#nextLink:hover, #nextLink:visited:hover { background: url(../images/nextlabel.gif) right 15% no-repeat; }　　↓#prevLink:hover, #prevLink:visited:hover { background: url(../images/lightbox/prevlabel.gif) left 15% no-repeat; }#nextLink:hover, #nextLink:visited:hover { background: url(../images/lightbox/nextlabel.gif) right 15% no-repeat; }#prevLink, #nextLink{ width: 49%; height: 100%; background-image: url(data:image/gif;base64,AAAA); /* Trick IE into showing hover */ display: block; }　　↓#prevLink, #nextLink{ width: 49%; height: 100%; background: transparent url(../images/lightbox/blank.gif) no-repeat; /* Trick IE into showing hover */ display: block; }ついでに、見にくいので整形しました（改行入れた）。８．ＨＴＭＬソース修正・以下のコードを &lt;head&gt;タグ 内に追加する。&lt;link rel=&quot;stylesheet&quot; href=&quot;css/lightbox.css&quot; type=&quot;text/css&quot; media=&quot;screen&quot; /&gt;・以下のコードを画像を表示するＨＴＭＬファイルの &lt;body&gt;タグ 内の最後（の直前）に追加する。&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/prototype.js&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/scriptaculous.js?load=effects,builder&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/lightbox.js&quot;&gt;&lt;/script&gt;※いろんなサイトでJavaScriptの読み込み部分を &lt;head&gt;タグ 内に記述するように説明があるが、それでは ＩＥ６ ではエラーとなってしまいます。・画像を表示するＨＴＭＬソースを作成・修正します。以下は例：&lt;body&gt;・・・　途中省略　・・・    ![TERRANO_01](images/terrano_01.jpg &quot;TERRANO_01&quot;)    ![TERRANO_02](images/terrano_02.jpg &quot;TERRANO_02&quot;)    ![TERRANO_03](images/terrano_03.jpg &quot;TERRANO_03&quot;)・・・　途中省略　・・・&lt;/body&gt;※ タグにサムネイル画像、に実画像を設定します。「 rel=”lightbox[terrano]” 」の terrano の部分が同じものでグルーピングされます。「 rel=”lightbox[terrano]” 」を「 rel=”lightbox” 」とすれば、　スライドショーではなく、普通に１枚ずつの表示になります。※ちなみに当方では以下のブラウザで動作確認しています。  FireFox3.0.6  Opera9.63  InternetExplorer6.0設定は以上です。これで、画像がカッコよく表示されるようになりました。ついでに画像も増やしました。よかったら見てみてください。→ → →　こちらまた、いつかブログ上の画像もホームページでスライドショーできるようにしようかと思ってます。それでは、おやすみなさい。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="ホームページでスライドショー！">
+<meta property="og:url" content="https://komasaru.github.io/2009/02/20/20013012/">
+
+
+  <meta property="og:description" content="今日は ホームページ の方をかまってみました。今までは自分の ホームページ で公開している画像はそのまま貼り付けているだけでしたが、ＷｏｒｄＰｒｅｓｓに導入したプラグイン「 LightBox2 」と同じように、サムネイルをクリックすると画像が大きくなるようにしたくなり、ググりながら調べて導入しました。スライドショーもできるやつでした。（ＪａｖａＳｃｒｉｐｔでうごくやつです）その名は「 Lightbox JS v2.0 」です。導入記録１．アーカイブファイルのダウンロードこちら（ http://www.huddletogether.com/projects/lightbox2/ ）の「 Download 」からＺＩＰファイルをダウンロードする。※当記事執筆時点では「 lightbox2.04.zip 」が最新でした。２．アーカイブファイルの展開先ほどダウンロードしたＺＩＰファイルを展開する。以下のようなファイルが格納されているはずです。│  index.html│├─css│      lightbox.css│├─images│      bullet.gif│      close.gif│      closelabel.gif│      donate-button.gif│      download-icon.gif│      image-1.jpg│      loading.gif│      nextlabel.gif│      prevlabel.gif│      thumb-1.jpg│└─js        builder.js        effects.js        lightbox.js        prototype.js        scriptaculous.js３．ファイルのコピー展開したファイルをＷｅｂサーバへアップロードする。※当方の場合、ドキュメントルート直下に「 css 」、「 images 」、「 js 」をフォルダを作り、さらに「 images 」、「 js 」は他の画像ファイルや JavaScript と区別するために「 lightbox 」用のフォルダを作ってそこへファイルをコピーしました。展開してできた index.html、thumb-1.jpg は不要。├─css│      lightbox.css├─images│  └─lightbox│          bullet.gif│          close.gif│          closelabel.gif│          donate-button.gif│          download-icon.gif│          image-1.jpg│          loading.gif│          nextlabel.gif│          prevlabel.gif│          thumb-1.jpg│└─js    └─lightbox            builder.js            effects.js            lightbox.js            prototype.js            scriptaculous.js４．画像ファイルの準備元画像の他に元画像のサムネイル用画像を準備してＷｅｂサーバに配置しておきます。※当方ではドキュメントルート配下に「 images 」フォルダを作成しそちらに配置。５．画像ファイルの準備（その２）lightbox2.04.zip を展開してできたＣＳＳファイルそのままでは、ブラウザ上ではエラーはでないものの、Ｗ３Ｃ − ＣＳＳ のチェックでエラーとなってしまうので、以下の「７」のように修正したが、そこで使用する画像「 blank.gif 」が lightbox2.04.zip には存在しません。lightbox2.03.zip を別途ダウンロード・展開して「 blank.gif 」をＷｅｂサーバにアップロードしました。※「 lightbox2.04.zip 」はまだバグがあるみたい！？６．ＪａｖａＳｃｒｉｐｔの修正※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。当方のように別途フォルダを作成した場合のみ修正が必要です。lightbox.jsを以下のように修正（以下は当方の場合）fileLoadingImage:        &#39;images/loading.gif&#39;,fileBottomNavCloseImage: &#39;images/closelabel.gif&#39;,　　↓fileLoadingImage:        &#39;images/lightbox/loading.gif&#39;,fileBottomNavCloseImage: &#39;images/lightbox/closelabel.gif&#39;,７．ＣＳＳの修正※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。当方のように別途フォルダを作成した場合のみ修正が必要です。lightbox.cssを以下のように修正（以下は当方の場合）#prevLink:hover, #prevLink:visited:hover { background: url(../images/prevlabel.gif) left 15% no-repeat; }#nextLink:hover, #nextLink:visited:hover { background: url(../images/nextlabel.gif) right 15% no-repeat; }　　↓#prevLink:hover, #prevLink:visited:hover { background: url(../images/lightbox/prevlabel.gif) left 15% no-repeat; }#nextLink:hover, #nextLink:visited:hover { background: url(../images/lightbox/nextlabel.gif) right 15% no-repeat; }#prevLink, #nextLink{ width: 49%; height: 100%; background-image: url(data:image/gif;base64,AAAA); /* Trick IE into showing hover */ display: block; }　　↓#prevLink, #nextLink{ width: 49%; height: 100%; background: transparent url(../images/lightbox/blank.gif) no-repeat; /* Trick IE into showing hover */ display: block; }ついでに、見にくいので整形しました（改行入れた）。８．ＨＴＭＬソース修正・以下のコードを &lt;head&gt;タグ 内に追加する。&lt;link rel=&quot;stylesheet&quot; href=&quot;css/lightbox.css&quot; type=&quot;text/css&quot; media=&quot;screen&quot; /&gt;・以下のコードを画像を表示するＨＴＭＬファイルの &lt;body&gt;タグ 内の最後（の直前）に追加する。&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/prototype.js&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/scriptaculous.js?load=effects,builder&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/lightbox.js&quot;&gt;&lt;/script&gt;※いろんなサイトでJavaScriptの読み込み部分を &lt;head&gt;タグ 内に記述するように説明があるが、それでは ＩＥ６ ではエラーとなってしまいます。・画像を表示するＨＴＭＬソースを作成・修正します。以下は例：&lt;body&gt;・・・　途中省略　・・・    ![TERRANO_01](images/terrano_01.jpg &quot;TERRANO_01&quot;)    ![TERRANO_02](images/terrano_02.jpg &quot;TERRANO_02&quot;)    ![TERRANO_03](images/terrano_03.jpg &quot;TERRANO_03&quot;)・・・　途中省略　・・・&lt;/body&gt;※ タグにサムネイル画像、に実画像を設定します。「 rel=”lightbox[terrano]” 」の terrano の部分が同じものでグルーピングされます。「 rel=”lightbox[terrano]” 」を「 rel=”lightbox” 」とすれば、　スライドショーではなく、普通に１枚ずつの表示になります。※ちなみに当方では以下のブラウザで動作確認しています。  FireFox3.0.6  Opera9.63  InternetExplorer6.0設定は以上です。これで、画像がカッコよく表示されるようになりました。ついでに画像も増やしました。よかったら見てみてください。→ → →　こちらまた、いつかブログ上の画像もホームページでスライドショーできるようにしようかと思ってます。それでは、おやすみなさい。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="ホームページでスライドショー！">
+  <meta name="twitter:description" content="今日は ホームページ の方をかまってみました。今までは自分の ホームページ で公開している画像はそのまま貼り付けているだけでしたが、ＷｏｒｄＰｒｅｓｓに導入したプラグイン「 LightBox2 」と同じように、サムネイルをクリックすると画像が大きくなるようにしたくなり、ググりながら調べて導入しました。スライドショーもできるやつでした。（ＪａｖａＳｃｒｉｐｔでうごくやつです）その名は「 Lightbox JS v2.0 」です。導入記録１．アーカイブファイルのダウンロードこちら（ http://www.huddletogether.com/projects/lightbox2/ ）の「 Download 」からＺＩＰファイルをダウンロードする。※当記事執筆時点では「 lightbox2.04.zip 」が最新でした。２．アーカイブファイルの展開先ほどダウンロードしたＺＩＰファイルを展開する。以下のようなファイルが格納されているはずです。│  index.html│├─css│      lightbox.css│├─images│      bullet.gif│      close.gif│      closelabel.gif│      donate-button.gif│      download-icon.gif│      image-1.jpg│      loading.gif│      nextlabel.gif│      prevlabel.gif│      thumb-1.jpg│└─js        builder.js        effects.js        lightbox.js        prototype.js        scriptaculous.js３．ファイルのコピー展開したファイルをＷｅｂサーバへアップロードする。※当方の場合、ドキュメントルート直下に「 css 」、「 images 」、「 js 」をフォルダを作り、さらに「 images 」、「 js 」は他の画像ファイルや JavaScript と区別するために「 lightbox 」用のフォルダを作ってそこへファイルをコピーしました。展開してできた index.html、thumb-1.jpg は不要。├─css│      lightbox.css├─images│  └─lightbox│          bullet.gif│          close.gif│          closelabel.gif│          donate-button.gif│          download-icon.gif│          image-1.jpg│          loading.gif│          nextlabel.gif│          prevlabel.gif│          thumb-1.jpg│└─js    └─lightbox            builder.js            effects.js            lightbox.js            prototype.js            scriptaculous.js４．画像ファイルの準備元画像の他に元画像のサムネイル用画像を準備してＷｅｂサーバに配置しておきます。※当方ではドキュメントルート配下に「 images 」フォルダを作成しそちらに配置。５．画像ファイルの準備（その２）lightbox2.04.zip を展開してできたＣＳＳファイルそのままでは、ブラウザ上ではエラーはでないものの、Ｗ３Ｃ − ＣＳＳ のチェックでエラーとなってしまうので、以下の「７」のように修正したが、そこで使用する画像「 blank.gif 」が lightbox2.04.zip には存在しません。lightbox2.03.zip を別途ダウンロード・展開して「 blank.gif 」をＷｅｂサーバにアップロードしました。※「 lightbox2.04.zip 」はまだバグがあるみたい！？６．ＪａｖａＳｃｒｉｐｔの修正※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。当方のように別途フォルダを作成した場合のみ修正が必要です。lightbox.jsを以下のように修正（以下は当方の場合）fileLoadingImage:        &#39;images/loading.gif&#39;,fileBottomNavCloseImage: &#39;images/closelabel.gif&#39;,　　↓fileLoadingImage:        &#39;images/lightbox/loading.gif&#39;,fileBottomNavCloseImage: &#39;images/lightbox/closelabel.gif&#39;,７．ＣＳＳの修正※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。当方のように別途フォルダを作成した場合のみ修正が必要です。lightbox.cssを以下のように修正（以下は当方の場合）#prevLink:hover, #prevLink:visited:hover { background: url(../images/prevlabel.gif) left 15% no-repeat; }#nextLink:hover, #nextLink:visited:hover { background: url(../images/nextlabel.gif) right 15% no-repeat; }　　↓#prevLink:hover, #prevLink:visited:hover { background: url(../images/lightbox/prevlabel.gif) left 15% no-repeat; }#nextLink:hover, #nextLink:visited:hover { background: url(../images/lightbox/nextlabel.gif) right 15% no-repeat; }#prevLink, #nextLink{ width: 49%; height: 100%; background-image: url(data:image/gif;base64,AAAA); /* Trick IE into showing hover */ display: block; }　　↓#prevLink, #nextLink{ width: 49%; height: 100%; background: transparent url(../images/lightbox/blank.gif) no-repeat; /* Trick IE into showing hover */ display: block; }ついでに、見にくいので整形しました（改行入れた）。８．ＨＴＭＬソース修正・以下のコードを &lt;head&gt;タグ 内に追加する。&lt;link rel=&quot;stylesheet&quot; href=&quot;css/lightbox.css&quot; type=&quot;text/css&quot; media=&quot;screen&quot; /&gt;・以下のコードを画像を表示するＨＴＭＬファイルの &lt;body&gt;タグ 内の最後（の直前）に追加する。&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/prototype.js&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/scriptaculous.js?load=effects,builder&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/lightbox.js&quot;&gt;&lt;/script&gt;※いろんなサイトでJavaScriptの読み込み部分を &lt;head&gt;タグ 内に記述するように説明があるが、それでは ＩＥ６ ではエラーとなってしまいます。・画像を表示するＨＴＭＬソースを作成・修正します。以下は例：&lt;body&gt;・・・　途中省略　・・・    ![TERRANO_01](images/terrano_01.jpg &quot;TERRANO_01&quot;)    ![TERRANO_02](images/terrano_02.jpg &quot;TERRANO_02&quot;)    ![TERRANO_03](images/terrano_03.jpg &quot;TERRANO_03&quot;)・・・　途中省略　・・・&lt;/body&gt;※ タグにサムネイル画像、に実画像を設定します。「 rel=”lightbox[terrano]” 」の terrano の部分が同じものでグルーピングされます。「 rel=”lightbox[terrano]” 」を「 rel=”lightbox” 」とすれば、　スライドショーではなく、普通に１枚ずつの表示になります。※ちなみに当方では以下のブラウザで動作確認しています。  FireFox3.0.6  Opera9.63  InternetExplorer6.0設定は以上です。これで、画像がカッコよく表示されるようになりました。ついでに画像も増やしました。よかったら見てみてください。→ → →　こちらまた、いつかブログ上の画像もホームページでスライドショーできるようにしようかと思ってます。それでは、おやすみなさい。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/02/20/20013012/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2009-02-20T01:30:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2009/02/20/20013012/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="ホームページでスライドショー！">
+    <meta itemprop="description" content="今日は ホームページ の方をかまってみました。今までは自分の ホームページ で公開している画像はそのまま貼り付けているだけでしたが、ＷｏｒｄＰｒｅｓｓに導入したプラグイン「 LightBox2 」と同じように、サムネイルをクリックすると画像が大きくなるようにしたくなり、ググりながら調べて導入しました。スライドショーもできるやつでした。（ＪａｖａＳｃｒｉｐｔでうごくやつです）その名は「 Lightbox JS v2.0 」です。導入記録１．アーカイブファイルのダウンロードこちら（ http://www.huddletogether.com/projects/lightbox2/ ）の「 Download 」からＺＩＰファイルをダウンロードする。※当記事執筆時点では「 lightbox2.04.zip 」が最新でした。２．アーカイブファイルの展開先ほどダウンロードしたＺＩＰファイルを展開する。以下のようなファイルが格納されているはずです。│  index.html│├─css│      lightbox.css│├─images│      bullet.gif│      close.gif│      closelabel.gif│      donate-button.gif│      download-icon.gif│      image-1.jpg│      loading.gif│      nextlabel.gif│      prevlabel.gif│      thumb-1.jpg│└─js        builder.js        effects.js        lightbox.js        prototype.js        scriptaculous.js３．ファイルのコピー展開したファイルをＷｅｂサーバへアップロードする。※当方の場合、ドキュメントルート直下に「 css 」、「 images 」、「 js 」をフォルダを作り、さらに「 images 」、「 js 」は他の画像ファイルや JavaScript と区別するために「 lightbox 」用のフォルダを作ってそこへファイルをコピーしました。展開してできた index.html、thumb-1.jpg は不要。├─css│      lightbox.css├─images│  └─lightbox│          bullet.gif│          close.gif│          closelabel.gif│          donate-button.gif│          download-icon.gif│          image-1.jpg│          loading.gif│          nextlabel.gif│          prevlabel.gif│          thumb-1.jpg│└─js    └─lightbox            builder.js            effects.js            lightbox.js            prototype.js            scriptaculous.js４．画像ファイルの準備元画像の他に元画像のサムネイル用画像を準備してＷｅｂサーバに配置しておきます。※当方ではドキュメントルート配下に「 images 」フォルダを作成しそちらに配置。５．画像ファイルの準備（その２）lightbox2.04.zip を展開してできたＣＳＳファイルそのままでは、ブラウザ上ではエラーはでないものの、Ｗ３Ｃ − ＣＳＳ のチェックでエラーとなってしまうので、以下の「７」のように修正したが、そこで使用する画像「 blank.gif 」が lightbox2.04.zip には存在しません。lightbox2.03.zip を別途ダウンロード・展開して「 blank.gif 」をＷｅｂサーバにアップロードしました。※「 lightbox2.04.zip 」はまだバグがあるみたい！？６．ＪａｖａＳｃｒｉｐｔの修正※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。当方のように別途フォルダを作成した場合のみ修正が必要です。lightbox.jsを以下のように修正（以下は当方の場合）fileLoadingImage:        &#39;images/loading.gif&#39;,fileBottomNavCloseImage: &#39;images/closelabel.gif&#39;,　　↓fileLoadingImage:        &#39;images/lightbox/loading.gif&#39;,fileBottomNavCloseImage: &#39;images/lightbox/closelabel.gif&#39;,７．ＣＳＳの修正※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。当方のように別途フォルダを作成した場合のみ修正が必要です。lightbox.cssを以下のように修正（以下は当方の場合）#prevLink:hover, #prevLink:visited:hover { background: url(../images/prevlabel.gif) left 15% no-repeat; }#nextLink:hover, #nextLink:visited:hover { background: url(../images/nextlabel.gif) right 15% no-repeat; }　　↓#prevLink:hover, #prevLink:visited:hover { background: url(../images/lightbox/prevlabel.gif) left 15% no-repeat; }#nextLink:hover, #nextLink:visited:hover { background: url(../images/lightbox/nextlabel.gif) right 15% no-repeat; }#prevLink, #nextLink{ width: 49%; height: 100%; background-image: url(data:image/gif;base64,AAAA); /* Trick IE into showing hover */ display: block; }　　↓#prevLink, #nextLink{ width: 49%; height: 100%; background: transparent url(../images/lightbox/blank.gif) no-repeat; /* Trick IE into showing hover */ display: block; }ついでに、見にくいので整形しました（改行入れた）。８．ＨＴＭＬソース修正・以下のコードを &lt;head&gt;タグ 内に追加する。&lt;link rel=&quot;stylesheet&quot; href=&quot;css/lightbox.css&quot; type=&quot;text/css&quot; media=&quot;screen&quot; /&gt;・以下のコードを画像を表示するＨＴＭＬファイルの &lt;body&gt;タグ 内の最後（の直前）に追加する。&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/prototype.js&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/scriptaculous.js?load=effects,builder&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;js/lightbox/lightbox.js&quot;&gt;&lt;/script&gt;※いろんなサイトでJavaScriptの読み込み部分を &lt;head&gt;タグ 内に記述するように説明があるが、それでは ＩＥ６ ではエラーとなってしまいます。・画像を表示するＨＴＭＬソースを作成・修正します。以下は例：&lt;body&gt;・・・　途中省略　・・・    ![TERRANO_01](images/terrano_01.jpg &quot;TERRANO_01&quot;)    ![TERRANO_02](images/terrano_02.jpg &quot;TERRANO_02&quot;)    ![TERRANO_03](images/terrano_03.jpg &quot;TERRANO_03&quot;)・・・　途中省略　・・・&lt;/body&gt;※ タグにサムネイル画像、に実画像を設定します。「 rel=”lightbox[terrano]” 」の terrano の部分が同じものでグルーピングされます。「 rel=”lightbox[terrano]” 」を「 rel=”lightbox” 」とすれば、　スライドショーではなく、普通に１枚ずつの表示になります。※ちなみに当方では以下のブラウザで動作確認しています。  FireFox3.0.6  Opera9.63  InternetExplorer6.0設定は以上です。これで、画像がカッコよく表示されるようになりました。ついでに画像も増やしました。よかったら見てみてください。→ → →　こちらまた、いつかブログ上の画像もホームページでスライドショーできるようにしようかと思ってます。それでは、おやすみなさい。">
+    <meta itemprop="datePublished" content="February 20, 2009">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">ホームページでスライドショー！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2009-02-20T01:30:00+09:00">2009-02-20 01:30</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>今日は <a href="http://www.mk-mode.com/rails/" title="ホームページ">ホームページ</a> の方をかまってみました。</p>
+
+<p>今までは自分の <a href="http://www.mk-mode.com/rails/" title="ホームページ">ホームページ</a> で公開している画像はそのまま貼り付けているだけでしたが、
+ＷｏｒｄＰｒｅｓｓに導入したプラグイン「 <strong>LightBox2</strong> 」と同じように、
+サムネイルをクリックすると画像が大きくなるようにしたくなり、
+ググりながら調べて導入しました。</p>
+
+<p>スライドショーもできるやつでした。
+（ＪａｖａＳｃｒｉｐｔでうごくやつです）
+その名は「 <strong><a href="http://www.huddletogether.com/projects/lightbox2/" title="Lightbox JS v2.0">Lightbox JS v2.0</a></strong> 」です。</p>
+
+<h3 id="導入記録">導入記録</h3>
+
+<h4 id="１アーカイブファイルのダウンロード">１．アーカイブファイルのダウンロード</h4>
+
+<p>こちら（ <a href="http://www.huddletogether.com/projects/lightbox2/" title="http://www.huddletogether.com/projects/lightbox2/">http://www.huddletogether.com/projects/lightbox2/</a> ）の「 Download 」からＺＩＰファイルをダウンロードする。
+※当記事執筆時点では「 lightbox2.04.zip 」が最新でした。</p>
+
+<h4 id="２アーカイブファイルの展開">２．アーカイブファイルの展開</h4>
+
+<p>先ほどダウンロードしたＺＩＰファイルを展開する。
+以下のようなファイルが格納されているはずです。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>│  index.html
+│
+├─css
+│      lightbox.css
+│
+├─images
+│      bullet.gif
+│      close.gif
+│      closelabel.gif
+│      donate-button.gif
+│      download-icon.gif
+│      image-1.jpg
+│      loading.gif
+│      nextlabel.gif
+│      prevlabel.gif
+│      thumb-1.jpg
+│
+└─js
+        builder.js
+        effects.js
+        lightbox.js
+        prototype.js
+        scriptaculous.js
+
+</code></pre></div></div>
+
+<h4 id="３ファイルのコピー">３．ファイルのコピー</h4>
+
+<p>展開したファイルをＷｅｂサーバへアップロードする。
+※当方の場合、ドキュメントルート直下に「 css 」、「 images 」、「 js 」をフォルダを作り、
+さらに「 images 」、「 js 」は他の画像ファイルや JavaScript と区別するために「 lightbox 」用のフォルダを作ってそこへファイルをコピーしました。
+展開してできた index.html、thumb-1.jpg は不要。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>├─css
+│      lightbox.css
+├─images
+│  └─lightbox
+│          bullet.gif
+│          close.gif
+│          closelabel.gif
+│          donate-button.gif
+│          download-icon.gif
+│          image-1.jpg
+│          loading.gif
+│          nextlabel.gif
+│          prevlabel.gif
+│          thumb-1.jpg
+│
+└─js
+    └─lightbox
+            builder.js
+            effects.js
+            lightbox.js
+            prototype.js
+            scriptaculous.js
+
+</code></pre></div></div>
+
+<h4 id="４画像ファイルの準備">４．画像ファイルの準備</h4>
+
+<p>元画像の他に元画像のサムネイル用画像を準備してＷｅｂサーバに配置しておきます。
+※当方ではドキュメントルート配下に「 images 」フォルダを作成しそちらに配置。</p>
+
+<h4 id="５画像ファイルの準備その２">５．画像ファイルの準備（その２）</h4>
+
+<p>lightbox2.04.zip を展開してできたＣＳＳファイルそのままでは、
+ブラウザ上ではエラーはでないものの、
+Ｗ３Ｃ − ＣＳＳ のチェックでエラーとなってしまうので、
+以下の「７」のように修正したが、
+そこで使用する画像「 <strong>blank.gif</strong> 」が lightbox2.04.zip には存在しません。
+lightbox2.03.zip を別途ダウンロード・展開して「 <strong>blank.gif</strong> 」をＷｅｂサーバにアップロードしました。
+※「 lightbox2.04.zip 」はまだバグがあるみたい！？</p>
+
+<h4 id="６ｊａｖａｓｃｒｉｐｔの修正">６．ＪａｖａＳｃｒｉｐｔの修正</h4>
+
+<p>※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。
+当方のように別途フォルダを作成した場合のみ修正が必要です。
+lightbox.jsを以下のように修正（以下は当方の場合）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fileLoadingImage:        'images/loading.gif',
+fileBottomNavCloseImage: 'images/closelabel.gif',
+　　↓
+fileLoadingImage:        'images/lightbox/loading.gif',
+fileBottomNavCloseImage: 'images/lightbox/closelabel.gif',
+
+</code></pre></div></div>
+
+<h4 id="７ｃｓｓの修正">７．ＣＳＳの修正</h4>
+
+<p>※アーカイブファイルを展開したそのままを使用していれば以下は必要ありません。
+当方のように別途フォルダを作成した場合のみ修正が必要です。
+lightbox.cssを以下のように修正（以下は当方の場合）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#prevLink:hover, #prevLink:visited:hover { background: url(../images/prevlabel.gif) left 15% no-repeat; }
+#nextLink:hover, #nextLink:visited:hover { background: url(../images/nextlabel.gif) right 15% no-repeat; }
+　　↓
+#prevLink:hover, #prevLink:visited:hover { background: url(../images/lightbox/prevlabel.gif) left 15% no-repeat; }
+#nextLink:hover, #nextLink:visited:hover { background: url(../images/lightbox/nextlabel.gif) right 15% no-repeat; }
+
+</code></pre></div></div>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#prevLink, #nextLink{ width: 49%; height: 100%; background-image: url(data:image/gif;base64,AAAA); /* Trick IE into showing hover */ display: block; }
+　　↓
+#prevLink, #nextLink{ width: 49%; height: 100%; background: transparent url(../images/lightbox/blank.gif) no-repeat; /* Trick IE into showing hover */ display: block; }
+
+</code></pre></div></div>
+
+<p>ついでに、見にくいので整形しました（改行入れた）。</p>
+
+<h4 id="８ｈｔｍｌソース修正">８．ＨＴＭＬソース修正</h4>
+
+<p>・以下のコードを &lt;head&gt;タグ 内に追加する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;link rel="stylesheet" href="css/lightbox.css" type="text/css" media="screen" /&gt;
+
+</code></pre></div></div>
+
+<p>・以下のコードを画像を表示するＨＴＭＬファイルの &lt;body&gt;タグ 内の最後（の直前）に追加する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;script type="text/javascript" src="js/lightbox/prototype.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="js/lightbox/scriptaculous.js?load=effects,builder"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="js/lightbox/lightbox.js"&gt;&lt;/script&gt;
+
+</code></pre></div></div>
+
+<p>※いろんなサイトでJavaScriptの読み込み部分を &lt;head&gt;タグ 内に記述するように説明があるが、それでは ＩＥ６ ではエラーとなってしまいます。
+・画像を表示するＨＴＭＬソースを作成・修正します。
+以下は例：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;body&gt;
+・・・　途中省略　・・・
+    
+![TERRANO_01](images/terrano_01.jpg "TERRANO_01")
+
+    
+![TERRANO_02](images/terrano_02.jpg "TERRANO_02")
+
+    
+![TERRANO_03](images/terrano_03.jpg "TERRANO_03")
+
+・・・　途中省略　・・・
+&lt;/body&gt;
+
+</code></pre></div></div>
+
+<p>※<img /> タグにサムネイル画像、<a href="">に実画像を設定します。
+「 rel=”lightbox[terrano]” 」の terrano の部分が同じものでグルーピングされます。
+「 rel=”lightbox[terrano]” 」を「 rel=”lightbox” 」とすれば、　スライドショーではなく、普通に１枚ずつの表示になります。</a></p>
+
+<p>※ちなみに当方では以下のブラウザで動作確認しています。</p>
+
+<ul>
+  <li>FireFox3.0.6</li>
+  <li>Opera9.63</li>
+  <li>InternetExplorer6.0</li>
+</ul>
+
+<hr />
+
+<p>設定は以上です。</p>
+
+<p>これで、画像がカッコよく表示されるようになりました。
+ついでに画像も増やしました。</p>
+
+<p>よかったら見てみてください。
+→ → →　<a href="http://www.mk-mode.com/rails/mycars/" title="こちら">こちら</a></p>
+
+<p>また、いつかブログ上の画像もホームページでスライドショーできるようにしようかと思ってます。</p>
+
+<p>それでは、おやすみなさい。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/wordpress" class="page__taxonomy-item" rel="tag">WordPress</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/web%E3%82%B5%E3%82%A4%E3%83%88" class="page__taxonomy-item" rel="tag">Webサイト</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2009-02-20T01:30:00+09:00">2009-02-20 01:30</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E3%83%9B%E3%83%BC%E3%83%A0%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%A7%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%89%E3%82%B7%E3%83%A7%E3%83%BC%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F02%2F20%2F20013012%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F02%2F20%2F20013012%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F02%2F20%2F20013012%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2009/02/20/20004557/" class="pagination--pager" title="LOTO6 No.433
+">Previous</a>
+    
+    
+      <a href="/2009/02/21/21001007/" class="pagination--pager" title="ＰＨＰでBASIC認証！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2009/02/20/20013012/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2009/02/20/20013012"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,879 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>CentOS - Lokka インストール！ - mk-mode BLOG</title>
+<meta name="description" content="Lokka とは、Ruby(Sinatra(軽量Rails)) 製の軽量な CMS です。クラウド環境で利用される事も想定されている CMS です。と言うか、クラウド環境の方が最適かもしれません。可能なら当方の WordPress ブログを将来 Lokka に移行したいとも考えています。今回は、Heroku（Rubyアプリケーションのクラウドプラットフォーム）へのインストールではなく、CentOS へのインストールを試みました。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="CentOS - Lokka インストール！">
+<meta property="og:url" content="https://komasaru.github.io/2012/07/10/10002011/">
+
+
+  <meta property="og:description" content="Lokka とは、Ruby(Sinatra(軽量Rails)) 製の軽量な CMS です。クラウド環境で利用される事も想定されている CMS です。と言うか、クラウド環境の方が最適かもしれません。可能なら当方の WordPress ブログを将来 Lokka に移行したいとも考えています。今回は、Heroku（Rubyアプリケーションのクラウドプラットフォーム）へのインストールではなく、CentOS へのインストールを試みました。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="CentOS - Lokka インストール！">
+  <meta name="twitter:description" content="Lokka とは、Ruby(Sinatra(軽量Rails)) 製の軽量な CMS です。クラウド環境で利用される事も想定されている CMS です。と言うか、クラウド環境の方が最適かもしれません。可能なら当方の WordPress ブログを将来 Lokka に移行したいとも考えています。今回は、Heroku（Rubyアプリケーションのクラウドプラットフォーム）へのインストールではなく、CentOS へのインストールを試みました。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2012/07/10/10002011/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2012-07-10T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2012/07/10/10002011/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="CentOS - Lokka インストール！">
+    <meta itemprop="description" content="Lokka とは、Ruby(Sinatra(軽量Rails)) 製の軽量な CMS です。クラウド環境で利用される事も想定されている CMS です。と言うか、クラウド環境の方が最適かもしれません。可能なら当方の WordPress ブログを将来 Lokka に移行したいとも考えています。今回は、Heroku（Rubyアプリケーションのクラウドプラットフォーム）へのインストールではなく、CentOS へのインストールを試みました。">
+    <meta itemprop="datePublished" content="July 10, 2012">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">CentOS - Lokka インストール！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-07-10T00:20:00+09:00">2012-07-10 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p><a href="http://lokka.org/" title="Lokka">Lokka</a> とは、Ruby(Sinatra(軽量Rails)) 製の軽量な CMS です。
+クラウド環境で利用される事も想定されている CMS です。
+と言うか、クラウド環境の方が最適かもしれません。</p>
+
+<p>可能なら当方の WordPress ブログを将来 <a href="http://lokka.org/" title="Lokka">Lokka</a> に移行したいとも考えています。
+今回は、Heroku（Rubyアプリケーションのクラウドプラットフォーム）へのインストールではなく、CentOS へのインストールを試みました。</p>
+
+<!--more-->
+
+<h3 id="作業記録">作業記録</h3>
+
+<h4 id="0-前提条件">0. 前提条件</h4>
+
+<ul>
+  <li>動作確認した OS は VMwarePlayer 上の CentOS 6.2</li>
+  <li>Ruby インストール済み(当方は Ruby1.9.3-p0)</li>
+  <li>RubyGems パッケージ Bundler インストール済み</li>
+  <li>Git インストール済み</li>
+  <li>データベースは MySQL がインストール済みである(PostgreSQL, SQLite は使わない)</li>
+  <li>モードは Development を使用(Production, Test は使わない)</li>
+</ul>
+
+<h4 id="1-リポジトリ複製">1. リポジトリ複製</h4>
+
+<p>Git リポジトリの複製をローカルに作成する。
+（場合により、配置したいディレクトリへ移動する。当方は /var/www/ 配下に配置）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd /var/www
+# git clone git://github.com/komagata/lokka.git
+Initialized empty Git repository in /var/www/lokka/.git/
+remote: Counting objects: 6088, done.
+remote: Compressing objects: 100% (2595/2595), done.
+remote: Total 6088 (delta 3461), reused 5821 (delta 3245)
+Receiving objects: 100% (6088/6088), 5.49 MiB | 388 KiB/s, done.
+Resolving deltas: 100% (3461/3461), done.
+</code></pre></div></div>
+
+<h4 id="2-lokka-のインストール">2. Lokka のインストール</h4>
+
+<p>bundle install を実行する。
+その際、使用しないモード（Production, Test）・データベース（PostgreSQL, SQLite）を指定する。
+また、bundle インストール先は “./vendor/bundler” とした。
+※ちなみに、Development を使用しないように設定すると、tapp がインストールされず rake でエラーになる。（Gemfile の production に gem ‘tapp’, ‘1.3.0’ を追加したらいいかも）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd lokka
+# bundle install --path ./vendor/bundler --without production test postgresql sqlite
+Fetching git://github.com/yayugu/dm-pagination.git
+remote: Counting objects: 935, done.
+remote: Compressing objects: 100% (443/443), done.
+remote: Total 935 (delta 504), reused 874 (delta 468)
+
+====&lt; 途中省略 &gt;====
+
+Installing yard (0.7.5) 
+Installing yard-sinatra (1.0.0) 
+Your bundle is complete! It was installed into ./vendor/bundler
+</code></pre></div></div>
+
+<p>※Lokka の bundle インストール時、以下のような do_mysql が入っていない旨のエラーが発生する場合は、mysql-devel がインストールされていないので mysql-devel をインストールしてから再度 bundle install。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Gem::Installer::ExtensionBuildError: ERROR: Failed to build gem native ExtensionBuildError.
+
+====&lt; 途中省略 &gt;====
+
+Gem files will remain installed in /usr/local/lib/ruby/gems/1.9.1/bundler/gems/do-d7cb262d89a1/do_mysql for inspection.
+Results logged to /usr/local/lib/ruby/gems/1.9.1/bundler/gems/do-d7cb262d89a1/do_mysql/ext/do_mysql/gem_make.out
+An error occured while installing do_mysql (0.10.6), and Bundler cannot continue.
+Make sure that `gem install do_mysql -v '0.10.6'` succeeds before bundling.
+</code></pre></div></div>
+
+<h4 id="3-データベースの作成">3. データベースの作成</h4>
+
+<p>今回使用する MySQL にデータベースが無いと後のビルドがうまくいかないので、データベースを作成しておく。
+MySQL にログイン後、以下のコマンドを実行する。
+データベース名は lokka とした。</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">create</span> <span class="k">database</span> <span class="n">lokka</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>正式には Lokka 用データベースユーザを作成してそのユーザのみが接続できるようにした方がよいでしょう。</p>
+
+<h4 id="4-データベース設定ファイルの作成">4. データベース設定ファイルの作成</h4>
+
+<p>database.default.yml をコピーして database.yml を作成し使用するデータベースにあわせて編集する。（データベース別の記述方法はコメントに記載してある）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cp database.default.yml database.yml
+# vi database.yml
+production:
+  dsn: &lt;%= ENV['DATABASE_URL'] %&gt;
+development:
+  # dsn: sqlite3://&lt;%= root %&gt;/db/development.sqlite3
+  dsn: mysql://root:password@127.0.0.1/lokka
+test:
+  # dsn: &lt;%= ENV['DATABASE_URL'] || "sqlite3://#{root}/db/test.sqlite3" %&gt;
+  dsn: &lt;%= ENV['DATABASE_URL'] || "mysql://root:password@127.0.0.1/lokka"
+</code></pre></div></div>
+
+<h4 id="5-ビルド">5. ビルド</h4>
+
+<p>以下のコマンドでビルドする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># bundle exec rake db:setup
+</code></pre></div></div>
+
+<h4 id="6-動作確認">6. 動作確認</h4>
+
+<p>以下のコマンドで Rackup してから、ブラウザから http://＜サーバアドレス＞:9292/ にアクセスして画面が表示されることを確認する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># bundle exec rackup
+</code></pre></div></div>
+
+<p><img src="/images/2012/06/CENTOS_LOKKA_1.jpg" alt="CENTOS_LOKKA_1" title="CENTOS_LOKKA_1" /></p>
+
+<p><img src="/images/2012/06/CENTOS_LOKKA_2.jpg" alt="CENTOS_LOKKA_2" title="CENTOS_LOKKA_2" /></p>
+
+<p>後は、煮るなり焼くなり。。。</p>
+
+<h4 id="参考サイト">参考サイト</h4>
+
+<ul>
+  <li><a href="http://lokka.org/" title="Lokka - CMS for Cloud">Lokka - CMS for Cloud</a></li>
+  <li><a href="http://lokka.org/getting-started-ja" title="はじめよう - Lokka">はじめよう - Lokka</a></li>
+</ul>
+
+<p>Windows, MacOS, Heroku へのインストール方法も記載されてます。
+英語サイトと日本語サイトで若干記述の異なる部分もありますが問題ありませんでした。</p>
+
+<hr />
+
+<p>一応 Rubyist の自分には、PHP 製の WordPress より扱いやすそうです。
+それに動作が軽いです。</p>
+
+<p>Ruby 製日記ツール tDiary、Ruby 製静的 CMS の nanoc も検討してましたが、WordPress からの移行は不可能に近いので断念しました。</p>
+
+<p><a href="http://lokka.org/" title="Lokka">Lokka</a> についてはもう少し勉強して、可能なら WordPress から Lokka へ移行したいところです。
+その前に、Sinatra の勉強かな？</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/lokka" class="page__taxonomy-item" rel="tag">Lokka</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/wordpress" class="page__taxonomy-item" rel="tag">WordPress</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E3%83%96%E3%83%AD%E3%82%B0" class="page__taxonomy-item" rel="tag">ブログ</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2012-07-10T00:20:00+09:00">2012-07-10 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=CentOS+-+Lokka+%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2012%2F07%2F10%2F10002011%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2012%2F07%2F10%2F10002011%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2012%2F07%2F10%2F10002011%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2012/07/08/08002030/" class="pagination--pager" title="VMware - 仮想マシンイメージのコピーでネットワーク接続不可に！
+">Previous</a>
+    
+    
+      <a href="/2012/07/12/12002024/" class="pagination--pager" title="Java - Tidy で Web スクレイピング！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2012/07/10/10002011/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2012/07/10/10002011"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

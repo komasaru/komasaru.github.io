@@ -1,0 +1,984 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Linux - 大量ユーザの一括作成、パスワード一括変更！ - mk-mode BLOG</title>
+<meta name="description" content="Linux で一般ユーザを追加作成する際 useradd, adduser コマンドを使用すると思いますが、一度に大量に作成したい場合に面倒に感じてしまいます。一括作成の方法は様々なサイト等で紹介されていますが、その方法だけでは useradd, adduser で登録した場合と状態が異なります。“/etc/skel” ディレクトリ配下がコピーされないのです。（以前は、パスワードの暗号(HASH)化方式も異なっていたが、現在は useradd, adduser で登録した場合も（下記の方法で）一括登録した場合も SHA-512 がデフォルトとなっているので相違（問題）はない）以下、一括作成する方法についての記録です。（パスワード一括変更方法、暗号化方式の変更方法も）">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Linux - 大量ユーザの一括作成、パスワード一括変更！">
+<meta property="og:url" content="https://komasaru.github.io/2014/11/09/linux-adding-many-users/">
+
+
+  <meta property="og:description" content="Linux で一般ユーザを追加作成する際 useradd, adduser コマンドを使用すると思いますが、一度に大量に作成したい場合に面倒に感じてしまいます。一括作成の方法は様々なサイト等で紹介されていますが、その方法だけでは useradd, adduser で登録した場合と状態が異なります。“/etc/skel” ディレクトリ配下がコピーされないのです。（以前は、パスワードの暗号(HASH)化方式も異なっていたが、現在は useradd, adduser で登録した場合も（下記の方法で）一括登録した場合も SHA-512 がデフォルトとなっているので相違（問題）はない）以下、一括作成する方法についての記録です。（パスワード一括変更方法、暗号化方式の変更方法も）">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Linux - 大量ユーザの一括作成、パスワード一括変更！">
+  <meta name="twitter:description" content="Linux で一般ユーザを追加作成する際 useradd, adduser コマンドを使用すると思いますが、一度に大量に作成したい場合に面倒に感じてしまいます。一括作成の方法は様々なサイト等で紹介されていますが、その方法だけでは useradd, adduser で登録した場合と状態が異なります。“/etc/skel” ディレクトリ配下がコピーされないのです。（以前は、パスワードの暗号(HASH)化方式も異なっていたが、現在は useradd, adduser で登録した場合も（下記の方法で）一括登録した場合も SHA-512 がデフォルトとなっているので相違（問題）はない）以下、一括作成する方法についての記録です。（パスワード一括変更方法、暗号化方式の変更方法も）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2014/11/09/linux-adding-many-users/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2014-11-09T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2014/11/09/linux-adding-many-users/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links">
+<li class="masthead__menu-item">
+              <a href="/year-archive/">Archives</a>
+            </li>
+<li class="masthead__menu-item">
+              <a href="/categories/">Categories</a>
+            </li>
+<li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li>
+<li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar">Calendar</a>
+            </li>
+<li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml">JMAXML</a>
+            </li>
+<li class="masthead__menu-item">
+              <a href="/privacy.html">Privacy Policy</a>
+            </li>
+</ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Linux - 大量ユーザの一括作成、パスワード一括変更！">
+    <meta itemprop="description" content="Linux で一般ユーザを追加作成する際 useradd, adduser コマンドを使用すると思いますが、一度に大量に作成したい場合に面倒に感じてしまいます。一括作成の方法は様々なサイト等で紹介されていますが、その方法だけでは useradd, adduser で登録した場合と状態が異なります。“/etc/skel” ディレクトリ配下がコピーされないのです。（以前は、パスワードの暗号(HASH)化方式も異なっていたが、現在は useradd, adduser で登録した場合も（下記の方法で）一括登録した場合も SHA-512 がデフォルトとなっているので相違（問題）はない）以下、一括作成する方法についての記録です。（パスワード一括変更方法、暗号化方式の変更方法も）">
+    <meta itemprop="datePublished" content="November 09, 2014">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Linux - 大量ユーザの一括作成、パスワード一括変更！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-11-09T00:20:00+09:00">2014-11-09 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br>
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Linux で一般ユーザを追加作成する際 <code class="language-plaintext highlighter-rouge">useradd</code>, <code class="language-plaintext highlighter-rouge">adduser</code> コマンドを使用すると思いますが、一度に大量に作成したい場合に面倒に感じてしまいます。</p>
+
+<p>一括作成の方法は様々なサイト等で紹介されていますが、その方法だけでは <code class="language-plaintext highlighter-rouge">useradd</code>, <code class="language-plaintext highlighter-rouge">adduser</code> で登録した場合と状態が異なります。<br>
+“/etc/skel” ディレクトリ配下がコピーされないのです。（以前は、パスワードの暗号(HASH)化方式も異なっていたが、現在は <code class="language-plaintext highlighter-rouge">useradd</code>, <code class="language-plaintext highlighter-rouge">adduser</code> で登録した場合も（下記の方法で）一括登録した場合も SHA-512 がデフォルトとなっているので相違（問題）はない）</p>
+
+<p>以下、一括作成する方法についての記録です。（パスワード一括変更方法、暗号化方式の変更方法も）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Linux Mint 17(64bit), CentOS 7.0(64bit) での作業を想定。</li>
+  <li>以下では、ユーザ一括作成とディレクトリコピーを一度に行うようにしているが、好みに合わせて変更してください。</li>
+  <li>Linux でのユーザ管理についての基本的な知識がある。</li>
+</ul>
+
+<h3 id="1-作成ユーザ一覧作成">1. 作成ユーザ一覧作成</h3>
+
+<p>一括作成するユーザの一覧をテキストファイルに作成する。<br>
+（ファイル名は任意。ここでは、”addusers.txt” としている）</p>
+
+<ul>
+  <li>書式は “/etc/passwd” と同じで <code class="language-plaintext highlighter-rouge">ユーザー名:パスワード:ユーザID:グループID:フルネーム:ホームディレクトリ:ログインシェル</code> である。</li>
+  <li>「ユーザID」と「グループID」は、省略すると自動で設定される。明示的に指定したければ入力する。（グループの作成方法はここでは省略）</li>
+  <li>空行を作らないこと。（特に、最終行に改行のみの行を作らない）</li>
+</ul>
+
+<p>File: <code class="language-plaintext highlighter-rouge">addusers.txt</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr>
+<td class="gutter gl"><pre class="lineno">1
+2
+3
+</pre></td>
+<td class="code"><pre>foo:foo_password::::/home/foo:/bin/bash
+bar:bar_password::::/home/bar:/bin/bash
+baz:baz_password::::/home/baz:/bin/bash
+</pre></td>
+</tr></tbody></table></code></pre></figure>
+
+<h3 id="2-シェルスクリプト作成">2. シェルスクリプト作成</h3>
+
+<p>ユーザ作成、 “/etc/skel” ディレクトリ配下のコピーを行うシェルスクリプトを以下のように作成する。（当方の例）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">addusers.sh</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr>
+<td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td>
+<td class="code"><pre><span class="c">#!/bin/bash</span>
+
+<span class="nv">FILE_U</span><span class="o">=</span><span class="s2">"addusers.txt"</span>
+<span class="nv">FILE_P</span><span class="o">=</span><span class="s2">"/etc/passwd"</span>
+
+newusers <span class="nv">$FILE_U</span>
+
+<span class="k">for </span>line <span class="k">in</span> <span class="sb">`</span><span class="nb">cat</span> <span class="nv">$FILE_U</span><span class="sb">`</span>
+<span class="k">do
+    </span><span class="nv">user_name</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo</span> <span class="nv">$line</span> | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">':'</span> <span class="nt">-f</span> 1<span class="sb">`</span>
+    <span class="nv">txt</span><span class="o">=</span><span class="sb">`</span><span class="nb">cat</span> <span class="nv">$FILE_P</span> | <span class="nb">grep</span> <span class="nt">-e</span> <span class="s2">"^</span><span class="nv">$user_name</span><span class="s2">"</span><span class="sb">`</span>
+    <span class="nv">user_id</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo</span> <span class="nv">$txt</span> | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">':'</span> <span class="nt">-f</span> 3<span class="sb">`</span>
+    <span class="nv">group_id</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo</span> <span class="nv">$txt</span> | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">':'</span> <span class="nt">-f</span> 4<span class="sb">`</span>
+    <span class="nv">home_dir</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo</span> <span class="nv">$txt</span> | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">':'</span> <span class="nt">-f</span> 6<span class="sb">`</span>
+    <span class="nb">echo</span> <span class="s2">"USER_ID:</span><span class="k">${</span><span class="nv">user_id</span><span class="k">}</span><span class="s2"> GROUP:</span><span class="k">${</span><span class="nv">group_id</span><span class="k">}</span><span class="s2"> HOME_DIR:</span><span class="nv">$home_dir</span><span class="s2">"</span>
+    <span class="nb">cp</span> <span class="nt">-rf</span> /etc/skel/<span class="k">*</span> <span class="nv">$home_dir</span>/
+    <span class="nb">chown</span> <span class="nt">-R</span> <span class="nv">$user_id</span>  <span class="nv">$home_dir</span>
+    <span class="nb">chgrp</span> <span class="nt">-R</span> <span class="nv">$group_id</span> <span class="nv">$home_dir</span>
+<span class="k">done</span>
+</pre></td>
+</tr></tbody></table></code></pre></figure>
+
+<p>上記のスクリプトで「ユーザID」、「グループID」等を “/etc/passwd” から取得しているのは、作成した一覧ファイルで指定しないことがあるため。</p>
+
+<h3 id="3-シェルスクリプト実行">3. シェルスクリプト実行</h3>
+
+<p>以下のように実行する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./addusers.sh
+USER:1001 GROUP:1002 HOME_DIR:/home/foo
+USER:1002 GROUP:1003 HOME_DIR:/home/bar
+USER:1003 GROUP:1004 HOME_DIR:/home/baz
+</code></pre></div></div>
+
+<h3 id="4-確認">4. 確認</h3>
+
+<p>ユーザが作成されたか確認してみる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cat /etc/passwd
+        :
+===&lt; 途中省略 &gt;===
+        :
+foo:x:1001:1002::/home/foo:/bin/bash
+bar:x:1002:1003::/home/bar:/bin/bash
+baz:x:1003:1004::/home/baz:/bin/bash
+</code></pre></div></div>
+
+<p>パスワードが登録暗号化されているか確認してみる。（以下の暗号は架空）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo cat /etc/shadow
+        :
+===&lt; 途中省略 &gt;===
+        :
+foo:$6$Mp.vm7n3$Q1fpBDt.3KRtR2n2BujOLScDA3ZI8ubeNU8FA1DdYDvZKOryQPYGYtIDwufwF85OrhiHnsyDpys0KJ2y/W534/:16361:0:99999:7:::
+bar:$6$B.Jyyj3J$EfTjMikFXUJrWvPEV7Z1HGySBl.KFofhqXyGK46wBGJgpUuyy.1snhPGgNUz97dewVV50XfKv92tB/JeyzyZS1:16361:0:99999:7:::
+baz:$6$qv9zbLuG$usgfPu.fUgCDFjG3mYYdN.mXYjRXfCwdG0PSBthVa9q5kKVBavf0kJNq/vrmoPLRJSow1P.GdIhm3M4qCInnT.:16361:0:99999:7:::
+</code></pre></div></div>
+
+<p>暗号化されたパスワードの先頭が <code class="language-plaintext highlighter-rouge">$6$</code>(SHA-512) であることを確認する。</p>
+
+<p>ちなみに、 <code class="language-plaintext highlighter-rouge">:</code> 区切りで以下のように設定されている。（<code class="language-plaintext highlighter-rouge">man shadow</code> 等参照）</p>
+
+<ol>
+  <li>ユーザ（ログイン）名</li>
+  <li>暗号化されたパスワード<br>
+  1, 3 カラム目の <code class="language-plaintext highlighter-rouge">$</code> で囲まれた数字が<br>
+  <code class="language-plaintext highlighter-rouge">1</code> なら、MD5<br>
+  <code class="language-plaintext highlighter-rouge">2a</code> なら、Blowfish （本流の glibc には入っていない。いくつかの Linux ディストリビューションで追加されている）<br>
+  <code class="language-plaintext highlighter-rouge">5</code> なら、SHA-256 （glibc 2.7 以降）<br>
+  <code class="language-plaintext highlighter-rouge">6</code> なら、SHA-512 （glibc 2.7 以降）</li>
+  <li>1970-01-01 から最後にパスワードが変更された日までの日数</li>
+  <li>パスワードが変更可能となるまでの日数</li>
+  <li>パスワードを変更しなくてはならなくなる日までの日数</li>
+  <li>パスワード有効期限が来る前に、ユーザが警告を受ける日数</li>
+  <li>パスワード有効期限が過ぎてからアカウントが使用不能になるまでの日数</li>
+  <li>1970-01-01からアカウントが使用不能になる日までの日数</li>
+  <li>予約フィールド</li>
+</ol>
+
+<p>さらに、 “/home” ディレクトリ配下にユーザディレクトリが作成されて、 “/etc/skel” ディレクトリ配下がコピーされ、適切なパーミッション設定になっているか確認する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ls -l /home/
+drwx------   5 foo       foo         42 10月 19 03:54 foo
+drwx------   5 bar       bar         42 10月 19 03:54 bar
+drwx------   5 baz       baz         42 10月 19 03:54 baz
+
+$ ls -l /home/foo/
+合計 0
+drwx------ 5 foo foo 36 10月 19 03:54 Maildir
+drwxr-xr-x 2 foo foo 22 10月 19 03:54 etc
+drwxr-xr-x 2 foo foo  6 10月 19 03:54 samba
+</code></pre></div></div>
+
+<h3 id="5-パスワード一括変更">5. パスワード一括変更</h3>
+
+<p>ユーザの一括作成同様、パスワードも一括変更が可能。</p>
+
+<p>以下のような、ユーザ名と変更後パスワードを <code class="language-plaintext highlighter-rouge">:</code> でつなげたテキストファイルを作成し、</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">chpasswd.txt</code></p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"><table class="rouge-table"><tbody><tr>
+<td class="gutter gl"><pre class="lineno">1
+2
+</pre></td>
+<td class="code"><pre>hoge:hogehoge1234
+fuga:fugafuga2345
+</pre></td>
+</tr></tbody></table></code></pre></figure>
+
+<p>以下のように実行すれば良い。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># chpasswd &lt; chpasswd.txt
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>但し、古いバージョンのディストリビューションではパスワード暗号化方式の違いにより、パスワードの先頭から８文字しか認識しない場合もあるので注意。<br>
+パスワード暗号化方式を変更する等対処すること。</strong></p>
+</blockquote>
+
+<h3 id="6-パスワード暗号化方式を変更する場合">6. パスワード暗号化方式を変更する場合</h3>
+
+<p>（通常、パスワード暗号化方式を変更する機会はないと思われる。以下は、変更せざるを得なくなった場合のみ）</p>
+
+<p>少し前までは “/etc/login.defs” の <code class="language-plaintext highlighter-rouge">ENCRYPT_METHOD</code> の値を <code class="language-plaintext highlighter-rouge">SHA512</code>, <code class="language-plaintext highlighter-rouge">SHA256</code>, <code class="language-plaintext highlighter-rouge">MD5</code> 等に変更することでパスワード暗号化方式が変更できていた。<br>
+（更に前は、暗号化方式を MD5 にしたい場合は <code class="language-plaintext highlighter-rouge">MD5_CRYPT_ENAB yes</code> とするなどしていた）</p>
+
+<p>しかし、現在は “/etc/login.defs” の設定は PAM に取って代わっているため、 “/etc/login.defs” を編集しても期待する結果にはならない。</p>
+
+<p>Linux Mint の場合は、 “/etc/pam.d/passwd”, “/etc/pam.d/chpasswd” が include している “/etc/pam.d/common-password” を以下のように編集して暗号化方式を変更することができる。（以下は SHA-256 に変更する例）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/pam.d/common-password</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr>
+<td class="gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="code"><pre>password»-[success<span class="o">=</span>1 <span class="nv">default</span><span class="o">=</span>ignore]»-pam_unix.so obscure sha256
+</pre></td>
+</tr></tbody></table></code></pre></figure>
+
+<p>CentOS の場合は、以下のようにすることで暗号化方式を変更することができる。（但し、 SELinux が有効であること）（以下は SHA-256 に変更する例）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/pam.d/system-auth-ac</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr>
+<td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td>
+<td class="code"><pre><span class="c"># authconfig --test | grep hashing       # &lt;= 現在の暗号化方式確認</span>
+ password hashing algorithm is sha512
+
+<span class="c"># authconfig --passalgo=sha256 --update  # &lt;= 暗号化方式を SHA-256 に変更</span>
+getsebool:  SELinux is disabled          <span class="c"># &lt;= SELinux の状態を出力しているだけなので問題なし</span>
+
+<span class="c"># authconfig --test | grep hashing       # &lt;= 現在の暗号化方式確認</span>
+ password hashing algorithm is sha256
+</pre></td>
+</tr></tbody></table></code></pre></figure>
+
+<h3 id="参考サイト">参考サイト</h3>
+
+<ul>
+  <li><a href="http://linuxjm.sourceforge.jp/html/LDP_man-pages/man3/crypt.3.html" title="Man page of CRYPT">Man page of CRYPT</a></li>
+  <li><a href="http://linuxjm.sourceforge.jp/html/shadow/man5/login.defs.5.html" title="Man page of LOGIN.DEFS">Man page of LOGIN.DEFS</a></li>
+</ul>
+
+<hr>
+
+<p>当方の場合、自宅サーバでユーザを追加する機会が多いので記録しておいた次第です。（主にメールアカウント追加）</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-11-09T00:20:00+09:00">2014-11-09 00:20</time></p>
+        
+        <br>
+      </footer>
+      <div id="google-ad-3"></div>
+      <br>
+      <br>
+      <br>
+      <br>
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&amp;text=Linux+-+%E5%A4%A7%E9%87%8F%E3%83%A6%E3%83%BC%E3%82%B6%E3%81%AE%E4%B8%80%E6%8B%AC%E4%BD%9C%E6%88%90%E3%80%81%E3%83%91%E3%82%B9%E3%83%AF%E3%83%BC%E3%83%89%E4%B8%80%E6%8B%AC%E5%A4%89%E6%9B%B4%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2014%2F11%2F09%2Flinux-adding-many-users%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2014%2F11%2F09%2Flinux-adding-many-users%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fkomasaru.github.io%2F2014%2F11%2F09%2Flinux-adding-many-users%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+         
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+       
+      
+  <nav class="pagination">
+    
+      <a href="/2014/11/07/gcc-acceleration-of-build/" class="pagination--pager" title="GCC - ccache でビルド高速化！
+">Previous</a>
+    
+    
+      <a href="/2014/11/11/bash-check-html-difference/" class="pagination--pager" title="Bash - Web サイト(HTML)差異チェックスクリプト！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+         <small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+         <small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+         <small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+         <small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap">
+<form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term...">
+    </form>
+    <div id="results" class="results">
+        <searchresults-only></searchresults-only>    
+    </div>
+</div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br>
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br>
+  <strong>Page View</strong><br>
+   合計 <tt id="pv-total">Loading...</tt><br>
+   今日 <tt id="pv-today">Loading...</tt><br>
+   昨日 <tt id="pv-yesterday">Loading...</tt><br>
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">© 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2014/11/09/linux-adding-many-users/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2014/11/09/linux-adding-many-users"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+
+
+  
+
+
+
+  </body>
+</html>

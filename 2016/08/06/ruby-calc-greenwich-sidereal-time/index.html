@@ -1,0 +1,1120 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby - グリニッジ恒星時の計算（IAU2006 理論）！ - mk-mode BLOG</title>
+<meta name="description" content="グリニッジ視恒星時(GAST; Greenwich Apparent Sidereal Time)、グリニッジ平均恒星時(GMST; Greenwich Mean Sidereal Time)、分点均差(EE; Equation of Equinoxes)の計算を Ruby で実装してみました。（使用するのは IAU2006 理論 etc.）  【2016-09-06 追記】以下で紹介の Ruby スクリプトを gem ライブラリにしました。mk_greenwich - RubyGems.org もご参照ください。【追記ここまで】">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby - グリニッジ恒星時の計算（IAU2006 理論）！">
+<meta property="og:url" content="https://komasaru.github.io/2016/08/06/ruby-calc-greenwich-sidereal-time/">
+
+
+  <meta property="og:description" content="グリニッジ視恒星時(GAST; Greenwich Apparent Sidereal Time)、グリニッジ平均恒星時(GMST; Greenwich Mean Sidereal Time)、分点均差(EE; Equation of Equinoxes)の計算を Ruby で実装してみました。（使用するのは IAU2006 理論 etc.）  【2016-09-06 追記】以下で紹介の Ruby スクリプトを gem ライブラリにしました。mk_greenwich - RubyGems.org もご参照ください。【追記ここまで】">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby - グリニッジ恒星時の計算（IAU2006 理論）！">
+  <meta name="twitter:description" content="グリニッジ視恒星時(GAST; Greenwich Apparent Sidereal Time)、グリニッジ平均恒星時(GMST; Greenwich Mean Sidereal Time)、分点均差(EE; Equation of Equinoxes)の計算を Ruby で実装してみました。（使用するのは IAU2006 理論 etc.）  【2016-09-06 追記】以下で紹介の Ruby スクリプトを gem ライブラリにしました。mk_greenwich - RubyGems.org もご参照ください。【追記ここまで】">
+  <meta name="twitter:url" content="https://komasaru.github.io/2016/08/06/ruby-calc-greenwich-sidereal-time/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2016-08-06T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2016/08/06/ruby-calc-greenwich-sidereal-time/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby - グリニッジ恒星時の計算（IAU2006 理論）！">
+    <meta itemprop="description" content="グリニッジ視恒星時(GAST; Greenwich Apparent Sidereal Time)、グリニッジ平均恒星時(GMST; Greenwich Mean Sidereal Time)、分点均差(EE; Equation of Equinoxes)の計算を Ruby で実装してみました。（使用するのは IAU2006 理論 etc.）  【2016-09-06 追記】以下で紹介の Ruby スクリプトを gem ライブラリにしました。mk_greenwich - RubyGems.org もご参照ください。【追記ここまで】">
+    <meta itemprop="datePublished" content="August 06, 2016">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby - グリニッジ恒星時の計算（IAU2006 理論）！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-08-06T00:20:00+09:00">2016-08-06 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>グリニッジ視恒星時(GAST; Greenwich Apparent Sidereal Time)、グリニッジ平均恒星時(GMST; Greenwich Mean Sidereal Time)、分点均差(EE; Equation of Equinoxes
+)の計算を Ruby で実装してみました。（使用するのは IAU2006 理論 etc.）</p>
+
+<blockquote>
+  <p>【2016-09-06 追記】<br />
+以下で紹介の Ruby スクリプトを gem ライブラリにしました。<br />
+<a href="https://rubygems.org/gems/mk_greenwich" title="mk_greenwich - RubyGems.org">mk_greenwich - RubyGems.org</a> もご参照ください。<br />
+【追記ここまで】</p>
+</blockquote>
+
+<!--more-->
+
+<h3 id="0-前提条件事前知識">0. 前提条件、事前知識</h3>
+
+<ul>
+  <li>グリニッジ時刻の計算には、 IAU SOFA(International Astronomical Union, Standards of Fundamental Astronomy) の提供する C ソースコードに実装されている数々のアルゴリズムを使用する。</li>
+  <li>IAU SOFA のソースコードには、 MHB2000(Mathews-Herring-Buffett, 2000) の理論や IERS2003(International Earth Rotation &amp; Reference Systems service, 2003) の理論の使用が混在していることに留意。</li>
+  <li>ここでは「グリニッジ時刻」そのものが何かについては詳細には説明しない。</li>
+  <li>また、算出アルゴリズムについてもここでは詳細には説明しない。（と言うより、煩雑で自分には説明できない）<br />
+参考サイトやソーススクリプトを参照のこと。</li>
+  <li>グリニッジ時刻の計算に使用する章動の計算は、過去記事「<a href="/2016/06/22/ruby-calc-nutation-by-iau2000a/" title="Ruby - 章動の計算（IAU2000A 理論）！">Ruby - 章動の計算（IAU2000A 理論）！</a>」もご参照ください。（但し、IAU2000A 理論を若干補正した IAU2006 理論としている）</li>
+</ul>
+
+<h3 id="1-ruby-スクリプトの作成">1. Ruby スクリプトの作成</h3>
+
+<ul>
+  <li>以下はメインのスクリプト。</li>
+  <li>ライブラリも多数作成しているが、紙面の都合上割愛する。
+GitHub リポジトリとして公開しているので、「<a href="https://github.com/komasaru/greenwich_time" title="komasaru/greenwich_time: Greenwich Time calculator.">komasaru/greenwich_time: Greenwich Time calculator.</a>」をご参照ください。</li>
+  <li>あらゆるメソッドは IAU SOFA の提供する C ソースコードに実装されているアルゴリズムに則って作成している。</li>
+  <li>当スクリプトでは計算の途中経過も出力するようにしている。</li>
+  <li>元々、スニペット的に作り始めたスクリプトなので、 RSpec 等のテストは実装しておりません。<br />
+（今後別途 RubyGems ライブラリ化する予定（あらゆる準備が整ったら））</li>
+</ul>
+
+<p>File: <code class="language-plaintext highlighter-rouge">calc_greenwich_time_old.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+</pre></td><td class="code"><pre><span class="c1">#! /usr/local/bin/ruby</span>
+<span class="c1"># coding: utf-8</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1">#= グリニジ視恒星時 GAST(= Greenwich Apparent Sidereal Time)等の計算</span>
+<span class="c1">#  : IAU2006 による計算</span>
+<span class="c1">#</span>
+<span class="c1">#  * IAU SOFA(International Astronomical Union, Standards of Fundamental Astronomy)</span>
+<span class="c1">#    の提供する C ソースコード "gst06.c" 等で実装されているアルゴリズムを使用する。</span>
+<span class="c1">#  * 参考サイト</span>
+<span class="c1">#    - [SOFA Library Issue 2016-05-03 for ANSI C: Complete List](http://www.iausofa.org/2016_0503_C/CompleteList.html)</span>
+<span class="c1">#    - [USNO Circular 179](http://aa.usno.navy.mil/publications/docs/Circular_179.php)</span>
+<span class="c1">#    - [IERS Conventions Center](http://62.161.69.131/iers/conv2003/conv2003_c5.html)</span>
+<span class="c1">#</span>
+<span class="c1"># Date          Author          Version</span>
+<span class="c1"># 2016.06.21    mk-mode.com     1.00 新規作成</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright(C) 2016 mk-mode.com All Rights Reserved.</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1"># 引数 : 日時(TT（地球時）)</span>
+<span class="c1">#          書式：YYYYMMDD or YYYYMMDDHHMMSS</span>
+<span class="c1">#          無指定なら現在(システム日時)を地球時とみなす。</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1">#++</span>
+<span class="vg">$:</span> <span class="o">&lt;&lt;</span> <span class="no">File</span><span class="p">.</span><span class="nf">dirname</span><span class="p">(</span><span class="kp">__FILE__</span><span class="p">)</span>
+<span class="nb">require</span> <span class="s1">'date'</span>
+<span class="nb">require</span> <span class="s1">'lib/greenwich'</span>
+<span class="kp">include</span> <span class="no">Greenwich</span>
+
+<span class="k">class</span> <span class="nc">CalcGreenwichTime</span>
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="vi">@tt</span> <span class="o">=</span> <span class="n">get_arg</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">calc</span>
+    <span class="k">begin</span>
+      <span class="c1"># Time calculation</span>
+      <span class="n">jd</span>     <span class="o">=</span> <span class="n">calc_jd</span><span class="p">(</span><span class="vi">@tt</span><span class="p">)</span>
+      <span class="n">jc</span>     <span class="o">=</span> <span class="n">calc_jc</span><span class="p">(</span><span class="n">jd</span><span class="p">)</span>
+      <span class="n">dt</span>     <span class="o">=</span> <span class="n">calc_dt</span><span class="p">(</span><span class="vi">@tt</span><span class="p">)</span>
+      <span class="n">ut1</span>    <span class="o">=</span> <span class="n">tt2ut1</span><span class="p">(</span><span class="vi">@tt</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+      <span class="n">jd_ut1</span> <span class="o">=</span> <span class="n">calc_jd</span><span class="p">(</span><span class="n">ut1</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="vi">@tt</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"     TT = %Y-%m-%d %H:%M:%S.%L"</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="n">ut1</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"    UT1 = %Y-%m-%d %H:%M:%S.%L"</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="s2">" JD(TT) = </span><span class="si">#{</span><span class="n">jd</span><span class="si">}</span><span class="s2">"</span>
+      <span class="nb">puts</span> <span class="s2">"JD(UT1) = </span><span class="si">#{</span><span class="n">jd_ut1</span><span class="si">}</span><span class="s2">"</span>
+      <span class="nb">puts</span> <span class="s2">"     JC = </span><span class="si">#{</span><span class="n">jc</span><span class="si">}</span><span class="s2">"</span>
+      <span class="nb">puts</span> <span class="s2">"     DT = </span><span class="si">#{</span><span class="n">dt</span><span class="si">}</span><span class="s2">"</span>
+
+      <span class="c1"># Fukushima-Williams angles for frame bias and precession.</span>
+      <span class="c1">#   Ref: iauPfw06(date1, date2, &amp;gamb, &amp;phib, &amp;psib, &amp;epsa)</span>
+      <span class="n">prec</span> <span class="o">=</span> <span class="no">Precession</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">jc</span><span class="p">)</span>
+      <span class="n">gam_b</span><span class="p">,</span> <span class="n">phi_b</span><span class="p">,</span> <span class="n">psi_b</span> <span class="o">=</span> <span class="n">prec</span><span class="p">.</span><span class="nf">calc_pfw_06</span>
+      <span class="n">eps_a</span>               <span class="o">=</span> <span class="n">prec</span><span class="p">.</span><span class="nf">calc_obl_06</span>
+      <span class="nb">puts</span> <span class="s2">" GAMMA_ = </span><span class="si">#{</span><span class="n">gam_b</span><span class="si">}</span><span class="s2">"</span>
+      <span class="nb">puts</span> <span class="s2">"   PHI_ = </span><span class="si">#{</span><span class="n">phi_b</span><span class="si">}</span><span class="s2">"</span>
+      <span class="nb">puts</span> <span class="s2">"   PSI_ = </span><span class="si">#{</span><span class="n">psi_b</span><span class="si">}</span><span class="s2">"</span>
+      <span class="nb">puts</span> <span class="s2">"  EPS_A = </span><span class="si">#{</span><span class="n">eps_a</span><span class="si">}</span><span class="s2">"</span>
+
+      <span class="c1"># Nutation components.</span>
+      <span class="c1">#   Ref: iauNut06a(date1, date2, &amp;dp, &amp;de)</span>
+      <span class="n">d_psi</span><span class="p">,</span> <span class="n">d_eps</span> <span class="o">=</span> <span class="no">Nutation</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">jc</span><span class="p">).</span><span class="nf">calc_nut_06_a</span>
+      <span class="nb">puts</span> <span class="s2">"  D_PSI = </span><span class="si">#{</span><span class="n">d_psi</span><span class="si">}</span><span class="s2">"</span>
+      <span class="nb">puts</span> <span class="s2">"  D_EPS = </span><span class="si">#{</span><span class="n">d_eps</span><span class="si">}</span><span class="s2">"</span>
+
+      <span class="c1"># Equinox based nutation x precession x bias matrix.</span>
+      <span class="c1">#   Ref: iauFw2m(gamb, phib, psib + dp, epsa + de, rnpb)</span>
+      <span class="n">r_mtx</span> <span class="o">=</span> <span class="no">RotationFw</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">fw2m</span><span class="p">(</span><span class="n">gam_b</span><span class="p">,</span> <span class="n">phi_b</span><span class="p">,</span> <span class="n">psi_b</span> <span class="o">+</span> <span class="n">d_psi</span><span class="p">,</span> <span class="n">eps_a</span> <span class="o">+</span> <span class="n">d_eps</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="s2">"  r_mtx = </span><span class="si">#{</span><span class="n">r_mtx</span><span class="si">}</span><span class="s2">"</span>
+
+      <span class="c1"># Extract CIP coordinates.</span>
+      <span class="c1">#   Ref: iauBpn2xy(rnpb, &amp;x, &amp;y)</span>
+      <span class="n">cc</span> <span class="o">=</span> <span class="no">CipCio</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">jc</span><span class="p">)</span>
+      <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">cc</span><span class="p">.</span><span class="nf">bpn2xy</span><span class="p">(</span><span class="n">r_mtx</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="s2">"      x = </span><span class="si">#{</span><span class="n">x</span><span class="si">}</span><span class="s2">"</span>
+      <span class="nb">puts</span> <span class="s2">"      y = </span><span class="si">#{</span><span class="n">y</span><span class="si">}</span><span class="s2">"</span>
+
+      <span class="c1"># The CIO locator, s.</span>
+      <span class="c1">#   Ref: iauS06(tta, ttb, x, y)</span>
+      <span class="n">s</span> <span class="o">=</span> <span class="n">cc</span><span class="p">.</span><span class="nf">calc_s_06</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="s2">"      s = </span><span class="si">#{</span><span class="n">s</span><span class="si">}</span><span class="s2">"</span>
+
+      <span class="c1"># Greenwich time</span>
+      <span class="n">gt</span> <span class="o">=</span> <span class="no">GreenwichTime</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">jd_ut1</span><span class="p">)</span>
+
+      <span class="c1"># Greenwich apparent sidereal time.</span>
+      <span class="c1">#   Ref: iauEra00(uta, utb), iauEors(rnpb, s)</span>
+      <span class="n">era</span> <span class="o">=</span> <span class="n">gt</span><span class="p">.</span><span class="nf">calc_era_00</span>
+      <span class="nb">puts</span> <span class="s2">"    ERA = </span><span class="si">#{</span><span class="n">era</span><span class="si">}</span><span class="s2"> rad"</span>
+      <span class="n">eo</span> <span class="o">=</span> <span class="n">gt</span><span class="p">.</span><span class="nf">calc_eors</span><span class="p">(</span><span class="n">r_mtx</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="s2">"     EO = </span><span class="si">#{</span><span class="n">eo</span><span class="si">}</span><span class="s2"> rad"</span>
+      <span class="n">gast</span> <span class="o">=</span> <span class="n">gt</span><span class="p">.</span><span class="nf">calc_gast</span><span class="p">(</span><span class="n">era</span><span class="p">,</span> <span class="n">eo</span><span class="p">)</span>
+      <span class="n">gast_deg</span> <span class="o">=</span> <span class="n">gast</span> <span class="o">/</span> <span class="no">PI_180</span>
+      <span class="nb">puts</span> <span class="s2">"   GAST = </span><span class="si">#{</span><span class="n">gast</span><span class="si">}</span><span class="s2"> rad"</span>
+      <span class="nb">puts</span> <span class="s2">"        = </span><span class="si">#{</span><span class="n">gast_deg</span><span class="si">}</span><span class="s2"> °"</span>
+      <span class="nb">puts</span> <span class="s2">"        = </span><span class="si">#{</span><span class="n">deg2hms</span><span class="p">(</span><span class="n">gast_deg</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+
+      <span class="c1"># Greenwich mean sidereal time, IAU 2006.</span>
+      <span class="c1">#   Ref: iauGmst06(uta, utb, tta, ttb)</span>
+      <span class="n">gmst</span> <span class="o">=</span> <span class="n">gt</span><span class="p">.</span><span class="nf">calc_gmst</span><span class="p">(</span><span class="n">era</span><span class="p">,</span> <span class="n">jc</span><span class="p">)</span>
+      <span class="n">gmst_deg</span> <span class="o">=</span> <span class="n">gmst</span> <span class="o">/</span> <span class="no">PI_180</span>
+      <span class="nb">puts</span> <span class="s2">"   GMST = </span><span class="si">#{</span><span class="n">gmst</span><span class="si">}</span><span class="s2"> rad"</span>
+      <span class="nb">puts</span> <span class="s2">"        = </span><span class="si">#{</span><span class="n">gmst_deg</span><span class="si">}</span><span class="s2"> °"</span>
+      <span class="nb">puts</span> <span class="s2">"        = </span><span class="si">#{</span><span class="n">deg2hms</span><span class="p">(</span><span class="n">gmst_deg</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+
+      <span class="c1"># Equation of Equinoxes</span>
+      <span class="n">ee</span> <span class="o">=</span> <span class="n">gt</span><span class="p">.</span><span class="nf">calc_ee</span><span class="p">(</span><span class="n">gast</span><span class="p">,</span> <span class="n">gmst</span><span class="p">)</span>
+      <span class="n">ee_deg</span> <span class="o">=</span> <span class="n">ee</span> <span class="o">/</span> <span class="no">PI_180</span>
+      <span class="nb">puts</span> <span class="s2">"     EE = </span><span class="si">#{</span><span class="n">ee</span><span class="si">}</span><span class="s2"> rad"</span>
+      <span class="nb">puts</span> <span class="s2">"        = </span><span class="si">#{</span><span class="n">ee_deg</span><span class="si">}</span><span class="s2"> °"</span>
+      <span class="nb">puts</span> <span class="s2">"        = </span><span class="si">#{</span><span class="n">deg2hms</span><span class="p">(</span><span class="n">ee_deg</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+      <span class="n">msg</span> <span class="o">=</span> <span class="s2">"[</span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="n">e</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+      <span class="n">msg</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="nf">backtrace</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">tr</span><span class="o">|</span> <span class="s2">"</span><span class="se">\t</span><span class="si">#{</span><span class="n">tr</span><span class="si">}</span><span class="s2">"</span><span class="p">}.</span><span class="nf">join</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+      <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="n">msg</span>
+      <span class="nb">exit</span> <span class="mi">1</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="c1"># コマンドライン引数の取得</span>
+  <span class="k">def</span> <span class="nf">get_arg</span>
+    <span class="k">unless</span> <span class="n">arg</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">.</span><span class="nf">shift</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">now</span>
+      <span class="k">return</span> <span class="no">Time</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="nf">year</span><span class="p">,</span> <span class="n">t</span><span class="p">.</span><span class="nf">month</span><span class="p">,</span> <span class="n">t</span><span class="p">.</span><span class="nf">day</span><span class="p">,</span> <span class="n">t</span><span class="p">.</span><span class="nf">hour</span><span class="p">,</span> <span class="n">t</span><span class="p">.</span><span class="nf">min</span><span class="p">,</span> <span class="n">t</span><span class="p">.</span><span class="nf">sec</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="nb">exit</span> <span class="mi">0</span> <span class="k">unless</span> <span class="n">arg</span> <span class="o">=~</span> <span class="sr">/^\d{8}$|^\d{14}$/</span>
+    <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span> <span class="o">=</span> <span class="n">arg</span><span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">].</span><span class="nf">to_i</span><span class="p">,</span> <span class="n">arg</span><span class="p">[</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span><span class="p">,</span> <span class="n">arg</span><span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="nb">exit</span> <span class="mi">0</span> <span class="k">unless</span> <span class="no">Date</span><span class="p">.</span><span class="nf">valid_date?</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">)</span>
+    <span class="n">hour</span><span class="p">,</span> <span class="n">min</span><span class="p">,</span>   <span class="n">sec</span> <span class="o">=</span> <span class="n">arg</span><span class="p">[</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span><span class="p">,</span> <span class="n">arg</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span><span class="p">,</span> <span class="n">arg</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="nb">exit</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">hour</span> <span class="o">&gt;</span> <span class="mi">23</span> <span class="o">||</span> <span class="n">min</span> <span class="o">&gt;</span> <span class="mi">59</span> <span class="o">||</span> <span class="n">sec</span> <span class="o">&gt;</span> <span class="mi">59</span>
+    <span class="k">return</span> <span class="no">Time</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">min</span><span class="p">,</span> <span class="n">sec</span><span class="p">)</span>
+  <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="k">raise</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="nb">exit</span> <span class="mi">0</span> <span class="k">unless</span> <span class="kp">__FILE__</span> <span class="o">==</span> <span class="vg">$0</span>
+<span class="n">g</span> <span class="o">=</span> <span class="no">CalcGreenwichTime</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">calc</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>※上記のスクリプトのファイル名を <code class="language-plaintext highlighter-rouge">calc_greenwich_time_old.rb</code> としているのは、後に作成した RubyGem ライブラリを使用したスクリプトを <code class="language-plaintext highlighter-rouge">calc_greenwich_time.rb</code> としたため。</p>
+
+<ul>
+  <li><a href="https://github.com/komasaru/greenwich_time" title="komasaru/greenwich_time: Greenwich Time calculator.">komasaru/greenwich_time: Greenwich Time calculator.</a></li>
+</ul>
+
+<h3 id="2-ruby-スクリプトの実行">2. Ruby スクリプトの実行</h3>
+
+<p><code class="language-plaintext highlighter-rouge">YYYYMMDD</code> or <code class="language-plaintext highlighter-rouge">YYYYMMDDHHMMSS</code> で地球時(TT) を指定して実行する。（引数なしでシステム時刻を地球時とみなす）</p>
+
+<p>以下は、地球時 TT 2016-06-23 00:01:08 のグリニッジ恒星時を計算する例。（= 世界時 UT1 2016-06-22 23:59:59.816）<br />
+（検証に使用する国立天文台のツールでは「世界時」で計算するようになっているため、当スクリプトでは地球時で指定する場合は +ΔT 秒する必要がある。（但し、1秒未満には対応していない））</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./calc_greenwich_time.rb 20160623000108
+     TT = 2016-06-23 00:01:08.000
+    UT1 = 2016-06-22 23:59:59.816
+ JD(TT) = 2457562.500787037
+JD(UT1) = 2457562.499988426
+     JC = 0.16475019266357177
+     DT = 68.184
+ GAMMA_ = 8.240003730537752e-06
+   PHI_ = 0.40905525096761974
+   PSI_ = 0.004024396279809388
+  EPS_A = 0.4090551906183934
+  D_PSI = -1.8968440409561198e-05
+  D_EPS = -4.671382897902791e-05
+  r_mtx = [[0.999992008532357, -0.00366671825908081, -0.0015931254284802185], [0.0036667927617467307, 0.9999932763315477, 4.3846772416533675e-05], [0.001592953943072013, -4.968808280619852e-05, 0.9999987300136084]]
+      x = 0.001592953943072013
+      y = -4.968808280619852e-05
+      s = 3.8623193718563546e-08
+    ERA = 4.736446317633735 rad
+     EO = -0.0036667274322983215 rad
+   GAST = 4.740113045066034 rad
+        = 271.5884718971887 °
+        = 18 h 06 m 21.233 s
+   GMST = 4.740130445665826 rad
+        = 271.58946887811777 °
+        = 18 h 06 m 21.473 s
+     EE = -1.740059979216113e-05 rad
+        = -0.0009969809290870503 °
+        = - 0 h 00 m 00.239 s
+</code></pre></div></div>
+
+<h3 id="3-計算結果の検証">3. 計算結果の検証</h3>
+
+<p>国立天文台・暦象年表のツールで計算した値と比較してみた。</p>
+
+<p>グリニッジ視恒星時・平均恒星時は時角で約1秒(1/100°未満)の誤差に、分点均差は時角で1/1000秒未満の誤差に収まることが確認できた。</p>
+
+<ul>
+  <li><a href="http://eco.mtk.nao.ac.jp/cgi-bin/koyomi/cande/gst.cgi" title="グリニジ恒星時">グリニジ恒星時</a></li>
+</ul>
+
+<h3 id="4-参考サイト">4. 参考サイト</h3>
+
+<ul>
+  <li><a href="http://www.iausofa.org/2016_0503_C/CompleteList.html" title="SOFA Library Issue 2016-05-03 for ANSI C: Complete List">SOFA Library Issue 2016-05-03 for ANSI C: Complete List</a></li>
+</ul>
+
+<hr />
+
+<p>今回のグリニッジ視恒星時の計算も、天体位置やこよみを正確に計算する際に必要になってきます。</p>
+
+<p>当方、今後挑戦してみようと考えております。（可能ならば）</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">カレンダー</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%9A%A6-%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC" class="page__taxonomy-item" rel="tag">暦・カレンダー</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-08-06T00:20:00+09:00">2016-08-06 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+-+%E3%82%B0%E3%83%AA%E3%83%8B%E3%83%83%E3%82%B8%E6%81%92%E6%98%9F%E6%99%82%E3%81%AE%E8%A8%88%E7%AE%97%EF%BC%88IAU2006+%E7%90%86%E8%AB%96%EF%BC%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2016%2F08%2F06%2Fruby-calc-greenwich-sidereal-time%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2016%2F08%2F06%2Fruby-calc-greenwich-sidereal-time%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2016%2F08%2F06%2Fruby-calc-greenwich-sidereal-time%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2016/08/02/ruby-ephemeris-calculation-by-my-gem/" class="pagination--pager" title="Ruby - JPL 天文暦 gem の作成！
+">Previous</a>
+    
+    
+      <a href="/2016/08/10/about-transformation-from-icrs/" class="pagination--pager" title="ICRS からの座標変換について！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2016/08/06/ruby-calc-greenwich-sidereal-time/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2016/08/06/ruby-calc-greenwich-sidereal-time"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,1034 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Apache - mk-mode BLOG</title>
+<meta name="description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+
+
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Apache">
+<meta property="og:url" content="https://komasaru.github.io/tags/apache/">
+
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Apache">
+  <meta name="twitter:description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+  <meta name="twitter:url" content="https://komasaru.github.io/tags/apache/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/tags/apache/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--archive-taxonomy wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      <div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <div class="archive">
+    <h1 class="page__title">Apache</h1>
+    <div id="google-ad-1"></div>
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/10/debian-7-apache2-ssl/" rel="permalink">Debian 7 Wheezy - Apache2 の SSL 化！
+</a>
+        &nbsp;<small>(2013-11-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバ上の Web サーバ Apache2 を SSL 化する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/08/debian-7-install-apache2/" rel="permalink">Debian 7 Wheezy - Web サーバ Apache2 インストール！
+</a>
+        &nbsp;<small>(2013-11-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバに Web サーバ Apache2 を構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/11/06/06002017/" rel="permalink">Linux Mint - Apache2 で mod_rewrite を有効化！
+</a>
+        &nbsp;<small>(2012-11-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux Mint 13 Maya(64bit) へインストールした Apache2 で URL のリダイレクトや置換えなど行えるモジュール mod_rewrite を有効化する方法についてのメモです。
+
+RedHat 系では Apache の設定ファイルでコメント化されている “mod_rewrite.so”...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/29/29002017/" rel="permalink">Linux - Apache 2.2.22 を yum でインストール！
+</a>
+        &nbsp;<small>(2012-04-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">現在の Scientific Linux 6.2 や CentOS 6.2 ではリポジトリの関係上、yum でインストールできる Apache は 2.2.15 です。（RPMForge, EPEL, REMI リポジトリも同様）
+しかし、2.2.20 未満のバージョンでは脆弱性があるため DoS 攻撃を受け、O...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/04/25/25002026/" rel="permalink">Linux - Apache 2.4.1 をソースからインストール！
+</a>
+        &nbsp;<small>(2012-04-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">現在の Scientific Linux 6.2 や CentOS 6.2 ではリポジトリの関係上、パッケージでインストールできる Apache は 2.2.15 です。（今回は RedHat(RPM) 系 Linux での話です。）
+しかし、2.2.20 未満のバージョンでは脆弱性があるため DoS 攻撃を受け...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/08/08002056/" rel="permalink">Apache2 - DoS 攻撃対策！
+</a>
+        &nbsp;<small>(2012-02-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">少し前に、「Apache2 - 脆弱性対策！」で紹介したとおり、Apache2 脆弱性（DoS攻撃）対策として、Apache 設定ファイルに不正なヘッダーやリクエストそのものを拒否する記述を追加する方法を採っていました。
+※本来は、Apache2 のバージョンを 2.2.20 以上にする事が一番妥当な方法ですが。...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/06/06002057/" rel="permalink">CentOS - SSL サーバ証明書の有効期限通知！
+</a>
+        &nbsp;<small>(2012-02-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Webサーバー間の通信内容を暗号化するため、 Apache に mod_ssl を導入している場合、サーバ証明書に有効期限が設定されているので、更新作業を忘れると有効期限が切れてしまいます。
+
+そのような状況に陥らないためには、SSLサーバ証明書の有効期限まで1ヶ月を切ったら、root宛にメールで通知してくれるツ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/30/30002016/" rel="permalink">Apache2 - 脆弱性対策！
+</a>
+        &nbsp;<small>(2012-01-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">最終的には Apache2 の脆弱性の対策を施していますが、経緯から記録します。
+確認・対策した環境は CentOS 6.2 です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/20/20002012/" rel="permalink">Linux - Apache 再起動で Address already in use！
+</a>
+        &nbsp;<small>(2012-01-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">先日、自宅サーバの Apache2 を再起動しようとしたら、以下のようなエラーが出力されて起動できませんでした。
+
+# /etc/rc.d/init.d/httpd restart
+httpd を停止中:                                            [  OK  ]
+ht...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/14/14003130/" rel="permalink">Cygwin - Ruby on Rails を Apache2 + Passenger で！
+</a>
+        &nbsp;<small>(2012-01-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Cygwin に構築した Ruby on Rails 環境が Rails 標準の WEBrick では動くことを確認しました。
+
+
+  Cygwin - Ruby on Rails で MySQL ソケットエラー！
+
+
+その流れで、Gem パッケージ Mongrel をインストールして動作確認もしました。
+こちら...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/13/13002044/" rel="permalink">Cygwin - Apache2 インストール！
+</a>
+        &nbsp;<small>(2012-01-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は Cygwin に Web サーバ Apache2 環境を構築しました。
+
+以下、作業記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/08/03/03002001/" rel="permalink">ブログ - Ping送信先削除！
+</a>
+        &nbsp;<small>(2011-08-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日も、たまたま自宅サーバのApacheのエラーログを見ていたら、以下のようなエラーが出力されているのを発見。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/07/31/31002036/" rel="permalink">Apache - PhusionPassenger関連のエラー？
+</a>
+        &nbsp;<small>(2011-07-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">最近、自宅サーバ(ScientificLinux6.0)のApacheのエラーログを別の件で検証していたところ、以下のようなメッセージがいくつか出力されてるのを発見しました。
+
+[ pid=15278 thr=3078633296 file=ext/apache2/Hooks.cpp:789 time=2011-...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/01/28/28002023/" rel="permalink">Ｒｕｂｙ １．９．２－ｐ１３６ にアップデート！
+</a>
+        &nbsp;<small>(2011-01-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方のホームページは「ＣｅｎｔＯＳ ＋ Ａｐａｃｈｅ２ ＋ Ｒｕｂｙ１．９．２ｐ０ ＋ Ｒａｉｌｓ ３．０．３」で運用しているのですが、「Ｒｕｂｙ」の修正版が出ているのではないかと思って、「Ｒｕｂｙ」の公式サイトを覗いてみるとやっぱり修正版がリリースされていました。
+
+早速、「 Ruby_1.9.2-p136 」...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/11/20/20002028/" rel="permalink">Ｐａｓｓｅｎｇｅｒを３．０．０にアップデート！
+</a>
+        &nbsp;<small>(2010-11-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「Ｒｕｂｙ ｏｎ Ｒａｉｌｓ」で構築されたＷｅｂアプリケーションを運用するためのＡｐａｃｈｅモジュール「Ｐａｓｓｅｎｇｅｒ」（Ｇｅｍパッケージ）に「２．２．１５」を使用していたが「３．０．０」がリリースされているのでアップデートする。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/11/01/01002012/" rel="permalink">ホームページを３０１リダイレクト！
+</a>
+        &nbsp;<small>(2010-11-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、ＨＴＴＰでのある特定のページへのアクセスを自動的に別のページにリダイレクトする方法です。
+例：
+[ http://www.hogehoge.com/index.php/ ]へアクセスしたら自動で
+[ http://www.hogehoge.com/rails/ ]にリダイレクトする。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/10/29/29002004/" rel="permalink">Ｒｕｂｙ ｏｎ Ｒａｉｌｓ を Ａｐａｃｈｅ２で動かす！
+</a>
+        &nbsp;<small>(2010-10-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は、「ＣｅｎｔＯＳ」サーバに「Ｒｕｂｙ ｏｎ Ｒａｉｌｓ」をインストールしました。
+今回は「Ａｐａｃｈｅ２」で「Ｒｕｂｙ ｏｎ Ｒａｉｌｓ」が動作するように設定しました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/09/28/28002045/" rel="permalink">Apache HTTP でのアクセスを自動的に HTTPS に rewrite する方法！
+</a>
+        &nbsp;<small>(2010-09-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、ＨＴＴＰでのある特定のフォルダへのアクセスを自動的にＨＴＴＰＳにリダイレクトする方法です。
+例：
+[ http://www.hogehoge.com/hogehoge/ ]へアクセスしたら自動で
+[ https://www.hogehoge.com/hogehoge/ ]にリダイレクトする。
+
+通常はあま...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2009/08/05/05002054/" rel="permalink">Ｆｅｄｏｒａ１０Apacheアクセスログ解析！
+</a>
+        &nbsp;<small>(2009-08-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">　　
+今日は、Ｆｅｄｏｒａ１０をインストールマシンにApacheアクセスログ解析の設定をしました。
+
+いつものように、こちら[ Fedoraで自宅サーバー構築 ]さんの[ Apacheアクセスログ解析(AWStats) ]の手順どおりに。
+
+設定方法はホントにこちらのままです。
+
+なので、ここでは説明しません。
+...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2009/08/02/02002022/" rel="permalink">Ｆｅｄｏｒａ１０Ｗｅｂサーバ構築！
+</a>
+        &nbsp;<small>(2009-08-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">　　
+今日は、Ｆｅｄｏｒａ１０をインストールマシンにWebサーバ（Ａｐａｃｈｅ）を構築しました。
+
+いつものように、こちら[ Fedoraで自宅サーバー構築 ]さんの[ Webサーバーを公開する ]の手順どおりに。
+
+設定方法はホントにこちらのままです。
+
+なので、ここでは説明しません。
+（あしからず。。。）
+
+...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2009/07/16/16002030/" rel="permalink">N-BENCHでベンチマーク！
+</a>
+        &nbsp;<small>(2009-07-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">先日は、ニュー自作マシンを「 ファイナルファンタジー 」のベンチマークマークソフトでベンチマークテストを行いました。
+
+今日は、「 Ｎ−ＢＥＮＣＨ 」という３Ｄベンチマークテストのフリーソフトでベンチマークテストを行ってみました。
+
+ソフト自体は「 窓の杜 」からダウンロードしました。
+
+インストールも普通にしま...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2009/03/05/05002048/" rel="permalink">Apacheのﾊﾟﾌｫｰﾏﾝｽﾍﾞﾝﾁﾏｰｸ！
+</a>
+        &nbsp;<small>(2009-03-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">最近、ＷｏｒｄＰｒｅｓｓの動きが非常に重いので、チューニングしようと考えてます。
+（Ａｐａｃｈｅ、ＰＨＰ、ＭｙＳＱＬの最適化等が必要かと）
+
+でもその前に、現状を把握しないと話にならないので、Ａｐａｃｈｅのパフォーマンスを測定できるベンチマークテストツール「 ａｂ（Apache Bench） 」をＦｅｄｏｒａサー...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2009/03/04/04004000/" rel="permalink">サイトの最終更新日を自動で！
+</a>
+        &nbsp;<small>(2009-03-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">　　
+今日は、ホームページの「 最終更新日 」についてです。
+
+いつもホームページを更新した際に、よく更新日を修正するのを忘れるので、自動でファイルのタイムスタンプから更新日時を取得させようと考えました。
+
+いろいろ調べてみると、 ＪａｖａＳｃｒｉｐｔ で簡単にできそうなんでやってみました。
+
+↓↓ こんな感じで...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2009/02/12/12001517/" rel="permalink">WindowsXPでＰＨＰ５！（＋Ａｐａｃｈｅ２）
+</a>
+        &nbsp;<small>(2009-02-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">昨日は、うちのメインマシン（WindowsXP）に AN HTTPD 、 PHP5 をインストールして 
+
+ で編集できるようにしたんだけど、、、
+
+やっぱり Apache2 も入れてみたくなり、早速インストール＆設定しました。
+
+作業記録
+
+１．インストール前の準備
+
+IIS というWebサーバが動いているとA...</p>
+  </article>
+</div>
+
+    
+    <div id="google-ad-3"></div>
+    <div id="google-ad-2"></div>
+  </div>
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+
+  </body>
+</html>

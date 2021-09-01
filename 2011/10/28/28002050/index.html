@@ -1,0 +1,1202 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ruby - 地球上の2点間の距離をほぼ正確に計算！ - mk-mode BLOG</title>
+<meta name="description" content="最近、 Ruby での UNIX MBOX メールヘッダの検証をやってきましたが、今回は気分転換に違った話題です。それは「Rubyを使って地球上の2点間の距離を出来るだけ正確に計算してみよう」というものです。※きっかけは、地元の原子力発電所と自宅の距離を正確に知りたかったから。ご存知のように地球は完全な球体ではありません。赤道方向の半径が極方向の半径より若干大きいです。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Ruby - 地球上の2点間の距離をほぼ正確に計算！">
+<meta property="og:url" content="https://komasaru.github.io/2011/10/28/28002050/">
+
+
+  <meta property="og:description" content="最近、 Ruby での UNIX MBOX メールヘッダの検証をやってきましたが、今回は気分転換に違った話題です。それは「Rubyを使って地球上の2点間の距離を出来るだけ正確に計算してみよう」というものです。※きっかけは、地元の原子力発電所と自宅の距離を正確に知りたかったから。ご存知のように地球は完全な球体ではありません。赤道方向の半径が極方向の半径より若干大きいです。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Ruby - 地球上の2点間の距離をほぼ正確に計算！">
+  <meta name="twitter:description" content="最近、 Ruby での UNIX MBOX メールヘッダの検証をやってきましたが、今回は気分転換に違った話題です。それは「Rubyを使って地球上の2点間の距離を出来るだけ正確に計算してみよう」というものです。※きっかけは、地元の原子力発電所と自宅の距離を正確に知りたかったから。ご存知のように地球は完全な球体ではありません。赤道方向の半径が極方向の半径より若干大きいです。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2011/10/28/28002050/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2011-10-28T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2011/10/28/28002050/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ruby - 地球上の2点間の距離をほぼ正確に計算！">
+    <meta itemprop="description" content="最近、 Ruby での UNIX MBOX メールヘッダの検証をやってきましたが、今回は気分転換に違った話題です。それは「Rubyを使って地球上の2点間の距離を出来るだけ正確に計算してみよう」というものです。※きっかけは、地元の原子力発電所と自宅の距離を正確に知りたかったから。ご存知のように地球は完全な球体ではありません。赤道方向の半径が極方向の半径より若干大きいです。">
+    <meta itemprop="datePublished" content="October 28, 2011">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Ruby - 地球上の2点間の距離をほぼ正確に計算！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-10-28T00:20:00+09:00">2011-10-28 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>最近、 Ruby での UNIX MBOX メールヘッダの検証をやってきましたが、今回は気分転換に違った話題です。</p>
+
+<p>それは「Rubyを使って地球上の2点間の距離を出来るだけ正確に計算してみよう」というものです。
+※きっかけは、地元の原子力発電所と自宅の距離を正確に知りたかったから。</p>
+
+<p>ご存知のように地球は完全な球体ではありません。
+赤道方向の半径が極方向の半径より若干大きいです。</p>
+
+<!--more-->
+
+<p>地球が完全な球体なら、高校数学程度の知識で計算できます。
+ちなみに、球面三角法による算出方法は以下のとおり。</p>
+
+<p><img src="/images/2011/10/DISTANCE_EARTH_11.jpg" alt="DISTANCE_EARTH_1" title="DISTANCE_EARTH_1" /></p>
+
+<p>正確に計算するには、まず正確な赤道半径・極半径が必要になります。
+<a href="http://ja.wikipedia.org/wiki/%E6%B8%AC%E5%9C%B0%E5%AD%A6" title="測地学 - Wikipedia">測地学 - Wikipedia</a>、<a href="http://ja.wikipedia.org/wiki/%E6%B8%AC%E5%9C%B0%E7%B3%BB" title="測地系 - Wikipedia">測地系 - Wikipedia</a> によると以下の3種類の測地系（測量の前提になる考え方）というものが存在し、それぞれに長半径（赤道半径）・短半径（極半径）が設定されています。</p>
+
+<table class="common">
+  <tr>
+    <th>測地系</th>
+    <th align="center">長半径（赤道半径）</th>
+    <th align="center">短半径（極半径）</th>
+  </tr>
+  <tr>
+    <td>Bessel</td>
+    <td align="right">6377397.155 m</td>
+    <td align="right">6356079.000000 m</td>
+  </tr>
+  <tr>
+    <td>GRS 80</td>
+    <td align="right">6378137.000 m</td>
+    <td align="right">6356752.314140 m</td>
+  </tr>
+  <tr>
+    <td>WGS 84</td>
+    <td align="right">6378137.000 m</td>
+    <td align="right">6356752.314245 m</td>
+  </tr>
+</table>
+
+<p>これらの測地系のうち、「GRS 80」と「WGS 84」が歴史も新しく精度も良いようで、中でも「GRS 80」が一番精度が良いようです。
+（と言っても、それぞれの誤差はわずかなものです）</p>
+
+<p>次に、計算方法ですが一番正確な方法は国土地理院のサイトに掲載の方法のような気がします。</p>
+
+<ul>
+  <li><a href="http://vldb.gsi.go.jp/sokuchi/surveycalc/surveycalc/algorithm/bl2st/bl2st.htm" title="距離と方位角の計算 計算式">距離と方位角の計算 計算式</a></li>
+</ul>
+
+<p>しかし、非常に複雑で簡単に実現できそうな気がしません。</p>
+
+<p>そこで、さらに調べてみると「ヒュベニの公式」というものが存在することが判明。</p>
+
+<ul>
+  <li><a href="http://www.kashmir3d.com/kash/manual/std_siki.htm" title="カシミール / 計算式">カシミール / 計算式</a></li>
+</ul>
+
+<p>詳しくはここでは説明しません（できません）が、他のサイト等も参考にしてまとめると以下のような公式になります。</p>
+
+<p><img src="/images/2011/10/DISTANCE_EARTH_21.jpg" alt="DISTANCE_EARTH_2" title="DISTANCE_EARTH_2" /></p>
+
+<p>参考までに、以下にこの公式を利用した距離計算のRubyスクリプトを掲載しておきます。</p>
+
+<h4 id="ruby-スクリプト">Ruby スクリプト</h4>
+
+<p>ご利用の環境によっては微修正が必要かもしれません。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">calc_dist.rb</code></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+</pre></td><td class="code"><pre><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># </span>
+<span class="c1"># ２地点間の距離を計算（２地点の緯度・経度から）</span>
+<span class="c1">#</span>
+<span class="c1"># date          name            version</span>
+<span class="c1"># 2011.10.22    mk-mode.com     1.00 新規作成</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright(C)2011 mk-mode.com All Rights Reserved.</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1"># 引数 : [第１] 測地系 ( 0:BESSEL , 1:GRS80 , 2:WGS84 )</span>
+<span class="c1">#        [第２] 緯度１ (  -90.00000000 ～  90.00000000 )</span>
+<span class="c1">#        [第３] 経度１ ( -180.00000000 ～ 180.00000000 )</span>
+<span class="c1">#        [第４] 緯度２ (  -90.00000000 ～  90.00000000 )</span>
+<span class="c1">#        [第５] 経度２ ( -180.00000000 ～ 180.00000000 )</span>
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="c1"># 備考 : 1:GRS80 が最も正確</span>
+<span class="c1">#        島根原発１号機 ( 35.5382 132.9998 )</span>
+<span class="c1">#        自宅           ( 99.9999 179.9999 )</span>
+<span class="c1">#      : 完全な球だと想定すると</span>
+<span class="c1">#        D = R * acos( sin(y1) * sin(y2) + cos(y1) * cos(y2) * cos(x2-x1) )</span>
+<span class="c1">#++</span>
+
+<span class="k">class</span> <span class="nc">CalcDist</span>
+  <span class="c1"># 使用方法</span>
+  <span class="no">USAGE</span> <span class="o">=</span>  <span class="s2">"USAGE : ruby calc_disk.rb Type Lat1 Lon1 Lat2 Lon2</span><span class="se">\n</span><span class="s2">"</span>
+  <span class="no">USAGE</span> <span class="o">&lt;&lt;</span> <span class="s2">"Type       : 0:BESSEL, 1:GRS80, 2:WGS84</span><span class="se">\n</span><span class="s2">"</span>
+  <span class="no">USAGE</span> <span class="o">&lt;&lt;</span> <span class="s2">"Lat1, Lat2 :  -90.00000000 -  [+]90.00000000</span><span class="se">\n</span><span class="s2">"</span>
+  <span class="no">USAGE</span> <span class="o">&lt;&lt;</span> <span class="s2">"Lon1, Lon2 : -180.00000000 - [+]180.00000000"</span>
+
+  <span class="c1"># 定数 ( ベッセル楕円体 ( 旧日本測地系 ) )</span>
+  <span class="no">BESSEL_R_X</span>  <span class="o">=</span> <span class="mf">6377397.155000</span> <span class="c1"># 赤道半径</span>
+  <span class="no">BESSEL_R_Y</span>  <span class="o">=</span> <span class="mf">6356079.000000</span> <span class="c1"># 極半径</span>
+  
+  <span class="c1"># 定数 ( GRS80 ( 世界測地系 ) )</span>
+  <span class="no">GRS80_R_X</span>   <span class="o">=</span> <span class="mf">6378137.000000</span> <span class="c1"># 赤道半径</span>
+  <span class="no">GRS80_R_Y</span>   <span class="o">=</span> <span class="mf">6356752.314140</span> <span class="c1"># 極半径</span>
+  
+  <span class="c1"># 定数 ( WGS84 ( GPS ) )</span>
+  <span class="no">WGS84_R_X</span>   <span class="o">=</span> <span class="mf">6378137.000000</span> <span class="c1"># 赤道半径</span>
+  <span class="no">WGS84_R_Y</span>   <span class="o">=</span> <span class="mf">6356752.314245</span> <span class="c1"># 極半径</span>
+  
+  <span class="c1"># 定数 ( 測地系 )</span>
+  <span class="no">MODE</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">"BESSEL"</span><span class="p">,</span> <span class="s2">"GRS-80"</span><span class="p">,</span> <span class="s2">"WGS-84"</span> <span class="p">]</span>
+  
+  <span class="c1"># [CLASS] 引数</span>
+  <span class="k">class</span> <span class="nc">Arg</span>
+    <span class="c1"># 引数チェック</span>
+    <span class="k">def</span> <span class="nf">check_arg</span><span class="p">()</span>
+      <span class="k">begin</span>
+        <span class="c1"># 存在チェック</span>
+        <span class="k">return</span> <span class="kp">false</span> <span class="k">unless</span> <span class="no">ARGV</span><span class="p">.</span><span class="nf">length</span> <span class="o">==</span> <span class="mi">5</span>
+        
+        <span class="c1"># 測地系タイプチェック</span>
+        <span class="k">unless</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=~</span> <span class="sr">/^[012]$/</span>
+          <span class="k">return</span> <span class="kp">false</span>
+        <span class="k">end</span>
+        
+        <span class="c1"># 緯度チェック</span>
+        <span class="k">unless</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=~</span> <span class="sr">/^[+|-]?(\d|[1-8]\d|90)(\.\d{1,8})?$/</span> <span class="o">&amp;&amp;</span>
+               <span class="no">ARGV</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=~</span> <span class="sr">/^[+|-]?(\d|[1-8]\d|90)(\.\d{1,8})?$/</span>
+          <span class="k">return</span> <span class="kp">false</span>
+        <span class="k">end</span>
+
+        <span class="c1"># 経度チェック</span>
+        <span class="k">unless</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=~</span> <span class="sr">/^[+|-]?(\d{1,2}|1[0-7]\d|180)(\.\d{1,8})?$/</span> <span class="o">&amp;&amp;</span>
+               <span class="no">ARGV</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=~</span> <span class="sr">/^[+|-]?(\d{1,2}|1[0-7]\d|180)(\.\d{1,8})?$/</span>
+          <span class="k">return</span> <span class="kp">false</span>
+        <span class="k">end</span>
+
+        <span class="k">return</span> <span class="kp">true</span>
+      <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+        <span class="c1"># エラーメッセージ</span>
+        <span class="n">str_msg</span> <span class="o">=</span> <span class="s2">"[EXCEPTION]["</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">name</span> <span class="o">+</span> <span class="s2">".check_arg] "</span> <span class="o">+</span> <span class="n">e</span><span class="p">.</span><span class="nf">to_s</span>
+        <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span><span class="p">(</span> <span class="n">str_msg</span> <span class="p">)</span>
+        <span class="nb">exit!</span> <span class="mi">1</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1"># [CLASS] 計算</span>
+  <span class="k">class</span> <span class="nc">Calc</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">lat_1</span><span class="p">,</span> <span class="n">lon_1</span><span class="p">,</span> <span class="n">lat_2</span><span class="p">,</span> <span class="n">lon_2</span><span class="p">)</span>
+      <span class="vi">@mode</span>  <span class="o">=</span> <span class="n">mode</span>
+      <span class="vi">@lat_1</span> <span class="o">=</span> <span class="n">lat_1</span>
+      <span class="vi">@lon_1</span> <span class="o">=</span> <span class="n">lon_1</span>
+      <span class="vi">@lat_2</span> <span class="o">=</span> <span class="n">lat_2</span>
+      <span class="vi">@lon_2</span> <span class="o">=</span> <span class="n">lon_2</span>
+    <span class="k">end</span>
+
+    <span class="c1"># 距離計算</span>
+    <span class="k">def</span> <span class="nf">calc_dist</span>
+      <span class="k">begin</span>
+        <span class="c1"># 指定測地系の赤道半径・極半径を設定</span>
+        <span class="k">case</span> <span class="vi">@mode</span>
+          <span class="k">when</span> <span class="mi">0</span>
+            <span class="n">r_x</span> <span class="o">=</span> <span class="no">BESSEL_R_X</span>
+            <span class="n">r_y</span> <span class="o">=</span> <span class="no">BESSEL_R_Y</span>
+          <span class="k">when</span> <span class="mi">1</span>
+            <span class="n">r_x</span> <span class="o">=</span> <span class="no">GRS80_R_X</span>
+            <span class="n">r_y</span> <span class="o">=</span> <span class="no">GRS80_R_Y</span>
+          <span class="k">when</span> <span class="mi">2</span>
+            <span class="n">r_x</span> <span class="o">=</span> <span class="no">WGS84_R_X</span>
+            <span class="n">r_y</span> <span class="o">=</span> <span class="no">WGS84_R_Y</span>
+        <span class="k">end</span>
+
+        <span class="c1"># 2点の経度の差を計算 ( ラジアン )</span>
+        <span class="n">a_x</span> <span class="o">=</span> <span class="vi">@lon_1</span> <span class="o">*</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="o">-</span> <span class="vi">@lon_2</span> <span class="o">*</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="o">/</span> <span class="mf">180.0</span>
+
+        <span class="c1"># 2点の緯度の差を計算 ( ラジアン )</span>
+        <span class="n">a_y</span> <span class="o">=</span> <span class="vi">@lat_1</span> <span class="o">*</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="o">-</span> <span class="vi">@lat_2</span> <span class="o">*</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="o">/</span> <span class="mf">180.0</span>
+
+        <span class="c1"># 2点の緯度の平均を計算</span>
+        <span class="nb">p</span> <span class="o">=</span> <span class="p">(</span> <span class="vi">@lat_1</span> <span class="o">*</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="o">+</span> <span class="vi">@lat_2</span> <span class="o">*</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+        <span class="c1"># 離心率を計算</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="no">Math</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span> <span class="p">(</span> <span class="n">r_x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">r_y</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="n">r_x</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">).</span><span class="nf">to_f</span> <span class="p">)</span>
+
+        <span class="c1"># 子午線・卯酉線曲率半径の分母Wを計算</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="no">Math</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">)</span> <span class="o">*</span> <span class="p">(</span> <span class="p">(</span> <span class="no">Math</span><span class="o">::</span><span class="n">sin</span><span class="p">(</span> <span class="nb">p</span> <span class="p">)</span> <span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">)</span> <span class="p">)</span>
+
+        <span class="c1"># 子午線曲率半径を計算</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">r_x</span> <span class="o">*</span> <span class="p">(</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="n">w</span> <span class="o">**</span> <span class="mi">3</span> <span class="p">).</span><span class="nf">to_f</span>
+
+        <span class="c1"># 卯酉線曲率半径を計算</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">r_x</span> <span class="o">/</span> <span class="n">w</span><span class="p">.</span><span class="nf">to_f</span>
+
+        <span class="c1"># 距離を計算</span>
+        <span class="n">d</span>  <span class="o">=</span> <span class="p">(</span> <span class="n">a_y</span> <span class="o">*</span> <span class="n">m</span> <span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">d</span> <span class="o">+=</span> <span class="p">(</span> <span class="n">a_x</span> <span class="o">*</span> <span class="n">n</span> <span class="o">*</span> <span class="no">Math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span> <span class="nb">p</span> <span class="p">)</span> <span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">d</span>  <span class="o">=</span> <span class="no">Math</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">d</span> <span class="p">)</span>
+
+        <span class="c1"># 地球を完全な球とみなした場合</span>
+        <span class="c1"># ( 球面三角法 )</span>
+        <span class="c1"># D = R * acos( sin(y1) * sin(y2) + cos(y1) * cos(y2) * cos(x2-x1) )</span>
+        <span class="n">d_1</span>  <span class="o">=</span> <span class="no">Math</span><span class="o">::</span><span class="n">sin</span><span class="p">(</span> <span class="vi">@lat_1</span> <span class="o">*</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="p">)</span> 
+        <span class="n">d_1</span> <span class="o">*=</span> <span class="no">Math</span><span class="o">::</span><span class="n">sin</span><span class="p">(</span> <span class="vi">@lat_2</span> <span class="o">*</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="p">)</span>
+        <span class="n">d_2</span>  <span class="o">=</span> <span class="no">Math</span><span class="o">::</span><span class="n">cos</span><span class="p">(</span> <span class="vi">@lat_1</span> <span class="o">*</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="p">)</span>
+        <span class="n">d_2</span> <span class="o">*=</span> <span class="no">Math</span><span class="o">::</span><span class="n">cos</span><span class="p">(</span> <span class="vi">@lat_2</span> <span class="o">*</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="p">)</span>
+        <span class="n">d_2</span> <span class="o">*=</span> <span class="no">Math</span><span class="o">::</span><span class="n">cos</span><span class="p">(</span> <span class="vi">@lon_2</span> <span class="o">*</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="o">-</span> <span class="vi">@lon_1</span> <span class="o">*</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="p">)</span>
+        <span class="n">d_0</span>  <span class="o">=</span> <span class="n">r_x</span> <span class="o">*</span> <span class="no">Math</span><span class="o">::</span><span class="n">acos</span><span class="p">(</span> <span class="n">d_1</span> <span class="o">+</span> <span class="n">d_2</span> <span class="p">).</span><span class="nf">to_f</span>
+
+        <span class="k">return</span> <span class="p">[</span> <span class="n">d</span><span class="p">,</span> <span class="n">d_0</span> <span class="p">]</span>
+      <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">e</span>
+        <span class="c1"># エラーメッセージ</span>
+        <span class="n">str_msg</span> <span class="o">=</span> <span class="s2">"[EXCEPTION]["</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">name</span> <span class="o">+</span> <span class="s2">".calc_dist] "</span> <span class="o">+</span> <span class="n">e</span><span class="p">.</span><span class="nf">to_s</span>
+        <span class="no">STDERR</span><span class="p">.</span><span class="nf">puts</span><span class="p">(</span> <span class="n">str_msg</span> <span class="p">)</span>
+        <span class="nb">exit</span> <span class="mi">1</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1">#### MAIN ####</span>
+  <span class="k">if</span> <span class="kp">__FILE__</span> <span class="o">==</span> <span class="vg">$0</span>
+    <span class="c1"># 引数チェック( エラーなら終了 )</span>
+    <span class="n">obj_arg</span> <span class="o">=</span> <span class="no">Arg</span><span class="p">.</span><span class="nf">new</span>
+    <span class="k">unless</span> <span class="n">obj_arg</span><span class="p">.</span><span class="nf">check_arg</span>
+      <span class="c1"># エラーの場合、終了</span>
+      <span class="nb">puts</span> <span class="no">USAGE</span>
+      <span class="nb">exit!</span>
+    <span class="k">end</span>
+
+    <span class="c1"># 引数取得</span>
+    <span class="n">mode</span>  <span class="o">=</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">to_i</span>
+    <span class="n">lat_1</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">to_f</span>
+    <span class="n">lon_1</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nf">to_f</span>
+    <span class="n">lat_2</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">3</span><span class="p">].</span><span class="nf">to_f</span>
+    <span class="n">lon_2</span> <span class="o">=</span> <span class="no">ARGV</span><span class="p">[</span><span class="mi">4</span><span class="p">].</span><span class="nf">to_f</span>
+
+    <span class="c1"># 距離計算</span>
+    <span class="n">obj_calc</span> <span class="o">=</span> <span class="no">Calc</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span> <span class="n">mode</span><span class="p">,</span> <span class="n">lat_1</span><span class="p">,</span> <span class="n">lon_1</span><span class="p">,</span> <span class="n">lat_2</span><span class="p">,</span> <span class="n">lon_2</span> <span class="p">)</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">obj_calc</span><span class="p">.</span><span class="nf">calc_dist</span>
+
+    <span class="c1"># 結果出力</span>
+    <span class="nb">puts</span> <span class="s2">"Mode        : </span><span class="si">#{</span><span class="no">MODE</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+    <span class="nb">puts</span> <span class="s2">"Latitude (1): </span><span class="si">#{</span><span class="nb">sprintf</span><span class="p">(</span><span class="s2">"%13.8f"</span><span class="p">,</span><span class="n">lat_1</span><span class="p">)</span><span class="si">}</span><span class="s2"> degrees"</span>
+    <span class="nb">puts</span> <span class="s2">"Longitude(1): </span><span class="si">#{</span><span class="nb">sprintf</span><span class="p">(</span><span class="s2">"%13.8f"</span><span class="p">,</span><span class="n">lon_1</span><span class="p">)</span><span class="si">}</span><span class="s2"> degrees"</span>
+    <span class="nb">puts</span> <span class="s2">"Latitude (2): </span><span class="si">#{</span><span class="nb">sprintf</span><span class="p">(</span><span class="s2">"%13.8f"</span><span class="p">,</span><span class="n">lat_2</span><span class="p">)</span><span class="si">}</span><span class="s2"> degrees"</span>
+    <span class="nb">puts</span> <span class="s2">"Longitude(2): </span><span class="si">#{</span><span class="nb">sprintf</span><span class="p">(</span><span class="s2">"%13.8f"</span><span class="p">,</span><span class="n">lon_2</span><span class="p">)</span><span class="si">}</span><span class="s2"> degrees"</span>
+    <span class="nb">puts</span> <span class="s2">"Distance = </span><span class="si">#{</span><span class="n">dist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> m ( </span><span class="si">#{</span><span class="n">dist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> m )"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h4 id="使用例">使用例</h4>
+
+<p>上記のスクリプトに測地系(0:Bessel, 1:GRS80, 2:WGS84 )と地点１の緯度・経度、地点２の緯度・経度を引数に指定して実行します。（1:GRS80 が一番精度が高いと思います。）</p>
+
+<ul>
+  <li>緯度・経度は度で指定。
+Ａ度Ｂ分Ｃ秒は度に変換して指定。( A + B / 60 + C / 3600 )</li>
+  <li>南緯・西経はマイナスで指定。</li>
+  <li>小数点以下は8桁まで指定可能。</li>
+</ul>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; ruby calc_dist.rb 1 35.5382 132.9998 35.47222 133.050556
+Mode        : GRS-80
+Latitude (1):   35.53820000 degrees
+Longitude(1):  132.99980000 degrees
+Latitude (2):   35.47222000 degrees
+Longitude(2):  133.05055600 degrees
+Distance = 8648.30331225593 m ( 8666.19473153661 m )
+</code></pre></div></div>
+
+<p>※上記は、島根原子力発電所１号機の位置（Googleマップより取得）と島根県庁の位置の距離です。<br />
+※計算結果の ( )内の数値は、地球が測地系の長半径を半径とする完全な球体とみなした場合の球面三角法による計算結果。</p>
+
+<p>このように、地球が完全な球体であると仮定した場合との差は、今回の場合 18 メートル位となります。</p>
+
+<hr />
+
+<p>ちなみに、島根原子力発電所１号機と自宅の距離は 8082.850806768164 mでした。
+※緯度・経度は自宅がばれるので公開しません。距離から自宅がある円周上に存在することは判明しますが・・・</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/ruby" class="page__taxonomy-item" rel="tag">Ruby</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%81%9D%E3%81%AE%E4%BB%96" class="page__taxonomy-item" rel="tag">その他</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%95%B0%E5%AD%A6" class="page__taxonomy-item" rel="tag">数学</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2011-10-28T00:20:00+09:00">2011-10-28 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Ruby+-+%E5%9C%B0%E7%90%83%E4%B8%8A%E3%81%AE2%E7%82%B9%E9%96%93%E3%81%AE%E8%B7%9D%E9%9B%A2%E3%82%92%E3%81%BB%E3%81%BC%E6%AD%A3%E7%A2%BA%E3%81%AB%E8%A8%88%E7%AE%97%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2011%2F10%2F28%2F28002050%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2011%2F10%2F28%2F28002050%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2011%2F10%2F28%2F28002050%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2011/10/26/26002048/" class="pagination--pager" title="Ruby - UNIX MBOX メールヘッダ・Received属性の検証！
+">Previous</a>
+    
+    
+      <a href="/2011/10/29/29002014/" class="pagination--pager" title="Ruby - UNIX MBOX ヘッダ集計！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2011/10/28/28002050/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2011/10/28/28002050"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

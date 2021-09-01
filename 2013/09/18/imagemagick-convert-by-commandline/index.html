@@ -1,0 +1,963 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>ImageMagick - convert コマンドで画像変換！ - mk-mode BLOG</title>
+<meta name="description" content="コマンドラインから画像処理ソフト ImageMagick の convert コマンドを使用して、画像を色々と変換してみました。convert コマンドでどのような変換ができるかを確認するためです。今回、やってみたことは以下の通り。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="ImageMagick - convert コマンドで画像変換！">
+<meta property="og:url" content="https://komasaru.github.io/2013/09/18/imagemagick-convert-by-commandline/">
+
+
+  <meta property="og:description" content="コマンドラインから画像処理ソフト ImageMagick の convert コマンドを使用して、画像を色々と変換してみました。convert コマンドでどのような変換ができるかを確認するためです。今回、やってみたことは以下の通り。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="ImageMagick - convert コマンドで画像変換！">
+  <meta name="twitter:description" content="コマンドラインから画像処理ソフト ImageMagick の convert コマンドを使用して、画像を色々と変換してみました。convert コマンドでどのような変換ができるかを確認するためです。今回、やってみたことは以下の通り。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/09/18/imagemagick-convert-by-commandline/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-09-18T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/09/18/imagemagick-convert-by-commandline/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="ImageMagick - convert コマンドで画像変換！">
+    <meta itemprop="description" content="コマンドラインから画像処理ソフト ImageMagick の convert コマンドを使用して、画像を色々と変換してみました。convert コマンドでどのような変換ができるかを確認するためです。今回、やってみたことは以下の通り。">
+    <meta itemprop="datePublished" content="September 18, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">ImageMagick - convert コマンドで画像変換！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-09-18T00:20:00+09:00">2013-09-18 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>コマンドラインから画像処理ソフト ImageMagick の <code class="language-plaintext highlighter-rouge">convert</code> コマンドを使用して、画像を色々と変換してみました。</p>
+
+<p><code class="language-plaintext highlighter-rouge">convert</code> コマンドでどのような変換ができるかを確認するためです。</p>
+
+<p>今回、やってみたことは以下の通り。</p>
+
+<!--more-->
+
+<h4 id="0-前提条件">0. 前提条件</h4>
+
+<ul>
+  <li>Linux Mint 14 (64bit) での作業・動作確認を想定。</li>
+  <li>画像処理処理ソフト ImageMagick がインストール済みである。</li>
+  <li>画像に関する用語については説明しない。必要であれば、別途お調べください。</li>
+  <li>今回使用する画像以下のような画像（ファイル名：”test.jpg”, 幅：320px, 高さ：240px）</li>
+</ul>
+
+<p><img src="/images/2013/09/18/test.jpg" alt="test" title="元画像" /></p>
+
+<h4 id="サイズ変更">サイズ変更</h4>
+
+<p>画像のサイズをピクセル値を指定して変更する場合は、以下のようにする。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-geometry</span> 240x180 test_resize_1.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_resize_1.jpg" alt="test_resize_1" title="サイズ変更１" /></p>
+
+<p>画像のサイズを比率を指定して変更する場合は、以下のようにする。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-geometry</span> 100%x70% test_resize_2.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_resize_2.jpg" alt="test_resize_2" title="サイズ変更２" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">80%x80%</code> のように幅・高さが同じなら <code class="language-plaintext highlighter-rouge">80%</code> と記述してもよい。<br />
+また、元の画像のサイズより小さくなる場合のみ適用したいときは <code class="language-plaintext highlighter-rouge">240x180&gt;</code> と、元の画像のサイズより大きくなる場合のみ適用したいときは <code class="language-plaintext highlighter-rouge">240x180&lt;</code> とするようだ。</p>
+
+<h4 id="上下反転">上下反転</h4>
+
+<p>画像を上下反転させたい場合は、以下のようにする。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-flip</span> test_flip.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_flip.jpg" alt="test_flip" title="上下反転" /></p>
+
+<h4 id="左右反転">左右反転</h4>
+
+<p>画像を左右反転させたい場合は、以下のようにする。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-flop</span> test_flop.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_flop.jpg" alt="test_flop" title="左右反転" /></p>
+
+<h4 id="回転時計回り">回転（時計回り）</h4>
+
+<p>画像を時計回りに回転させたい場合は、以下のようにする。<br />
+半時計回りならマイナス値で指定する。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-rotate</span> 30 test_rotate.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_rotate.jpg" alt="test_rotate" title="回転" /></p>
+
+<h4 id="枠付け">枠付け</h4>
+
+<p>画像の周りに単純に色を付ける場合は、以下のようにする。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-bordercolor</span> blue <span class="nt">-border</span> 10x10 test_border.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_border.jpg" alt="test_border" title="色枠" /></p>
+
+<p>画像の周りに立体的な枠を付ける場合は、以下のようにする。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-mattecolor</span> yellow <span class="nt">-frame</span> 10x10+4+4 test_frame.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_frame.jpg" alt="test_frame" title="フレーム" /></p>
+
+<p>画像が浮き上がったように見える枠を付ける場合は、以下のようにする。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-raise</span> 10x10 test_raise.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_raise.jpg" alt="test_raise" title="浮き上げ" /></p>
+
+<h4 id="モノクロ変換">モノクロ変換</h4>
+
+<p>画像をモノクロ画像に変換するには、以下のようにする。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-monochrome</span> test_monochrome.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_monochrome.jpg" alt="test_monochrome" title="モノクロ変換" /></p>
+
+<h4 id="二値化">二値化</h4>
+
+<p>画像を二値化変換するには、以下のようにする。<br />
+<code class="language-plaintext highlighter-rouge">-threshold</code> の設定値は画像の輝度に合わせて調節する。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-threshold</span> 10000 test_threshold.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_threshold.jpg" alt="test_threshold" title="二値化" /></p>
+
+<h4 id="メディアンフィルタ">メディアンフィルタ</h4>
+
+<p>画像にメディアンフィルタをかけるには、以下のようにする。<br />
+<code class="language-plaintext highlighter-rouge">-median</code> の設定値は適当に調節する。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-median</span> 10 test_median.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_median.jpg" alt="test_median" title="メディアンフィルタ" /></p>
+
+<h4 id="ぼかし">ぼかし</h4>
+
+<p>画像にぼかしをかけるには、以下のようにする。<br />
+<code class="language-plaintext highlighter-rouge">-blur</code> の設定値は適当に調節する。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-blur</span> 5x5 test_blur.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_blur.jpg" alt="test_blur" title="ぼかし" /></p>
+
+<h4 id="モザイク">モザイク</h4>
+
+<p>画像にモザイクをかけるには、以下のようにする。<br />
+２つの <code class="language-plaintext highlighter-rouge">-sample</code> を使用する。１つ目の <code class="language-plaintext highlighter-rouge">-sample</code> 値が元画像の 1/x 倍なら、２つ目の <code class="language-plaintext highlighter-rouge">-sample</code> 値は元画像の x 倍を指定する。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-sample</span> 20% <span class="nt">-sample</span> 500% test_sample.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_sample.jpg" alt="test_sample" title="モザイク" /></p>
+
+<h4 id="エッジ検出">エッジ検出</h4>
+
+<p>画像のエッジを検出するに、以下のようにする。<br />
+<code class="language-plaintext highlighter-rouge">-edge</code> の設定値は適当に調節する。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-edge</span> 10 test_edge.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_edge.jpg" alt="test_edge" title="エッジ検出" /></p>
+
+<h4 id="エンボス">エンボス</h4>
+
+<p>画像にエンボス効果をかけるには、以下のようにする。<br />
+<code class="language-plaintext highlighter-rouge">-emboss</code> の設定値は適当に調節する。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-emboss</span> 10 test_emboss.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_emboss.jpg" alt="test_emboss" title="エンボス" /></p>
+
+<h4 id="水墨画風">水墨画風</h4>
+
+<p>画像を水墨画風に変換するには、以下のようにする。<br />
+<code class="language-plaintext highlighter-rouge">-charcoal</code> の設定値は適当に調節する。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-charcoal</span> 5 test_charcoal.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_charcoal.jpg" alt="test_charcoal" title="水墨画風" /></p>
+
+<h4 id="ぬりえ風">ぬりえ風</h4>
+
+<p>画像をぬりえ風に変換するには、以下のようにする。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-edge</span> 1 <span class="nt">-negate</span> <span class="nt">-normalize</span> <span class="nt">-colorspace</span> Gray <span class="se">\</span>
+    <span class="nt">-blur</span> <span class="nt">-0x</span>.5 <span class="nt">-contrast-stretch</span> 0x50% test_colorspace_1.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_colorspace_1.jpg" alt="test_colorspace_1" title="ぬりえ風１" /></p>
+
+<p>以下のようなコマンドでもよい。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-background</span> white <span class="nt">-flatten</span> <span class="nt">-colorspace</span> Gray <span class="se">\</span>
+    <span class="nt">-negate</span> <span class="nt">-edge</span> 1 <span class="nt">-negate</span> <span class="nt">-normalize</span> <span class="nt">-threshold</span> 50% <span class="nt">-despeckle</span> <span class="se">\</span>
+    <span class="nt">-blur</span> 0x.5 <span class="nt">-contrast-stretch</span> 0x50% test_colorspace_2.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_colorspace_2.jpg" alt="test_colorspace_2" title="ぬりえ風２" /></p>
+
+<p>さらに、以下のようなコマンドだと、よりぬりえ風に近づいた。（画像の質による）</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-colorspace</span> gray <span class="se">\</span>
+    <span class="se">\(</span> +clone <span class="nt">-blur</span> 0x2 <span class="se">\)</span> +swap <span class="nt">-compose</span> divide <span class="nt">-composite</span> <span class="se">\</span>
+    <span class="nt">-linear-stretch</span> 5%x0% test_colorspace_3.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_colorspace_3.jpg" alt="test_colorspace_3" title="ぬりえ風３" /></p>
+
+<h4 id="スケッチ風">スケッチ風</h4>
+
+<p>画像をスケッチ風に変換するには、以下のようにする。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert test.jpg <span class="nt">-colorspace</span> gray <span class="nt">-sketch</span> 0x20+135 test_sketch_1.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/test_sketch_1.jpg" alt="test_sketch_1" title="スケッチ風１" /></p>
+
+<p>以下のように、あらかじめスケッチ風背景画像を作成しておき、次にその画像を元の画像に重ね合わせるような方法も可能。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>convert <span class="nt">-size</span> 256x256 xc:  +noise Random  <span class="nt">-virtual-pixel</span> tile <span class="se">\</span>
+    <span class="nt">-motion-blur</span> 0x20+135 <span class="nt">-charcoal</span> 1 <span class="nt">-resize</span> 50% pencil_tile.gif
+<span class="nv">$ </span>convert test.jpg <span class="nt">-colorspace</span> gray <span class="se">\</span>
+    <span class="se">\(</span> +clone <span class="nt">-tile</span> pencil_tile.gif <span class="nt">-draw</span> <span class="s2">"color 0,0 reset"</span> <span class="se">\</span>
+    +clone +swap <span class="nt">-compose</span> color_dodge <span class="nt">-composite</span> <span class="se">\)</span> <span class="se">\</span>
+    <span class="nt">-fx</span> <span class="s1">'u*.2+v*.8'</span> test_sketch_2.jpg
+</code></pre></div></div>
+
+<p><img src="/images/2013/09/18/pencil_tile.gif" alt="pencil_tile" title="スケッチ風背景" />
+<img src="/images/2013/09/18/test_sketch_2.jpg" alt="test_sketch_2" title="スケッチ風２" /></p>
+
+<h4 id="参考サイト">参考サイト</h4>
+
+<ul>
+  <li><a href="http://www.imagemagick.org/script/command-line-tools.php" title="ImageMagick: Command-line Tools">ImageMagick: Command-line Tools</a></li>
+</ul>
+
+<hr />
+
+<p>これらの他にも、様々な画像変換方法が考えられます。<br />
+他の方法は、必要になった際に考えることにします。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/imagemagick" class="page__taxonomy-item" rel="tag">ImageMagick</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/%E7%94%BB%E5%83%8F" class="page__taxonomy-item" rel="tag">画像</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/pc-tips" class="page__taxonomy-item" rel="tag">PC_Tips</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-09-18T00:20:00+09:00">2013-09-18 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=ImageMagick+-+convert+%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E3%81%A7%E7%94%BB%E5%83%8F%E5%A4%89%E6%8F%9B%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F09%2F18%2Fimagemagick-convert-by-commandline%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F09%2F18%2Fimagemagick-convert-by-commandline%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F09%2F18%2Fimagemagick-convert-by-commandline%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/09/16/imagemagick-write-shapes-by-commandline/" class="pagination--pager" title="ImageMagick - コマンドラインで図形描画！
+">Previous</a>
+    
+    
+      <a href="/2013/09/20/cpp-simultaneous-equation-by-gauss-jorden/" class="pagination--pager" title="C++ - 連立方程式解法（ガウス・ジョルダン法）！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/09/18/imagemagick-convert-by-commandline/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/09/18/imagemagick-convert-by-commandline"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

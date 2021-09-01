@@ -1,0 +1,2661 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Rails - mk-mode BLOG</title>
+<meta name="description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+
+
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Rails">
+<meta property="og:url" content="https://komasaru.github.io/tags/rails/">
+
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Rails">
+  <meta name="twitter:description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+  <meta name="twitter:url" content="https://komasaru.github.io/tags/rails/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/tags/rails/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--archive-taxonomy wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      <div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <div class="archive">
+    <h1 class="page__title">Rails</h1>
+    <div id="google-ad-1"></div>
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/07/11/ruby-rails-jma-xml-oame-kikendo/" rel="permalink">気象庁防災情報 XML - 大雨危険度通知！
+</a>
+        &nbsp;<small>(2019-07-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">7月10日から気象庁防災情報 XML で運用が開始された「大雨危険度通知」の配信内容を一覧で確認するためのページを作成しました。（既に公開済みの他の情報と同様に）
+
+（ちなみに、当方、気象庁防災情報 XML のデータは Ruby + Rails + MariaDB(MySQL) 等で自作したシステムで受信＆管理し...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/07/08/ruby-rails-jma-xml-sokitenko/" rel="permalink">気象庁防災情報 XML - 早期天候情報！
+</a>
+        &nbsp;<small>(2019-07-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">6月27日から気象庁防災情報 XML でも運用が開始された「早期天候情報」（「異常天候早期警戒情報」の後継）の配信内容を一覧で確認するためのページを作成しました。（既に公開済みの他の情報と同様に）
+
+（ちなみに、当方、気象庁防災情報 XML のデータは Ruby + Rails + MariaDB(MySQL) ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/07/05/ruby-rails-jma-xml-yoho-temp-2w/" rel="permalink">気象庁防災情報 XML - ２週間気温予報！
+</a>
+        &nbsp;<small>(2019-07-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">6月27日から気象庁防災情報 XML でも運用が開始された「全般季節予報（２週間気温予報）」、「地方季節予報（２週間気温予報）」の配信内容を一覧で確認するためのページを作成しました。（既に公開済みの他の情報と同様に）
+
+（ちなみに、当方、気象庁防災情報 XML のデータは Ruby + Rails + Maria...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2018/10/23/ruby-rails-medicine-price/" rel="permalink">Ruby, Rails - 薬価基準一覧、薬価基準検索ページ！
+</a>
+        &nbsp;<small>(2018-10-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">薬効分類別に薬価基準収載医薬品の一覧を表示したり、薬価基準収載医薬品を検索するページを自 Web サイト内に設置しました。
+
+今回はそのページの紹介のみ。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2018/10/08/rails-isj-location-search/" rel="permalink">Ruby, Rails - 位置参照情報：位置（緯度・経度）検索ページ！
+</a>
+        &nbsp;<small>(2018-10-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">国土交通省・国土政策局提供の位置参照情報（大字・町丁目レベル）を位置（緯度・経度）ベースで検索するページを自 Web サイト内に設置しました。
+
+今回はそのページの紹介のみ。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2018/10/05/rails-isj-address-search/" rel="permalink">Ruby, Rails - 位置参照情報：住所検索ページ！
+</a>
+        &nbsp;<small>(2018-10-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">国土交通省・国土政策局提供の位置参照情報（大字・町丁目レベル）を住所ベースで検索できるページを自 Web サイト内に設置しました。
+
+今回はそのページの紹介のみ。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2018/10/02/rails-isj-reference/" rel="permalink">Ruby, Rails - 位置参照情報：一覧ページ！
+</a>
+        &nbsp;<small>(2018-10-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">国土交通省・国土政策局提供の位置参照情報（大字・町丁目レベル）を一覧で確認できるページを自 Web サイト内に設置しました。
+
+今回はそのページの紹介のみ。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2018/09/29/rails-dist-calc-between-two-planets/" rel="permalink">Ruby, Rails - 惑星間距離計算ページ！
+</a>
+        &nbsp;<small>(2018-09-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方 Ruby on Rails 製 Web サイト内に 2 つの惑星の距離を計算するページを設置しました。（計算自体は Python で）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2018/09/11/rails-iss-pos-vel-calc/" rel="permalink">Ruby, Rails - ISS 軌道（位置／速度）計算ページ！
+</a>
+        &nbsp;<small>(2018-09-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 Python で ISS（きぼう）の軌道（位置／速度）計算をしました。
+
+今回は、当方の Rails 製 Web サイト上で計算できるようにしました。（但し、裏での計算は Python を使用）
+また、10秒間隔で48時間分の軌道を確認するための JSON データも公開するようにしました。
+
+そのページの...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2018/01/22/rails-jmx-wx-chart-list/" rel="permalink">Ruby, Rails - 気象庁防災情報 XML: 天気図情報ページ！
+</a>
+        &nbsp;<small>(2018-01-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、気象庁防災情報 XML の情報を受信＆管理し、Web ページ上でも公開しております。
+
+先日、一般にも公開が開始された各種天気図情報。その一覧ページも他の一覧ページ同様、当方 Web ページ上で公開を開始しました。
+
+今回は、そのページの紹介のみ。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/12/14/rails-dut1-list/" rel="permalink">Ruby, Rails - DUT1 一覧ページ！
+</a>
+        &nbsp;<small>(2017-12-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、以前からカレンダー関連のページを公開しております。
+
+今回、DUT1 一覧のページを設置しました。
+
+以下、そのページの紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/12/10/rails-leap-second-list/" rel="permalink">Ruby, Rails - うるう秒実施一覧ページ！
+</a>
+        &nbsp;<small>(2017-12-10)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、以前からカレンダー関連のページを公開しております。
+
+今回、うるう秒実施一覧のページを設置しました。
+
+以下、そのページの紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/12/06/rails-nutation-calculation/" rel="permalink">Ruby, Rails - 章動計算ページ！
+</a>
+        &nbsp;<small>(2017-12-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、以前からカレンダー関連のページを公開しております。
+
+今回、章動（\(\Delta\psi, \Delta\epsilon\)）を計算するページを設置しました。
+
+以下、そのページの紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/12/02/rails-mean-obliquity-ecliptic-calculation/" rel="permalink">Ruby, Rails - 平均黄道傾斜角計算ページ！
+</a>
+        &nbsp;<small>(2017-12-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、以前からカレンダー関連のページを公開しております。
+
+今回、平均黄道傾斜角\(\epsilon_a\)を計算するページを設置しました。
+
+以下、そのページの紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/11/28/rails-greenwich-time-calculation/" rel="permalink">Ruby, Rails - グリニッジ恒星時計算ページ！
+</a>
+        &nbsp;<small>(2017-11-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、以前からカレンダー関連のページを公開しております。
+
+今回、グリニッジ恒星時を計算するページを設置しました。
+
+以下、そのページの紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/11/24/rails-jpl-apparent-sun-moon-calculation/" rel="permalink">Ruby, Rails - 視位置（太陽／月）計算ページ！
+</a>
+        &nbsp;<small>(2017-11-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、以前からカレンダー関連のページを公開しております。
+
+今回、太陽／月の視位置を計算するページを設置しました。
+
+以下、そのページの紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/11/20/rails-jcg-ephemeris-calculation/" rel="permalink">Ruby, Rails - 天体暦（天体位置表）（海保版）計算ページ！
+</a>
+        &nbsp;<small>(2017-11-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、以前からカレンダー関連のページを公開しております。
+
+今回、天体暦（天体位置表）（海保版）を計算するページを設置しました。
+
+以下、そのページの紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/11/16/rails-jpl-ephemeris-calculation/" rel="permalink">Ruby, Rails - 天体暦（天体位置表）（JPL版）計算ページ！
+</a>
+        &nbsp;<small>(2017-11-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、以前からカレンダー関連のページを公開しております。
+
+今回、 ICRS(International Celestial Reference System) 天体暦（天体位置表）（JPL版）を計算するページを設置しました。
+
+以下、そのページの紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/11/12/rails-delta-t-calculation/" rel="permalink">Ruby, Rails - ΔT（地球自転速度補正値）計算ページ！
+</a>
+        &nbsp;<small>(2017-11-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、以前からカレンダー関連のページを公開しております。
+
+今回、任意の年月のΔT（地球自転速度補正値）を個別に計算するページを設置しました。
+
+以下、そのページの紹介です。
+
+
+  【2018-11-11 追記】
+ΔT（地球自転速度補正値）計算は「時刻系変換」に含まれているので、ΔT計算ページの運用は終了しまし...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/11/08/rails-time-system-conversion/" rel="permalink">Ruby, Rails - 時刻系変換ページ！
+</a>
+        &nbsp;<small>(2017-11-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、以前からカレンダー関連のページを公開しております。
+
+今回、各種時刻系を変換するページを設置しました。
+
+以下、そのページの紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/11/04/rails-calendar-calculation/" rel="permalink">Ruby, Rails - カレンダー個別計算ページ！
+</a>
+        &nbsp;<small>(2017-11-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、以前からカレンダー関連のページを公開しております。
+
+今回、任意の日付のカレンダーを個別に計算するページを設置しました。
+
+以下、そのページの紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/10/30/rails-jmaxml-list-with-searching/" rel="permalink">Ruby, Rails - 気象庁防災情報 XML: Feed受信履歴ページ（絞り込み機能付き）！
+</a>
+        &nbsp;<small>(2017-10-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、気象庁防災情報 XML の情報を受信＆管理し、Web ページ上でも公開しております。
+
+以前から「Feed 受信履歴ページ」は過去24時間分に限って公開しておりましたが、この度、全ての情報を閲覧できるようなページも公開しました。（過去には公開しておりましたが、非力マシンの負荷軽減のために非公開にしておりまし...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/06/11/rails-gengo-list/" rel="permalink">Ruby, Rails - 元号一覧ページについて！
+</a>
+        &nbsp;<small>(2017-06-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">日本の元号の一覧ページを作成して、公開しております。
+
+今回はそのページの紹介と、元号を集計してみた結果の紹介です。（最近、天皇退位の特例法案が話題なので）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/05/26/ruby-rails-jma-xml-keiho-h27/" rel="permalink">気象庁防災情報 XML - 気象警報・注意報（Ｈ２７）、警報級の可能性！
+</a>
+        &nbsp;<small>(2017-05-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">5月17日から運用が開始された気象庁防災情報 XML の「気象警報・注意報（Ｈ２７）」、「警報級の可能性（明日まで）」、「警報級の可能性（明後日まで）」の配信内容を一覧で確認するためのページを作成しました。（既に公開済みの他の情報と同様に）
+
+（ちなみに、当方、気象庁防災情報 XML のデータは Ruby + R...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/04/16/fr24-squawk-list/" rel="permalink">Ruby, Rails - Flightradar24 (SQUAWK) ページについて！
+</a>
+        &nbsp;<small>(2017-04-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Flightradar24.com API で取得した全世界の SQUAK 7500, 7600, 7700 発信状況を確認するためのページを作成しました。
+
+今回はそのページのご紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/04/12/fr24-matsue-list/" rel="permalink">Ruby, Rails - Flightradar24（松江）ページについて！
+</a>
+        &nbsp;<small>(2017-04-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Flightradar24.com API で取得した航空機運行情報のうち、松江市上空を通過したものの一覧を確認するためのページを作成しました。
+
+今回はそのページのご紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/04/08/metar-sanin-list/" rel="permalink">Ruby, Rails - METAR 気象情報（山陰）ページについて！
+</a>
+        &nbsp;<small>(2017-04-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、当方 Web サイトに設置した METAR 気象観測所一覧ページの紹介をしました。
+
+
+  Ruby, Rails - METAR 気象観測所一覧ページについて！
+
+
+今回は、 METAR 気象情報（山陰の4空港限定）ページのご紹介です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/04/04/metar-station-list/" rel="permalink">Ruby, Rails - METAR 気象観測所一覧ページについて！
+</a>
+        &nbsp;<small>(2017-04-04)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、 METAR の気象観測所一覧を取得する方法について記事にしました。
+
+
+  Ruby - NOAA（アメリカ海洋大気庁）気象観測所一覧！
+  Bash - NOAA 気象観測所検索！
+
+
+今回、当方 Web サイト に METAR の気象観測所一覧を確認できるページを設けました。
+
+単なるページのご案内で...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/03/31/waterstorage-list-hii-river/" rel="permalink">Ruby, Rails - 斐伊川水系ダム貯水率一覧ページについて！
+</a>
+        &nbsp;<small>(2017-03-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方 Web サイトには島根県・斐伊川水系のダムの貯水率一覧のページを設けております。
+
+ダムにより管理が国、県、市と異なるため、一度に同時に確認したく作成した次第です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/03/27/postal-code-searching/" rel="permalink">Ruby, Rails - 郵便番号検索ページについて！
+</a>
+        &nbsp;<small>(2017-03-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方 Web サイトには郵便番号検索ページを設けております。
+
+今回は紹介のみ。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/10/30/rails-exact-calendar-list/" rel="permalink">Ruby, Rails - 月別カレンダーページの更新！
+</a>
+        &nbsp;<small>(2016-10-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">これまでコツコツと太陽と月の視位置を正確に計算するプログラムを作成してきました。
+
+この度、高精度で計算できるようになったので、 Rails 製の自 Web サイト上の月別カレンダーページを更新いたしました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/10/22/rails-moon-saku-gen-bou-list/" rel="permalink">Ruby, Rails - 朔・弦・望（月の満ち欠け）一覧ページ！
+</a>
+        &nbsp;<small>(2016-10-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">これまでコツコツと太陽と月の視位置を正確に計算するプログラムを作成してきました。
+
+この度、高精度で計算できるようになったので、月の満ち欠け（朔・弦・望新＝月・上弦・満月・下弦）の一覧ページを Rails 製の自 Web サイト上に作成＆公開しました。※分単位では国立天文台の計算と一致するはず
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/10/18/rails-sekki24-list/" rel="permalink">Ruby, Rails - 二十四節気（時刻入り）一覧ページ！
+</a>
+        &nbsp;<small>(2016-10-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">これまでコツコツと太陽と月の視位置を正確に計算するプログラムを作成してきました。
+
+この度、高精度で計算できるようになったので、既存の Rails 製の自 Web サイト上「二十四節気一覧」ページに二十四節気の瞬間の時刻を追加しました。（国立天文台の計算と高精度で一致するはず）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/01/08/rails-installation-bootstrap-bootswatch/" rel="permalink">Rails - Bootstrap + Bootswatch 導入！
+</a>
+        &nbsp;<small>(2015-01-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">こんにちは。
+
+Rails アプリに Twitter Bootstarp のデザインを適用する方法についての記録です。
+
+Bootstrap デフォルトのテーマでは代り映えがしないので Bootswatch のテーマを使用します。
+
+さらに、動的スタイルシート言語は LESS ではなく SASS を使用する。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/11/rails-commit-utf8-param-of-submit-tag/" rel="permalink">Ruby on Rails - submit_tag で付加される commit, utf8 パラメータ！
+</a>
+        &nbsp;<small>(2014-06-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby on Rails で submit_tag メソッドを使用して submit タグを生成すると、Submit 後の URL に自分の意識していないパラメータが勝手に付加されます。 utf8 と commit です。
+
+以下、現象と対策方法についての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/09/rails-ajax-callback-by-jquery/" rel="permalink">Ruby on Rails - jQuery で Ajax 処理の callback 判定！
+</a>
+        &nbsp;<small>(2014-06-09)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby on Rails + jQuery で Ajax 処理を行う際に、そのステータスにより処理を振り分ける必要があるケースもあります。
+
+その方法についての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/06/08/rails-make-method-ajax/" rel="permalink">Ruby on Rails - メソッド(Action)の Ajax 化！
+</a>
+        &nbsp;<small>(2014-06-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby on Rails で Submit ボタンを押下後に画面遷移することなく部分的に表示を更新する方法についての備忘録です。
+
+ちなみに、以前は別のアプローチで Rails + jQuery の Ajax 化（遅延読み込み）の記事を紹介しています。
+
+
+  Ruby on Rails - jQuery で ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/04/15/rails-disable-csrf-protection/" rel="permalink">Ruby on Rails - CSRF 対策（InvalidCrossOriginRequest 関連）！
+</a>
+        &nbsp;<small>(2014-04-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">実は、最近の Rails ではデフォルトで CSRF（クロスサイトリクエストフォージェリ）対策はなされています。
+
+しかし、その対策が原因でエラーになるケースもあります。
+（当方の場合、Rails 4.0.0 で問題なかった処理が 4.1.0 にアップデートした後にエラーが発生するようになった）
+
+以下、備忘録で...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/02/02/unicorn-logrotation/" rel="permalink">Ruby on Rails - Unicorn のログローテーション！
+</a>
+        &nbsp;<small>(2014-02-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、Ruby on Rails のログ（”production.log”）のローテーションについて記録を残しました。
+
+
+  * CentOS - Rails ログローテーション！
+
+
+Rails のログだけでなく、Rails サーバ Unicorn のログも放おっておくと肥大化します。そこで、ログローテーショ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/20/rails-implement-pubsubhubbub-subscriber/" rel="permalink">Ruby on Rails - PubSubHubbub Subscriber 実装！
+</a>
+        &nbsp;<small>(2013-11-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今回は、PubSubHubbub という Google 提唱のフィードをリアルタイムで配信するプロトコルについてです。
+
+中でも、フィードを購読する側（Subcriber）を Rails で実装する方法についての記録です。
+
+ブログの更新通知を即座に行うのにも利用したりしますが、当方の場合は「気象庁防災情報XML...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/08/08/rails-sitemap-generator/" rel="permalink">Rails - sitemap generator で sitemap.xml 生成！
+</a>
+        &nbsp;<small>(2013-08-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Web サイトにはサイトマップというものを設置して、そのサイトにどのようなページ（リンク）があるのかを知らせる方法があります。
+人が目で見て確認するサイトマップページ（HTML 形式）はよく見かけると思いますが、検索エンジンのクローラ（ボット）に検索してもらうためには、HTML 形式のサイトマップではなく、XML...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/07/29/rails-jpmobile-redirect/" rel="permalink">Rails - jpmobile でリダイレクト！
+</a>
+        &nbsp;<small>(2013-07-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方の Ruby on Rails 製ホームページは、先日 jpmobile でスマートフォン対応しました。
+
+携帯電話からのアクセスは需要が少ないと見込んで非対応としております。
+
+しかし、携帯電話からのアクセスの際に無条件に PC 用ページが表示されてしまっては不親切ですので、携帯電話からアクセスされた場合は...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/07/28/rails-install-jpmobile/" rel="permalink">Rails - jpmobile で携帯・スマホ対応！
+</a>
+        &nbsp;<small>(2013-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">現在、当方の Ruby on Rails 製ホームページは PC 用となっています。
+携帯電話やスマートフォン等の携帯端末では、画面表示が崩れてしまいます。
+
+そこで、当方のホームページを携帯・スマホにも対応すべく、 “jpmoblie” という RubyGem をインストールしてみました。
+“jpmobile”...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/07/06/rails-migrate-to-4-0-0/" rel="permalink">Rails 4.0.0 - Rails 3.2 系から移行！
+</a>
+        &nbsp;<small>(2013-07-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Rails 4.0.0 がリリースされたので、当方の Rails 3.2.13 製Webサイトも Rails 4.0.0 に移行してみました。
+
+実際には、アップグレードではなく「作り直し」です。
+作り直しと言っても、新規に空の Rails アプリを作成して、そこへ既存のコードを目視で移動する作業です。
+当方は、...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/26/proxy-remote-addr/" rel="permalink">プロキシ経由時のリモートアドレスについて！
+</a>
+        &nbsp;<small>(2013-01-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">少し前から当方の Ruby on Rails 製のホームページを Apache + Passenger から Nginx + Unicorn に変更して運用しています。
+
+しかし当初、プロキシの関係で、アクセス解析処理の部分でリモートアドレスが正常に取得できなくなっていました。
+
+以下、対応記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/24/apache-nginx-benchmark/" rel="permalink">Nginx + Unicorn でベンチマークテスト！
+</a>
+        &nbsp;<small>(2013-01-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">先日、Nginx + Unicorn で Rails アプリを動かす設定を行いました。
+
+
+  Ruby on Rails - Nginx ＆ Unicorn で動かす！
+
+
+Nginx + Unicorn の Rails サイト・アプリが Apache + Passenger と比較してどのくらい性能がアップし...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/23/unicorn-start-script/" rel="permalink">Unicorn - 起動スクリプト作成！
+</a>
+        &nbsp;<small>(2013-01-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は、Nginx + Unicorn で Rails アプリを動かす設定を行いました。
+
+
+  Ruby on Rails - Nginx ＆ Unicorn で動かす！
+
+
+しかし、Unicorn の起動コマンドを入力するのが面倒すぎるくらいに感じるので、起動スクリプトを作成してみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/22/ruby-on-rails-nginx-unicorn/" rel="permalink">Ruby on Rails - Nginx &amp; Unicorn で動かす！
+</a>
+        &nbsp;<small>(2013-01-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">現在 Rails サイト・アプリは、サーバ環境・ローカル環境ともに Apache2 + Passenger で動かしていますが、Nginx + Unicorn で動かすにはどうすべきか試行してみたので、記録しておきます。
+（ちなみに、当初この記事を執筆していた時（数週間前）は試行段階でしたが、現在は実際に運用して...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/11/rails-atom-feed/" rel="permalink">Ruby on Rails - Atom 1.0 Feed 生成！
+</a>
+        &nbsp;<small>(2013-01-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">ブログでは通常 RSS や Atom の Feed(フィード) の機能を使用します。
+ホームページでも Feed 機能を使用することで SEO 的にも効果を発揮します。
+
+という訳で、今回は Ruby on Rails 製のサイトの Atom 1.0 Feed を生成する方法についての記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/11/02/02002041/" rel="permalink">Ruby on Rails - Ruby+RSRuby のスクリプトを動かす！
+</a>
+        &nbsp;<small>(2012-11-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + RSRuby で正常に動作していたスクリプトを Ruby on Rails アプリからコールすると動作しません。
+
+Fatal Error: R home directory is not defined
+
+
+などとなります。
+R のホームディレクトリが定義されていないと言っています。
+
+ちなみに、...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/06/14/14002011/" rel="permalink">Ruby on Rails - jQuery で Ajax 処理（遅延読み込み）！
+</a>
+        &nbsp;<small>(2012-06-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby on Rails アプリを作成していてあれこれと機能が追加されていくと、当然ながらだんだんと動作が重くなっていきます。
+そこで、ページ表示時に処理に若干時間のかかる部分を遅らせて表示する方法を取り入れました。
+
+ちなみに、当方の Ruby on Rails 製の Webサイトでは、既に以下については j...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/06/08/08002015/" rel="permalink">Ruby on Rails - コントローラのグループ化！
+</a>
+        &nbsp;<small>(2012-06-08)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby on Rails アプリを作成していて規模が大きくなってくると “controllers” ディレクトリに “**_controller.rb” というファイルがコントローラの数だけ増えていきます。
+“controllers” ディレクトリのみならず、”views” ディレクトリも同様に増えます。
+
+単...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/06/06/06002022/" rel="permalink">Ruby on Rails - ActiveRecord で規約外の主キーを使用する方法！
+</a>
+        &nbsp;<small>(2012-06-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby on Rails の ActiveRecord でテーブルを扱う際、デフォルトでは “id” というカラム を使用するようになっています。
+Scaffold 機能を使ってジェネレートすると、テーブルに “id” カラムが自動で作成され、更に “id” カラムが主キー（プライマリキー）に割り当てられます。...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/06/02/02002028/" rel="permalink">Ruby on Rails - ActiveRecord で規約外のテーブル名を使用する方法！
+</a>
+        &nbsp;<small>(2012-06-02)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby on Rails の ActiveRecord でテーブルを扱う際、デフォルトでは「モデルでは単数系の名称」を「テーブルでは複数形の名称」を使用するようになっています。
+“hoge” → “hoges”、”library” → “libraries”、”person” → “people” などとテーブ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/31/31002001/" rel="permalink">Ruby on Rails - Ruby スクリプト呼び出しで require エラー！
+</a>
+        &nbsp;<small>(2012-05-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby on Rails アプリを操作中にコンソールに
+
+`require' cannot load such file -- hoge
+
+
+などと出力される場合は、当然 Gemfile に
+
+require 'hoge'
+
+
+などと記載して対応します。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/29/29002003/" rel="permalink">Ruby on Rails - Development モードでログ出力簡素化！
+</a>
+        &nbsp;<small>(2012-05-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby on Rails でアプリを開発する際、大抵の場合は最初は Development で開発し運用時に Production モードに切り替えると思います。
+
+その Development モードで開発中はあれこれとログが出力され重宝するのですが、時に目触りに感じる事があります。
+特に、DB 関係のアプリ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/16/16002016/" rel="permalink">FreeBSD 9.0 - RubyGems libv8 インストール！
+</a>
+        &nbsp;<small>(2012-05-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は FreeBSD 8.3 での libv8 のインストールについてお話しました。
+
+
+  FreeBSD 8.3 - RubyGems libv8 インストール！
+
+
+今回は FreeBSD 9.0 での libv8 インストールのお話です。
+FreeBSD 8.3 での対応方法と同じ方法ではうまくいきませ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/14/14002031/" rel="permalink">FreeBSD 8.3 - RubyGems libv8 インストール！
+</a>
+        &nbsp;<small>(2012-05-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、ブログでは滅多にしない FreeBSD 関連についてのお話です。
+
+FreeBSD で Ruby on Rails 3.2.x を動かそうとすると、therubyracer という RubyGems が必要になります。
+この therubyracer のインストールにはさらに Google JavaScr...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/05/06/06002043/" rel="permalink">Ruby - RubyGems で SSL 証明書チェック！
+</a>
+        &nbsp;<small>(2012-05-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby が2012年4月20日に 1.9.3-p194 にアップデートされ、パッケージ管理の RubyGems も 1.8.23 にアップデートされました。
+
+
+  Ruby 1.9.3-p194 リリース
+
+
+当方の自作自宅サーバ(当記事執筆時点、CentOS6.2)も Ruby_1.9.3-p194, Ru...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/02/16/16002013/" rel="permalink">Ruby on Rails - 3.1.3 から 3.2.1 へアップグレード！
+</a>
+        &nbsp;<small>(2012-02-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">１ヶ月ほど前に、Ruby を 1.9.2 から 1.9.3 にアップデートしたのに合わせ、Rails も 3.0 系から 3.1.3 にアップグレードしました。
+しかし、今では Rails も既に 3.2.1 までリリースされています。
+
+そこで、当方の Rails も 3.2.1 にアップグレードしました。
+
+...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/25/25002016/" rel="permalink">CentOS - Rails ログローテーション！
+</a>
+        &nbsp;<small>(2012-01-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、CentOS 6.2 上に構築した Ruby on Rails 環境のログの肥大化対策についてです。
+
+Ruby on Rails で Web 公開（production モードでの運用）すると Web サーバのログとは別にログが記録されます。
+開発（development）モードほどではありませんが、公...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/23/23002025/" rel="permalink">株式市場 - 銘柄を集計！
+</a>
+        &nbsp;<small>(2012-01-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">久々に株式のお話です。
+
+と言っても、Ruby + MySQL で自作した株価管理システム（閲覧は Rails）内の銘柄をSQLのみで集計してみただけです。
+※最近は取引はひかえていますが、データを弄るのがおもしろい分野なので。。。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/19/19002041/" rel="permalink">Ruby on Rails 3.1 - Asset Pipeline プリコンパイルエラー！
+</a>
+        &nbsp;<small>(2012-01-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">昨日に引き続き、Ruby on Rails 3.0 系から 3.1 系へ移行すべく、各種テストをしていた時のことです。
+
+Rails アプリを production モードで起動させようとすると、以下のような内部エラーが発生しました。
+※development モードや test モードでは以下のようなメッセージ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/18/18002057/" rel="permalink">Ruby on Rails 3.1 - 起動時に JavaScript Runtime エラー！
+</a>
+        &nbsp;<small>(2012-01-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、Ruby on Rails 3.0 系から 3.1 系へ移行すべく、各種テストをしていた時のことです。
+
+Rails アプリを production モードで起動させようとすると、以下のようなメッセージが出力されました。
+※development モードや test モードでは以下のようなメッセージは出力さ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/16/16002000/" rel="permalink">Ruby on Rails 3.1 では auto_link メソッド使用不可！
+</a>
+        &nbsp;<small>(2012-01-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方、Ruby on Rails 3.0 系で作成した Web サイト・アプリを 3.1 系へ移行しようと作業していました。
+
+作業自体は簡単ですが、いざ実行してみると以下のようなエラーが出力されます。
+
+undefined method 'auto_link'
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/14/14003130/" rel="permalink">Cygwin - Ruby on Rails を Apache2 + Passenger で！
+</a>
+        &nbsp;<small>(2012-01-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Cygwin に構築した Ruby on Rails 環境が Rails 標準の WEBrick では動くことを確認しました。
+
+
+  Cygwin - Ruby on Rails で MySQL ソケットエラー！
+
+
+その流れで、Gem パッケージ Mongrel をインストールして動作確認もしました。
+こちら...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2012/01/12/12003036/" rel="permalink">Cygwin - Ruby on Rails で MySQL ソケットエラー！
+</a>
+        &nbsp;<small>(2012-01-12)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方の Cygwin 環境に Ruby を導入したことだし、Linux サーバで運用中の Ruby on Rails アプリを Cygwin 上で動かしてみようと考えました。
+
+Ruby、RubyGems、MySQL は導入済みなので、後は Gem で Rails をインストールしてソースを用意すればよいだけです...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/12/06/06002042/" rel="permalink">Ruby on Rails - 郵便番号検索システム修正！
+</a>
+        &nbsp;<small>(2011-12-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、日本郵便提供の郵便番号データ（CSVデータ）を使って以下の作業をしました。
+
+
+  Ruby + MySQL で郵便番号データ取り込み！
+  Ruby on Rails - 郵便番号検索システム作成！
+
+
+しかし、日本郵便提供の郵便番号データ（CSVデータ）は仕様上非常に危険なデータとなっています。
+日本郵...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/10/07/07002004/" rel="permalink">Ruby on Rails - Windowsイベントログ閲覧！
+</a>
+        &nbsp;<small>(2011-10-07)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">先日は、RubyでWindowsイベントログの取得を試みました。
+
+
+  Ruby - Windowsイベントログ取得！
+
+
+さらに、バッチファイルで毎日MySQLサーバへバックアップするようにしました。
+
+そして、今回は Ruby on Rails で閲覧できるようにしました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/10/03/03002029/" rel="permalink">WordPress - アクセス状況をRuby on Railsで公開！
+</a>
+        &nbsp;<small>(2011-10-03)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">最近、毎月あたまにブログのアクセス状況を公開するようになって先日も2011年9月分について公開しました。
+
+今回は同じようなロジックで、当方の Ruby on Rails 製のホームページで WordPress ブログのアクセス状況を閲覧できるようにしてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/09/28/28002002/" rel="permalink">NetBeans 7.0.1 - Ruby on Railsプラグインをインストール！
+</a>
+        &nbsp;<small>(2011-09-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方は、現在 Ruby とか Ruby on Rails で開発する際に「NetBeans」を使用しています。「Aptana」とかJava系開発に使用していた「Eclipse」とかも使用してみましたが、あまりに重いのでそれらでの開発は断念しました。
+Ruby 単独なら「RDE」でもよいのですが、Ruby に特化し...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/09/16/16002000/" rel="permalink">Ruby on Rails - 日・月の出・入・南中を計算・表示！
+</a>
+        &nbsp;<small>(2011-09-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">昨日は、Ruby 単独で日・月の出・入時刻・方位角、日・月の南中時刻・高度を算出するスクリプトを紹介しました。
+
+
+  Ruby - 日・月の出・入・南中スクリプト作成！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/09/06/06002033/" rel="permalink">Ruby on Rails - 地方公共団体一覧作成！
+</a>
+        &nbsp;<small>(2011-09-06)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby + MySQL で 「 財団法人地方自治情報センター 」 から全国の地方公共団体（都道府県・区市町村）のコード・住所等の一覧を取得し、当方の Ruby on Rails で構築している Webサイト に表示させてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/08/29/29002026/" rel="permalink">Ruby on Rails - 郵便番号検索システム作成！
+</a>
+        &nbsp;<small>(2011-08-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">昨日は、Ruby + MySQL で日本郵便提供の郵便番号CSVデータを取り込む作業を行いました。（参照 → Ruby + MySQL で郵便番号データ取り込み！）
+
+今回は、MySQL に取り込んだデータを Ruby on Rails で検索できるようにしてみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/08/28/28002011/" rel="permalink">Ruby + MySQL で郵便番号データ取り込み！
+</a>
+        &nbsp;<small>(2011-08-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby on Rails 上で郵便番号を検索できるシステムを作成することを思いつき、まずは日本郵便のサイトからダウンロードしたCSVファイルを Ruby + MySQL で取り込むことを考えてみました。
+
+※日本郵便のサイトによると、郵便番号データは「郵便事業株式会社は著作権を主張しません。自由に配布していただ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/08/24/24002005/" rel="permalink">Ruby on Rails - アメダスデータ取得！
+</a>
+        &nbsp;<small>(2011-08-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ruby on Railsで気象庁のアメダスデータのページから気温・湿度等の最新のアメダスデータを取得してみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/08/22/22002014/" rel="permalink">jQuery - 文字に影をつける！
+</a>
+        &nbsp;<small>(2011-08-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">通常、Webサイトで文字に影（ぼかし）を付ける際、CSSの”text-shadow”を使用すると簡単に実現できます。
+
+しかし、この”text-shadow”は現在W3C勧告のCSS2.1では非推奨のため、W3Cチェックでエラーとなります。
+（以前のCSS2.0や将来（ずいぶん先）勧告される予定のCSS3.0では...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/08/17/17002022/" rel="permalink">jQuery版LightBox導入！
+</a>
+        &nbsp;<small>(2011-08-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">先日、当方のWebサイト・ブログサイトでページ下部へスクロースした際にページトップへ戻れるようボタンを設置しました。その際JavaScriptライブラリ「jQuery」を導入しました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/07/31/31002036/" rel="permalink">Apache - PhusionPassenger関連のエラー？
+</a>
+        &nbsp;<small>(2011-07-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">最近、自宅サーバ(ScientificLinux6.0)のApacheのエラーログを別の件で検証していたところ、以下のようなメッセージがいくつか出力されてるのを発見しました。
+
+[ pid=15278 thr=3078633296 file=ext/apache2/Hooks.cpp:789 time=2011-...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/07/24/24002043/" rel="permalink">JavaScript - PageTopボタン配置！
+</a>
+        &nbsp;<small>(2011-07-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">昨日は「Ruby on Rails - jQueryを導入！」のとおり「Ruby on Rails」でJavaScriptのライブラリ「jQuery」を使用できるようにしました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/07/23/23002037/" rel="permalink">Ruby on Rails - jQueryを導入！
+</a>
+        &nbsp;<small>(2011-07-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日はJavaScriptのライブラリの「jQuery」を「Ruby on Rails」環境に導入してみました。
+今までは「jQuery」の必要性は感じませんでしたが、このたび使用したいJavaScriptで「jQuery」が必要だったので。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/07/18/18002048/" rel="permalink">Twitter - MySQLに保存したツイートをホームページで公開！
+</a>
+        &nbsp;<small>(2011-07-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">昨日、「Ruby – TwitterタイムラインをOAuth認証で取得！」で紹介したとおり、自分のツイートを手元のScientificLinuxサーバのMySQLに登録するRubyスクリプトを作成しました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/07/17/17002038/" rel="permalink">Ruby - TwitterタイムラインをOAuth認証で取得！
+</a>
+        &nbsp;<small>(2011-07-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Twitterを始めてまだ10日ばかりですが、面白さにはまりRubyで実用的なものを作ろうと考えました。
+
+今回作ってみたものは、「自分のTwitterタイムラインをバックアップするRubyスクリプト」です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/04/15/15002052/" rel="permalink">カレンダー作成！
+</a>
+        &nbsp;<small>(2011-04-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">六曜ってご存知ですか？
+「先勝、友引、先負、仏滅、大安、赤口」というやつです。
+
+これらを表示できるカレンダーを自分で作成してみました。
+
+単に数字を並べるだけのカレンダーは簡単に作成できるのですが、六曜が絡むと非常に面倒です。
+
+なぜなら、旧暦（日本なら、天保暦という暦）を計算しないとからです。
+
+調査してみる...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/01/28/28002023/" rel="permalink">Ｒｕｂｙ １．９．２－ｐ１３６ にアップデート！
+</a>
+        &nbsp;<small>(2011-01-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方のホームページは「ＣｅｎｔＯＳ ＋ Ａｐａｃｈｅ２ ＋ Ｒｕｂｙ１．９．２ｐ０ ＋ Ｒａｉｌｓ ３．０．３」で運用しているのですが、「Ｒｕｂｙ」の修正版が出ているのではないかと思って、「Ｒｕｂｙ」の公式サイトを覗いてみるとやっぱり修正版がリリースされていました。
+
+早速、「 Ruby_1.9.2-p136 」...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2011/01/19/19002052/" rel="permalink">数字選択式宝くじ当選データ！
+</a>
+        &nbsp;<small>(2011-01-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方のサイトでは「数字選択式宝くじ」（ナンバーズ３・４、ミニロト、ロト６）の当選情報を公開しています。
+＝＝＝＞ mk-mode SITE
+
+当方自宅で運用しているＣｅｎｔＯＳサーバでみずほ銀行の宝くじコーナーから「Ｒｕｂｙ」を駆使して毎日自動で取得しています。
+
+しかし、今週月曜日からうまく取得できていないよう...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/11/20/20002028/" rel="permalink">Ｐａｓｓｅｎｇｅｒを３．０．０にアップデート！
+</a>
+        &nbsp;<small>(2010-11-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「Ｒｕｂｙ ｏｎ Ｒａｉｌｓ」で構築されたＷｅｂアプリケーションを運用するためのＡｐａｃｈｅモジュール「Ｐａｓｓｅｎｇｅｒ」（Ｇｅｍパッケージ）に「２．２．１５」を使用していたが「３．０．０」がリリースされているのでアップデートする。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/11/15/15002035/" rel="permalink">ホームページ － アクセスカウンタ更新！
+</a>
+        &nbsp;<small>(2010-11-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">当方のホームページ（Ｒｕｂｙ ｏｎ Ｒａｉｌｓ で作成）に表示させているアクセスカウンター。
+
+ちょっと不正確？
+
+データベース１レコードで管理しているため、
+
+
+  同じＩＰからのアクセスでも指定時間を越えてアクセスされたら別カウントになる
+  同じＩＰからの２回のアクセスの間に別のＩＰからのアクセスがあると別...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/11/01/01002012/" rel="permalink">ホームページを３０１リダイレクト！
+</a>
+        &nbsp;<small>(2010-11-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">今日は、ＨＴＴＰでのある特定のページへのアクセスを自動的に別のページにリダイレクトする方法です。
+例：
+[ http://www.hogehoge.com/index.php/ ]へアクセスしたら自動で
+[ http://www.hogehoge.com/rails/ ]にリダイレクトする。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/10/29/29002004/" rel="permalink">Ｒｕｂｙ ｏｎ Ｒａｉｌｓ を Ａｐａｃｈｅ２で動かす！
+</a>
+        &nbsp;<small>(2010-10-29)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は、「ＣｅｎｔＯＳ」サーバに「Ｒｕｂｙ ｏｎ Ｒａｉｌｓ」をインストールしました。
+今回は「Ａｐａｃｈｅ２」で「Ｒｕｂｙ ｏｎ Ｒａｉｌｓ」が動作するように設定しました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/10/27/27002041/" rel="permalink">Ｒｕｂｙ ｏｎ Ｒａｉｌｓ インストール － ＣｅｎｔＯＳ
+</a>
+        &nbsp;<small>(2010-10-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、ＷｉｎｄｏｗｓＸＰに「Ｒｕｂｙ ｏｎ Ｒａｉｌｓ」をインストールしましたが、今回はＣｅｎｔＯＳサーバにインストールしました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/10/17/17002047/" rel="permalink">ＷｉｎｄｏｗｓＸＰ – Ruby on Rails 3 を Mongrel で！
+</a>
+        &nbsp;<small>(2010-10-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">現在、Ｒｕｂｙ というか 「Ｒｕｂｙ ｏｎ Ｒａｉｌｓ」を勉強中です。
+
+いずれ、うちのサーバ（ＣｅｎｔＯＳ＋Ａｐａｃｈｅ＋ＭｙＳＱＬ）も「Ｒｕｂｙ ｏｎ Ｒａｉｌｓ」化したいと思っています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2010/10/13/13002035/" rel="permalink">ＷｉｎｄｏｗｓＸＰ – Ruby on Rails 3.0.0 で MySQL！
+</a>
+        &nbsp;<small>(2010-10-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">最近、地元（島根県松江市）ゆかりの「Ｒｕｂｙ」がマイブームです。
+
+「Ｒｕｂｙ」に関しては素人なので目下勉強中ですが、試しにＷｉｎｄｏｗｓの「Ｒｕｂｙ ｏｎ Ｒａｉｌｓ ３．０．０」で「ＭｙＳＱＬ」も試してみようと思ってインストールしてみました。
+
+</p>
+  </article>
+</div>
+
+    
+    <div id="google-ad-3"></div>
+    <div id="google-ad-2"></div>
+  </div>
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,1476 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Nginx - mk-mode BLOG</title>
+<meta name="description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+
+
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Nginx">
+<meta property="og:url" content="https://komasaru.github.io/tags/nginx/">
+
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Nginx">
+  <meta name="twitter:description" content="このブログは自宅サーバ(Debian GNU/Linux)で運用してしているブログのクローンです。PC・サーバ構築等の話題を中心に公開しております。">
+  <meta name="twitter:url" content="https://komasaru.github.io/tags/nginx/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/tags/nginx/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--archive-taxonomy wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      <div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <div class="archive">
+    <h1 class="page__title">Nginx</h1>
+    <div id="google-ad-1"></div>
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/01/17/debian-10-php-installation-by-src-with-nginx-cooperation/" rel="permalink">Debian 10 (buster) - PHP インストール（Nginx と連携）！
+</a>
+        &nbsp;<small>(2020-01-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に PHP をソースをビルドしてインストールし、 Web／リバースプロキシサーバ Nginx と連携する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/12/26/debian-10-nginx-ssl-by-lets-encrypt/" rel="permalink">Debian 10 (buster) - Let’s Encrypt で常時 SSL 化(with Nginx)！
+</a>
+        &nbsp;<small>(2019-12-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。
+
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/12/23/debian-10-nginx-ssl-connection-setting/" rel="permalink">Debian 10 (buster) - Web サーバ Nginx で SSL 接続！
+</a>
+        &nbsp;<small>(2019-12-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてく...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2019/12/20/debian-10-nginx-installation-by-official-apt/" rel="permalink">Debian 10 (buster) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！
+</a>
+        &nbsp;<small>(2019-12-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 10 (buster) に Web サーバ Nginx を Nginx 公式リポジトリを使用して導入する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなけれ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/28/debian-9-php-installation-by-src-with-nginx-cooperation/" rel="permalink">Debian 9 (Stretch) - PHP インストール（Nginx と連携）！
+</a>
+        &nbsp;<small>(2017-09-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に PHP をソースをビルドしてインストールし、 Web／リバースプロキシサーバ Nginx と連携する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/20/debian-9-nginx-ssl-by-lets-encrypt/" rel="permalink">Debian 9 (Stretch) - Let’s Encrypt で常時 SSL 化(with Nginx)！
+</a>
+        &nbsp;<small>(2017-09-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。
+
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/18/debian-9-nginx-ssl-connection-setting/" rel="permalink">Debian 9 (Stretch) - Web サーバ Nginx で SSL 接続！
+</a>
+        &nbsp;<small>(2017-09-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてく...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2017/09/16/debian-9-nginx-installation-by-official-apt/" rel="permalink">Debian 9 (Stretch) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！
+</a>
+        &nbsp;<small>(2017-09-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 9 (Stretch) に Web サーバ Nginx を Nginx 公式リポジトリを使用して導入する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなけれ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2016/09/15/nginx-deleting-proxy-caches/" rel="permalink">Nginx - キャッシュの手動削除！
+</a>
+        &nbsp;<small>(2016-09-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">HTTP &amp; リバースプロキシサーバ Nginx の溜まったキャッシュを手動で削除する方法についての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/30/debian-8-php-cooperation-with-nginx/" rel="permalink">Debian 8 (Jessie) - PHP と Nginx の連携！
+</a>
+        &nbsp;<small>(2015-06-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) にインストールした PHP を Web サーバ Nginx と連携する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーして...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/20/debian-8-nginx-ssl-connection-setting/" rel="permalink">Debian 8 (Jessie) - Web サーバ Nginx で SSL 接続！
+</a>
+        &nbsp;<small>(2015-06-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてくだ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/06/19/debian-8-nginx-installation-by-official-apt/" rel="permalink">Debian 8 (Jessie) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！
+</a>
+        &nbsp;<small>(2015-06-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 8 (Jessie) に Web サーバ Nginx を導入する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2015/01/26/debian-7-8-nginx-installation-by-apt/" rel="permalink">Debian 7.8 - Web サーバ Nginx インストール（Apt 使用）！
+</a>
+        &nbsp;<small>(2015-01-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前 Debian GNU/Linux Wheezy 7.1.0 サーバで Web・プロキシサーバ Nginx をソースビルドでインストールする方法について紹介しました。
+
+
+  Debian 7 Wheezy - Web サーバ Nginx をインストール（ソースビルド）！
+
+
+今回は Nginx 公式の Ap...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/10/31/freebsd-10-0-installation-of-nginx/" rel="permalink">FreeBSD 10.0 - HTTP &amp; リバースプロキシサーバ Nginx インストール！
+</a>
+        &nbsp;<small>(2014-10-31)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「FreeBSD 10.0 - HTTP &amp; リバースプロキシサーバ Nginx インストール」についての記録です。
+
+（旧バージョンでの個人の作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/18/centos-7-0-installation-of-roundcube-mail/" rel="permalink">CentOS 7.0 - Webmail システム RoundCube Webmail 導入！
+</a>
+        &nbsp;<small>(2014-09-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - Webmail システム RoundCube Webmail 導入」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/15/centos-7-0-setting-of-cooperation-nginx-php/" rel="permalink">CentOS 7.0 - PHP と Nginx の連携！
+</a>
+        &nbsp;<small>(2014-09-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - PHP と Nginx の連携」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/09/13/centos-7-0-setting-of-nginx-ssl-connection/" rel="permalink">CentOS 7.0 - Web サーバ Nginx で SSL 接続！
+</a>
+        &nbsp;<small>(2014-09-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - Web サーバ Nginx で SSL 接続」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/08/28/centos-7-0-installation-of-nginx-by-src/" rel="permalink">CentOS 7.0 - Web サーバ Nginx 構築（ソースインストール）！
+</a>
+        &nbsp;<small>(2014-08-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">「CentOS 7.0 - Web サーバ Nginx 構築（ソースインストール）」についての記録です。
+
+（旧バージョンでの作業記録を更新しました。興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/04/23/nginx-proxy-cache-setting/" rel="permalink">Nginx - リバースプロキシキャッシュ設定（基本的）！
+</a>
+        &nbsp;<small>(2014-04-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Nginx のリバースプロキシでファイルをキャッシュする方法についての備忘録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/04/13/nginx-file-discriptor-limit/" rel="permalink">Nginx - ファイルディスクリプタ設定(Too many open files 対策)！
+</a>
+        &nbsp;<small>(2014-04-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux では、１プロセスが同時オープン可能なファイルディスクリプタの上限に達すると “Too many open files” などというエラーを発生します。
+OS 上でのファイルディスクリプタ設定についての記事は結構存在するので、対策はそれほど難しくありません。
+しかし、Web サーバ Nginx が絡むと...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/02/26/nginx-newest-installation-by-package/" rel="permalink">Nginx - Linux Mint 13 へ最新をインストール（パッケージ使用）！
+</a>
+        &nbsp;<small>(2014-02-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">これまで Linux Mint 上で Web(Reverse Proxy) サーバ Nginx をソースをビルドしてインストールしたり、標準リポジトリからパッケージインストールしたりしてきました。
+
+
+  Nginx - Linux Mint にインストール（ソースビルド）！
+  Nginx - Linux Mi...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/02/14/nginx-redirection-of-url-without-www/" rel="permalink">Nginx - www 有無を統一！！
+</a>
+        &nbsp;<small>(2014-02-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">軽量 Web サーバ Nginx で URL をリダイレクトさせる方法についての備忘録です。
+
+Apache なら RewriteCond と RewriteRule を使うところを Nginx ではどう記述すればよいのかということです。
+
+“www” 付きの URL にも “www” 無しの URL にもそのま...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/20/centos-6-5-php-coordination-with-nginx/" rel="permalink">CentOS 6.5 - PHP と Nginx の連携！
+</a>
+        &nbsp;<small>(2014-01-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上で PHP のインストール（ソースビルド）を行いました。
+今回は PHP と Web サーバ Nginx の連携を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/18/centos-6-5-nginx-setting-of-ssl/" rel="permalink">CentOS 6.5 - Web サーバ Nginx で SSL 接続！
+</a>
+        &nbsp;<small>(2014-01-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上のサーバ監視ツール munin で Web(HTTP) サーバ Nginx の監視設定を行いました。
+今回は Web(HTTP) サーバ Nginx で SSL 接続するため設定を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/17/centos-6-5-munin-setting-of-nginx/" rel="permalink">CentOS 6.5 - サーバ監視ツール（munin）で Nginx を監視！
+</a>
+        &nbsp;<small>(2014-01-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバ上のサーバ監視ツール munin で MariaDB(MySQL) の監視設定を行いました。
+今回はサーバ監視ツール munin で Web(HTTP) サーバ Nginx の監視設定を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2014/01/05/centos-6-5-nginx-installation-by-src/" rel="permalink">CentOS 6.5 - Web サーバ Nginx 構築（ソースインストール）！
+</a>
+        &nbsp;<small>(2014-01-05)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は CentOS 6.5 サーバで Fetchmail による複数ドメイン宛メールの集約を行いました。
+今回は Web サーバ Nginx の構築（ソースをビルドしてインストール）を行います。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/11/13/debian-7-squirrelmail-by-nginx/" rel="permalink">Debian 7 Wheezy - SquirrelMail を Nginx で！
+</a>
+        &nbsp;<small>(2013-11-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバ上の Web メールシステム SquirrelMail を Web サーバ Nginx で運用する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/10/28/debian-7-install-nginx-by-src/" rel="permalink">Debian 7 Wheezy - Web サーバ Nginx をインストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2013-10-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 7 Wheezy サーバに Web サーバ Nginx をソースをビルドしてインストールする方法についての記録です。
+
+ちなみに以前、Linux Mint にソースビルドでインストールする方法を紹介しています。（当然、似たような内容となっています）
+
+
+  Nginx - Lin...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/02/17/nginx-logrotation/" rel="permalink">Nginx - ログローテーション設定！
+</a>
+        &nbsp;<small>(2013-02-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、軽量 Web サーバ Nginx を CentOS にインストールしました。
+
+
+  Nginx - CentOS にインストール（ソースビルド）！
+
+
+しかし、ログローテーションの設定をしていなかったため、知らないうちにログが肥大化していました。（幸い、サーバにはまだ影響が出ていませんでしたが）
+
+以下、...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/26/proxy-remote-addr/" rel="permalink">プロキシ経由時のリモートアドレスについて！
+</a>
+        &nbsp;<small>(2013-01-26)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">少し前から当方の Ruby on Rails 製のホームページを Apache + Passenger から Nginx + Unicorn に変更して運用しています。
+
+しかし当初、プロキシの関係で、アクセス解析処理の部分でリモートアドレスが正常に取得できなくなっていました。
+
+以下、対応記録です。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/25/nginx-centos-install-by-src/" rel="permalink">Nginx - CentOS にインストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2013-01-25)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">以前、軽量 Web サーバ Nginx をLinux Mint にソースをビルドしてインストールする手順について記録しました。
+
+
+  Nginx - Linux Mint にインストール（ソースビルド）！
+
+
+今日は、Nginx を CentOS(Redhat 系ディストリビューション) にソースをビルドしてイ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/24/apache-nginx-benchmark/" rel="permalink">Nginx + Unicorn でベンチマークテスト！
+</a>
+        &nbsp;<small>(2013-01-24)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">先日、Nginx + Unicorn で Rails アプリを動かす設定を行いました。
+
+
+  Ruby on Rails - Nginx ＆ Unicorn で動かす！
+
+
+Nginx + Unicorn の Rails サイト・アプリが Apache + Passenger と比較してどのくらい性能がアップし...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/23/unicorn-start-script/" rel="permalink">Unicorn - 起動スクリプト作成！
+</a>
+        &nbsp;<small>(2013-01-23)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回は、Nginx + Unicorn で Rails アプリを動かす設定を行いました。
+
+
+  Ruby on Rails - Nginx ＆ Unicorn で動かす！
+
+
+しかし、Unicorn の起動コマンドを入力するのが面倒すぎるくらいに感じるので、起動スクリプトを作成してみました。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/22/ruby-on-rails-nginx-unicorn/" rel="permalink">Ruby on Rails - Nginx &amp; Unicorn で動かす！
+</a>
+        &nbsp;<small>(2013-01-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">現在 Rails サイト・アプリは、サーバ環境・ローカル環境ともに Apache2 + Passenger で動かしていますが、Nginx + Unicorn で動かすにはどうすべきか試行してみたので、記録しておきます。
+（ちなみに、当初この記事を執筆していた時（数週間前）は試行段階でしたが、現在は実際に運用して...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/21/nginx-phpmyadmin/" rel="permalink">Nginx - phpMyAdmin を使用する！
+</a>
+        &nbsp;<small>(2013-01-21)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">軽量 Web サーバ Nginx で phpMyAdmin（MySQLサーバーをウェブブラウザで管理するためのデータベース接続クライアントツール）を使用する方法についてです。
+
+既にインストールされている phpMyAdmin を Nginx で利用する方法についてです。PHP, phpMyAdmin, MySQ...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/20/nginx-php/" rel="permalink">Nginx - PHP との連携！
+</a>
+        &nbsp;<small>(2013-01-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Nginx で PHP を使用するには、PHP の FastCGI 実装が必要です。
+
+今回は PHP の FastCGI 実装の１つである PHP5-FPM(PHP FastCGI Process Manager) を使用します。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/19/nginx-hide-version/" rel="permalink">Nginx - バージョン情報隠蔽！
+</a>
+        &nbsp;<small>(2013-01-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Web サーバのバージョン情報を公開するのはセキュリティ上よろしくないので、Nginx のバージョン情報を隠蔽する。
+
+ソースをビルドしてインストールする方法・基本設定については過去記事を参照。
+
+
+  Nginx - Linux Mint にインストール（ソースビルド）！
+  Nginx - 基本的な設定！
+
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/18/nginx-gzip-compress/" rel="permalink">Nginx - Gzip 圧縮！
+</a>
+        &nbsp;<small>(2013-01-18)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">軽量 Web サーバ  Nginx での Gzip 圧縮の設定についてです。
+（Debian, Ubuntu 等 GNU 系ディストリビューションは同様だと思う）
+
+Web サーバでの Gzip 圧縮とは、要求した側にデータを返却する際にサーバ側で Gzip 圧縮して容量を小さくし高速化することです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/17/nginx-error-log/" rel="permalink">Nginx - エラーログについて！
+</a>
+        &nbsp;<small>(2013-01-17)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">軽量 Web サーバ  Nginx の設定の中のエラーログについてです。
+（Debian, Ubuntu 等 GNU 系ディストリビューションは同様だと思う）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/16/nginx-access-log/" rel="permalink">Nginx - ログフォーマット、アクセスログについて！
+</a>
+        &nbsp;<small>(2013-01-16)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">軽量 Web サーバ  Nginx の設定の中のアクセスログについてです。
+（Debian, Ubuntu 等 GNU 系ディストリビューションは同様だと思う）
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/15/nginx-setting/" rel="permalink">Nginx - 基本的な設定！
+</a>
+        &nbsp;<small>(2013-01-15)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux Mint にソースをビルドしてインストールした軽量 Web サーバ  Nginx の基本的な設定についてです。
+（Debian, Ubuntu 等 GNU 系ディストリビューションは同様だと思う）
+
+ソースをビルドしてインストールする方法については過去記事を参照。
+
+
+  Linux Mint - N...</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/14/nginx-linux-mint-install-by-src/" rel="permalink">Nginx - Linux Mint にインストール（ソースビルド）！
+</a>
+        &nbsp;<small>(2013-01-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">昨日は、Linux Mint に軽量 Web サーバ  Nginx をパーケージインストールする手順について記録しました。
+
+
+  Linux Mint - Nginx インストール（パッケージ使用）！
+
+
+今日は、Nginx をソースをビルドしてインストールする方法についてです。
+
+</p>
+  </article>
+</div>
+
+    
+      
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2013/01/13/nginx-linux-mint-install-by-apt/" rel="permalink">Nginx - Linux Mint にインストール（パッケージ使用）！
+</a>
+        &nbsp;<small>(2013-01-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Linux Mint に軽量 Web サーバ  Nginx をインストールする手順についてです。
+（Debian, Ubuntu 等 GNU 系ディストリビューションは同様だと思う）
+
+GNU 系 Linux ディストリビューションに Nginx をインストールするには、
+
+
+  apt (apt-get, ap...</p>
+  </article>
+</div>
+
+    
+    <div id="google-ad-3"></div>
+    <div id="google-ad-2"></div>
+  </div>
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,899 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>玄箱ＨＧ - U-Boot 化！ - mk-mode BLOG</title>
+<meta name="description" content="今日は、とうとううちの玄箱HG(Debian 4.0(etch))を「U-Boot」化しました。（玄箱HG - Debian 5.0(lenny) 化の前準備として）通常、「Ｕ−Ｂｏｏｔ」化するにはシリアルコンソールが必要のようですが、玄箱にそのような細工をするのは怖いし面倒なので、シリアルコンソールを使用しない方法、また「U-Boot」の起動確認は「netcat」を使用する方法をとりました。作業記録※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※失敗すると、玄 箱が単なるゴミになります。個人の記録です。この記事を参考に作業される方は自己責任でお願いします。当方も、十分に下調べした上での作業です。当記事を参考にされてもよいですが、実際に作業される場合は、自分で十分に調査して手順を整理してから行ってください。※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※■前提条件  玄箱HGにはDebian 4.0(etch) がインストール済み。  玄箱HGにはシリアルコンソールを取り付けていない（シリアルコンソールは使用しない）。  クライアント側は WindowsXP マシンで、U-Boot の起動確認は「netcat」を使用。１．必要なファイルを準備GenBako Kernel Collectionから、uImage のカーネルイメージ（2.6.20）、U-Boot Loader、U-Boot Loaderのmd5をダウンロードする。# cd /tmp  &lt;span style=&quot;color: #ff0000;&quot;&gt;← ダウンロードするファイルを置くディレクトリへ移動。（どこでもＯＫ）&lt;/span&gt;# wget http://www.genbako.com/uImage/kernelimage-2.6.20-kuroHG-uImage.tgz# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.bin# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.md5※ちなみに、u-boot-hg.serial.flash.bin, u-boot-hg.serial.flash.md5 は標準でシリアルを使って出力するためのもののようです。（今回はシリアル出力しないので[serial]のないバージョン）２．「mtdblock1」の確認「/dev」に「mtdblock1」があるのを確認。なければ以下のコマンドでデバイスを作っておく。（当方は、「/dev」に「mtdblock1」があったので、この項は不実施）# cd /dev# ./MAKEDEV mtd３．システムマップの退避念のため、「/boot」のシステムマップを退避。# cd /boot# cp -p System.map System.map.orig４．「uImage」を展開「uImage」のアーカイブを展開。（「/boot」に）# tar zxvf /tmp/kernelimage-2.6.20-kuroHG-uImage.tgz５．「U-Boot Loader」のチェックサム確認「U-Boot Loader」が壊れているとフラッシュに書き込んでも取り返しのつかないことになるので、md5ファイルで「U-Boot Loader」のチェックサムを確認する。# cd /tmp# md5sum -c u-boot-hg.flash.md5u-boot-hg.flash.bin: OK 　&lt;span style=&quot;color: #ff0000;&quot;&gt;←　このように表示されればＯＫ&lt;/span&gt;６．「U-Boot Loader」の書き込みここで、フラッシュに「U-Boot Loader」を書き込む。※ここで失敗すると玄箱がお亡くなりになります。# dd if=u-boot-hg.flash.bin of=/dev/mtdblock1 bs=1k170+1 records in170+1 records out174668 bytes (175 kB) copied, 3.09891 seconds, 56.4 kB/s※上記のコマンドの代わりに以下のコマンドでもＯＫ。“cat u-boot-hg.flash.bin &gt; /dev/mtdblock1”７．書き込み確認フラッシュに書き込んだ「U-Boot Loader」がもとのファイルが同一か（ちゃんと書き込まれたか）を確認する。# cmp u-boot-hg.flash.bin /dev/mtdblock1cmp: EOF on u-boot-hg.flash.bin　&lt;span style=&quot;color: #ff0000;&quot;&gt;←　これでＯＫ（最後までエラーが無かったということ&lt;/span&gt;８．「netcat」インストール（玄箱ＨＧ側）当方の玄箱HGにはシリアルコンソールをつけていないので、シリアルコンソールの代わりに「netcat」を使います。# apt-get install netcat９．「netcat」インストール（WindowsXP側）「http://www.genbako.com/u-boot_loader/」に 「nc111nt.zip」が置かれているので、ダウンロード・展開し、WindowsマシンのIPアドレスを「192.168.11.149」に設定する。※U-Boot起動時、IPアドレスが以下のように固定されているようです。  玄箱側のIPアドレス１９２．１６８．１１．１５０  クライアント側１９２．１６８．１１．１４９１０．「netcat」監視開始Windows マシンのコマンドプロンプトで「netcat」のフォルダへ移動後、以下のコマンドを実行すると監視が開始されます。＞ nc -v -v -n -u -s 192.168.11.149 -p 6666 192.168.11.150 6666(UNKNOWN) [192.168.11.150] 6666 (?) open１１．玄箱リブートここで、玄箱を再起動する。# reboot１２．確認玄箱起動時に、Windows 側の「netcat」（コマンドプロンプト）で以下のような出力がされれば、大成功！U-Boot 1.1.4 LiSt 2.1.0 (Sep 21 2006 - 00:14:53) LinkStation HG / KuroBox HGstdin :   ncstdout:   ncstderr:   ncIDE:   Bus 0: OKDevice 0: Model: WDC WD3200JB-22KFA0 Firm: 08.05J08 Ser#: WD-WCAMR1323445Type: Hard DiskSupports 48-bit addressingCapacity: 305245.3 MB = 298.0 GB (625142448 x 512)Boot in 01 seconds (&#39;s&#39; to stop)...Loading 0:1:boot/vmlinux.UBoot1319184 bytes read## Booting image at 00800000 ...Image Name:   Linux-2.6.20-kuroboxHGImage Type:   PowerPC Linux Kernel Image (gzip compressed)Data Size:    1319120 Bytes =  1.3 MBLoad Address: 00000000Entry Point:  00000000Verifying Checksum ... OKUncompressing Kernel Image ... OK「U-Boot」化の作業は以上です。もしも、このようにならなければ、「U-Boot」化失敗です。玄箱はゴミになってしまったことになります。※でも、ハードハックできれば再起可能のようですが。。。（よくわかりませんが、超超玄人でないとできないと思います）あと、「U-Boot」化したら、玄箱は今までどおりの方法でのEMモードでの起動はできません。以下のようにするようです。      EM モードでの起動したい場合    Boot 待ちの時に s でストップ  run writeng      run emboot        EMモードの状態から通常モードで起動したい場合    Boot 待ちの時に s でストップ  run writeok  boot※fl3(mtdblock2) に echo -n “NGNG” しただけで再起動すると HDD にある 「/boot/vmlinux.UBoot」 で起動してしまうのでカーネルパニックになるようです。玄箱HGが「U-Boot」化できたので、次回はいよいよ「Debian 5.0(lenny)」化ですかね～。では、また。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="玄箱ＨＧ - U-Boot 化！">
+<meta property="og:url" content="https://komasaru.github.io/2010/04/11/11002043/">
+
+
+  <meta property="og:description" content="今日は、とうとううちの玄箱HG(Debian 4.0(etch))を「U-Boot」化しました。（玄箱HG - Debian 5.0(lenny) 化の前準備として）通常、「Ｕ−Ｂｏｏｔ」化するにはシリアルコンソールが必要のようですが、玄箱にそのような細工をするのは怖いし面倒なので、シリアルコンソールを使用しない方法、また「U-Boot」の起動確認は「netcat」を使用する方法をとりました。作業記録※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※失敗すると、玄 箱が単なるゴミになります。個人の記録です。この記事を参考に作業される方は自己責任でお願いします。当方も、十分に下調べした上での作業です。当記事を参考にされてもよいですが、実際に作業される場合は、自分で十分に調査して手順を整理してから行ってください。※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※■前提条件  玄箱HGにはDebian 4.0(etch) がインストール済み。  玄箱HGにはシリアルコンソールを取り付けていない（シリアルコンソールは使用しない）。  クライアント側は WindowsXP マシンで、U-Boot の起動確認は「netcat」を使用。１．必要なファイルを準備GenBako Kernel Collectionから、uImage のカーネルイメージ（2.6.20）、U-Boot Loader、U-Boot Loaderのmd5をダウンロードする。# cd /tmp  &lt;span style=&quot;color: #ff0000;&quot;&gt;← ダウンロードするファイルを置くディレクトリへ移動。（どこでもＯＫ）&lt;/span&gt;# wget http://www.genbako.com/uImage/kernelimage-2.6.20-kuroHG-uImage.tgz# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.bin# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.md5※ちなみに、u-boot-hg.serial.flash.bin, u-boot-hg.serial.flash.md5 は標準でシリアルを使って出力するためのもののようです。（今回はシリアル出力しないので[serial]のないバージョン）２．「mtdblock1」の確認「/dev」に「mtdblock1」があるのを確認。なければ以下のコマンドでデバイスを作っておく。（当方は、「/dev」に「mtdblock1」があったので、この項は不実施）# cd /dev# ./MAKEDEV mtd３．システムマップの退避念のため、「/boot」のシステムマップを退避。# cd /boot# cp -p System.map System.map.orig４．「uImage」を展開「uImage」のアーカイブを展開。（「/boot」に）# tar zxvf /tmp/kernelimage-2.6.20-kuroHG-uImage.tgz５．「U-Boot Loader」のチェックサム確認「U-Boot Loader」が壊れているとフラッシュに書き込んでも取り返しのつかないことになるので、md5ファイルで「U-Boot Loader」のチェックサムを確認する。# cd /tmp# md5sum -c u-boot-hg.flash.md5u-boot-hg.flash.bin: OK 　&lt;span style=&quot;color: #ff0000;&quot;&gt;←　このように表示されればＯＫ&lt;/span&gt;６．「U-Boot Loader」の書き込みここで、フラッシュに「U-Boot Loader」を書き込む。※ここで失敗すると玄箱がお亡くなりになります。# dd if=u-boot-hg.flash.bin of=/dev/mtdblock1 bs=1k170+1 records in170+1 records out174668 bytes (175 kB) copied, 3.09891 seconds, 56.4 kB/s※上記のコマンドの代わりに以下のコマンドでもＯＫ。“cat u-boot-hg.flash.bin &gt; /dev/mtdblock1”７．書き込み確認フラッシュに書き込んだ「U-Boot Loader」がもとのファイルが同一か（ちゃんと書き込まれたか）を確認する。# cmp u-boot-hg.flash.bin /dev/mtdblock1cmp: EOF on u-boot-hg.flash.bin　&lt;span style=&quot;color: #ff0000;&quot;&gt;←　これでＯＫ（最後までエラーが無かったということ&lt;/span&gt;８．「netcat」インストール（玄箱ＨＧ側）当方の玄箱HGにはシリアルコンソールをつけていないので、シリアルコンソールの代わりに「netcat」を使います。# apt-get install netcat９．「netcat」インストール（WindowsXP側）「http://www.genbako.com/u-boot_loader/」に 「nc111nt.zip」が置かれているので、ダウンロード・展開し、WindowsマシンのIPアドレスを「192.168.11.149」に設定する。※U-Boot起動時、IPアドレスが以下のように固定されているようです。  玄箱側のIPアドレス１９２．１６８．１１．１５０  クライアント側１９２．１６８．１１．１４９１０．「netcat」監視開始Windows マシンのコマンドプロンプトで「netcat」のフォルダへ移動後、以下のコマンドを実行すると監視が開始されます。＞ nc -v -v -n -u -s 192.168.11.149 -p 6666 192.168.11.150 6666(UNKNOWN) [192.168.11.150] 6666 (?) open１１．玄箱リブートここで、玄箱を再起動する。# reboot１２．確認玄箱起動時に、Windows 側の「netcat」（コマンドプロンプト）で以下のような出力がされれば、大成功！U-Boot 1.1.4 LiSt 2.1.0 (Sep 21 2006 - 00:14:53) LinkStation HG / KuroBox HGstdin :   ncstdout:   ncstderr:   ncIDE:   Bus 0: OKDevice 0: Model: WDC WD3200JB-22KFA0 Firm: 08.05J08 Ser#: WD-WCAMR1323445Type: Hard DiskSupports 48-bit addressingCapacity: 305245.3 MB = 298.0 GB (625142448 x 512)Boot in 01 seconds (&#39;s&#39; to stop)...Loading 0:1:boot/vmlinux.UBoot1319184 bytes read## Booting image at 00800000 ...Image Name:   Linux-2.6.20-kuroboxHGImage Type:   PowerPC Linux Kernel Image (gzip compressed)Data Size:    1319120 Bytes =  1.3 MBLoad Address: 00000000Entry Point:  00000000Verifying Checksum ... OKUncompressing Kernel Image ... OK「U-Boot」化の作業は以上です。もしも、このようにならなければ、「U-Boot」化失敗です。玄箱はゴミになってしまったことになります。※でも、ハードハックできれば再起可能のようですが。。。（よくわかりませんが、超超玄人でないとできないと思います）あと、「U-Boot」化したら、玄箱は今までどおりの方法でのEMモードでの起動はできません。以下のようにするようです。      EM モードでの起動したい場合    Boot 待ちの時に s でストップ  run writeng      run emboot        EMモードの状態から通常モードで起動したい場合    Boot 待ちの時に s でストップ  run writeok  boot※fl3(mtdblock2) に echo -n “NGNG” しただけで再起動すると HDD にある 「/boot/vmlinux.UBoot」 で起動してしまうのでカーネルパニックになるようです。玄箱HGが「U-Boot」化できたので、次回はいよいよ「Debian 5.0(lenny)」化ですかね～。では、また。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="玄箱ＨＧ - U-Boot 化！">
+  <meta name="twitter:description" content="今日は、とうとううちの玄箱HG(Debian 4.0(etch))を「U-Boot」化しました。（玄箱HG - Debian 5.0(lenny) 化の前準備として）通常、「Ｕ−Ｂｏｏｔ」化するにはシリアルコンソールが必要のようですが、玄箱にそのような細工をするのは怖いし面倒なので、シリアルコンソールを使用しない方法、また「U-Boot」の起動確認は「netcat」を使用する方法をとりました。作業記録※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※失敗すると、玄 箱が単なるゴミになります。個人の記録です。この記事を参考に作業される方は自己責任でお願いします。当方も、十分に下調べした上での作業です。当記事を参考にされてもよいですが、実際に作業される場合は、自分で十分に調査して手順を整理してから行ってください。※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※■前提条件  玄箱HGにはDebian 4.0(etch) がインストール済み。  玄箱HGにはシリアルコンソールを取り付けていない（シリアルコンソールは使用しない）。  クライアント側は WindowsXP マシンで、U-Boot の起動確認は「netcat」を使用。１．必要なファイルを準備GenBako Kernel Collectionから、uImage のカーネルイメージ（2.6.20）、U-Boot Loader、U-Boot Loaderのmd5をダウンロードする。# cd /tmp  &lt;span style=&quot;color: #ff0000;&quot;&gt;← ダウンロードするファイルを置くディレクトリへ移動。（どこでもＯＫ）&lt;/span&gt;# wget http://www.genbako.com/uImage/kernelimage-2.6.20-kuroHG-uImage.tgz# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.bin# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.md5※ちなみに、u-boot-hg.serial.flash.bin, u-boot-hg.serial.flash.md5 は標準でシリアルを使って出力するためのもののようです。（今回はシリアル出力しないので[serial]のないバージョン）２．「mtdblock1」の確認「/dev」に「mtdblock1」があるのを確認。なければ以下のコマンドでデバイスを作っておく。（当方は、「/dev」に「mtdblock1」があったので、この項は不実施）# cd /dev# ./MAKEDEV mtd３．システムマップの退避念のため、「/boot」のシステムマップを退避。# cd /boot# cp -p System.map System.map.orig４．「uImage」を展開「uImage」のアーカイブを展開。（「/boot」に）# tar zxvf /tmp/kernelimage-2.6.20-kuroHG-uImage.tgz５．「U-Boot Loader」のチェックサム確認「U-Boot Loader」が壊れているとフラッシュに書き込んでも取り返しのつかないことになるので、md5ファイルで「U-Boot Loader」のチェックサムを確認する。# cd /tmp# md5sum -c u-boot-hg.flash.md5u-boot-hg.flash.bin: OK 　&lt;span style=&quot;color: #ff0000;&quot;&gt;←　このように表示されればＯＫ&lt;/span&gt;６．「U-Boot Loader」の書き込みここで、フラッシュに「U-Boot Loader」を書き込む。※ここで失敗すると玄箱がお亡くなりになります。# dd if=u-boot-hg.flash.bin of=/dev/mtdblock1 bs=1k170+1 records in170+1 records out174668 bytes (175 kB) copied, 3.09891 seconds, 56.4 kB/s※上記のコマンドの代わりに以下のコマンドでもＯＫ。“cat u-boot-hg.flash.bin &gt; /dev/mtdblock1”７．書き込み確認フラッシュに書き込んだ「U-Boot Loader」がもとのファイルが同一か（ちゃんと書き込まれたか）を確認する。# cmp u-boot-hg.flash.bin /dev/mtdblock1cmp: EOF on u-boot-hg.flash.bin　&lt;span style=&quot;color: #ff0000;&quot;&gt;←　これでＯＫ（最後までエラーが無かったということ&lt;/span&gt;８．「netcat」インストール（玄箱ＨＧ側）当方の玄箱HGにはシリアルコンソールをつけていないので、シリアルコンソールの代わりに「netcat」を使います。# apt-get install netcat９．「netcat」インストール（WindowsXP側）「http://www.genbako.com/u-boot_loader/」に 「nc111nt.zip」が置かれているので、ダウンロード・展開し、WindowsマシンのIPアドレスを「192.168.11.149」に設定する。※U-Boot起動時、IPアドレスが以下のように固定されているようです。  玄箱側のIPアドレス１９２．１６８．１１．１５０  クライアント側１９２．１６８．１１．１４９１０．「netcat」監視開始Windows マシンのコマンドプロンプトで「netcat」のフォルダへ移動後、以下のコマンドを実行すると監視が開始されます。＞ nc -v -v -n -u -s 192.168.11.149 -p 6666 192.168.11.150 6666(UNKNOWN) [192.168.11.150] 6666 (?) open１１．玄箱リブートここで、玄箱を再起動する。# reboot１２．確認玄箱起動時に、Windows 側の「netcat」（コマンドプロンプト）で以下のような出力がされれば、大成功！U-Boot 1.1.4 LiSt 2.1.0 (Sep 21 2006 - 00:14:53) LinkStation HG / KuroBox HGstdin :   ncstdout:   ncstderr:   ncIDE:   Bus 0: OKDevice 0: Model: WDC WD3200JB-22KFA0 Firm: 08.05J08 Ser#: WD-WCAMR1323445Type: Hard DiskSupports 48-bit addressingCapacity: 305245.3 MB = 298.0 GB (625142448 x 512)Boot in 01 seconds (&#39;s&#39; to stop)...Loading 0:1:boot/vmlinux.UBoot1319184 bytes read## Booting image at 00800000 ...Image Name:   Linux-2.6.20-kuroboxHGImage Type:   PowerPC Linux Kernel Image (gzip compressed)Data Size:    1319120 Bytes =  1.3 MBLoad Address: 00000000Entry Point:  00000000Verifying Checksum ... OKUncompressing Kernel Image ... OK「U-Boot」化の作業は以上です。もしも、このようにならなければ、「U-Boot」化失敗です。玄箱はゴミになってしまったことになります。※でも、ハードハックできれば再起可能のようですが。。。（よくわかりませんが、超超玄人でないとできないと思います）あと、「U-Boot」化したら、玄箱は今までどおりの方法でのEMモードでの起動はできません。以下のようにするようです。      EM モードでの起動したい場合    Boot 待ちの時に s でストップ  run writeng      run emboot        EMモードの状態から通常モードで起動したい場合    Boot 待ちの時に s でストップ  run writeok  boot※fl3(mtdblock2) に echo -n “NGNG” しただけで再起動すると HDD にある 「/boot/vmlinux.UBoot」 で起動してしまうのでカーネルパニックになるようです。玄箱HGが「U-Boot」化できたので、次回はいよいよ「Debian 5.0(lenny)」化ですかね～。では、また。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2010/04/11/11002043/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2010-04-11T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2010/04/11/11002043/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="玄箱ＨＧ - U-Boot 化！">
+    <meta itemprop="description" content="今日は、とうとううちの玄箱HG(Debian 4.0(etch))を「U-Boot」化しました。（玄箱HG - Debian 5.0(lenny) 化の前準備として）通常、「Ｕ−Ｂｏｏｔ」化するにはシリアルコンソールが必要のようですが、玄箱にそのような細工をするのは怖いし面倒なので、シリアルコンソールを使用しない方法、また「U-Boot」の起動確認は「netcat」を使用する方法をとりました。作業記録※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※失敗すると、玄 箱が単なるゴミになります。個人の記録です。この記事を参考に作業される方は自己責任でお願いします。当方も、十分に下調べした上での作業です。当記事を参考にされてもよいですが、実際に作業される場合は、自分で十分に調査して手順を整理してから行ってください。※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※■前提条件  玄箱HGにはDebian 4.0(etch) がインストール済み。  玄箱HGにはシリアルコンソールを取り付けていない（シリアルコンソールは使用しない）。  クライアント側は WindowsXP マシンで、U-Boot の起動確認は「netcat」を使用。１．必要なファイルを準備GenBako Kernel Collectionから、uImage のカーネルイメージ（2.6.20）、U-Boot Loader、U-Boot Loaderのmd5をダウンロードする。# cd /tmp  &lt;span style=&quot;color: #ff0000;&quot;&gt;← ダウンロードするファイルを置くディレクトリへ移動。（どこでもＯＫ）&lt;/span&gt;# wget http://www.genbako.com/uImage/kernelimage-2.6.20-kuroHG-uImage.tgz# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.bin# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.md5※ちなみに、u-boot-hg.serial.flash.bin, u-boot-hg.serial.flash.md5 は標準でシリアルを使って出力するためのもののようです。（今回はシリアル出力しないので[serial]のないバージョン）２．「mtdblock1」の確認「/dev」に「mtdblock1」があるのを確認。なければ以下のコマンドでデバイスを作っておく。（当方は、「/dev」に「mtdblock1」があったので、この項は不実施）# cd /dev# ./MAKEDEV mtd３．システムマップの退避念のため、「/boot」のシステムマップを退避。# cd /boot# cp -p System.map System.map.orig４．「uImage」を展開「uImage」のアーカイブを展開。（「/boot」に）# tar zxvf /tmp/kernelimage-2.6.20-kuroHG-uImage.tgz５．「U-Boot Loader」のチェックサム確認「U-Boot Loader」が壊れているとフラッシュに書き込んでも取り返しのつかないことになるので、md5ファイルで「U-Boot Loader」のチェックサムを確認する。# cd /tmp# md5sum -c u-boot-hg.flash.md5u-boot-hg.flash.bin: OK 　&lt;span style=&quot;color: #ff0000;&quot;&gt;←　このように表示されればＯＫ&lt;/span&gt;６．「U-Boot Loader」の書き込みここで、フラッシュに「U-Boot Loader」を書き込む。※ここで失敗すると玄箱がお亡くなりになります。# dd if=u-boot-hg.flash.bin of=/dev/mtdblock1 bs=1k170+1 records in170+1 records out174668 bytes (175 kB) copied, 3.09891 seconds, 56.4 kB/s※上記のコマンドの代わりに以下のコマンドでもＯＫ。“cat u-boot-hg.flash.bin &gt; /dev/mtdblock1”７．書き込み確認フラッシュに書き込んだ「U-Boot Loader」がもとのファイルが同一か（ちゃんと書き込まれたか）を確認する。# cmp u-boot-hg.flash.bin /dev/mtdblock1cmp: EOF on u-boot-hg.flash.bin　&lt;span style=&quot;color: #ff0000;&quot;&gt;←　これでＯＫ（最後までエラーが無かったということ&lt;/span&gt;８．「netcat」インストール（玄箱ＨＧ側）当方の玄箱HGにはシリアルコンソールをつけていないので、シリアルコンソールの代わりに「netcat」を使います。# apt-get install netcat９．「netcat」インストール（WindowsXP側）「http://www.genbako.com/u-boot_loader/」に 「nc111nt.zip」が置かれているので、ダウンロード・展開し、WindowsマシンのIPアドレスを「192.168.11.149」に設定する。※U-Boot起動時、IPアドレスが以下のように固定されているようです。  玄箱側のIPアドレス１９２．１６８．１１．１５０  クライアント側１９２．１６８．１１．１４９１０．「netcat」監視開始Windows マシンのコマンドプロンプトで「netcat」のフォルダへ移動後、以下のコマンドを実行すると監視が開始されます。＞ nc -v -v -n -u -s 192.168.11.149 -p 6666 192.168.11.150 6666(UNKNOWN) [192.168.11.150] 6666 (?) open１１．玄箱リブートここで、玄箱を再起動する。# reboot１２．確認玄箱起動時に、Windows 側の「netcat」（コマンドプロンプト）で以下のような出力がされれば、大成功！U-Boot 1.1.4 LiSt 2.1.0 (Sep 21 2006 - 00:14:53) LinkStation HG / KuroBox HGstdin :   ncstdout:   ncstderr:   ncIDE:   Bus 0: OKDevice 0: Model: WDC WD3200JB-22KFA0 Firm: 08.05J08 Ser#: WD-WCAMR1323445Type: Hard DiskSupports 48-bit addressingCapacity: 305245.3 MB = 298.0 GB (625142448 x 512)Boot in 01 seconds (&#39;s&#39; to stop)...Loading 0:1:boot/vmlinux.UBoot1319184 bytes read## Booting image at 00800000 ...Image Name:   Linux-2.6.20-kuroboxHGImage Type:   PowerPC Linux Kernel Image (gzip compressed)Data Size:    1319120 Bytes =  1.3 MBLoad Address: 00000000Entry Point:  00000000Verifying Checksum ... OKUncompressing Kernel Image ... OK「U-Boot」化の作業は以上です。もしも、このようにならなければ、「U-Boot」化失敗です。玄箱はゴミになってしまったことになります。※でも、ハードハックできれば再起可能のようですが。。。（よくわかりませんが、超超玄人でないとできないと思います）あと、「U-Boot」化したら、玄箱は今までどおりの方法でのEMモードでの起動はできません。以下のようにするようです。      EM モードでの起動したい場合    Boot 待ちの時に s でストップ  run writeng      run emboot        EMモードの状態から通常モードで起動したい場合    Boot 待ちの時に s でストップ  run writeok  boot※fl3(mtdblock2) に echo -n “NGNG” しただけで再起動すると HDD にある 「/boot/vmlinux.UBoot」 で起動してしまうのでカーネルパニックになるようです。玄箱HGが「U-Boot」化できたので、次回はいよいよ「Debian 5.0(lenny)」化ですかね～。では、また。">
+    <meta itemprop="datePublished" content="April 11, 2010">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">玄箱ＨＧ - U-Boot 化！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2010-04-11T00:20:00+09:00">2010-04-11 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>今日は、とうとううちの玄箱HG(Debian 4.0(etch))を「U-Boot」化しました。
+（玄箱HG - Debian 5.0(lenny) 化の前準備として）</p>
+
+<p>通常、「Ｕ−Ｂｏｏｔ」化するにはシリアルコンソールが必要のようですが、玄箱にそのような細工をするのは怖いし面倒なので、シリアルコンソールを使用しない方法、また「U-Boot」の起動確認は「netcat」を使用する方法をとりました。</p>
+
+<h3 id="作業記録">作業記録</h3>
+
+<p>※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
+失敗すると、玄 箱が単なるゴミになります。
+個人の記録です。この記事を参考に作業される方は<strong>自己責任</strong>でお願いします。
+当方も、十分に下調べした上での作業です。
+当記事を参考にされてもよいですが、
+実際に作業される場合は、自分で十分に調査して手順を整理してから行ってください。
+※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※</p>
+
+<p>■前提条件</p>
+
+<ul>
+  <li>玄箱HGにはDebian 4.0(etch) がインストール済み。</li>
+  <li>玄箱HGにはシリアルコンソールを取り付けていない（シリアルコンソールは使用しない）。</li>
+  <li>クライアント側は WindowsXP マシンで、U-Boot の起動確認は「netcat」を使用。</li>
+</ul>
+
+<h4 id="１必要なファイルを準備">１．必要なファイルを準備</h4>
+
+<p><a href="http://www.genbako.com/" title="GenBako Kernel Collection">GenBako Kernel Collection</a>から、uImage のカーネルイメージ（2.6.20）、U-Boot Loader、U-Boot Loaderのmd5をダウンロードする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd /tmp  &lt;span style="color: #ff0000;"&gt;← ダウンロードするファイルを置くディレクトリへ移動。（どこでもＯＫ）&lt;/span&gt;
+# wget http://www.genbako.com/uImage/kernelimage-2.6.20-kuroHG-uImage.tgz
+# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.bin
+# wget http://www.genbako.com/u-boot_loader/u-boot-hg.flash.md5
+</code></pre></div></div>
+
+<p>※ちなみに、u-boot-hg.serial.flash.bin, u-boot-hg.serial.flash.md5 は標準でシリアルを使って出力するためのもののようです。（今回はシリアル出力しないので[serial]のないバージョン）</p>
+
+<h4 id="２mtdblock1の確認">２．「mtdblock1」の確認</h4>
+
+<p>「/dev」に「mtdblock1」があるのを確認。なければ以下のコマンドでデバイスを作っておく。
+（当方は、「/dev」に「mtdblock1」があったので、この項は不実施）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd /dev
+# ./MAKEDEV mtd
+</code></pre></div></div>
+
+<h4 id="３システムマップの退避">３．システムマップの退避</h4>
+
+<p>念のため、「/boot」のシステムマップを退避。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd /boot
+# cp -p System.map System.map.orig
+</code></pre></div></div>
+
+<h4 id="４uimageを展開">４．「uImage」を展開</h4>
+
+<p>「uImage」のアーカイブを展開。（「/boot」に）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># tar zxvf /tmp/kernelimage-2.6.20-kuroHG-uImage.tgz
+</code></pre></div></div>
+
+<h4 id="５u-boot-loaderのチェックサム確認">５．「U-Boot Loader」のチェックサム確認</h4>
+
+<p>「U-Boot Loader」が壊れているとフラッシュに書き込んでも取り返しのつかないことになるので、md5ファイルで「U-Boot Loader」のチェックサムを確認する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd /tmp
+# md5sum -c u-boot-hg.flash.md5
+u-boot-hg.flash.bin: OK 　&lt;span style="color: #ff0000;"&gt;←　このように表示されればＯＫ&lt;/span&gt;
+</code></pre></div></div>
+
+<h4 id="６u-boot-loaderの書き込み">６．「U-Boot Loader」の書き込み</h4>
+
+<p>ここで、フラッシュに「U-Boot Loader」を書き込む。
+<strong>※ここで失敗すると玄箱がお亡くなりになります。</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dd if=u-boot-hg.flash.bin of=/dev/mtdblock1 bs=1k
+170+1 records in
+170+1 records out
+174668 bytes (175 kB) copied, 3.09891 seconds, 56.4 kB/s
+</code></pre></div></div>
+
+<p>※上記のコマンドの代わりに以下のコマンドでもＯＫ。
+“cat u-boot-hg.flash.bin &gt; /dev/mtdblock1”</p>
+
+<h4 id="７書き込み確認">７．書き込み確認</h4>
+
+<p>フラッシュに書き込んだ「U-Boot Loader」がもとのファイルが同一か（ちゃんと書き込まれたか）を確認する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cmp u-boot-hg.flash.bin /dev/mtdblock1
+cmp: EOF on u-boot-hg.flash.bin　&lt;span style="color: #ff0000;"&gt;←　これでＯＫ（最後までエラーが無かったということ&lt;/span&gt;
+</code></pre></div></div>
+
+<h4 id="８netcatインストール玄箱ｈｇ側">８．「netcat」インストール（玄箱ＨＧ側）</h4>
+
+<p>当方の玄箱HGにはシリアルコンソールをつけていないので、シリアルコンソールの代わりに「netcat」を使います。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt-get install netcat
+</code></pre></div></div>
+
+<h4 id="９netcatインストールwindowsxp側">９．「netcat」インストール（WindowsXP側）</h4>
+
+<p>「<a href="http://www.genbako.com/u-boot_loader/" title="http://www.genbako.com/u-boot_loader/">http://www.genbako.com/u-boot_loader/</a>」に 「nc111nt.zip」が置かれているので、ダウンロード・展開し、WindowsマシンのIPアドレスを「192.168.11.149」に設定する。
+※U-Boot起動時、IPアドレスが以下のように固定されているようです。</p>
+
+<ul>
+  <li>玄箱側のIPアドレス
+１９２．１６８．１１．１５０</li>
+  <li>クライアント側
+１９２．１６８．１１．１４９</li>
+</ul>
+
+<h4 id="１０netcat監視開始">１０．「netcat」監視開始</h4>
+
+<p>Windows マシンのコマンドプロンプトで「netcat」のフォルダへ移動後、以下のコマンドを実行すると監視が開始されます。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>＞ nc -v -v -n -u -s 192.168.11.149 -p 6666 192.168.11.150 6666
+(UNKNOWN) [192.168.11.150] 6666 (?) open
+</code></pre></div></div>
+
+<h4 id="１１玄箱リブート">１１．玄箱リブート</h4>
+
+<p>ここで、玄箱を再起動する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># reboot
+</code></pre></div></div>
+
+<h4 id="１２確認">１２．確認</h4>
+
+<p>玄箱起動時に、Windows 側の「netcat」（コマンドプロンプト）で以下のような出力がされれば、大成功！</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>U-Boot 1.1.4 LiSt 2.1.0 (Sep 21 2006 - 00:14:53) LinkStation HG / KuroBox HG
+stdin :   nc
+stdout:   nc
+stderr:   nc
+IDE:   Bus 0: OK
+Device 0: Model: WDC WD3200JB-22KFA0 Firm: 08.05J08 Ser#: WD-WCAMR1323445
+Type: Hard Disk
+Supports 48-bit addressing
+Capacity: 305245.3 MB = 298.0 GB (625142448 x 512)
+Boot in 01 seconds ('s' to stop)...
+Loading 0:1:boot/vmlinux.UBoot
+
+1319184 bytes read
+## Booting image at 00800000 ...
+Image Name:   Linux-2.6.20-kuroboxHG
+Image Type:   PowerPC Linux Kernel Image (gzip compressed)
+Data Size:    1319120 Bytes =  1.3 MB
+Load Address: 00000000
+Entry Point:  00000000
+Verifying Checksum ... OK
+Uncompressing Kernel Image ... OK
+</code></pre></div></div>
+
+<hr />
+
+<p>「U-Boot」化の作業は以上です。</p>
+
+<p>もしも、このようにならなければ、「U-Boot」化失敗です。
+玄箱はゴミになってしまったことになります。
+※でも、ハードハックできれば再起可能のようですが。。。（よくわかりませんが、超超玄人でないとできないと思います）</p>
+
+<p>あと、「U-Boot」化したら、玄箱は今までどおりの方法でのEMモードでの起動はできません。</p>
+
+<p>以下のようにするようです。</p>
+
+<ul>
+  <li>
+    <p>EM モードでの起動したい場合</p>
+  </li>
+  <li>Boot 待ちの時に s でストップ</li>
+  <li>run writeng</li>
+  <li>
+    <p>run emboot</p>
+  </li>
+  <li>
+    <p>EMモードの状態から通常モードで起動したい場合</p>
+  </li>
+  <li>Boot 待ちの時に s でストップ</li>
+  <li>run writeok</li>
+  <li>boot</li>
+</ul>
+
+<p>※fl3(mtdblock2) に echo -n “NGNG” しただけで再起動すると HDD にある 「/boot/vmlinux.UBoot」 で起動してしまうのでカーネルパニックになるようです。</p>
+
+<p>玄箱HGが「U-Boot」化できたので、次回はいよいよ「Debian 5.0(lenny)」化ですかね～。</p>
+
+<p>では、また。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E7%8E%84%E7%AE%B1" class="page__taxonomy-item" rel="tag">玄箱</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2010-04-11T00:20:00+09:00">2010-04-11 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E7%8E%84%E7%AE%B1%EF%BC%A8%EF%BC%A7+-+U-Boot+%E5%8C%96%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2010%2F04%2F11%2F11002043%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2010%2F04%2F11%2F11002043%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2010%2F04%2F11%2F11002043%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2010/04/10/10002046/" class="pagination--pager" title="玄箱ＨＧ － フラッシュのバックアップ！
+">Previous</a>
+    
+    
+      <a href="/2010/04/12/12002049/" class="pagination--pager" title="玄箱ＨＧ - ＤｅｂｉａｎをＬｅｎｎｙ化！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2010/04/11/11002043/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2010/04/11/11002043"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

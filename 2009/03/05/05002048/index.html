@@ -1,0 +1,933 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Apacheのﾊﾟﾌｫｰﾏﾝｽﾍﾞﾝﾁﾏｰｸ！ - mk-mode BLOG</title>
+<meta name="description" content="最近、ＷｏｒｄＰｒｅｓｓの動きが非常に重いので、チューニングしようと考えてます。（Ａｐａｃｈｅ、ＰＨＰ、ＭｙＳＱＬの最適化等が必要かと）でもその前に、現状を把握しないと話にならないので、Ａｐａｃｈｅのパフォーマンスを測定できるベンチマークテストツール「 ａｂ（Apache Bench） 」をＦｅｄｏｒａサーバで試してみました。（Ａｐａｃｈｅに標準で付属しているツールです）以下が記録です。本当はこの「 ａｂ 」を実行するマシンはＷｅｂサーバではなく別のマシンがよいらしい。（接続に要する時間の測定ができないから）なので、ローカルマシン（Ｗｉｎｄｏｗｓマシン）のＡｐａｃｈｅから実行してみました。※リクエストの数が多いとBenchmarking 192.168.11.3 (be patient)...apr_poll: The timeout specified has expired (70007)みたいなタイムアウトエラーがでてしまうんで、リクエストを少なめにしてテストしました。C:\Program Files\Apache Software Foundation\Apache2.2\bin&amp;&gt;ab -n 5 -c 2 http://192.168.11.3/wordpress/index.phpThis is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/Licensed to The Apache Software Foundation, http://www.apache.org/Benchmarking 192.168.11.3 (be patient).....doneServer Software:        ApacheServer Hostname:        192.168.11.3Server Port:            80Document Path:          /wordpress/index.phpDocument Length:        0 bytesConcurrency Level:      2Time taken for tests:   38.047 secondsComplete requests:      5Failed requests:        0Write errors:           0Non-2xx responses:      5Total transferred:      2590 bytesHTML transferred:       0 bytesRequests per second:    0.13 [#/sec] (mean)Time per request:       15218.750 [ms] (mean)Time per request:       7609.375 [ms] (mean, across all concurrent requests)Transfer rate:          0.07 [Kbytes/sec] receivedConnection Times (ms)min  mean[+/-sd] median   maxConnect:        0     0    0.0      0       0Processing:  8547 13853 4524.6  14750   20047Waiting:     8516 13828 4538.6  14703   20047Total:       8547 13853 4524.6  14750   20047Percentage of the requests served within a certain time (ms)50%  1293866%  1656375%  1656380%  2004790%  2004795%  2004798%  2004799%  20047100%  20047 (longest request)C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;オプションの説明・テスト結果の見方については「 ＠IT：Apacheパフォーマンス・チューニングのポイント（2/2） 」 をご参照下さい。チェックについては主に以下を確認すればＯＫみたいです。  リクエストの成否（Complete requestsとFailed requests）  1秒間に処理されたリクエスト数（Requests per second）  接続時間・処理時間・待ち時間の内訳（Connect/Processing/Waiting）でも、しばらくサーバをかまって再び同じベンチマークテストをしたら、今度はとっても調子がいい。上と同じテスト↓↓C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ab -n 5 -c 2 http://192.168.11.3/wordpress/index.phpThis is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/Licensed to The Apache Software Foundation, http://www.apache.org/Benchmarking 192.168.11.3 (be patient).....doneServer Software:        ApacheServer Hostname:        192.168.11.3Server Port:            80Document Path:          /wordress/index.phpDocument Length:        216 bytesConcurrency Level:      2Time taken for tests:   0.031 secondsComplete requests:      5Failed requests:        0Write errors:           0Non-2xx responses:      5Total transferred:      2015 bytesHTML transferred:       1080 bytesRequests per second:    160.00 [#/sec] (mean)Time per request:       12.500 [ms] (mean)Time per request:       6.250 [ms] (mean, across all concurrent requests)Transfer rate:          62.97 [Kbytes/sec] receivedConnection Times (ms)              min  mean[+/-sd] median   maxConnect:        0    0   0.0      0       0Processing:     0   13   7.0     16      16Waiting:        0   13   7.0     16      16Total:          0   13   7.0     16      16Percentage of the requests served within a certain time (ms)  50%     16  66%     16  75%     16  80%     16  90%     16  95%     16  98%     16  99%     16 100%     16 (longest request)C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ついでに、もっと負荷をかけてみた。結果↓↓C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ab -n 1000 -c 100 http://192.168.11.3/wordpress/index.phpThis is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/Licensed to The Apache Software Foundation, http://www.apache.org/Benchmarking 192.168.11.3 (be patient)Completed 100 requestsCompleted 200 requestsCompleted 300 requestsCompleted 400 requestsCompleted 500 requestsCompleted 600 requestsCompleted 700 requestsCompleted 800 requestsCompleted 900 requestsCompleted 1000 requestsFinished 1000 requestsServer Software:        ApacheServer Hostname:        192.168.11.3Server Port:            80Document Path:          /wordress/index.phpDocument Length:        216 bytesConcurrency Level:      100Time taken for tests:   6.938 secondsComplete requests:      1000Failed requests:        0Write errors:           0Non-2xx responses:      1000Total transferred:      403000 bytesHTML transferred:       216000 bytesRequests per second:    144.14 [#/sec] (mean)Time per request:       693.750 [ms] (mean)Time per request:       6.938 [ms] (mean, across all concurrent requests)Transfer rate:          56.73 [Kbytes/sec] receivedConnection Times (ms)              min  mean[+/-sd] median   maxConnect:        0    1   3.5      0      31Processing:   219  660 117.3    672    1188Waiting:      219  659 117.4    672    1188Total:        219  660 116.9    672    1188Percentage of the requests served within a certain time (ms)  50%    672  66%    672  75%    688  80%    688  90%    781  95%    828  98%    953  99%   1063 100%   1188 (longest request)C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;非常にいい！？いろいろサービスを再起動させたりしてたからかも！とりあえず、パフォーマンスアップ作戦は保留しとこっと。では、では。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Apacheのﾊﾟﾌｫｰﾏﾝｽﾍﾞﾝﾁﾏｰｸ！">
+<meta property="og:url" content="https://komasaru.github.io/2009/03/05/05002048/">
+
+
+  <meta property="og:description" content="最近、ＷｏｒｄＰｒｅｓｓの動きが非常に重いので、チューニングしようと考えてます。（Ａｐａｃｈｅ、ＰＨＰ、ＭｙＳＱＬの最適化等が必要かと）でもその前に、現状を把握しないと話にならないので、Ａｐａｃｈｅのパフォーマンスを測定できるベンチマークテストツール「 ａｂ（Apache Bench） 」をＦｅｄｏｒａサーバで試してみました。（Ａｐａｃｈｅに標準で付属しているツールです）以下が記録です。本当はこの「 ａｂ 」を実行するマシンはＷｅｂサーバではなく別のマシンがよいらしい。（接続に要する時間の測定ができないから）なので、ローカルマシン（Ｗｉｎｄｏｗｓマシン）のＡｐａｃｈｅから実行してみました。※リクエストの数が多いとBenchmarking 192.168.11.3 (be patient)...apr_poll: The timeout specified has expired (70007)みたいなタイムアウトエラーがでてしまうんで、リクエストを少なめにしてテストしました。C:\Program Files\Apache Software Foundation\Apache2.2\bin&amp;&gt;ab -n 5 -c 2 http://192.168.11.3/wordpress/index.phpThis is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/Licensed to The Apache Software Foundation, http://www.apache.org/Benchmarking 192.168.11.3 (be patient).....doneServer Software:        ApacheServer Hostname:        192.168.11.3Server Port:            80Document Path:          /wordpress/index.phpDocument Length:        0 bytesConcurrency Level:      2Time taken for tests:   38.047 secondsComplete requests:      5Failed requests:        0Write errors:           0Non-2xx responses:      5Total transferred:      2590 bytesHTML transferred:       0 bytesRequests per second:    0.13 [#/sec] (mean)Time per request:       15218.750 [ms] (mean)Time per request:       7609.375 [ms] (mean, across all concurrent requests)Transfer rate:          0.07 [Kbytes/sec] receivedConnection Times (ms)min  mean[+/-sd] median   maxConnect:        0     0    0.0      0       0Processing:  8547 13853 4524.6  14750   20047Waiting:     8516 13828 4538.6  14703   20047Total:       8547 13853 4524.6  14750   20047Percentage of the requests served within a certain time (ms)50%  1293866%  1656375%  1656380%  2004790%  2004795%  2004798%  2004799%  20047100%  20047 (longest request)C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;オプションの説明・テスト結果の見方については「 ＠IT：Apacheパフォーマンス・チューニングのポイント（2/2） 」 をご参照下さい。チェックについては主に以下を確認すればＯＫみたいです。  リクエストの成否（Complete requestsとFailed requests）  1秒間に処理されたリクエスト数（Requests per second）  接続時間・処理時間・待ち時間の内訳（Connect/Processing/Waiting）でも、しばらくサーバをかまって再び同じベンチマークテストをしたら、今度はとっても調子がいい。上と同じテスト↓↓C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ab -n 5 -c 2 http://192.168.11.3/wordpress/index.phpThis is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/Licensed to The Apache Software Foundation, http://www.apache.org/Benchmarking 192.168.11.3 (be patient).....doneServer Software:        ApacheServer Hostname:        192.168.11.3Server Port:            80Document Path:          /wordress/index.phpDocument Length:        216 bytesConcurrency Level:      2Time taken for tests:   0.031 secondsComplete requests:      5Failed requests:        0Write errors:           0Non-2xx responses:      5Total transferred:      2015 bytesHTML transferred:       1080 bytesRequests per second:    160.00 [#/sec] (mean)Time per request:       12.500 [ms] (mean)Time per request:       6.250 [ms] (mean, across all concurrent requests)Transfer rate:          62.97 [Kbytes/sec] receivedConnection Times (ms)              min  mean[+/-sd] median   maxConnect:        0    0   0.0      0       0Processing:     0   13   7.0     16      16Waiting:        0   13   7.0     16      16Total:          0   13   7.0     16      16Percentage of the requests served within a certain time (ms)  50%     16  66%     16  75%     16  80%     16  90%     16  95%     16  98%     16  99%     16 100%     16 (longest request)C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ついでに、もっと負荷をかけてみた。結果↓↓C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ab -n 1000 -c 100 http://192.168.11.3/wordpress/index.phpThis is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/Licensed to The Apache Software Foundation, http://www.apache.org/Benchmarking 192.168.11.3 (be patient)Completed 100 requestsCompleted 200 requestsCompleted 300 requestsCompleted 400 requestsCompleted 500 requestsCompleted 600 requestsCompleted 700 requestsCompleted 800 requestsCompleted 900 requestsCompleted 1000 requestsFinished 1000 requestsServer Software:        ApacheServer Hostname:        192.168.11.3Server Port:            80Document Path:          /wordress/index.phpDocument Length:        216 bytesConcurrency Level:      100Time taken for tests:   6.938 secondsComplete requests:      1000Failed requests:        0Write errors:           0Non-2xx responses:      1000Total transferred:      403000 bytesHTML transferred:       216000 bytesRequests per second:    144.14 [#/sec] (mean)Time per request:       693.750 [ms] (mean)Time per request:       6.938 [ms] (mean, across all concurrent requests)Transfer rate:          56.73 [Kbytes/sec] receivedConnection Times (ms)              min  mean[+/-sd] median   maxConnect:        0    1   3.5      0      31Processing:   219  660 117.3    672    1188Waiting:      219  659 117.4    672    1188Total:        219  660 116.9    672    1188Percentage of the requests served within a certain time (ms)  50%    672  66%    672  75%    688  80%    688  90%    781  95%    828  98%    953  99%   1063 100%   1188 (longest request)C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;非常にいい！？いろいろサービスを再起動させたりしてたからかも！とりあえず、パフォーマンスアップ作戦は保留しとこっと。では、では。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Apacheのﾊﾟﾌｫｰﾏﾝｽﾍﾞﾝﾁﾏｰｸ！">
+  <meta name="twitter:description" content="最近、ＷｏｒｄＰｒｅｓｓの動きが非常に重いので、チューニングしようと考えてます。（Ａｐａｃｈｅ、ＰＨＰ、ＭｙＳＱＬの最適化等が必要かと）でもその前に、現状を把握しないと話にならないので、Ａｐａｃｈｅのパフォーマンスを測定できるベンチマークテストツール「 ａｂ（Apache Bench） 」をＦｅｄｏｒａサーバで試してみました。（Ａｐａｃｈｅに標準で付属しているツールです）以下が記録です。本当はこの「 ａｂ 」を実行するマシンはＷｅｂサーバではなく別のマシンがよいらしい。（接続に要する時間の測定ができないから）なので、ローカルマシン（Ｗｉｎｄｏｗｓマシン）のＡｐａｃｈｅから実行してみました。※リクエストの数が多いとBenchmarking 192.168.11.3 (be patient)...apr_poll: The timeout specified has expired (70007)みたいなタイムアウトエラーがでてしまうんで、リクエストを少なめにしてテストしました。C:\Program Files\Apache Software Foundation\Apache2.2\bin&amp;&gt;ab -n 5 -c 2 http://192.168.11.3/wordpress/index.phpThis is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/Licensed to The Apache Software Foundation, http://www.apache.org/Benchmarking 192.168.11.3 (be patient).....doneServer Software:        ApacheServer Hostname:        192.168.11.3Server Port:            80Document Path:          /wordpress/index.phpDocument Length:        0 bytesConcurrency Level:      2Time taken for tests:   38.047 secondsComplete requests:      5Failed requests:        0Write errors:           0Non-2xx responses:      5Total transferred:      2590 bytesHTML transferred:       0 bytesRequests per second:    0.13 [#/sec] (mean)Time per request:       15218.750 [ms] (mean)Time per request:       7609.375 [ms] (mean, across all concurrent requests)Transfer rate:          0.07 [Kbytes/sec] receivedConnection Times (ms)min  mean[+/-sd] median   maxConnect:        0     0    0.0      0       0Processing:  8547 13853 4524.6  14750   20047Waiting:     8516 13828 4538.6  14703   20047Total:       8547 13853 4524.6  14750   20047Percentage of the requests served within a certain time (ms)50%  1293866%  1656375%  1656380%  2004790%  2004795%  2004798%  2004799%  20047100%  20047 (longest request)C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;オプションの説明・テスト結果の見方については「 ＠IT：Apacheパフォーマンス・チューニングのポイント（2/2） 」 をご参照下さい。チェックについては主に以下を確認すればＯＫみたいです。  リクエストの成否（Complete requestsとFailed requests）  1秒間に処理されたリクエスト数（Requests per second）  接続時間・処理時間・待ち時間の内訳（Connect/Processing/Waiting）でも、しばらくサーバをかまって再び同じベンチマークテストをしたら、今度はとっても調子がいい。上と同じテスト↓↓C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ab -n 5 -c 2 http://192.168.11.3/wordpress/index.phpThis is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/Licensed to The Apache Software Foundation, http://www.apache.org/Benchmarking 192.168.11.3 (be patient).....doneServer Software:        ApacheServer Hostname:        192.168.11.3Server Port:            80Document Path:          /wordress/index.phpDocument Length:        216 bytesConcurrency Level:      2Time taken for tests:   0.031 secondsComplete requests:      5Failed requests:        0Write errors:           0Non-2xx responses:      5Total transferred:      2015 bytesHTML transferred:       1080 bytesRequests per second:    160.00 [#/sec] (mean)Time per request:       12.500 [ms] (mean)Time per request:       6.250 [ms] (mean, across all concurrent requests)Transfer rate:          62.97 [Kbytes/sec] receivedConnection Times (ms)              min  mean[+/-sd] median   maxConnect:        0    0   0.0      0       0Processing:     0   13   7.0     16      16Waiting:        0   13   7.0     16      16Total:          0   13   7.0     16      16Percentage of the requests served within a certain time (ms)  50%     16  66%     16  75%     16  80%     16  90%     16  95%     16  98%     16  99%     16 100%     16 (longest request)C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ついでに、もっと負荷をかけてみた。結果↓↓C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ab -n 1000 -c 100 http://192.168.11.3/wordpress/index.phpThis is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/Licensed to The Apache Software Foundation, http://www.apache.org/Benchmarking 192.168.11.3 (be patient)Completed 100 requestsCompleted 200 requestsCompleted 300 requestsCompleted 400 requestsCompleted 500 requestsCompleted 600 requestsCompleted 700 requestsCompleted 800 requestsCompleted 900 requestsCompleted 1000 requestsFinished 1000 requestsServer Software:        ApacheServer Hostname:        192.168.11.3Server Port:            80Document Path:          /wordress/index.phpDocument Length:        216 bytesConcurrency Level:      100Time taken for tests:   6.938 secondsComplete requests:      1000Failed requests:        0Write errors:           0Non-2xx responses:      1000Total transferred:      403000 bytesHTML transferred:       216000 bytesRequests per second:    144.14 [#/sec] (mean)Time per request:       693.750 [ms] (mean)Time per request:       6.938 [ms] (mean, across all concurrent requests)Transfer rate:          56.73 [Kbytes/sec] receivedConnection Times (ms)              min  mean[+/-sd] median   maxConnect:        0    1   3.5      0      31Processing:   219  660 117.3    672    1188Waiting:      219  659 117.4    672    1188Total:        219  660 116.9    672    1188Percentage of the requests served within a certain time (ms)  50%    672  66%    672  75%    688  80%    688  90%    781  95%    828  98%    953  99%   1063 100%   1188 (longest request)C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;非常にいい！？いろいろサービスを再起動させたりしてたからかも！とりあえず、パフォーマンスアップ作戦は保留しとこっと。では、では。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/03/05/05002048/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2009-03-05T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2009/03/05/05002048/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Apacheのﾊﾟﾌｫｰﾏﾝｽﾍﾞﾝﾁﾏｰｸ！">
+    <meta itemprop="description" content="最近、ＷｏｒｄＰｒｅｓｓの動きが非常に重いので、チューニングしようと考えてます。（Ａｐａｃｈｅ、ＰＨＰ、ＭｙＳＱＬの最適化等が必要かと）でもその前に、現状を把握しないと話にならないので、Ａｐａｃｈｅのパフォーマンスを測定できるベンチマークテストツール「 ａｂ（Apache Bench） 」をＦｅｄｏｒａサーバで試してみました。（Ａｐａｃｈｅに標準で付属しているツールです）以下が記録です。本当はこの「 ａｂ 」を実行するマシンはＷｅｂサーバではなく別のマシンがよいらしい。（接続に要する時間の測定ができないから）なので、ローカルマシン（Ｗｉｎｄｏｗｓマシン）のＡｐａｃｈｅから実行してみました。※リクエストの数が多いとBenchmarking 192.168.11.3 (be patient)...apr_poll: The timeout specified has expired (70007)みたいなタイムアウトエラーがでてしまうんで、リクエストを少なめにしてテストしました。C:\Program Files\Apache Software Foundation\Apache2.2\bin&amp;&gt;ab -n 5 -c 2 http://192.168.11.3/wordpress/index.phpThis is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/Licensed to The Apache Software Foundation, http://www.apache.org/Benchmarking 192.168.11.3 (be patient).....doneServer Software:        ApacheServer Hostname:        192.168.11.3Server Port:            80Document Path:          /wordpress/index.phpDocument Length:        0 bytesConcurrency Level:      2Time taken for tests:   38.047 secondsComplete requests:      5Failed requests:        0Write errors:           0Non-2xx responses:      5Total transferred:      2590 bytesHTML transferred:       0 bytesRequests per second:    0.13 [#/sec] (mean)Time per request:       15218.750 [ms] (mean)Time per request:       7609.375 [ms] (mean, across all concurrent requests)Transfer rate:          0.07 [Kbytes/sec] receivedConnection Times (ms)min  mean[+/-sd] median   maxConnect:        0     0    0.0      0       0Processing:  8547 13853 4524.6  14750   20047Waiting:     8516 13828 4538.6  14703   20047Total:       8547 13853 4524.6  14750   20047Percentage of the requests served within a certain time (ms)50%  1293866%  1656375%  1656380%  2004790%  2004795%  2004798%  2004799%  20047100%  20047 (longest request)C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;オプションの説明・テスト結果の見方については「 ＠IT：Apacheパフォーマンス・チューニングのポイント（2/2） 」 をご参照下さい。チェックについては主に以下を確認すればＯＫみたいです。  リクエストの成否（Complete requestsとFailed requests）  1秒間に処理されたリクエスト数（Requests per second）  接続時間・処理時間・待ち時間の内訳（Connect/Processing/Waiting）でも、しばらくサーバをかまって再び同じベンチマークテストをしたら、今度はとっても調子がいい。上と同じテスト↓↓C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ab -n 5 -c 2 http://192.168.11.3/wordpress/index.phpThis is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/Licensed to The Apache Software Foundation, http://www.apache.org/Benchmarking 192.168.11.3 (be patient).....doneServer Software:        ApacheServer Hostname:        192.168.11.3Server Port:            80Document Path:          /wordress/index.phpDocument Length:        216 bytesConcurrency Level:      2Time taken for tests:   0.031 secondsComplete requests:      5Failed requests:        0Write errors:           0Non-2xx responses:      5Total transferred:      2015 bytesHTML transferred:       1080 bytesRequests per second:    160.00 [#/sec] (mean)Time per request:       12.500 [ms] (mean)Time per request:       6.250 [ms] (mean, across all concurrent requests)Transfer rate:          62.97 [Kbytes/sec] receivedConnection Times (ms)              min  mean[+/-sd] median   maxConnect:        0    0   0.0      0       0Processing:     0   13   7.0     16      16Waiting:        0   13   7.0     16      16Total:          0   13   7.0     16      16Percentage of the requests served within a certain time (ms)  50%     16  66%     16  75%     16  80%     16  90%     16  95%     16  98%     16  99%     16 100%     16 (longest request)C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ついでに、もっと負荷をかけてみた。結果↓↓C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ab -n 1000 -c 100 http://192.168.11.3/wordpress/index.phpThis is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/Licensed to The Apache Software Foundation, http://www.apache.org/Benchmarking 192.168.11.3 (be patient)Completed 100 requestsCompleted 200 requestsCompleted 300 requestsCompleted 400 requestsCompleted 500 requestsCompleted 600 requestsCompleted 700 requestsCompleted 800 requestsCompleted 900 requestsCompleted 1000 requestsFinished 1000 requestsServer Software:        ApacheServer Hostname:        192.168.11.3Server Port:            80Document Path:          /wordress/index.phpDocument Length:        216 bytesConcurrency Level:      100Time taken for tests:   6.938 secondsComplete requests:      1000Failed requests:        0Write errors:           0Non-2xx responses:      1000Total transferred:      403000 bytesHTML transferred:       216000 bytesRequests per second:    144.14 [#/sec] (mean)Time per request:       693.750 [ms] (mean)Time per request:       6.938 [ms] (mean, across all concurrent requests)Transfer rate:          56.73 [Kbytes/sec] receivedConnection Times (ms)              min  mean[+/-sd] median   maxConnect:        0    1   3.5      0      31Processing:   219  660 117.3    672    1188Waiting:      219  659 117.4    672    1188Total:        219  660 116.9    672    1188Percentage of the requests served within a certain time (ms)  50%    672  66%    672  75%    688  80%    688  90%    781  95%    828  98%    953  99%   1063 100%   1188 (longest request)C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;非常にいい！？いろいろサービスを再起動させたりしてたからかも！とりあえず、パフォーマンスアップ作戦は保留しとこっと。では、では。">
+    <meta itemprop="datePublished" content="March 05, 2009">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Apacheのﾊﾟﾌｫｰﾏﾝｽﾍﾞﾝﾁﾏｰｸ！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2009-03-05T00:20:00+09:00">2009-03-05 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>最近、ＷｏｒｄＰｒｅｓｓの動きが非常に重いので、チューニングしようと考えてます。
+（Ａｐａｃｈｅ、ＰＨＰ、ＭｙＳＱＬの最適化等が必要かと）</p>
+
+<p>でもその前に、現状を把握しないと話にならないので、Ａｐａｃｈｅのパフォーマンスを測定できるベンチマークテストツール「 ａｂ（Apache Bench） 」をＦｅｄｏｒａサーバで試してみました。（Ａｐａｃｈｅに標準で付属しているツールです）</p>
+
+<p>以下が記録です。</p>
+
+<p>本当はこの「 ａｂ 」を実行するマシンはＷｅｂサーバではなく別のマシンがよいらしい。
+（接続に要する時間の測定ができないから）</p>
+
+<p>なので、ローカルマシン（Ｗｉｎｄｏｗｓマシン）のＡｐａｃｈｅから実行してみました。</p>
+
+<p>※リクエストの数が多いと</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Benchmarking 192.168.11.3 (be patient)...apr_poll: The timeout specified has expired (70007)
+
+</code></pre></div></div>
+
+<p>みたいなタイムアウトエラーがでてしまうんで、リクエストを少なめにしてテストしました。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>C:\Program Files\Apache Software Foundation\Apache2.2\bin&amp;&gt;ab -n 5 -c 2 http://192.168.11.3/wordpress/index.php
+This is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 192.168.11.3 (be patient).....done
+
+Server Software:        Apache
+Server Hostname:        192.168.11.3
+Server Port:            80
+
+Document Path:          /wordpress/index.php
+Document Length:        0 bytes
+
+Concurrency Level:      2
+Time taken for tests:   38.047 seconds
+Complete requests:      5
+Failed requests:        0
+Write errors:           0
+Non-2xx responses:      5
+Total transferred:      2590 bytes
+HTML transferred:       0 bytes
+Requests per second:    0.13 [#/sec] (mean)
+Time per request:       15218.750 [ms] (mean)
+Time per request:       7609.375 [ms] (mean, across all concurrent requests)
+Transfer rate:          0.07 [Kbytes/sec] received
+
+Connection Times (ms)
+min  mean[+/-sd] median   max
+Connect:        0     0    0.0      0       0
+Processing:  8547 13853 4524.6  14750   20047
+Waiting:     8516 13828 4538.6  14703   20047
+Total:       8547 13853 4524.6  14750   20047
+
+Percentage of the requests served within a certain time (ms)
+50%  12938
+66%  16563
+75%  16563
+80%  20047
+90%  20047
+95%  20047
+98%  20047
+99%  20047
+100%  20047 (longest request)
+
+C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;
+
+</code></pre></div></div>
+
+<p>オプションの説明・テスト結果の見方については
+「 <a href="http://www.atmarkit.co.jp/flinux/rensai/apache15/apache15b.html" title="＠IT：Apacheパフォーマンス・チューニングのポイント（2/2）">＠IT：Apacheパフォーマンス・チューニングのポイント（2/2）</a> 」 をご参照下さい。</p>
+
+<p>チェックについては主に以下を確認すればＯＫみたいです。</p>
+
+<ul>
+  <li>リクエストの成否（Complete requestsとFailed requests）</li>
+  <li>1秒間に処理されたリクエスト数（Requests per second）</li>
+  <li>接続時間・処理時間・待ち時間の内訳（Connect/Processing/Waiting）</li>
+</ul>
+
+<p>でも、しばらくサーバをかまって再び同じベンチマークテストをしたら、今度はとっても調子がいい。
+上と同じテスト↓↓</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ab -n 5 -c 2 http://192.168.11.3/wordpress/index.php
+This is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 192.168.11.3 (be patient).....done
+
+Server Software:        Apache
+Server Hostname:        192.168.11.3
+Server Port:            80
+
+Document Path:          /wordress/index.php
+Document Length:        216 bytes
+
+Concurrency Level:      2
+Time taken for tests:   0.031 seconds
+Complete requests:      5
+Failed requests:        0
+Write errors:           0
+Non-2xx responses:      5
+Total transferred:      2015 bytes
+HTML transferred:       1080 bytes
+Requests per second:    160.00 [#/sec] (mean)
+Time per request:       12.500 [ms] (mean)
+Time per request:       6.250 [ms] (mean, across all concurrent requests)
+Transfer rate:          62.97 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.0      0       0
+Processing:     0   13   7.0     16      16
+Waiting:        0   13   7.0     16      16
+Total:          0   13   7.0     16      16
+
+Percentage of the requests served within a certain time (ms)
+  50%     16
+  66%     16
+  75%     16
+  80%     16
+  90%     16
+  95%     16
+  98%     16
+  99%     16
+ 100%     16 (longest request)
+
+C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;
+
+</code></pre></div></div>
+
+<p>ついでに、もっと負荷をかけてみた。
+結果↓↓</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;ab -n 1000 -c 100 http://192.168.11.3/wordpress/index.php
+This is ApacheBench, Version 2.3 &lt;$Revision: 655654 $&gt;
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 192.168.11.3 (be patient)
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+
+Server Software:        Apache
+Server Hostname:        192.168.11.3
+Server Port:            80
+
+Document Path:          /wordress/index.php
+Document Length:        216 bytes
+
+Concurrency Level:      100
+Time taken for tests:   6.938 seconds
+Complete requests:      1000
+Failed requests:        0
+Write errors:           0
+Non-2xx responses:      1000
+Total transferred:      403000 bytes
+HTML transferred:       216000 bytes
+Requests per second:    144.14 [#/sec] (mean)
+Time per request:       693.750 [ms] (mean)
+Time per request:       6.938 [ms] (mean, across all concurrent requests)
+Transfer rate:          56.73 [Kbytes/sec] received
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    1   3.5      0      31
+Processing:   219  660 117.3    672    1188
+Waiting:      219  659 117.4    672    1188
+Total:        219  660 116.9    672    1188
+
+Percentage of the requests served within a certain time (ms)
+  50%    672
+  66%    672
+  75%    688
+  80%    688
+  90%    781
+  95%    828
+  98%    953
+  99%   1063
+ 100%   1188 (longest request)
+
+C:\Program Files\Apache Software Foundation\Apache2.2\bin&gt;
+
+</code></pre></div></div>
+
+<p>非常にいい！？</p>
+
+<p>いろいろサービスを再起動させたりしてたからかも！</p>
+
+<p>とりあえず、パフォーマンスアップ作戦は保留しとこっと。
+では、では。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/apache" class="page__taxonomy-item" rel="tag">Apache</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E3%83%96%E3%83%AD%E3%82%B0" class="page__taxonomy-item" rel="tag">ブログ</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2009-03-05T00:20:00+09:00">2009-03-05 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Apache%E3%81%AE%EF%BE%8A%EF%BE%9F%EF%BE%8C%EF%BD%AB%EF%BD%B0%EF%BE%8F%EF%BE%9D%EF%BD%BD%EF%BE%8D%EF%BE%9E%EF%BE%9D%EF%BE%81%EF%BE%8F%EF%BD%B0%EF%BD%B8%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F03%2F05%2F05002048%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F03%2F05%2F05002048%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F03%2F05%2F05002048%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2009/03/04/04004000/" class="pagination--pager" title="サイトの最終更新日を自動で！
+">Previous</a>
+    
+    
+      <a href="/2009/03/05/05234040/" class="pagination--pager" title="LOTO6 No.435
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2009/03/05/05002048/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2009/03/05/05002048"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

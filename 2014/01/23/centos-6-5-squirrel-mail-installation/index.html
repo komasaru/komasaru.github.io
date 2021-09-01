@@ -1,0 +1,1019 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>CentOS 6.5 - Webmail システム SquirrelMail 導入！ - mk-mode BLOG</title>
+<meta name="description" content="前回は CentOS 6.5 サーバ上でユーザ管理ツール Usermin でメール自動返信 Vacation を利用する設定を行いました。今回は Web メールシステム SquirrelMail の導入を行います。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="CentOS 6.5 - Webmail システム SquirrelMail 導入！">
+<meta property="og:url" content="https://komasaru.github.io/2014/01/23/centos-6-5-squirrel-mail-installation/">
+
+
+  <meta property="og:description" content="前回は CentOS 6.5 サーバ上でユーザ管理ツール Usermin でメール自動返信 Vacation を利用する設定を行いました。今回は Web メールシステム SquirrelMail の導入を行います。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="CentOS 6.5 - Webmail システム SquirrelMail 導入！">
+  <meta name="twitter:description" content="前回は CentOS 6.5 サーバ上でユーザ管理ツール Usermin でメール自動返信 Vacation を利用する設定を行いました。今回は Web メールシステム SquirrelMail の導入を行います。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2014/01/23/centos-6-5-squirrel-mail-installation/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2014-01-23T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2014/01/23/centos-6-5-squirrel-mail-installation/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="CentOS 6.5 - Webmail システム SquirrelMail 導入！">
+    <meta itemprop="description" content="前回は CentOS 6.5 サーバ上でユーザ管理ツール Usermin でメール自動返信 Vacation を利用する設定を行いました。今回は Web メールシステム SquirrelMail の導入を行います。">
+    <meta itemprop="datePublished" content="January 23, 2014">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">CentOS 6.5 - Webmail システム SquirrelMail 導入！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-01-23T00:20:00+09:00">2014-01-23 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>前回は CentOS 6.5 サーバ上でユーザ管理ツール Usermin でメール自動返信 Vacation を利用する設定を行いました。<br />
+今回は Web メールシステム SquirrelMail の導入を行います。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>CentOS 6.5(x86_64) を Minimal で最小インストールしている。</li>
+  <li>クライントマシンは Linux Mint 14(64bit) を想定。</li>
+  <li>Web サーバは Nginx を想定。</li>
+  <li>SMTP サーバ Postfix 構築済み。</li>
+  <li>IMAP サーバ Dovecot 構築済み。</li>
+  <li>PHP インストール済み。</li>
+  <li>主に「<a href="http://centossrv.com/" title="CentOSで自宅サーバー構築">CentOSで自宅サーバー構築</a>」を参考にしている。<br />
+（実際は、過去にこのサイトを参考にして作業した際に記録していたものを参照している）</li>
+</ul>
+
+<h3 id="1-アーカイブダウンロード展開">1. アーカイブダウンロード＆展開</h3>
+
+<p>アーカイブをダウンロードし、展開する。そして、ディレクトリごと所定の位置へ移動する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wget http://sourceforge.net/projects/squirrelmail/files/stable/1.4.22/squirrelmail-webmail-1.4.22.tar.gz/download
+# tar zxvf squirrelmail-webmail-1.4.22.tar.gz
+# mv squirrelmail-webmail-1.4.22 /var/www/webmail
+# rm -f squirrelmail-webmail-1.4.22.tar.gz  # &lt;= 後始末
+</code></pre></div></div>
+
+<h3 id="2-日本語設定">2. 日本語設定</h3>
+
+<p>日本語が使用できるように設定する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mkdir -p locales                             # &lt;= locales ディレクトリ作成
+# cd locales                                   # &lt;= locales ディレクトリへ移動
+# wget http://jaist.dl.sourceforge.net/sourceforge/squirrelmail/ja_JP-1.4.18-20090526.tar.bz2
+                                               # &lt;= locale ダウンロード
+# tar jxvf ja_JP-1.4.18-20090526.tar.bz2       # &lt;= locale 展開
+# ./install                                    # &lt;= localeインストール
+Please enter path to your squirrelmail installation:/var/www/webmail
+                                               # &lt;= インストール先を入力
+
+# cd                                           # &lt;= ルートへ移動
+# rm -rf locales                               # &lt;= 後始末
+# cd /var/www/webmail/po/                      # &lt;= ディレクトリ移動
+# ./compilepo ja_JP                            # &lt;= squirrelmail.po ファイル作成
+Compiling ../locale/ja_JP/LC_MESSAGES/squirrelmail.po
+
+# cd                                           # &lt;= ルートへ移動
+# chmod 730 /var/www/webmail/data/             # &lt;= dataディレクトリの権限設定
+# chown -R nginx:nginx /var/www/webmail/data/  # &lt;= data ディレクトリの所有者設定
+</code></pre></div></div>
+
+<h3 id="3-squirrelmail-設定">3. SquirrelMail 設定</h3>
+
+<p>設定用スクリプトを実行して各種設定を行う。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># /var/www/webmail/config/conf.pl
+</code></pre></div></div>
+
+<p>以下、入力部分のみ箇条書き。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Main Menu</code> で <code class="language-plaintext highlighter-rouge">10</code>(Languages) を選択。</li>
+  <li><code class="language-plaintext highlighter-rouge">Language preferences</code> で <code class="language-plaintext highlighter-rouge">1</code>(Default Language) を選択。</li>
+  <li>言語として <code class="language-plaintext highlighter-rouge">ja_JP</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">Language preferences</code> で <code class="language-plaintext highlighter-rouge">2</code>(Default Charset) を選択。</li>
+  <li>文字コードとして <code class="language-plaintext highlighter-rouge">iso-2022-jp</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">r</code> で <code class="language-plaintext highlighter-rouge">Main Menu</code> へ戻る。</li>
+  <li><code class="language-plaintext highlighter-rouge">Main Menu</code> で <code class="language-plaintext highlighter-rouge">1</code>(Organization Preferences) を選択。</li>
+  <li><code class="language-plaintext highlighter-rouge">Organization Preferences</code> で <code class="language-plaintext highlighter-rouge">5</code>(Signout Page) を選択。</li>
+  <li>ログアウト時に表示するページとして <code class="language-plaintext highlighter-rouge">/webmail</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">r</code> で <code class="language-plaintext highlighter-rouge">Main Menu</code> へ戻る。</li>
+  <li><code class="language-plaintext highlighter-rouge">Main Menu</code> で <code class="language-plaintext highlighter-rouge">2</code>(Server Settings) を選択。</li>
+  <li><code class="language-plaintext highlighter-rouge">Server Settings - General</code> で <code class="language-plaintext highlighter-rouge">1</code>(Domain) を選択。</li>
+  <li>ドメイン名として <code class="language-plaintext highlighter-rouge">mk-mode.com</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">Server Settings - General</code> で <code class="language-plaintext highlighter-rouge">A</code>(Update IMAP Settings) を選択。</li>
+  <li><code class="language-plaintext highlighter-rouge">Server Settings - IMAP Settings</code> で <code class="language-plaintext highlighter-rouge">4</code>(IMAP Server) を選択。</li>
+  <li>IMAP サーバ名として <code class="language-plaintext highlighter-rouge">mail.mk-mode.com</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">Server Settings - IMAP Settings</code> で <code class="language-plaintext highlighter-rouge">8</code>(Server software) を選択。</li>
+  <li>IMAP サーバソフト名として <code class="language-plaintext highlighter-rouge">dovecot</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">Server Settings - IMAP Settings</code> で <code class="language-plaintext highlighter-rouge">B</code>(Update SMTP Settings) を選択。</li>
+  <li><code class="language-plaintext highlighter-rouge">Server Settings - SMTP Settings</code> で <code class="language-plaintext highlighter-rouge">4</code>(SMTP Server) を選択。</li>
+  <li>SMTP サーバ名として <code class="language-plaintext highlighter-rouge">mail.mk-mode.com</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">Server Settings - SMTP Settings</code> で <code class="language-plaintext highlighter-rouge">7</code>(SMTP Authentication) を選択。</li>
+  <li><code class="language-plaintext highlighter-rouge">Try to detect auth mechanisms? [y/N]</code> で <code class="language-plaintext highlighter-rouge">y</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">none, login, plain, cram-md5, or digest-md5 [none]</code> で <code class="language-plaintext highlighter-rouge">login</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">SMTP connections? [y/N]</code> で <code class="language-plaintext highlighter-rouge">n</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">r</code> で <code class="language-plaintext highlighter-rouge">Main Menu</code> へ戻る。</li>
+  <li><code class="language-plaintext highlighter-rouge">Main Menu</code> で <code class="language-plaintext highlighter-rouge">4</code>(General Settings) を選択。</li>
+  <li><code class="language-plaintext highlighter-rouge">General Options</code> で <code class="language-plaintext highlighter-rouge">7</code>(Hide SM attributions) を選択。</li>
+  <li><code class="language-plaintext highlighter-rouge">Hide SM attributions (y/n) [n]</code> で <code class="language-plaintext highlighter-rouge">y</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">General Options</code> で <code class="language-plaintext highlighter-rouge">1</code>(Data Directory) を選択。</li>
+  <li>データディレクトリとして <code class="language-plaintext highlighter-rouge">../data/</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">General Options</code> で <code class="language-plaintext highlighter-rouge">2</code>(Attachment Directory) を選択。</li>
+  <li>添付データディレクトリとして <code class="language-plaintext highlighter-rouge">$data_dir</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">General Options</code> で <code class="language-plaintext highlighter-rouge">16</code>(Only secure cookies if poss.) を選択。</li>
+  <li>Secure Login プラグインによるログインを不可にするために <code class="language-plaintext highlighter-rouge">n</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">r</code> で <code class="language-plaintext highlighter-rouge">Main Menu</code> へ戻る。</li>
+  <li><code class="language-plaintext highlighter-rouge">Main Menu</code> で <code class="language-plaintext highlighter-rouge">3</code>(Folder Defaults) を選択。</li>
+  <li><code class="language-plaintext highlighter-rouge">Folder Defaults</code> で <code class="language-plaintext highlighter-rouge">3</code>(Trash Folder) を選択。</li>
+  <li>ゴミ箱フォルダとして <code class="language-plaintext highlighter-rouge">Trash</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">Folder Defaults</code> で <code class="language-plaintext highlighter-rouge">4</code>(Sent Folder) を選択。</li>
+  <li>送信済みフォルダとして <code class="language-plaintext highlighter-rouge">Sent</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">Folder Defaults</code> で <code class="language-plaintext highlighter-rouge">5</code>(Drafts Folder) を選択。</li>
+  <li>草稿フォルダとして <code class="language-plaintext highlighter-rouge">Drafts</code> と入力。</li>
+  <li><code class="language-plaintext highlighter-rouge">q</code> で終了。</li>
+  <li><code class="language-plaintext highlighter-rouge">y</code> で書き込み。</li>
+</ul>
+
+<h3 id="4-プラグインアーカイブダウンロード展開">4. プラグインアーカイブダウンロード＆展開</h3>
+
+<p>プラグインを全てのバージョンの SquirrelMail でそのまま動くようにする “Compatibility”、ログイン時に自動的にhttps(SSL)でアクセスする “Secure Login” を導入する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wget "http://www.squirrelmail.org/countdl.php?fileurl=http%3A%2F%2Fwww.squirrelmail.org%2Fplugins%2Fcompatibility-2.0.16-1.0.tar.gz"
+# wget "http://www.squirrelmail.org/countdl.php?fileurl=http%3A%2F%2Fwww.squirrelmail.org%2Fplugins%2Fsecure_login-1.4-1.2.8.tar.gz"
+
+# cd /var/www/webmail/plugins/
+
+# tar zxvf /root/compatibility-*.tar.gz
+# tar zxvf /root/secure_login-*.tar.gz
+
+# rm -f /root/compatibility-*.tar.gz
+# rm -f /root/secure_login-*.tar.gz
+</code></pre></div></div>
+
+<h3 id="5-secure-login-プラグイン設定">5. Secure Login プラグイン設定</h3>
+
+<p>ログイン後もSSL通信を継続するようにするため、設定ファイルサンプルを複製して編集する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cp secure_login/config.sample.php secure_login/config.php
+</code></pre></div></div>
+
+<p>File: <code class="language-plaintext highlighter-rouge">secure_login/config.php</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+</pre></td><td class="code"><pre>   <span class="nv">$change_back_to_http_after_login</span> <span class="o">=</span> 0<span class="p">;</span>  <span class="c"># &lt;= 変更</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="6-squirrelmail-設定">6. SquirrelMail 設定</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># /var/www/webmail/config/conf.pl
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Main Menu</code> で <code class="language-plaintext highlighter-rouge">8</code>(Plugins) を選択。</li>
+  <li><code class="language-plaintext highlighter-rouge">Plugins</code> で <code class="language-plaintext highlighter-rouge">4</code>(compatibility) を選択。（※番号は環境により異なる！）</li>
+  <li><code class="language-plaintext highlighter-rouge">Plugins</code> で <code class="language-plaintext highlighter-rouge">14</code>(secure_login) を選択。（※番号は環境により異なる！）</li>
+  <li><code class="language-plaintext highlighter-rouge">q</code> で終了。</li>
+  <li><code class="language-plaintext highlighter-rouge">y</code> で書き込み。</li>
+</ul>
+
+<h3 id="7-添付ファイルサイズ拡大">7. 添付ファイルサイズ拡大</h3>
+
+<p>添付ファイルサイズを拡大する設定を行う。（例として 10MB を想定）</p>
+
+<p>まず、メールサイズの上限を 20MB（添付ファイルサイズの２倍位） に設定する（Postfix 設定ファイル編集する）。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+</pre></td><td class="code"><pre>message_size_limit <span class="o">=</span> 20971520  <span class="c"># &lt;= 20MB = 0*1024*1024</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>そして、設定を反映させるために Postfix をリロードする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># /etc/rc.d/init.d/postfix reload
+postfix を再読み込み中:                                    [  OK  ]
+</code></pre></div></div>
+
+<p>次に、PHP 設定ファイルを編集する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/php.ini</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="c">#upload_max_filesize = 2M</span>
+upload_max_filesize <span class="o">=</span> 10M  <span class="c"># &lt;= 変更</span>
+
+<span class="c">#post_max_size = 8M</span>
+post_max_size <span class="o">=</span> 10M        <span class="c"># &lt;= 変更</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="8-nginx-設定">8. Nginx 設定</h3>
+
+<p>Nginx 設定ファイルをの <code class="language-plaintext highlighter-rouge">server</code> ディレクティブ（HTTPS 用）内に以下のように記述を追加する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/usr/local/nginx/conf/nginx.conf</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+</pre></td><td class="code"><pre>    server <span class="o">{</span>
+
+         <span class="c"># ===&lt; 省略 &gt;===</span>
+
+         <span class="c"># Squirrel Mail</span>
+         location /webmail <span class="o">{</span>
+             <span class="nb">alias</span> /var/www/webmail<span class="p">;</span>
+             index index.php<span class="p">;</span>
+             allow 127.0.0.1<span class="p">;</span>
+             allow 192.168.11.0/24<span class="p">;</span>
+             deny  all<span class="p">;</span>
+         <span class="o">}</span>
+
+         location ~ /webmail/.<span class="k">*</span><span class="se">\.</span>php<span class="nv">$ </span><span class="o">{</span>
+             fastcgi_pass    127.0.0.1:9000<span class="p">;</span>
+             fastcgi_index   index.php<span class="p">;</span>
+             fastcgi_param   SCRIPT_FILENAME  /var/www/<span class="nv">$uri</span><span class="p">;</span>
+             include         fastcgi_params<span class="p">;</span>
+         <span class="o">}</span>
+
+         <span class="c"># ===&lt; 省略 &gt;===</span>
+
+    <span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p><code class="language-plaintext highlighter-rouge">http://＜サーバホスト名orアドレス＞/webmail/</code> で <code class="language-plaintext highlighter-rouge">https//＜サーバホスト名orアドレス＞/webmail/</code> にリライトさせたいなら、Nginx 設定ファイルの <code class="language-plaintext highlighter-rouge">server</code> ディレクティブ（HTTP 用）に以下のように <code class="language-plaintext highlighter-rouge">rewrite</code> 設定を追加すればよい。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/usr/local/nginx/conf/nginx.conf</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="code"><pre>    server <span class="o">{</span>
+
+         <span class="c"># ===&lt; 省略 &gt;===</span>
+
+         rewrite ^/webmail<span class="o">(</span>.<span class="k">*</span><span class="o">)</span>?<span class="nv">$ </span>https://<span class="nv">$http_host</span>/webmail<span class="nv">$1</span> last<span class="p">;</span>
+
+         <span class="c"># ===&lt; 省略 &gt;===</span>
+
+    <span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="9-nginx-リロード">9. Nginx リロード</h3>
+
+<p>設定を反映させるため Nginx をリロードする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># /etc/rc.d/init.d/nginx reload
+nginx: the configuration file /usr/local/nginx/conf/nginx.conf syntax is ok
+nginx: configuration file /usr/local/nginx/conf/nginx.conf test is successful
+nginx を再読み込み中:                                      [  OK  ]
+</code></pre></div></div>
+
+<h3 id="10-動作確認">10. 動作確認</h3>
+
+<p>ブラウザで <code class="language-plaintext highlighter-rouge">https:/＜サーバ名＞/webmail/</code> にアクセスし、ログイン画面が表示されるか、その他各種動作を確認する。<br />
+<code class="language-plaintext highlighter-rouge">http</code> を <code class="language-plaintext highlighter-rouge">https</code> にリライトするように設定している場合は <code class="language-plaintext highlighter-rouge">http:/＜サーバ名＞/webmail/</code> でアクセスし <code class="language-plaintext highlighter-rouge">https:/＜サーバ名＞/webmail/</code> にリライトされるかも確認する。</p>
+
+<p><img src="/images/2014/01/23/CENTOS_6-5_SQUIRREL_MAIL_1.png" alt="CENTOS_6-5_SQUIRREL_MAIL_1" title="CENTOS_6-5_SQUIRREL_MAIL_1" />
+<img src="/images/2014/01/23/CENTOS_6-5_SQUIRREL_MAIL_2.png" alt="CENTOS_6-5_SQUIRREL_MAIL_2" title="CENTOS_6-5_SQUIRREL_MAIL_2" /></p>
+
+<hr />
+
+<p>次回は、ログ監視ツール SWATCH の導入について紹介する予定です。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/centos" class="page__taxonomy-item" rel="tag">CentOS</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-01-23T00:20:00+09:00">2014-01-23 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=CentOS+6.5+-+Webmail+%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0+SquirrelMail+%E5%B0%8E%E5%85%A5%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2014%2F01%2F23%2Fcentos-6-5-squirrel-mail-installation%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2014%2F01%2F23%2Fcentos-6-5-squirrel-mail-installation%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2014%2F01%2F23%2Fcentos-6-5-squirrel-mail-installation%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2014/01/22/centos-6-5-usermin-vacation-setting/" class="pagination--pager" title="CentOS 6.5 - Usermin で Vacation 設定！
+">Previous</a>
+    
+    
+      <a href="/2014/01/24/centos-6-5-swatch-installation/" class="pagination--pager" title="CentOS 6.5 - ログ監視ツール SWATCH 導入！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2014/01/23/centos-6-5-squirrel-mail-installation/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2014/01/23/centos-6-5-squirrel-mail-installation"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

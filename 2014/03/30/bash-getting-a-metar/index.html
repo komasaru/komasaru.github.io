@@ -1,0 +1,1103 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Bash - METAR 気象情報取得！ - mk-mode BLOG</title>
+<meta name="description" content="前回は、NOAA - National Oceanic and Atmospheric Administration（アメリカ海洋大気庁）の所有する世界中の気象観測所一覧から目的の観測所を検索するシェル（Bash）スクリプトを紹介しました。  Bash - NOAA 気象観測所検索！今回は、METAR（定時航空実況気象通報式）についての備忘録です。また、指定した ICAO コードの観測所（空港）の METAR 情報を取得するシェル（Bash）スクリプトも紹介します。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Bash - METAR 気象情報取得！">
+<meta property="og:url" content="https://komasaru.github.io/2014/03/30/bash-getting-a-metar/">
+
+
+  <meta property="og:description" content="前回は、NOAA - National Oceanic and Atmospheric Administration（アメリカ海洋大気庁）の所有する世界中の気象観測所一覧から目的の観測所を検索するシェル（Bash）スクリプトを紹介しました。  Bash - NOAA 気象観測所検索！今回は、METAR（定時航空実況気象通報式）についての備忘録です。また、指定した ICAO コードの観測所（空港）の METAR 情報を取得するシェル（Bash）スクリプトも紹介します。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Bash - METAR 気象情報取得！">
+  <meta name="twitter:description" content="前回は、NOAA - National Oceanic and Atmospheric Administration（アメリカ海洋大気庁）の所有する世界中の気象観測所一覧から目的の観測所を検索するシェル（Bash）スクリプトを紹介しました。  Bash - NOAA 気象観測所検索！今回は、METAR（定時航空実況気象通報式）についての備忘録です。また、指定した ICAO コードの観測所（空港）の METAR 情報を取得するシェル（Bash）スクリプトも紹介します。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2014/03/30/bash-getting-a-metar/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2014-03-30T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2014/03/30/bash-getting-a-metar/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Bash - METAR 気象情報取得！">
+    <meta itemprop="description" content="前回は、NOAA - National Oceanic and Atmospheric Administration（アメリカ海洋大気庁）の所有する世界中の気象観測所一覧から目的の観測所を検索するシェル（Bash）スクリプトを紹介しました。  Bash - NOAA 気象観測所検索！今回は、METAR（定時航空実況気象通報式）についての備忘録です。また、指定した ICAO コードの観測所（空港）の METAR 情報を取得するシェル（Bash）スクリプトも紹介します。">
+    <meta itemprop="datePublished" content="March 30, 2014">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Bash - METAR 気象情報取得！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-03-30T00:20:00+09:00">2014-03-30 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>前回は、<a href="http://www.noaa.gov/" title="NOAA - National Oceanic and Atmospheric Administration">NOAA - National Oceanic and Atmospheric Administration</a>（アメリカ海洋大気庁）の所有する世界中の気象観測所一覧から目的の観測所を検索するシェル（Bash）スクリプトを紹介しました。</p>
+
+<ul>
+  <li><a href="/2014/03/28/bash-getting-a-weather-station-noaa" title="Bash - NOAA 気象観測所検索！">Bash - NOAA 気象観測所検索！</a></li>
+</ul>
+
+<p>今回は、METAR（定時航空実況気象通報式）についての備忘録です。<br />
+また、指定した ICAO コードの観測所（空港）の METAR 情報を取得するシェル（Bash）スクリプトも紹介します。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>GNU bash, バージョン 4.2.25(1)-release での作業を想定。</li>
+</ul>
+
+<h3 id="1-metar-とは">1. METAR とは？</h3>
+
+<ul>
+  <li>METAR とは「定時航空実況気象通報式」と呼ばれ、ICAO（国際民間航空機関）が基本形式をWMO（世界気象機関）が国際符号を策定した、航空気象情報を定期的に通報するために定められた共通フォーマットのことである。</li>
+  <li>Linux OS(GUI) の時計アプレット・お天気アプレットの天気情報として利用されている。</li>
+  <li>データは、以下のサイトで公開されている。
+    <ul>
+      <li><a href="http://www.aviationweather.gov/adds/metars/" title="ADDS - METARs">ADDS - METARs</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="2-metar-書式">2. METAR 書式</h3>
+
+<p>METAR の基本的な書式は以下のようになっている。（以下は一例で、説明用の架空の情報）<br />
+書式等は国によって異なる部分もあるので注意。また、状況により出現したりしなかったりする項目もある。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2014/03/18 23:00
+RJOC 182300Z 15003KT 130V250 8000 SHRA BR FEW020 BKN030 06/04 Q1019 NOSIG
+</code></pre></div></div>
+
+<p>各項目の意味は以下のとおり（日本の場合）</p>
+
+<ul>
+  <li><strong>ICAO コード</strong>
+    <ul>
+      <li>例の <code class="language-plaintext highlighter-rouge">RJOC</code> は「出雲空港」</li>
+    </ul>
+  </li>
+  <li><strong>日時</strong>
+    <ul>
+      <li>例の <code class="language-plaintext highlighter-rouge">182300Z</code> は「18日23時00分(UTC)」</li>
+    </ul>
+  </li>
+  <li><strong>風（風向＋風速）</strong>
+    <ul>
+      <li>例の <code class="language-plaintext highlighter-rouge">15003KT</code> は「風向：150度（北から時計回り）、風速：3ノット」</li>
+      <li>平均風速を10kt以上上回る最大瞬間風速が観測された場合は、 <code class="language-plaintext highlighter-rouge">15003G20KT</code> のように平均風速値の後に <code class="language-plaintext highlighter-rouge">G</code> をを挟んで最大瞬間風速が記述される。</li>
+      <li>風速が100kt以上となる場合は <code class="language-plaintext highlighter-rouge">P99</code> で表される。</li>
+    </ul>
+  </li>
+  <li><strong>風向変動</strong>
+    <ul>
+      <li>例の <code class="language-plaintext highlighter-rouge">130V250</code> は「風向の変動が130度から250度の間」</li>
+    </ul>
+  </li>
+  <li><strong>視程</strong>
+    <ul>
+      <li>例の <code class="language-plaintext highlighter-rouge">8000</code> は「卓越視程：8000m(8km)」</li>
+      <li>5,000m未満は100m単位、5,000m(5km)以上10,000m(10km)未満は1km単位。</li>
+      <li>10,000m(10km)以上は <code class="language-plaintext highlighter-rouge">9999</code> で表される。</li>
+      <li>記号の意味は以下のとおり。
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">SKC</code> : 晴天(Sky Clear, =雲が無い)</li>
+          <li><code class="language-plaintext highlighter-rouge">NSC</code> : 運行上有意な雲無し(Nil Significant Cloud, =雲が無い)</li>
+          <li><code class="language-plaintext highlighter-rouge">CAVOK</code> : 気象条件が必要条件を満足する(Cloud And Visibility OK, =快晴)
+            <ul>
+              <li>卓越視程が10km以上。</li>
+              <li>5,000ft未満に雲がなく、かつ重要な対流雲がない。</li>
+              <li>天気略語表に該当する天気がない。</li>
+            </ul>
+          </li>
+          <li><code class="language-plaintext highlighter-rouge">SKC</code> : 雲がなく、鉛直視程も良好だがCAVOKでないとき。</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>現在天気</strong>
+    <ul>
+      <li>例の <code class="language-plaintext highlighter-rouge">SHRA BR</code> は「しゅう雨性の雨で、もやがある」</li>
+      <li>記号の意味は以下のとおり。
+        <ul>
+          <li>強度・周辺現象
+            <ul>
+              <li><code class="language-plaintext highlighter-rouge">-</code> : 弱い</li>
+              <li>（表示なし） : 並</li>
+              <li><code class="language-plaintext highlighter-rouge">+</code> : 強い</li>
+              <li><code class="language-plaintext highlighter-rouge">VC</code> : 飛行場の境界から8㎞以内の現象</li>
+            </ul>
+          </li>
+          <li>特性
+            <ul>
+              <li><code class="language-plaintext highlighter-rouge">TS</code> : 雷電(Thunder Storm)</li>
+              <li><code class="language-plaintext highlighter-rouge">SH</code> : しゅう雨性(Shower)</li>
+              <li><code class="language-plaintext highlighter-rouge">FZ</code> : 着氷性(Freezing)</li>
+              <li><code class="language-plaintext highlighter-rouge">BC</code> : 散在(Patches, (仏)Bancs)</li>
+              <li><code class="language-plaintext highlighter-rouge">DR</code> : 低い(Dow Drifting)</li>
+              <li><code class="language-plaintext highlighter-rouge">BL</code> : 高い(Blowing)</li>
+              <li><code class="language-plaintext highlighter-rouge">MI</code> : 地(Shallow, (仏)Mince, =浅い)</li>
+              <li><code class="language-plaintext highlighter-rouge">PR</code> : 部分的(Partial)</li>
+            </ul>
+          </li>
+          <li>降水現象
+            <ul>
+              <li><code class="language-plaintext highlighter-rouge">RA</code> : 雨(Rain)</li>
+              <li><code class="language-plaintext highlighter-rouge">DZ</code> : 霧雨(Drizzle)</li>
+              <li><code class="language-plaintext highlighter-rouge">SN</code> : 雪(Snow)</li>
+              <li><code class="language-plaintext highlighter-rouge">SG</code> : 霧雪(Snow Grains)</li>
+              <li><code class="language-plaintext highlighter-rouge">GR</code> : ひょう(Hail, (仏)Grêle)</li>
+              <li><code class="language-plaintext highlighter-rouge">GS</code> : 氷あられ／雪あられ(Small Hail/Snow Pellets, Ground Snow)</li>
+              <li><code class="language-plaintext highlighter-rouge">PL</code> : 凍雨(Ice Pellets)</li>
+              <li><code class="language-plaintext highlighter-rouge">IC</code> : 氷晶(Ice Crystals)</li>
+            </ul>
+          </li>
+          <li>視程障害現象
+            <ul>
+              <li><code class="language-plaintext highlighter-rouge">BR</code> : もや(Mist)（視程1km以上5km以下）</li>
+              <li><code class="language-plaintext highlighter-rouge">FU</code> : 煙(Smoke, (仏)Fumée)（視程5km以下）</li>
+              <li><code class="language-plaintext highlighter-rouge">HZ</code> : 煙霧(Haze)（視程5km以下）</li>
+              <li><code class="language-plaintext highlighter-rouge">SA</code> : 砂(Sand)（視程5km以下）</li>
+              <li><code class="language-plaintext highlighter-rouge">DU</code> : 塵(Dust)（視程5km以下）</li>
+              <li><code class="language-plaintext highlighter-rouge">FG</code> : 霧(Fog)（視程1km未満）</li>
+              <li><code class="language-plaintext highlighter-rouge">VA</code> : 火山灰(Volcanic Ash)</li>
+            </ul>
+          </li>
+          <li>その他の現象
+            <ul>
+              <li><code class="language-plaintext highlighter-rouge">SQ</code> : スコール(Squall)</li>
+              <li><code class="language-plaintext highlighter-rouge">DS</code> : 砂じん嵐(Duststorm)</li>
+              <li><code class="language-plaintext highlighter-rouge">FC</code> : ろうと雲・たつ巻(Funnel Cloud, Tornado or Water-spout)※<code class="language-plaintext highlighter-rouge">+FC</code>で竜巻</li>
+              <li><code class="language-plaintext highlighter-rouge">SS</code> : 砂じん嵐(Sandstorm)</li>
+              <li><code class="language-plaintext highlighter-rouge">PO</code> : じん旋風(Dust/Sand Whirls, (仏)Poussière)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>雲量</strong>
+    <ul>
+      <li>例の <code class="language-plaintext highlighter-rouge">FEW025 BKN030</code> は「2,500ftに全天の1/8～2/8を覆う雲、3,000ftに全店の5/8〜7/8を覆う雲がある」</li>
+      <li>記号の意味は以下のとおり。
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">SKC</code> : 雲がない</li>
+          <li><code class="language-plaintext highlighter-rouge">FEW</code> : 全天の1/8～2/8を覆う雲</li>
+          <li><code class="language-plaintext highlighter-rouge">SCT</code> : 全天の3/8～4/8を覆う雲</li>
+          <li><code class="language-plaintext highlighter-rouge">BKN</code> : 全天の5/8～7/8を覆う雲</li>
+          <li><code class="language-plaintext highlighter-rouge">OVC</code> : 全天を覆う雲</li>
+          <li><code class="language-plaintext highlighter-rouge">VV999</code> : 鉛直視程999×100ft（濃霧等の場合に使用）</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>雲形</strong>
+    <ul>
+      <li>記号の意味は以下のとおり。
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">AC</code> : 高積雲(Altocumulus)</li>
+          <li><code class="language-plaintext highlighter-rouge">AS</code> : 高層雲(Altostratus)</li>
+          <li><code class="language-plaintext highlighter-rouge">CB</code> : 積乱雲（入道雲、かなとこ雲）(Cumulonimbus)</li>
+          <li><code class="language-plaintext highlighter-rouge">CC</code> : 巻積雲, まだら雲(Cirrocumulus)</li>
+          <li><code class="language-plaintext highlighter-rouge">SL</code> : レンズ雲（強風を示唆）(Standing Lenticular Cloud)</li>
+          <li><code class="language-plaintext highlighter-rouge">CI</code> : 巻雲（すじ雲）(Cirrus)</li>
+          <li><code class="language-plaintext highlighter-rouge">CS</code> : 巻層雲(Cirrostratus)</li>
+          <li><code class="language-plaintext highlighter-rouge">CU</code> : 積雲(Cumulus)</li>
+          <li><code class="language-plaintext highlighter-rouge">NS</code> : 乱層雲(Nimbostratus)</li>
+          <li><code class="language-plaintext highlighter-rouge">SC</code> : 層積雲(Stratocumulus)</li>
+          <li><code class="language-plaintext highlighter-rouge">ST</code> : 層雲(Stratus)</li>
+          <li><code class="language-plaintext highlighter-rouge">TCU</code> : 雄大積雲（入道雲）(Towering Cumulus)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>気温・露点温度</strong>
+    <ul>
+      <li>例の <code class="language-plaintext highlighter-rouge">06/04</code> は「気温が摂氏6度、露点温度が摂氏4度」</li>
+    </ul>
+  </li>
+  <li><strong>気圧</strong>
+    <ul>
+      <li>例の <code class="language-plaintext highlighter-rouge">Q1019</code> は「気圧が1019hPa（QNH方式）」</li>
+    </ul>
+  </li>
+  <li><strong>その他</strong>
+    <ul>
+      <li>記号の意味は以下のとおり。
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">WS</code> : ウィンドシアー（風向が方位上下方向共に急変）</li>
+          <li><code class="language-plaintext highlighter-rouge">NOSIG</code> : 天候に変化は無い。</li>
+          <li><code class="language-plaintext highlighter-rouge">BECMG</code> : 天候が継続的に変化する。「のち」。</li>
+          <li><code class="language-plaintext highlighter-rouge">TEMPO</code> : 天候が一時的に変化する。「ときどき」。</li>
+          <li><code class="language-plaintext highlighter-rouge">RMKS</code> : 特記事項・国内記事(Remark)</li>
+        </ul>
+      </li>
+      <li>厳密には多数の記号が使用されているが、ここでは説明しない。Web サイト等を参照のこと。</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="3-データ公開先">3. データ公開先</h3>
+
+<p>METAR データは以下の URL で公開されている。</p>
+
+<ul>
+  <li>~<del><a href="http://weather.noaa.gov/pub/data/observations/metar/">http://weather.noaa.gov/pub/data/observations/metar/</a></del>~<br />
+<a href="http://tgftp.nws.noaa.gov/data/observations/metar/">http://tgftp.nws.noaa.gov/data/observations/metar/</a></li>
+  <li><a href="ftp://tgftp.nws.noaa.gov/data/observations/metar/">ftp://tgftp.nws.noaa.gov/data/observations/metar/</a></li>
+</ul>
+
+<p>そして、リンク先は以下の4つのディレクトリで構成されている。</p>
+
+<ul>
+  <li>“cycles” ディレクトリ
+    <ul>
+      <li>0時から23時まで1時間単位で全データがファイル化されている。</li>
+    </ul>
+  </li>
+  <li>“stations” ディレクトリ
+    <ul>
+      <li>観測所（空港）（ICAO コード）別に最新のデータがファイル化されている。</li>
+    </ul>
+  </li>
+  <li>“decoded” ディレクトリ
+    <ul>
+      <li>観測所（空港）（ICAO コード）別に最新のデータがファイル化されているが、箇条書きされていて可読性が高い。</li>
+    </ul>
+  </li>
+  <li>“trend” ディレクトリ
+    <ul>
+      <li>観測所（空港）（ICAO コード）別に天気予報データがファイル化されている。（仕様・フォーマットの詳細は不明）</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="4-データ取得コマンドライン">4. データ取得（コマンドライン）</h3>
+
+<p>ブラウザから取得する以外に、<code class="language-plaintext highlighter-rouge">wget</code> コマンドや <code class="language-plaintext highlighter-rouge">curl</code> コマンドで簡単に取得できる。（以下は “decode” データの取得例）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ wget -q -O - http://tgftp.nws.noaa.gov/data/observations/metar/decoded/RJOC.TXT
+Izumo Airport, Japan (RJOC) 35-25N 132-54E 5M
+Mar 19, 2014 - 12:00 AM EDT / 2014.03.19 0400 UTC
+Wind: from the ENE (070 degrees) at 14 MPH (12 KT):0
+Visibility: greater than 7 mile(s):0
+Sky conditions: mostly cloudy
+Temperature: 53 F (12 C)
+Dew Point: 37 F (3 C)
+Relative Humidity: 54%
+Pressure (altimeter): 30.03 in. Hg (1017 hPa)
+ob: RJOC 190400Z 07012KT 9999 FEW030 BKN/// 12/03 Q1017
+cycle: 4
+</code></pre></div></div>
+
+<p>以下でも同様。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ curl http://tgftp.nws.noaa.gov/data/observations/metar/decoded/RJOC.TXT
+</code></pre></div></div>
+
+<h3 id="5-bash-スクリプト作成">5. Bash スクリプト作成</h3>
+
+<p>取得する都度長い URL を入力するのは面倒なので、簡単な Bash スクリプトを作成する。（英字は大文字限定）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">metar.sh</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="code"><pre><span class="c">#!/bin/bash</span>
+
+<span class="c"># 引数(ICAO コード)不正なら終了</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="o">!</span> <span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span> <span class="o">=</span>~ <span class="o">[</span>0-9A-Z]<span class="o">{</span>4<span class="o">}</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+    </span><span class="nb">echo</span> <span class="s2">"Wrong argument!"</span>
+    <span class="nb">exit
+</span><span class="k">fi</span>
+
+<span class="c"># URL("decode" データ)（以下のどちらか）</span>
+<span class="nv">URL</span><span class="o">=</span><span class="s2">"http://tgftp.nws.noaa.gov/data/observations/metar/decoded/"</span>
+<span class="c">#URL="ftp://tgftp.nws.noaa.gov/data/observations/metar/decoded/"</span>
+
+<span class="c"># METAR 取得（以下のどちらか）</span>
+wget <span class="nt">-q</span> <span class="nt">-O</span> - <span class="s2">"</span><span class="k">${</span><span class="nv">URL</span><span class="k">}${</span><span class="nv">1</span><span class="k">}</span><span class="s2">.TXT"</span>
+<span class="c">#curl "${URL}${1}.TXT"</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/9635884" title="Gist - Bash script to get a METAR information.">Gist - Bash script to get a METAR information.</a></li>
+</ul>
+
+<h3 id="6-bash-スクリプト実行">6. Bash スクリプト実行</h3>
+
+<p>引数に英4文字の ICAO コードを指定して Bash スクリプトを実行する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./metar.sh RJOC
+Izumo Airport, Japan (RJOC) 35-25N 132-54E 5M
+Mar 19, 2014 - 12:00 AM EDT / 2014.03.19 0400 UTC
+Wind: from the ENE (070 degrees) at 14 MPH (12 KT):0
+Visibility: greater than 7 mile(s):0
+Sky conditions: mostly cloudy
+Temperature: 53 F (12 C)
+Dew Point: 37 F (3 C)
+Relative Humidity: 54%
+Pressure (altimeter): 30.03 in. Hg (1017 hPa)
+ob: RJOC 190400Z 07012KT 9999 FEW030 BKN/// 12/03 Q1017
+cycle: 4
+</code></pre></div></div>
+
+<h3 id="7-その他">7. その他</h3>
+
+<p>METAR 同様に、TAF（運航用飛行場予報気象通報式）という天気予報データも公開されている。<br />
+参考までに URL は以下のとおり。</p>
+
+<ul>
+  <li>~<del><a href="http://weather.noaa.gov/pub/data/forecasts/taf/">http://weather.noaa.gov/pub/data/forecasts/taf/</a></del>~<br />
+<a href="http://tgftp.nws.noaa.gov/data/forecasts/taf/">http://tgftp.nws.noaa.gov/data/forecasts/taf/</a></li>
+  <li><a href="ftp://tgftp.nws.noaa.gov/data/forecasts/taf/">ftp://tgftp.nws.noaa.gov/data/forecasts/taf/</a></li>
+</ul>
+
+<p>そして、リンク先は以下の2つのディレクトリで構成されている。</p>
+
+<ul>
+  <li>“cycles” ディレクトリ
+    <ul>
+      <li>0時から18時まで6時間単位で全データがファイル化されている。</li>
+    </ul>
+  </li>
+  <li>“stations” ディレクトリ
+    <ul>
+      <li>観測所（空港）（ICAO コード）別に最新のデータがファイル化されている。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>METER 同様、容易に Bash スクリプトを作成できるであろう。</p>
+
+<h3 id="8-参考サイト">8. 参考サイト</h3>
+
+<ul>
+  <li><a href="http://www.aviationweather.gov/adds/metars/" title="ADDS - METARs">ADDS - METARs</a></li>
+  <li><a href="http://www.jma-net.go.jp/chubu-airport/metar_1.htm" title="中部航空地方気象台－飛行場実況気象通報式（ＭＥＴＡＲ、ＳＰＥＣＩ）の解説－">中部航空地方気象台－飛行場実況気象通報式（ＭＥＴＡＲ、ＳＰＥＣＩ）の解説－</a></li>
+</ul>
+
+<hr />
+
+<p>気象庁等の発表する気象データとは異なる航空業務用の気象データが存在するということを知った次第です。</p>
+
+<p>簡単なテキストデータなので、システム利用も容易でしょう。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/bash" class="page__taxonomy-item" rel="tag">bash</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/%E3%82%B7%E3%82%A7%E3%83%AB" class="page__taxonomy-item" rel="tag">シェル</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/pc-tips" class="page__taxonomy-item" rel="tag">PC_Tips</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-03-30T00:20:00+09:00">2014-03-30 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Bash+-+METAR+%E6%B0%97%E8%B1%A1%E6%83%85%E5%A0%B1%E5%8F%96%E5%BE%97%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2014%2F03%2F30%2Fbash-getting-a-metar%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2014%2F03%2F30%2Fbash-getting-a-metar%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2014%2F03%2F30%2Fbash-getting-a-metar%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2014/03/28/bash-getting-a-weather-station-noaa/" class="pagination--pager" title="Bash - NOAA 気象観測所検索！
+">Previous</a>
+    
+    
+      <a href="/2014/04/01/blog-access/" class="pagination--pager" title="2014年3月 - OS・ブラウザ別アクセス状況！【自動集計】
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2014/03/30/bash-getting-a-metar/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2014/03/30/bash-getting-a-metar"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

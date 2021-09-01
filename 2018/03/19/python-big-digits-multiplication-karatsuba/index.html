@@ -1,0 +1,1180 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Python - 多桁乗算（Karatsuba 法）！ - mk-mode BLOG</title>
+<meta name="description" content="前回、 Python 3 で「標準（筆算）法」による多桁乗算アルゴリズムを実装する方法を紹介しました。  Python - 多桁乗算（標準（筆算）法）！今回は、「標準（筆算）法」より高速に乗算が可能な「Karatsuba 法」アルゴリズムを実装してみました。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Python - 多桁乗算（Karatsuba 法）！">
+<meta property="og:url" content="https://komasaru.github.io/2018/03/19/python-big-digits-multiplication-karatsuba/">
+
+
+  <meta property="og:description" content="前回、 Python 3 で「標準（筆算）法」による多桁乗算アルゴリズムを実装する方法を紹介しました。  Python - 多桁乗算（標準（筆算）法）！今回は、「標準（筆算）法」より高速に乗算が可能な「Karatsuba 法」アルゴリズムを実装してみました。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Python - 多桁乗算（Karatsuba 法）！">
+  <meta name="twitter:description" content="前回、 Python 3 で「標準（筆算）法」による多桁乗算アルゴリズムを実装する方法を紹介しました。  Python - 多桁乗算（標準（筆算）法）！今回は、「標準（筆算）法」より高速に乗算が可能な「Karatsuba 法」アルゴリズムを実装してみました。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2018/03/19/python-big-digits-multiplication-karatsuba/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2018-03-19T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2018/03/19/python-big-digits-multiplication-karatsuba/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Python - 多桁乗算（Karatsuba 法）！">
+    <meta itemprop="description" content="前回、 Python 3 で「標準（筆算）法」による多桁乗算アルゴリズムを実装する方法を紹介しました。  Python - 多桁乗算（標準（筆算）法）！今回は、「標準（筆算）法」より高速に乗算が可能な「Karatsuba 法」アルゴリズムを実装してみました。">
+    <meta itemprop="datePublished" content="March 19, 2018">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Python - 多桁乗算（Karatsuba 法）！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2018-03-19T00:20:00+09:00">2018-03-19 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>前回、 Python 3 で「標準（筆算）法」による多桁乗算アルゴリズムを実装する方法を紹介しました。</p>
+
+<ul>
+  <li><a href="/2018/03/16/python-big-digits-multiplication-normal" title="Python - 多桁乗算（標準（筆算）法）！">Python - 多桁乗算（標準（筆算）法）！</a></li>
+</ul>
+
+<p>今回は、「標準（筆算）法」より高速に乗算が可能な「Karatsuba 法」アルゴリズムを実装してみました。</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>LMDE 2 (Linux Mint Debian Edition 2; 64bit) での作業を想定。</li>
+  <li>Python 3.6.4 での作業を想定。</li>
+  <li><strong>当方は他のバージョンとの共存環境であり、 <code class="language-plaintext highlighter-rouge">python3.6</code>, <code class="language-plaintext highlighter-rouge">pip3.6</code> で 3.6 系を使用するようにしている。（適宜、置き換えて考えること）</strong></li>
+</ul>
+
+<h3 id="1-アルゴリズムについて">1. アルゴリズムについて</h3>
+
+<p>当ブログ過去記事を参照。</p>
+
+<ul>
+  <li><a href="/2013/04/25/cpp-big-multiply-karatsuba" title="C++ - 多桁乗算（Karatsuba 法）！">C++ - 多桁乗算（Karatsuba 法）！</a></li>
+  <li><a href="/2013/04/26/ruby-big-multiply-karatsuba" title="Ruby - 多桁乗算（Karatsuba 法）！">Ruby - 多桁乗算（Karatsuba 法）！</a></li>
+</ul>
+
+<h3 id="2-python-スクリプトの作成">2. Python スクリプトの作成</h3>
+
+<ul>
+  <li>敢えてオブジェクト指向で作成している。</li>
+  <li>Shebang ストリング（1行目）では、フルパスでコマンド指定している。（<a href="/2015/04/30/ruby-script-running-by-shebang/" title="Ruby - Shebang ストリングによるスクリプト実行！">当方の慣習</a>）</li>
+  <li>数値計算ライブラリ NumPy を使用しない。（この程度の計算では、逆に2倍程度時間がかかってしまうため）</li>
+  <li>必要であれば、スクリプト内の定数を変更する。</li>
+</ul>
+
+<p>File: <code class="language-plaintext highlighter-rouge">multiply_karatsuba.py</code></p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+</pre></td><td class="code"><pre><span class="c1">#! /usr/local/bin/python3.6
+</span><span class="s">"""
+Multiplication of big-digit values with Karatsuba method
+"""</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
+
+<span class="k">class</span> <span class="nc">MultiplyKaratsuba</span><span class="p">:</span>
+    <span class="n">D_MAX</span> <span class="o">=</span> <span class="mi">1024</span>  <span class="c1"># Maximum number of digits (power of 2)
+</span>    <span class="n">D</span>     <span class="o">=</span> <span class="mi">1024</span>  <span class="c1"># Digits of computation (Multiples of 4 &lt;= D_MAX)
+</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="p">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">D</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="p">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">D</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">""" Computation of multiplication """</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">D_MAX</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">a</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">D_MAX</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">b</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">__multiply_karatsuba</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">b</span><span class="p">)</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">__do_carry</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">__display</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">b</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span> <span class="nf">__multiply_normal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="s">""" Normal multiplication
+
+        :param  list a
+        :param  list b
+        :return list z
+        """</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">a_len</span><span class="p">,</span> <span class="n">b_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a_len</span> <span class="o">+</span> <span class="n">b_len</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">b_len</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a_len</span><span class="p">):</span>
+                    <span class="n">z</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">z</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span> <span class="nf">__multiply_karatsuba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="s">""" Karatsuba multiplication
+
+        :param  list a
+        :param  list b
+        :return list z
+        """</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">t_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">t_len</span> <span class="o">&lt;=</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">__multiply_normal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+            <span class="n">a_0</span> <span class="o">=</span> <span class="n">a</span><span class="p">[:(</span><span class="n">t_len</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)]</span>
+            <span class="n">a_1</span> <span class="o">=</span> <span class="n">a</span><span class="p">[(</span><span class="n">t_len</span> <span class="o">//</span> <span class="mi">2</span><span class="p">):]</span>
+            <span class="n">b_0</span> <span class="o">=</span> <span class="n">b</span><span class="p">[:(</span><span class="n">t_len</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)]</span>
+            <span class="n">b_1</span> <span class="o">=</span> <span class="n">b</span><span class="p">[(</span><span class="n">t_len</span> <span class="o">//</span> <span class="mi">2</span><span class="p">):]</span>
+            <span class="n">v</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">t_len</span> <span class="o">//</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="n">v</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">a_1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_0</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">w</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b_0</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">x_1</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">__multiply_karatsuba</span><span class="p">(</span><span class="n">a_0</span><span class="p">,</span> <span class="n">b_0</span><span class="p">)</span>
+            <span class="n">x_2</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">__multiply_karatsuba</span><span class="p">(</span><span class="n">a_1</span><span class="p">,</span> <span class="n">b_1</span><span class="p">)</span>
+            <span class="n">x_3</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">__multiply_karatsuba</span><span class="p">(</span><span class="n">v</span><span class="p">,</span>  <span class="n">w</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">t_len</span><span class="p">):</span>
+                <span class="n">x_3</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">x_1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">x_2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">x_1</span> <span class="o">+</span> <span class="n">x_2</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">t_len</span><span class="p">):</span>
+                <span class="n">z</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">t_len</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">x_3</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">z</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span> <span class="nf">__do_carry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+        <span class="s">""" Process of carrying
+
+        :param  list a
+        :return list a
+        """</span>
+        <span class="n">cr</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)):</span>
+                <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">cr</span>
+                <span class="n">cr</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">//</span> <span class="mi">10</span>
+                <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">cr</span> <span class="o">*</span> <span class="mi">10</span>
+            <span class="k">if</span> <span class="n">cr</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">"[ OVERFLOW!! ] "</span><span class="p">,</span> <span class="n">cr</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span> <span class="nf">__display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="s">""" Display
+
+        :param list a
+        :param list b
+        :param list z
+        """</span>
+        <span class="n">a_len</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">D_MAX</span>
+        <span class="n">b_len</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">D_MAX</span>
+        <span class="n">z_len</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">D_MAX</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="n">a</span><span class="p">[</span><span class="n">a_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="n">a_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">a_len</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">b</span><span class="p">[</span><span class="n">b_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">b</span><span class="p">[</span><span class="n">b_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">b_len</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">z</span><span class="p">[</span><span class="n">z_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">z</span><span class="p">[</span><span class="n">z_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">z_len</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">"a ="</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">a_len</span><span class="p">)):</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">end</span><span class="o">=</span><span class="s">""</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">a_len</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s">" "</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s">""</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">a_len</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">print</span><span class="p">()</span>
+            <span class="k">print</span><span class="p">()</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">"b ="</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">b_len</span><span class="p">)):</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">end</span><span class="o">=</span><span class="s">""</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">b_len</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s">" "</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s">""</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">b_len</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">print</span><span class="p">()</span>
+            <span class="k">print</span><span class="p">()</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">"z ="</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">z_len</span><span class="p">)):</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">end</span><span class="o">=</span><span class="s">""</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">z_len</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s">" "</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s">""</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">z_len</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">print</span><span class="p">()</span>
+            <span class="k">print</span><span class="p">()</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">MultiplyKaratsuba</span><span class="p">()</span>
+        <span class="n">obj</span><span class="p">.</span><span class="n">compute</span><span class="p">()</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="p">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="n">sys</span><span class="p">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li><a href="https://gist.github.com/komasaru/030f96dbde88ba1c3362187d380d5631" title="Gist - Python script to multiply big-digit values with Karatsuba method.">Gist - Python script to multiply big-digit values with Karatsuba method.</a></li>
+</ul>
+
+<h3 id="3-python-スクリプトの実行">3. Python スクリプトの実行</h3>
+
+<p>まず、実行権限を付与。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ chmod +x multiply_karatsuba.py
+</code></pre></div></div>
+
+<p>そして、実行。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./multiply_karatsuba.py
+a =
+2105985447 9026926375 6163318067 1521930549 6102825804
+1732057778 1611724768 2908201805 0244698557 0709918605
+3288302496 4685317623 4898190784 4604144986 3284474952
+3815865438 2836148231 2276177859 5371315395 9309499404
+0566467922 5640804557 4467398356 7424949681 5178552540
+0541446090 9708451086 7487095916 4646885025 2741712589
+2363632763 0729423690 1494709138 6427545614 3028890118
+4889790537 0353275730 9503292442 5163455511 5505731441
+8592814590 9017490715 7015863874 1973673448 7936782139
+8928318070 9515820526 3695226727 0786268578 8720379890
+6887133727 2018526408 6131597125 6321843839 0807036026
+3769160191 5458712924 4834971170 0441452910 5739231133
+0670340821 6600754190 0522297563 8211057443 1231388408
+3316296015 0459410484 8764822388 7751806458 6495800912
+5564499453 2656329959 3722669651 7720216391 6356637691
+3337369251 3648011916 9573403651 3886387186 2826292213
+7560755759 9805658710 3767623191 4379788385 7168928193
+3975006892 7048951344 3313637262 4872387200 2683660287
+0676925624 9068704392 8887230169 6092366260 3809264412
+8164893414 7875628093 7481381683 0046583990 3655373497
+1748152522 2338977371 6948
+b =
+4366469670 3352625316 5510628732 7279216713 9157308666
+8404530809 5155246561 9742812159 3712625456 1332100320
+1707557823 4106256438 0173900781 3010030878 4575894860
+4367607055 8736235625 9100602978 1673553804 2210299395
+6686456288 5410955347 2188689413 4870874031 9921652732
+9578669947 6155568279 4319874491 0773822156 4283762043
+3744141415 6586469207 8334719319 9332699957 1296982503
+3013589754 4141518291 8395808984 7573901094 8772990979
+3589667620 4966730949 4557350864 1346004040 1666278583
+8383072207 6458936430 9703269027 9983478606 6353194116
+6839882498 7202316199 3088389089 2028400979 5573595533
+0872930081 0735540881 0101544157 6600790471 2281515618
+4515107231 9208853815 0984860225 5179140820 9457673331
+2100093633 8850378825 1781382974 4695469940 5116060013
+4142133163 6491857677 6398988539 5696980766 3479164616
+4820409853 3521017829 1941410440 0677222815 9608160501
+4125204122 9518267483 5078059055 0055299138 9173535281
+0211731935 7691628736 5328243792 6164518594 8050934433
+7320800390 5109094720 4205090660 0997232578 3995922913
+0436793066 6125787094 3388887009 7226333094 0070116097
+3124359899 1053911781 8075
+z =
+9195721584 4345305261 3784372239 2619730025 9709288555
+0625891700 0425091970 5413580730 1838410598 1164579193
+3556857349 6319147194 0405916033 5584528780 3340215384
+6800763238 4643269282 1879868418 2391971025 8849100804
+6633941047 1304637342 9062754152 2987910268 5053507656
+7936530947 5464952839 5584313960 4493822379 2041595745
+3207454440 3097602371 8089400555 9605381499 2253277639
+8266368350 2608566970 4464472909 7999555769 2708536577
+0616719377 0555861205 9252613165 8838805388 6785051192
+6607613096 9015161138 8764149133 5742091218 3785052342
+4937468039 0912853664 3108498441 5448459921 0240328721
+4716227000 3334750768 5660325424 2343585147 2633224213
+2134953985 9067375586 9519732307 7708998788 5112124164
+8732422570 6197477692 9538435683 8823915544 9517333936
+9274932251 9721121276 0302054521 7249457306 8634514334
+2964964063 4858530853 0401493135 1282742659 0080652728
+5397477551 0094744816 6624970112 6483824369 4343913667
+8386831589 8791180640 4444539898 5200149392 7861376145
+0401281911 8056943064 6130910692 9125515495 3741340417
+7047486957 9477989920 0474131121 1210178329 4417738382
+1269471393 8180898412 9881742528 6382100174 0883434176
+3236106165 9341657226 1629754331 1332530711 5862296183
+9501218376 8186735690 9846766197 3758818963 5915329550
+4221773538 8288527196 9462799411 7394177062 6672912386
+6336959888 1816617528 7817188649 3153015340 7828861162
+3493890190 7564529087 3756497382 7667478003 8686526841
+5611259682 9783562867 1923519039 1203474353 2247999689
+0735672946 9842721936 3639217701 9643387694 9284007798
+2655579913 7146465504 5695644122 1017911119 1004716200
+9478455686 2663063591 6358475221 0014850178 7072237219
+2505209139 6934611505 2539130584 3486847403 8666463342
+7267992432 9059939037 5244690943 0276464594 8658846549
+3550855848 3233476890 4590488286 3377284029 8654472183
+1156295479 8808632082 5449318945 7152398719 4788700237
+9456043047 5812881514 5675418478 0060413341 8269359936
+3611305317 3675808350 5630467111 5673108244 3215605764
+1592213906 3322057143 9017160501 5968667798 8667476788
+4363142935 2835338163 4639119738 7725710450 5582346635
+0664304068 3422461938 3090967032 1825513189 3488848468
+2542353714 0881370058 1739983017 4332759708 1969165524
+5022481864 0192757494 6014532112 8122898840 8235100
+</code></pre></div></div>
+
+<hr />
+
+<p>以上</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/python" class="page__taxonomy-item" rel="tag">Python</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0" class="page__taxonomy-item" rel="tag">プログラミング</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E6%95%B0%E5%AD%A6" class="page__taxonomy-item" rel="tag">数学</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2018-03-19T00:20:00+09:00">2018-03-19 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Python+-+%E5%A4%9A%E6%A1%81%E4%B9%97%E7%AE%97%EF%BC%88Karatsuba+%E6%B3%95%EF%BC%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2018%2F03%2F19%2Fpython-big-digits-multiplication-karatsuba%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2018%2F03%2F19%2Fpython-big-digits-multiplication-karatsuba%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2018%2F03%2F19%2Fpython-big-digits-multiplication-karatsuba%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2018/03/16/python-big-digits-multiplication-normal/" class="pagination--pager" title="Python - 多桁乗算（標準（筆算）法）！
+">Previous</a>
+    
+    
+      <a href="/2018/03/22/python-big-digits-multiplication-toom-cook-3/" class="pagination--pager" title="Python - 多桁乗算（Toom-Cook 法 (3-way)）！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2018/03/19/python-big-digits-multiplication-karatsuba/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2018/03/19/python-big-digits-multiplication-karatsuba"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

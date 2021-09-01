@@ -1,0 +1,969 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>気象庁防災情報 XML - 受信手順（概要）！ - mk-mode BLOG</title>
+<meta name="description" content="気象庁発表の防災関連情報を XML 形式で即時に受信する方法についての概要です。試験的な運用の段階ですが、サイトのデータをパースするのは非推奨とされているので、データを取得したければ公式に二次利用が許可されているこちらの方法を採用しないといけません。大まかな流れですが、参考になればと思います。（ちなみに、Subscriber の構築が一番の鬼門になるかと思います）">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="気象庁防災情報 XML - 受信手順（概要）！">
+<meta property="og:url" content="https://komasaru.github.io/2013/11/29/jma-disaster-info-xml/">
+
+
+  <meta property="og:description" content="気象庁発表の防災関連情報を XML 形式で即時に受信する方法についての概要です。試験的な運用の段階ですが、サイトのデータをパースするのは非推奨とされているので、データを取得したければ公式に二次利用が許可されているこちらの方法を採用しないといけません。大まかな流れですが、参考になればと思います。（ちなみに、Subscriber の構築が一番の鬼門になるかと思います）">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="気象庁防災情報 XML - 受信手順（概要）！">
+  <meta name="twitter:description" content="気象庁発表の防災関連情報を XML 形式で即時に受信する方法についての概要です。試験的な運用の段階ですが、サイトのデータをパースするのは非推奨とされているので、データを取得したければ公式に二次利用が許可されているこちらの方法を採用しないといけません。大まかな流れですが、参考になればと思います。（ちなみに、Subscriber の構築が一番の鬼門になるかと思います）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2013/11/29/jma-disaster-info-xml/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2013-11-29T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2013/11/29/jma-disaster-info-xml/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="気象庁防災情報 XML - 受信手順（概要）！">
+    <meta itemprop="description" content="気象庁発表の防災関連情報を XML 形式で即時に受信する方法についての概要です。試験的な運用の段階ですが、サイトのデータをパースするのは非推奨とされているので、データを取得したければ公式に二次利用が許可されているこちらの方法を採用しないといけません。大まかな流れですが、参考になればと思います。（ちなみに、Subscriber の構築が一番の鬼門になるかと思います）">
+    <meta itemprop="datePublished" content="November 29, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">気象庁防災情報 XML - 受信手順（概要）！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-11-29T00:20:00+09:00">2013-11-29 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>気象庁発表の防災関連情報を XML 形式で即時に受信する方法についての概要です。</p>
+
+<p>試験的な運用の段階ですが、サイトのデータをパースするのは非推奨とされているので、データを取得したければ公式に二次利用が許可されているこちらの方法を採用しないといけません。</p>
+
+<p>大まかな流れですが、参考になればと思います。（ちなみに、Subscriber の構築が一番の鬼門になるかと思います）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Web サーバを自分で自由に操作できる環境が必要。（Apache, Nginx 等）</li>
+  <li>Web サーバ上で動的処理のできる環境が整備済み。（PHP, Ruby on Rails 等）</li>
+</ul>
+
+<h3 id="1-気象庁防災情報-xml-について理解">1. 気象庁防災情報 XML について理解</h3>
+
+<p>「<a href="http://xml.kishou.go.jp/" title="気象庁防災情報XMLフォーマット">気象庁防災情報XMLフォーマット</a>」のページで全てが説明されているので、全てに目を通す。<br />
+一度に全てを理解するのは骨が折れる作業になるので、取り敢えずは概要を理解し、その後各種コードの仕様や電文別のフォーマット等の説明は随時理解していくようにすると良いだろう。<br />
+実際、受信した XML を処理しようとプログラミングを始めると自ずと理解できるようになる。</p>
+
+<h3 id="2-pubsubhubbub-について理解">2. PubSubHubbub について理解</h3>
+
+<p>「気象庁防災情報 XML」の配信には、”PubSubHubbub” という XML を即時に配信するプロトコルが使用されている。<br />
+各種 Web サイト等でも説明されているので、参考にして理解する。<br />
+当ブログ過去記事でも説明している。参考まで。</p>
+
+<ul>
+  <li><a href="http://www.mk-mode.com/octopress/2013/11/20/rails-implement-pubsubhubbub-subscriber/" title="Ruby on Rails - PubSubHubbub Subscriber 実装！ - mk-mode BLOG">Ruby on Rails - PubSubHubbub Subscriber 実装！ - mk-mode BLOG</a></li>
+</ul>
+
+<h3 id="3-subscriber-構築">3. Subscriber 構築</h3>
+
+<p>「気象庁防災情報 XML」を受信するためには “Subscriber”（購読者）が必要であるので、構築し、不具合が無いようにテストしておく。<br />
+参考までに、「<a href="http://www.mk-mode.com/octopress/2013/11/20/rails-implement-pubsubhubbub-subscriber/" title="Ruby on Rails - PubSubHubbub Subscriber 実装！ - mk-mode BLOG">Ruby on Rails - PubSubHubbub Subscriber 実装！ - mk-mode BLOG</a>」でも Ruby on Rails での構築方法を紹介している。</p>
+
+<h3 id="4-hub-登録申請">4. Hub 登録申請</h3>
+
+<p>「気象庁防災情報 XML」からの配信は Google の “Alert Hub” 経由で行わる。（Subscriber 構築時のテストでは Google の “PubSubHubbub Hub” を使用していた）<br />
+Alert Hub の登録は、気象庁が登録者数を把握するために気象庁側で行われるので、自分ではしない。<br />
+「<a href="http://xml.kishou.go.jp/" title="気象庁防災情報XMLフォーマット">気象庁防災情報XMLフォーマット</a>」内に申請方法も記載されているので、よく読んでメールで登録申請する。<br />
+そして、２週間以内に気象庁側で登録が完了し、返信メールが届く。</p>
+
+<p>注意しないといけいないは、Alert Hub 登録時に Subscriber 宛に「購読意思確認」の GET リクエストが飛んでくるので、その時に正常にレスポンスを返せないと登録されないということ。（Subscriber 構築時に入念にテストしておくこと）</p>
+
+<h3 id="5-get-リクエスト処理">5. GET リクエスト処理</h3>
+
+<p>気象庁側で Alert Hub 登録時に GET リクエスト（購読意思確認）が飛んでくるので、Subscriber で正常にレスポンスを返す。（「<a href="http://www.mk-mode.com/octopress/2013/11/20/rails-implement-pubsubhubbub-subscriber/" title="Ruby on Rails - PubSubHubbub Subscriber 実装！ - mk-mode BLOG">Ruby on Rails - PubSubHubbub Subscriber 実装！ - mk-mode BLOG</a>」参照）</p>
+
+<p>実際には、以下のような GET リクエストとなる。（<code class="language-plaintext highlighter-rouge">verify_token</code> は伏せている）（Web サーバ：Nginx の場合）<br />
+処理が成功すれば、レスポンスコード <code class="language-plaintext highlighter-rouge">200</code> が返るはずである。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>8.35.200.39 - - <span class="o">[</span>07/Nov/2013:12:14:39 +0900] <span class="s2">"GET /rails/jmx?hub.verify_token=XX
+XXXXXXXX&amp;hub.challenge=-SEezbWxrJn-aoBO-uR9ObjHXZTAqSJW7k3C2Jcg-WuVWAWe0EpkvRARl
+PFrvKyUdnHHlUplZv3Z47F50IIbre5wSqUPkbVK0Vi4E0eiLzZrKDbhxfTA9N1UDyh7TcwU&amp;hub.topi
+c=http%3A%2F%2Fxml.kishou.go.jp%2Ffeed%2Fregular.xml&amp;hub.mode=subscribe&amp;hub.leas
+e_seconds=432000 HTTP/1.1"</span> 200 153 <span class="s2">"-"</span> <span class="s2">"AppEngine-Google; (+http://code.google.c
+om/appengine; appid: s~alert-hub)"</span> <span class="s2">"-"</span> <span class="s2">"0.90"</span>
+</code></pre></div></div>
+
+<h3 id="6-post-リクエスト処理">6. POST リクエスト処理</h3>
+
+<p>Alert Hub の登録が正常に終了すると、以降順次 POST リクエスト（XML フィードが発行されたという Atom フィード）が飛んでくる。<br />
+この受信した Atom フィード内に記載されている XML の URL にアクセスすれば実際の XML が取得できる。<br />
+後は取得した XML を好きに処理すればよい。</p>
+
+<p>実際には、以下のような POST リクエストとなる。（Web サーバ：Nginx の場合）</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>8.35.200.38 - - <span class="o">[</span>07/Nov/2013:12:20:15 +0900] <span class="s2">"POST /rails/jmx HTTP/1.1"</span> 200 32 <span class="s2">"
+-"</span> <span class="s2">"AppEngine-Google; (+http://code.google.com/appengine; appid: s~alert-hub)"</span> <span class="s2">"
+-"</span> <span class="s2">"0.05"</span>
+</code></pre></div></div>
+
+<p>参考までに、飛んでくる Atom フィードは以下のような内容。</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;feed</span> <span class="na">xmlns=</span><span class="s">"http://www.w3.org/2005/Atom"</span> <span class="na">xml:lang=</span><span class="s">"ja"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;title&gt;</span>JMAXML publishing feed<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;subtitle&gt;</span>this feed is published by JMA<span class="nt">&lt;/subtitle&gt;</span>
+<span class="nt">&lt;updated&gt;</span>2013-11-10T00:21:01+09:00<span class="nt">&lt;/updated&gt;</span>
+<span class="nt">&lt;id&gt;</span>urn:uuid:f57b5866-0c8c-3c92-9aff-10a715cdf48b<span class="nt">&lt;/id&gt;</span>
+<span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">"http://www.jma.go.jp/"</span> <span class="na">rel=</span><span class="s">"related"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">"http://xml.kishou.go.jp/feed/extra.xml"</span> <span class="na">rel=</span><span class="s">"self"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;rights&gt;</span>Published by Japan Meteorological Agency<span class="nt">&lt;/rights&gt;</span>
+
+<span class="nt">&lt;entry&gt;</span>
+<span class="nt">&lt;title&gt;</span>気象警報・注意報<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;id&gt;</span>urn:uuid:c3f6002a-029d-3283-8a60-563d54c64b7f<span class="nt">&lt;/id&gt;</span>
+<span class="nt">&lt;updated&gt;</span>2013-11-09T15:20:37Z<span class="nt">&lt;/updated&gt;</span>
+<span class="nt">&lt;author&gt;&lt;name&gt;</span>仙台管区気象台<span class="nt">&lt;/name&gt;&lt;/author&gt;</span>
+<span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">"http://xml.kishou.go.jp/data/c3f6002a-029d-3283-8a60-563d54c64b7f.xml"</span> <span class="na">type=</span><span class="s">"application/xml"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;content</span> <span class="na">type=</span><span class="s">"text"</span><span class="nt">&gt;</span>【宮城県気象警報・注意報】東部では、１０日朝から１０日昼前まで暴風に警戒してください。<span class="nt">&lt;/content&gt;</span>
+<span class="nt">&lt;/entry&gt;</span>
+<span class="nt">&lt;entry&gt;</span>
+<span class="nt">&lt;title&gt;</span>気象特別警報・警報・注意報<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;id&gt;</span>urn:uuid:40f3f3f6-ccc9-36b9-898b-19d880e3f55b<span class="nt">&lt;/id&gt;</span>
+<span class="nt">&lt;updated&gt;</span>2013-11-09T15:20:34Z<span class="nt">&lt;/updated&gt;</span>
+<span class="nt">&lt;author&gt;&lt;name&gt;</span>仙台管区気象台<span class="nt">&lt;/name&gt;&lt;/author&gt;</span>
+<span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">"http://xml.kishou.go.jp/data/40f3f3f6-ccc9-36b9-898b-19d880e3f55b.xml"</span> <span class="na">type=</span><span class="s">"application/xml"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;content</span> <span class="na">type=</span><span class="s">"text"</span><span class="nt">&gt;</span>【宮城県気象警報・注意報】東部では、１０日朝から１０日昼前まで暴風に警戒してください。<span class="nt">&lt;/content&gt;</span>
+<span class="nt">&lt;/entry&gt;</span>
+<span class="nt">&lt;/feed&gt;</span>
+</code></pre></div></div>
+
+<p>この <code class="language-plaintext highlighter-rouge">&lt;entry&gt;</code> タグ内の URL を読み行けば、発行された XML が取得できる。<br />
+以下のようなもの。</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;Report</span> <span class="na">xmlns=</span><span class="s">"http://xml.kishou.go.jp/jmaxml1/"</span> <span class="na">xmlns:jmx=</span><span class="s">"http://xml.kishou.go.jp/jmaxml1/"</span> <span class="na">xmlns:jmx_add=</span><span class="s">"http://xml.kishou.go.jp/jmaxml1/addition1/"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;Control&gt;</span>
+<span class="nt">&lt;Title&gt;</span>気象警報・注意報<span class="nt">&lt;/Title&gt;</span>
+<span class="nt">&lt;DateTime&gt;</span>2013-11-09T15:20:37Z<span class="nt">&lt;/DateTime&gt;</span>
+<span class="nt">&lt;Status&gt;</span>通常<span class="nt">&lt;/Status&gt;</span>
+<span class="nt">&lt;EditorialOffice&gt;</span>仙台管区気象台<span class="nt">&lt;/EditorialOffice&gt;</span>
+<span class="nt">&lt;PublishingOffice&gt;</span>仙台管区気象台<span class="nt">&lt;/PublishingOffice&gt;</span>
+<span class="nt">&lt;/Control&gt;</span>
+<span class="nt">&lt;Head</span> <span class="na">xmlns=</span><span class="s">"http://xml.kishou.go.jp/jmaxml1/informationBasis1/"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;Title&gt;</span>宮城県気象警報・注意報<span class="nt">&lt;/Title&gt;</span>
+<span class="nt">&lt;ReportDateTime&gt;</span>2013-11-10T00:20:00+09:00<span class="nt">&lt;/ReportDateTime&gt;</span>
+<span class="nt">&lt;TargetDateTime&gt;</span>2013-11-10T00:20:00+09:00<span class="nt">&lt;/TargetDateTime&gt;</span>
+<span class="nt">&lt;EventID/&gt;</span>
+<span class="nt">&lt;InfoType&gt;</span>発表<span class="nt">&lt;/InfoType&gt;</span>
+<span class="nt">&lt;Serial/&gt;</span>
+<span class="nt">&lt;InfoKind&gt;</span>気象警報・注意報<span class="nt">&lt;/InfoKind&gt;</span>
+<span class="nt">&lt;InfoKindVersion&gt;</span>1.0_0<span class="nt">&lt;/InfoKindVersion&gt;</span>
+<span class="nt">&lt;Headline&gt;</span>
+<span class="nt">&lt;Text&gt;</span>東部では、１０日朝から１０日昼前まで暴風に警戒してください。<span class="nt">&lt;/Text&gt;</span>
+
+<span class="c">&lt;!-- 途中省略 --&gt;</span>
+
+<span class="nt">&lt;/Head&gt;</span>
+<span class="nt">&lt;Body</span> <span class="na">xmlns=</span><span class="s">"http://xml.kishou.go.jp/jmaxml1/body/meteorology1/"</span> <span class="na">xmlns:jmx_eb=</span><span class="s">"http://xml.kishou.go.jp/jmaxml1/elementBasis1/"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;Warning</span> <span class="na">type=</span><span class="s">"気象警報・注意報（府県予報区等）"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;Item&gt;</span>
+<span class="nt">&lt;Kind&gt;</span>
+<span class="nt">&lt;Name&gt;</span>暴風警報<span class="nt">&lt;/Name&gt;</span>
+<span class="nt">&lt;Code&gt;</span>05<span class="nt">&lt;/Code&gt;</span>
+<span class="nt">&lt;Status&gt;</span>発表<span class="nt">&lt;/Status&gt;</span>
+<span class="nt">&lt;/Kind&gt;</span>
+<span class="nt">&lt;Kind&gt;</span>
+<span class="nt">&lt;Name&gt;</span>波浪注意報<span class="nt">&lt;/Name&gt;</span>
+<span class="nt">&lt;Code&gt;</span>16<span class="nt">&lt;/Code&gt;</span>
+<span class="nt">&lt;Status&gt;</span>継続<span class="nt">&lt;/Status&gt;</span>
+<span class="nt">&lt;/Kind&gt;</span>
+<span class="nt">&lt;Area&gt;</span>
+<span class="nt">&lt;Name&gt;</span>宮城県<span class="nt">&lt;/Name&gt;</span>
+<span class="nt">&lt;Code&gt;</span>040000<span class="nt">&lt;/Code&gt;</span>
+<span class="nt">&lt;/Area&gt;</span>
+<span class="nt">&lt;ChangeStatus&gt;</span>警報・注意報種別に変化有<span class="nt">&lt;/ChangeStatus&gt;</span>
+<span class="nt">&lt;FullStatus&gt;</span>一部<span class="nt">&lt;/FullStatus&gt;</span>
+<span class="nt">&lt;EditingMark&gt;</span>0<span class="nt">&lt;/EditingMark&gt;</span>
+<span class="nt">&lt;/Item&gt;</span>
+<span class="nt">&lt;/Warning&gt;</span>
+
+<span class="c">&lt;!-- 途中省略 --&gt;</span>
+
+<span class="nt">&lt;/Body&gt;</span>
+<span class="nt">&lt;/Report&gt;</span>
+</code></pre></div></div>
+
+<h3 id="7-当方の利用例">7. 当方の利用例</h3>
+
+<p>今回は簡単に流れを説明したが、当方は実際には以下のような環境で運用化している。</p>
+
+<ul>
+  <li>Web サーバ：Nginx</li>
+  <li>Web フレームワーク：Ruby on Rails</li>
+  <li>Rails サーバ：Unicorn</li>
+</ul>
+
+<p>Rails のコントローラで GET リクエスト（購読意思確認）受信・処理、POST リクエスト（更新 フィード）受信し、実際の処理はコントローラから別途作成している Ruby スクリプトをキックする方法を採っている。<br />
+ちなみに、そのキックされる Ruby スクリプトでは、取得した XML を解析し、データベース（MySQL）に保存し、場合によっては整形してツイートする、という処理を行なっている。（取得・保存した XML データは Rails 製サイトで閲覧できるようにもしている）</p>
+
+<p>【当方閲覧用ページ】</p>
+
+<ul>
+  <li><a href="http://www.mk-mode.com/rails/jmaxml" title="mk-mode SITE : 気象庁防災情報XML">mk-mode SITE : 気象庁防災情報XML</a></li>
+</ul>
+
+<p>【ツイートアカウント】（地震・津波・火山は全国規模で、その他気象防災関連は島根県・松江市を中心にツイート）</p>
+
+<ul>
+  <li><a href="https://twitter.com/wn_matsue" title="警戒・松江（非公式Bot） wn_matsue">警戒・松江（非公式Bot） wn_matsue</a></li>
+</ul>
+
+<h3 id="8-気象庁発信データの利用について">8. 気象庁発信データの利用について</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>気象庁のサイトをスクレイピングして情報を取得することは、「[気象庁</td>
+      <td>著作権・リンク・個人情報保護について](http://www.jma.go.jp/jma/kishou/info/coment.html “気象庁</td>
+      <td>著作権・リンク・個人情報保護について”)」の「利用上の注意について」に、</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>当ホームページは、通常のブラウザで閲覧することを前提に各種情報を掲載しております。自動巡回ソフト等による、定期的、自動的な気象データの収集等は、サーバーに負荷がかかる等の理由から、原則としてご遠慮いただいております。ご理解お願いします。</p>
+</blockquote>
+
+<p>と記載があるとおり、やるべきではありません。</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>一方、XML を取得し二次利用することは、「[気象庁防災情報XMLフォーマット</td>
+      <td>技術資料](http://xml.kishou.go.jp/open_trial/index.html “気象庁防災情報XMLフォーマット</td>
+      <td>技術資料”)」内の「気象庁ホームページを通じて公開するＸＭＬ形式電文のご利用にあたっての留意事項」(PDFファイル)に、</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>利用目的が気象業務法の趣旨及び公序良俗に反しない限り、原則として制限はありません。</p>
+</blockquote>
+
+<p>と記載があるとおり、原則として自由のようです。</p>
+
+<h3 id="参考サイト">参考サイト</h3>
+
+<ul>
+  <li><a href="http://xml.kishou.go.jp/" title="気象庁防災情報XMLフォーマット">気象庁防災情報XMLフォーマット</a></li>
+</ul>
+
+<hr />
+
+<p>XML データの配信は試験的な運用ではあるようですが、うまく利用すればかなり有用なものが作れるようになるのではないでしょうか。</p>
+
+<p>ただ、試験運用のためか、受信する電文種類（XML）によっては発行タイミングが気象庁サイトで公開されるより若干遅れるようです。<br />
+また、負荷分散のためにサーバが分散している（？）しているからか、同じ UUID のフィード（内容も全く同じ）が飛んできたり、内容が同じでも UUID の異なるフィードが飛んできたりもします。</p>
+
+<p>さらに、緊急地震速報も XML 化されているようですが、現在は公開はされていないようです。今後公開されるようになるかも知れません。<br />
+その時には、タイムラグの問題も解消されるのではないでしょうか。</p>
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/feed" class="page__taxonomy-item" rel="tag">Feed</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/xml" class="page__taxonomy-item" rel="tag">XML</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/pc-tips" class="page__taxonomy-item" rel="tag">PC_Tips</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-11-29T00:20:00+09:00">2013-11-29 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E6%B0%97%E8%B1%A1%E5%BA%81%E9%98%B2%E7%81%BD%E6%83%85%E5%A0%B1+XML+-+%E5%8F%97%E4%BF%A1%E6%89%8B%E9%A0%86%EF%BC%88%E6%A6%82%E8%A6%81%EF%BC%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2013%2F11%2F29%2Fjma-disaster-info-xml%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2013%2F11%2F29%2Fjma-disaster-info-xml%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2013%2F11%2F29%2Fjma-disaster-info-xml%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2013/11/26/linux-cron-locale-behavior/" class="pagination--pager" title="Linux - cron での locale の挙動！
+">Previous</a>
+    
+    
+      <a href="/2013/12/01/blog-access/" class="pagination--pager" title="2013年11月 - OS・ブラウザ別アクセス状況！【自動集計】
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2013/11/29/jma-disaster-info-xml/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2013/11/29/jma-disaster-info-xml"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

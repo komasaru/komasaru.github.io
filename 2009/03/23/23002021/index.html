@@ -1,0 +1,930 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>玄箱ＨＧをＦｅｄｏｒａ８にｱｯﾌﾟｸﾞﾚｰﾄﾞ！ - mk-mode BLOG</title>
+<meta name="description" content="今回は、昨日 Ｆｅｄｏｒａ７ をインストールした KURO-BOX/HG を Ｆｅｄｏｒａ８ にアップグレードしてみました。いつもながら、これはあくまでも自分用の記録です。若干環境等異なる場合もあるかもしれません。ご了承下さい。作業記録【前提条件】・Ｆｅｄｏｒａ化する玄箱は「 KURO-BOX/HG 」。・「 KURO-BOX/HG 」には３２０ＧＢのハードディスクを組み込んでいる。・「 KURO-BOX/HG 」のＩＰアドレスは [ 192.168.11.2 ]・「 KURO-BOX/HG 」に「 できる！玄箱 Fedora化！！ 」のインストールキット「 F4K Install Kit 」でＦｅｄｏｒａ７導入済み＆「 yum 」が最新版に入れ替え済み。・インストール作業を実行させるマシンはＷｉｎｄｏｗｓＸＰ（ＰｅｎｔｉｕｍＭ）１．玄箱への接続ローカルマシンから KURO-BOX/HG へリモート接続し、rootユーザになる。（当方は、「 Poderosa 」というのを使用しています）２．パッケージダウンロード「 http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/ 」にある「 fedora-release-8-3.noarch.rpm 」と「 fedora-release-notes-8.0.0-3.noarch.rpm 」をダンロードする。[root@KURO-BOX ~]# rpm -Uvh http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-8-3.noarch.rpm http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-notes-8.0.0-3.noarch.rpmhttp://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-8-3.noarch.rpm を取得中http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-notes-8.0.0-3.noarch.rpm を取得中準備中...                ########################################### [100%]   1:fedora-release-notes   ########################################### [ 50%]   2:fedora-release         ########################################### [100%][root@KURO-BOX ~]#３．キャッシュの整理以下のように入力してキャッシュをきれいにしておく[root@KURO-BOX ~]# yum clean allLoading &quot;fastestmirror&quot; pluginCleaning up EverythingCleaning up list of fastest mirrors[root@KURO-BOX ~]#４．「 yum 」と「 rpm 」をアップデートＦｅｄｏｒａのアップグレードの前にまず「 yum 」と「 rpm 」をアップデートしておく。[root@KURO-BOX ~]# yum -y update rpm\* yum\*Loading &quot;fastestmirror&quot; pluginLoading mirror speeds from cached hostfile * fedora: ftp.jaist.ac.jp * updates: ftp.jaist.ac.jpSetting up Update ProcessResolving Dependencies・・・　途中省略　・・・Updated: popt.ppc 0:1.12-3.fc8 rpm.ppc 0:4.4.2.2-3.fc8 rpm-libs.ppc 0:4.4.2.2-3.fc8 rpm-python.ppc 0:4.4.2.2-3.fc8 yum-metadata-parser.ppc 0:1.1.2-1.fc8Complete![root@KURO-BOX ~]#５．rpm のデータベースが壊れていることがあるので、再構築[root@KURO-BOX ~]# rpm --rebuilddb[root@KURO-BOX ~]#６．アップグレード以下のように入力してアップグレードする。[root@KURO-BOX ~]# yum -y upgradeLoading &quot;fastestmirror&quot; pluginLoading mirror speeds from cached hostfile * fedora: ftp.jaist.ac.jp * updates: ftp.jaist.ac.jpSetting up Upgrade ProcessResolving Dependencies・・・　途中省略　・・・Complete![root@KURO-BOX ~]#７．「 Base Group 」をアップデート[root@KURO-BOX ~]# yum -y groupupdate BaseLoading &quot;fastestmirror&quot; pluginLoading mirror speeds from cached hostfile * updates-newkey: ftp.jaist.ac.jp * fedora: ftp.jaist.ac.jp * updates: ftp.jaist.ac.jp・・・　途中省略　・・・Complete![root@KURO-BOX ~]#８．リブート玄箱をリブートする。９．yum ユーティリティのインストール[root@KURO-BOX ~]# yum -y install yum-utils・・・　途中省略　・・・Updated:  yum-utils.noarch 0:1.1.17-1.fc8                                                 Complete![root@KURO-BOX ~]#１０．Ｆｅｄｏｒａ８ になって公式から消えた rpm を調査[root@KURO-BOX ~]# package-cleanup --orphansSetting up yumvim-minimal-7.1.245-1.fc7.ppcyum-fastestmirror-1.1.11-1.fc7.noarchinfo-4.11-2.fc7.ppckernel-headers-2.6.23.17-88.fc7.ppcelfutils-libelf-0.131-1.fc7.ppclibxml2-2.6.31-1.fc7.ppcpcre-7.3-3.fc7.ppcvim-common-7.1.245-1.fc7.ppctzdata-2008c-1.fc7.noarchbash-3.2-20.fc7.ppclibnl-1.1-1.fc7.ppclibxml2-python-2.6.31-1.fc7.ppcsyslog-ng-2.0.8-1.fc7.ppckernel-2.6.21-1.3194.fc7.ppckernel-2.6.23.17-88.fc7.ppc[root@KURO-BOX ~]#古い kernel 等見つかりましたが、別にあってもいいと思うので、とりあえずそのままにした。１１．rpm の依存関係をチェック[root@KURO-BOX ~]# package-cleanup --problemsSetting up yumReading local RPM databaseProcessing all local requiresNo problems found[root@KURO-BOX ~]#問題なしでした。１２．パッケージの重複チェック[root@KURO-BOX ~]# package-cleanup --dupesSetting up yum[root@KURO-BOX ~]#重複なしでした。もし、重複パッケージがあったら、package-cleanup –cleandupes１３．rpm データベースの再構築[root@KURO-BOX ~]# rm -f /var/lib/rpm/__* ; rpm --rebuilddb[root@KURO-BOX ~]#１４．ネットワークの確認・修正念のため、ネットワークの確認・修正を行う。（「 玄箱ＨＧにＦｅｄｏｒａ７インストール！ 」での「 １４．各種設定確認 」を参照）１５．リブート念のため、玄箱をリブートする。１６．バージョン確認再度リモート接続しrootユーザになり、以下のように入力してみる。[root@KURO-BOX ~]# cat /etc/fedora-releaseFedora release 8 (Werewolf)　←　Ｆｅｄｏｒａ８になってる[root@KURO-BOX ~]#いいんじゃないでしょうか？次は、同じ手順で Ｆｅｄｏｒａ９ にアップグレードしてみるつもり。。。詳細はまた。">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="玄箱ＨＧをＦｅｄｏｒａ８にｱｯﾌﾟｸﾞﾚｰﾄﾞ！">
+<meta property="og:url" content="https://komasaru.github.io/2009/03/23/23002021/">
+
+
+  <meta property="og:description" content="今回は、昨日 Ｆｅｄｏｒａ７ をインストールした KURO-BOX/HG を Ｆｅｄｏｒａ８ にアップグレードしてみました。いつもながら、これはあくまでも自分用の記録です。若干環境等異なる場合もあるかもしれません。ご了承下さい。作業記録【前提条件】・Ｆｅｄｏｒａ化する玄箱は「 KURO-BOX/HG 」。・「 KURO-BOX/HG 」には３２０ＧＢのハードディスクを組み込んでいる。・「 KURO-BOX/HG 」のＩＰアドレスは [ 192.168.11.2 ]・「 KURO-BOX/HG 」に「 できる！玄箱 Fedora化！！ 」のインストールキット「 F4K Install Kit 」でＦｅｄｏｒａ７導入済み＆「 yum 」が最新版に入れ替え済み。・インストール作業を実行させるマシンはＷｉｎｄｏｗｓＸＰ（ＰｅｎｔｉｕｍＭ）１．玄箱への接続ローカルマシンから KURO-BOX/HG へリモート接続し、rootユーザになる。（当方は、「 Poderosa 」というのを使用しています）２．パッケージダウンロード「 http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/ 」にある「 fedora-release-8-3.noarch.rpm 」と「 fedora-release-notes-8.0.0-3.noarch.rpm 」をダンロードする。[root@KURO-BOX ~]# rpm -Uvh http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-8-3.noarch.rpm http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-notes-8.0.0-3.noarch.rpmhttp://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-8-3.noarch.rpm を取得中http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-notes-8.0.0-3.noarch.rpm を取得中準備中...                ########################################### [100%]   1:fedora-release-notes   ########################################### [ 50%]   2:fedora-release         ########################################### [100%][root@KURO-BOX ~]#３．キャッシュの整理以下のように入力してキャッシュをきれいにしておく[root@KURO-BOX ~]# yum clean allLoading &quot;fastestmirror&quot; pluginCleaning up EverythingCleaning up list of fastest mirrors[root@KURO-BOX ~]#４．「 yum 」と「 rpm 」をアップデートＦｅｄｏｒａのアップグレードの前にまず「 yum 」と「 rpm 」をアップデートしておく。[root@KURO-BOX ~]# yum -y update rpm\* yum\*Loading &quot;fastestmirror&quot; pluginLoading mirror speeds from cached hostfile * fedora: ftp.jaist.ac.jp * updates: ftp.jaist.ac.jpSetting up Update ProcessResolving Dependencies・・・　途中省略　・・・Updated: popt.ppc 0:1.12-3.fc8 rpm.ppc 0:4.4.2.2-3.fc8 rpm-libs.ppc 0:4.4.2.2-3.fc8 rpm-python.ppc 0:4.4.2.2-3.fc8 yum-metadata-parser.ppc 0:1.1.2-1.fc8Complete![root@KURO-BOX ~]#５．rpm のデータベースが壊れていることがあるので、再構築[root@KURO-BOX ~]# rpm --rebuilddb[root@KURO-BOX ~]#６．アップグレード以下のように入力してアップグレードする。[root@KURO-BOX ~]# yum -y upgradeLoading &quot;fastestmirror&quot; pluginLoading mirror speeds from cached hostfile * fedora: ftp.jaist.ac.jp * updates: ftp.jaist.ac.jpSetting up Upgrade ProcessResolving Dependencies・・・　途中省略　・・・Complete![root@KURO-BOX ~]#７．「 Base Group 」をアップデート[root@KURO-BOX ~]# yum -y groupupdate BaseLoading &quot;fastestmirror&quot; pluginLoading mirror speeds from cached hostfile * updates-newkey: ftp.jaist.ac.jp * fedora: ftp.jaist.ac.jp * updates: ftp.jaist.ac.jp・・・　途中省略　・・・Complete![root@KURO-BOX ~]#８．リブート玄箱をリブートする。９．yum ユーティリティのインストール[root@KURO-BOX ~]# yum -y install yum-utils・・・　途中省略　・・・Updated:  yum-utils.noarch 0:1.1.17-1.fc8                                                 Complete![root@KURO-BOX ~]#１０．Ｆｅｄｏｒａ８ になって公式から消えた rpm を調査[root@KURO-BOX ~]# package-cleanup --orphansSetting up yumvim-minimal-7.1.245-1.fc7.ppcyum-fastestmirror-1.1.11-1.fc7.noarchinfo-4.11-2.fc7.ppckernel-headers-2.6.23.17-88.fc7.ppcelfutils-libelf-0.131-1.fc7.ppclibxml2-2.6.31-1.fc7.ppcpcre-7.3-3.fc7.ppcvim-common-7.1.245-1.fc7.ppctzdata-2008c-1.fc7.noarchbash-3.2-20.fc7.ppclibnl-1.1-1.fc7.ppclibxml2-python-2.6.31-1.fc7.ppcsyslog-ng-2.0.8-1.fc7.ppckernel-2.6.21-1.3194.fc7.ppckernel-2.6.23.17-88.fc7.ppc[root@KURO-BOX ~]#古い kernel 等見つかりましたが、別にあってもいいと思うので、とりあえずそのままにした。１１．rpm の依存関係をチェック[root@KURO-BOX ~]# package-cleanup --problemsSetting up yumReading local RPM databaseProcessing all local requiresNo problems found[root@KURO-BOX ~]#問題なしでした。１２．パッケージの重複チェック[root@KURO-BOX ~]# package-cleanup --dupesSetting up yum[root@KURO-BOX ~]#重複なしでした。もし、重複パッケージがあったら、package-cleanup –cleandupes１３．rpm データベースの再構築[root@KURO-BOX ~]# rm -f /var/lib/rpm/__* ; rpm --rebuilddb[root@KURO-BOX ~]#１４．ネットワークの確認・修正念のため、ネットワークの確認・修正を行う。（「 玄箱ＨＧにＦｅｄｏｒａ７インストール！ 」での「 １４．各種設定確認 」を参照）１５．リブート念のため、玄箱をリブートする。１６．バージョン確認再度リモート接続しrootユーザになり、以下のように入力してみる。[root@KURO-BOX ~]# cat /etc/fedora-releaseFedora release 8 (Werewolf)　←　Ｆｅｄｏｒａ８になってる[root@KURO-BOX ~]#いいんじゃないでしょうか？次は、同じ手順で Ｆｅｄｏｒａ９ にアップグレードしてみるつもり。。。詳細はまた。">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="玄箱ＨＧをＦｅｄｏｒａ８にｱｯﾌﾟｸﾞﾚｰﾄﾞ！">
+  <meta name="twitter:description" content="今回は、昨日 Ｆｅｄｏｒａ７ をインストールした KURO-BOX/HG を Ｆｅｄｏｒａ８ にアップグレードしてみました。いつもながら、これはあくまでも自分用の記録です。若干環境等異なる場合もあるかもしれません。ご了承下さい。作業記録【前提条件】・Ｆｅｄｏｒａ化する玄箱は「 KURO-BOX/HG 」。・「 KURO-BOX/HG 」には３２０ＧＢのハードディスクを組み込んでいる。・「 KURO-BOX/HG 」のＩＰアドレスは [ 192.168.11.2 ]・「 KURO-BOX/HG 」に「 できる！玄箱 Fedora化！！ 」のインストールキット「 F4K Install Kit 」でＦｅｄｏｒａ７導入済み＆「 yum 」が最新版に入れ替え済み。・インストール作業を実行させるマシンはＷｉｎｄｏｗｓＸＰ（ＰｅｎｔｉｕｍＭ）１．玄箱への接続ローカルマシンから KURO-BOX/HG へリモート接続し、rootユーザになる。（当方は、「 Poderosa 」というのを使用しています）２．パッケージダウンロード「 http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/ 」にある「 fedora-release-8-3.noarch.rpm 」と「 fedora-release-notes-8.0.0-3.noarch.rpm 」をダンロードする。[root@KURO-BOX ~]# rpm -Uvh http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-8-3.noarch.rpm http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-notes-8.0.0-3.noarch.rpmhttp://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-8-3.noarch.rpm を取得中http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-notes-8.0.0-3.noarch.rpm を取得中準備中...                ########################################### [100%]   1:fedora-release-notes   ########################################### [ 50%]   2:fedora-release         ########################################### [100%][root@KURO-BOX ~]#３．キャッシュの整理以下のように入力してキャッシュをきれいにしておく[root@KURO-BOX ~]# yum clean allLoading &quot;fastestmirror&quot; pluginCleaning up EverythingCleaning up list of fastest mirrors[root@KURO-BOX ~]#４．「 yum 」と「 rpm 」をアップデートＦｅｄｏｒａのアップグレードの前にまず「 yum 」と「 rpm 」をアップデートしておく。[root@KURO-BOX ~]# yum -y update rpm\* yum\*Loading &quot;fastestmirror&quot; pluginLoading mirror speeds from cached hostfile * fedora: ftp.jaist.ac.jp * updates: ftp.jaist.ac.jpSetting up Update ProcessResolving Dependencies・・・　途中省略　・・・Updated: popt.ppc 0:1.12-3.fc8 rpm.ppc 0:4.4.2.2-3.fc8 rpm-libs.ppc 0:4.4.2.2-3.fc8 rpm-python.ppc 0:4.4.2.2-3.fc8 yum-metadata-parser.ppc 0:1.1.2-1.fc8Complete![root@KURO-BOX ~]#５．rpm のデータベースが壊れていることがあるので、再構築[root@KURO-BOX ~]# rpm --rebuilddb[root@KURO-BOX ~]#６．アップグレード以下のように入力してアップグレードする。[root@KURO-BOX ~]# yum -y upgradeLoading &quot;fastestmirror&quot; pluginLoading mirror speeds from cached hostfile * fedora: ftp.jaist.ac.jp * updates: ftp.jaist.ac.jpSetting up Upgrade ProcessResolving Dependencies・・・　途中省略　・・・Complete![root@KURO-BOX ~]#７．「 Base Group 」をアップデート[root@KURO-BOX ~]# yum -y groupupdate BaseLoading &quot;fastestmirror&quot; pluginLoading mirror speeds from cached hostfile * updates-newkey: ftp.jaist.ac.jp * fedora: ftp.jaist.ac.jp * updates: ftp.jaist.ac.jp・・・　途中省略　・・・Complete![root@KURO-BOX ~]#８．リブート玄箱をリブートする。９．yum ユーティリティのインストール[root@KURO-BOX ~]# yum -y install yum-utils・・・　途中省略　・・・Updated:  yum-utils.noarch 0:1.1.17-1.fc8                                                 Complete![root@KURO-BOX ~]#１０．Ｆｅｄｏｒａ８ になって公式から消えた rpm を調査[root@KURO-BOX ~]# package-cleanup --orphansSetting up yumvim-minimal-7.1.245-1.fc7.ppcyum-fastestmirror-1.1.11-1.fc7.noarchinfo-4.11-2.fc7.ppckernel-headers-2.6.23.17-88.fc7.ppcelfutils-libelf-0.131-1.fc7.ppclibxml2-2.6.31-1.fc7.ppcpcre-7.3-3.fc7.ppcvim-common-7.1.245-1.fc7.ppctzdata-2008c-1.fc7.noarchbash-3.2-20.fc7.ppclibnl-1.1-1.fc7.ppclibxml2-python-2.6.31-1.fc7.ppcsyslog-ng-2.0.8-1.fc7.ppckernel-2.6.21-1.3194.fc7.ppckernel-2.6.23.17-88.fc7.ppc[root@KURO-BOX ~]#古い kernel 等見つかりましたが、別にあってもいいと思うので、とりあえずそのままにした。１１．rpm の依存関係をチェック[root@KURO-BOX ~]# package-cleanup --problemsSetting up yumReading local RPM databaseProcessing all local requiresNo problems found[root@KURO-BOX ~]#問題なしでした。１２．パッケージの重複チェック[root@KURO-BOX ~]# package-cleanup --dupesSetting up yum[root@KURO-BOX ~]#重複なしでした。もし、重複パッケージがあったら、package-cleanup –cleandupes１３．rpm データベースの再構築[root@KURO-BOX ~]# rm -f /var/lib/rpm/__* ; rpm --rebuilddb[root@KURO-BOX ~]#１４．ネットワークの確認・修正念のため、ネットワークの確認・修正を行う。（「 玄箱ＨＧにＦｅｄｏｒａ７インストール！ 」での「 １４．各種設定確認 」を参照）１５．リブート念のため、玄箱をリブートする。１６．バージョン確認再度リモート接続しrootユーザになり、以下のように入力してみる。[root@KURO-BOX ~]# cat /etc/fedora-releaseFedora release 8 (Werewolf)　←　Ｆｅｄｏｒａ８になってる[root@KURO-BOX ~]#いいんじゃないでしょうか？次は、同じ手順で Ｆｅｄｏｒａ９ にアップグレードしてみるつもり。。。詳細はまた。">
+  <meta name="twitter:url" content="https://komasaru.github.io/2009/03/23/23002021/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2009-03-23T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2009/03/23/23002021/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="玄箱ＨＧをＦｅｄｏｒａ８にｱｯﾌﾟｸﾞﾚｰﾄﾞ！">
+    <meta itemprop="description" content="今回は、昨日 Ｆｅｄｏｒａ７ をインストールした KURO-BOX/HG を Ｆｅｄｏｒａ８ にアップグレードしてみました。いつもながら、これはあくまでも自分用の記録です。若干環境等異なる場合もあるかもしれません。ご了承下さい。作業記録【前提条件】・Ｆｅｄｏｒａ化する玄箱は「 KURO-BOX/HG 」。・「 KURO-BOX/HG 」には３２０ＧＢのハードディスクを組み込んでいる。・「 KURO-BOX/HG 」のＩＰアドレスは [ 192.168.11.2 ]・「 KURO-BOX/HG 」に「 できる！玄箱 Fedora化！！ 」のインストールキット「 F4K Install Kit 」でＦｅｄｏｒａ７導入済み＆「 yum 」が最新版に入れ替え済み。・インストール作業を実行させるマシンはＷｉｎｄｏｗｓＸＰ（ＰｅｎｔｉｕｍＭ）１．玄箱への接続ローカルマシンから KURO-BOX/HG へリモート接続し、rootユーザになる。（当方は、「 Poderosa 」というのを使用しています）２．パッケージダウンロード「 http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/ 」にある「 fedora-release-8-3.noarch.rpm 」と「 fedora-release-notes-8.0.0-3.noarch.rpm 」をダンロードする。[root@KURO-BOX ~]# rpm -Uvh http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-8-3.noarch.rpm http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-notes-8.0.0-3.noarch.rpmhttp://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-8-3.noarch.rpm を取得中http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-notes-8.0.0-3.noarch.rpm を取得中準備中...                ########################################### [100%]   1:fedora-release-notes   ########################################### [ 50%]   2:fedora-release         ########################################### [100%][root@KURO-BOX ~]#３．キャッシュの整理以下のように入力してキャッシュをきれいにしておく[root@KURO-BOX ~]# yum clean allLoading &quot;fastestmirror&quot; pluginCleaning up EverythingCleaning up list of fastest mirrors[root@KURO-BOX ~]#４．「 yum 」と「 rpm 」をアップデートＦｅｄｏｒａのアップグレードの前にまず「 yum 」と「 rpm 」をアップデートしておく。[root@KURO-BOX ~]# yum -y update rpm\* yum\*Loading &quot;fastestmirror&quot; pluginLoading mirror speeds from cached hostfile * fedora: ftp.jaist.ac.jp * updates: ftp.jaist.ac.jpSetting up Update ProcessResolving Dependencies・・・　途中省略　・・・Updated: popt.ppc 0:1.12-3.fc8 rpm.ppc 0:4.4.2.2-3.fc8 rpm-libs.ppc 0:4.4.2.2-3.fc8 rpm-python.ppc 0:4.4.2.2-3.fc8 yum-metadata-parser.ppc 0:1.1.2-1.fc8Complete![root@KURO-BOX ~]#５．rpm のデータベースが壊れていることがあるので、再構築[root@KURO-BOX ~]# rpm --rebuilddb[root@KURO-BOX ~]#６．アップグレード以下のように入力してアップグレードする。[root@KURO-BOX ~]# yum -y upgradeLoading &quot;fastestmirror&quot; pluginLoading mirror speeds from cached hostfile * fedora: ftp.jaist.ac.jp * updates: ftp.jaist.ac.jpSetting up Upgrade ProcessResolving Dependencies・・・　途中省略　・・・Complete![root@KURO-BOX ~]#７．「 Base Group 」をアップデート[root@KURO-BOX ~]# yum -y groupupdate BaseLoading &quot;fastestmirror&quot; pluginLoading mirror speeds from cached hostfile * updates-newkey: ftp.jaist.ac.jp * fedora: ftp.jaist.ac.jp * updates: ftp.jaist.ac.jp・・・　途中省略　・・・Complete![root@KURO-BOX ~]#８．リブート玄箱をリブートする。９．yum ユーティリティのインストール[root@KURO-BOX ~]# yum -y install yum-utils・・・　途中省略　・・・Updated:  yum-utils.noarch 0:1.1.17-1.fc8                                                 Complete![root@KURO-BOX ~]#１０．Ｆｅｄｏｒａ８ になって公式から消えた rpm を調査[root@KURO-BOX ~]# package-cleanup --orphansSetting up yumvim-minimal-7.1.245-1.fc7.ppcyum-fastestmirror-1.1.11-1.fc7.noarchinfo-4.11-2.fc7.ppckernel-headers-2.6.23.17-88.fc7.ppcelfutils-libelf-0.131-1.fc7.ppclibxml2-2.6.31-1.fc7.ppcpcre-7.3-3.fc7.ppcvim-common-7.1.245-1.fc7.ppctzdata-2008c-1.fc7.noarchbash-3.2-20.fc7.ppclibnl-1.1-1.fc7.ppclibxml2-python-2.6.31-1.fc7.ppcsyslog-ng-2.0.8-1.fc7.ppckernel-2.6.21-1.3194.fc7.ppckernel-2.6.23.17-88.fc7.ppc[root@KURO-BOX ~]#古い kernel 等見つかりましたが、別にあってもいいと思うので、とりあえずそのままにした。１１．rpm の依存関係をチェック[root@KURO-BOX ~]# package-cleanup --problemsSetting up yumReading local RPM databaseProcessing all local requiresNo problems found[root@KURO-BOX ~]#問題なしでした。１２．パッケージの重複チェック[root@KURO-BOX ~]# package-cleanup --dupesSetting up yum[root@KURO-BOX ~]#重複なしでした。もし、重複パッケージがあったら、package-cleanup –cleandupes１３．rpm データベースの再構築[root@KURO-BOX ~]# rm -f /var/lib/rpm/__* ; rpm --rebuilddb[root@KURO-BOX ~]#１４．ネットワークの確認・修正念のため、ネットワークの確認・修正を行う。（「 玄箱ＨＧにＦｅｄｏｒａ７インストール！ 」での「 １４．各種設定確認 」を参照）１５．リブート念のため、玄箱をリブートする。１６．バージョン確認再度リモート接続しrootユーザになり、以下のように入力してみる。[root@KURO-BOX ~]# cat /etc/fedora-releaseFedora release 8 (Werewolf)　←　Ｆｅｄｏｒａ８になってる[root@KURO-BOX ~]#いいんじゃないでしょうか？次は、同じ手順で Ｆｅｄｏｒａ９ にアップグレードしてみるつもり。。。詳細はまた。">
+    <meta itemprop="datePublished" content="March 23, 2009">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">玄箱ＨＧをＦｅｄｏｒａ８にｱｯﾌﾟｸﾞﾚｰﾄﾞ！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2009-03-23T00:20:00+09:00">2009-03-23 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>今回は、昨日 Ｆｅｄｏｒａ７ をインストールした KURO-BOX/HG を Ｆｅｄｏｒａ８ にアップグレードしてみました。</p>
+
+<p>いつもながら、これはあくまでも自分用の記録です。若干環境等異なる場合もあるかもしれません。ご了承下さい。</p>
+
+<h3 id="作業記録">作業記録</h3>
+
+<p>【前提条件】
+・Ｆｅｄｏｒａ化する玄箱は「 KURO-BOX/HG 」。
+・「 KURO-BOX/HG 」には３２０ＧＢのハードディスクを組み込んでいる。
+・「 KURO-BOX/HG 」のＩＰアドレスは [ 192.168.11.2 ]
+・「 KURO-BOX/HG 」に「 できる！玄箱 Fedora化！！ 」のインストールキット「 F4K Install Kit 」でＦｅｄｏｒａ７導入済み＆「 yum 」が最新版に入れ替え済み。
+・インストール作業を実行させるマシンはＷｉｎｄｏｗｓＸＰ（ＰｅｎｔｉｕｍＭ）</p>
+
+<h4 id="１玄箱への接続">１．玄箱への接続</h4>
+
+<p>ローカルマシンから KURO-BOX/HG へリモート接続し、rootユーザになる。
+（当方は、「 Poderosa 」というのを使用しています）</p>
+
+<h4 id="２パッケージダウンロード">２．パッケージダウンロード</h4>
+
+<p>「 http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/ 」にある
+「 fedora-release-8-3.noarch.rpm 」と
+「 fedora-release-notes-8.0.0-3.noarch.rpm 」をダンロードする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@KURO-BOX ~]# rpm -Uvh http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-8-3.noarch.rpm http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-notes-8.0.0-3.noarch.rpm
+http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-8-3.noarch.rpm を取得中
+http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Fedora/ppc/os/Packages/fedora-release-notes-8.0.0-3.noarch.rpm を取得中
+準備中...                ########################################### [100%]
+   1:fedora-release-notes   ########################################### [ 50%]
+   2:fedora-release         ########################################### [100%]
+[root@KURO-BOX ~]#
+</code></pre></div></div>
+
+<h4 id="３キャッシュの整理">３．キャッシュの整理</h4>
+
+<p>以下のように入力してキャッシュをきれいにしておく</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@KURO-BOX ~]# yum clean all
+Loading "fastestmirror" plugin
+Cleaning up Everything
+Cleaning up list of fastest mirrors
+[root@KURO-BOX ~]#
+</code></pre></div></div>
+
+<h4 id="４-yum-と-rpm-をアップデート">４．「 yum 」と「 rpm 」をアップデート</h4>
+
+<p>Ｆｅｄｏｒａのアップグレードの前にまず「 yum 」と「 rpm 」をアップデートしておく。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@KURO-BOX ~]# yum -y update rpm\* yum\*
+Loading "fastestmirror" plugin
+Loading mirror speeds from cached hostfile
+ * fedora: ftp.jaist.ac.jp
+ * updates: ftp.jaist.ac.jp
+Setting up Update Process
+Resolving Dependencies
+
+・・・　途中省略　・・・
+
+Updated: popt.ppc 0:1.12-3.fc8 rpm.ppc 0:4.4.2.2-3.fc8 rpm-libs.ppc 0:4.4.2.2-3.fc8 rpm-python.ppc 0:4.4.2.2-3.fc8 yum-metadata-parser.ppc 0:1.1.2-1.fc8
+Complete!
+[root@KURO-BOX ~]#
+</code></pre></div></div>
+
+<h4 id="５rpm-のデータベースが壊れていることがあるので再構築">５．rpm のデータベースが壊れていることがあるので、再構築</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@KURO-BOX ~]# rpm --rebuilddb
+[root@KURO-BOX ~]#
+</code></pre></div></div>
+
+<h4 id="６アップグレード">６．アップグレード</h4>
+
+<p>以下のように入力してアップグレードする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@KURO-BOX ~]# yum -y upgrade
+Loading "fastestmirror" plugin
+Loading mirror speeds from cached hostfile
+ * fedora: ftp.jaist.ac.jp
+ * updates: ftp.jaist.ac.jp
+Setting up Upgrade Process
+Resolving Dependencies
+
+・・・　途中省略　・・・
+
+Complete!
+[root@KURO-BOX ~]#
+</code></pre></div></div>
+
+<h4 id="７-base-group-をアップデート">７．「 Base Group 」をアップデート</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@KURO-BOX ~]# yum -y groupupdate Base
+Loading "fastestmirror" plugin
+Loading mirror speeds from cached hostfile
+ * updates-newkey: ftp.jaist.ac.jp
+ * fedora: ftp.jaist.ac.jp
+ * updates: ftp.jaist.ac.jp
+
+・・・　途中省略　・・・
+
+Complete!
+[root@KURO-BOX ~]#
+</code></pre></div></div>
+
+<h4 id="８リブート">８．リブート</h4>
+
+<p>玄箱をリブートする。</p>
+
+<h4 id="９yum-ユーティリティのインストール">９．yum ユーティリティのインストール</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@KURO-BOX ~]# yum -y install yum-utils
+
+・・・　途中省略　・・・
+
+Updated:
+  yum-utils.noarch 0:1.1.17-1.fc8                                                 
+
+Complete!
+[root@KURO-BOX ~]#
+</code></pre></div></div>
+
+<h4 id="１０ｆｅｄｏｒａ８-になって公式から消えた-rpm-を調査">１０．Ｆｅｄｏｒａ８ になって公式から消えた rpm を調査</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@KURO-BOX ~]# package-cleanup --orphans
+Setting up yum
+vim-minimal-7.1.245-1.fc7.ppc
+yum-fastestmirror-1.1.11-1.fc7.noarch
+info-4.11-2.fc7.ppc
+kernel-headers-2.6.23.17-88.fc7.ppc
+elfutils-libelf-0.131-1.fc7.ppc
+libxml2-2.6.31-1.fc7.ppc
+pcre-7.3-3.fc7.ppc
+vim-common-7.1.245-1.fc7.ppc
+tzdata-2008c-1.fc7.noarch
+bash-3.2-20.fc7.ppc
+libnl-1.1-1.fc7.ppc
+libxml2-python-2.6.31-1.fc7.ppc
+syslog-ng-2.0.8-1.fc7.ppc
+kernel-2.6.21-1.3194.fc7.ppc
+kernel-2.6.23.17-88.fc7.ppc
+[root@KURO-BOX ~]#
+</code></pre></div></div>
+
+<p>古い kernel 等見つかりましたが、別にあってもいいと思うので、とりあえずそのままにした。</p>
+
+<h4 id="１１rpm-の依存関係をチェック">１１．rpm の依存関係をチェック</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@KURO-BOX ~]# package-cleanup --problems
+Setting up yum
+Reading local RPM database
+Processing all local requires
+No problems found
+[root@KURO-BOX ~]#
+</code></pre></div></div>
+
+<p>問題なしでした。</p>
+
+<h4 id="１２パッケージの重複チェック">１２．パッケージの重複チェック</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@KURO-BOX ~]# package-cleanup --dupes
+Setting up yum
+[root@KURO-BOX ~]#
+</code></pre></div></div>
+
+<p>重複なしでした。
+もし、重複パッケージがあったら、</p>
+<h1 id="package-cleanup-cleandupes">package-cleanup –cleandupes</h1>
+
+<h4 id="１３rpm-データベースの再構築">１３．rpm データベースの再構築</h4>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@KURO-BOX ~]# rm -f /var/lib/rpm/__* ; rpm --rebuilddb
+[root@KURO-BOX ~]#
+</code></pre></div></div>
+
+<h4 id="１４ネットワークの確認修正">１４．ネットワークの確認・修正</h4>
+
+<p>念のため、ネットワークの確認・修正を行う。
+（「 <a href="http://www.mk-mode.com/wordpress/?p=1520" title="玄箱ＨＧにＦｅｄｏｒａ７インストール！">玄箱ＨＧにＦｅｄｏｒａ７インストール！</a> 」での「 １４．各種設定確認 」を参照）</p>
+
+<h4 id="１５リブート">１５．リブート</h4>
+
+<p>念のため、玄箱をリブートする。</p>
+
+<h4 id="１６バージョン確認">１６．バージョン確認</h4>
+
+<p>再度リモート接続しrootユーザになり、以下のように入力してみる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@KURO-BOX ~]# cat /etc/fedora-release
+Fedora release 8 (Werewolf)　←　Ｆｅｄｏｒａ８になってる
+[root@KURO-BOX ~]#
+</code></pre></div></div>
+
+<p>いいんじゃないでしょうか？</p>
+
+<hr />
+
+<p>次は、同じ手順で Ｆｅｄｏｒａ９ にアップグレードしてみるつもり。。。</p>
+
+<p>詳細はまた。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/fedora" class="page__taxonomy-item" rel="tag">Fedora</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/%E7%8E%84%E7%AE%B1" class="page__taxonomy-item" rel="tag">玄箱</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2009-03-23T00:20:00+09:00">2009-03-23 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=%E7%8E%84%E7%AE%B1%EF%BC%A8%EF%BC%A7%E3%82%92%EF%BC%A6%EF%BD%85%EF%BD%84%EF%BD%8F%EF%BD%92%EF%BD%81%EF%BC%98%E3%81%AB%EF%BD%B1%EF%BD%AF%EF%BE%8C%EF%BE%9F%EF%BD%B8%EF%BE%9E%EF%BE%9A%EF%BD%B0%EF%BE%84%EF%BE%9E%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2009%2F03%2F23%2F23002021%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2009%2F03%2F23%2F23002021%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2009%2F03%2F23%2F23002021%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2009/03/22/22002021/" class="pagination--pager" title="玄箱ＨＧにＦｅｄｏｒａ７・その３！
+">Previous</a>
+    
+    
+      <a href="/2009/03/24/24002020/" class="pagination--pager" title="ホームページに雨雲レーダ！
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/09/01/blog-access/" rel="permalink">2021年8月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-09-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/08/01/blog-access/" rel="permalink">2021年7月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-08-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/28/bash-date-loop/" rel="permalink">Bash - 年月日ループ！
+</a>
+        &nbsp;<small>(2021-07-28)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/07/14/cpp-iss-position-velocity-blh-json/" rel="permalink">C++ - ISS 位置・速度（BLH(WGS84)座標）一覧 JSON 生成！
+</a>
+        &nbsp;<small>(2021-07-14)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">前回、 C++ で NASA 提供の最新の TLE（2行軌道要素形式）から任意の時刻（JST; 日本標準時）の ISS の位置・速度（WGS84 座標; いわゆる、緯度・経度・高度(BLH)という座標）を、 SGP4 アルゴリズムを用いて計算しました。
+
+今回は、応用として、10秒間隔で2日分の JSON データ...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2009/03/23/23002021/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2009/03/23/23002021"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>
