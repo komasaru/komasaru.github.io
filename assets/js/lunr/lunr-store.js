@@ -12088,4 +12088,10 @@ var store = [{
         "tags": ["Debian","Linux"],
         "url": "/2021/09/02/debian-11-installation-for-small-server/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - サーバ初期設定！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) インストール後の初期設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 「Debian 11 (bullseye) - インストール（サーバ用途・最小構成）！」の方法でインストールが完了していることを想定。 一般ユーザ名は foo を想定。 以下の作業は全て root ユーザで行うことを想定。 コマンドラインプロンプト # は root ユーザ、 $ は一般ユーザであることを理解しておく。 コメントしての # と混同しないよう注意する。 ネットワークカードは enp0s3 を想定。 IP アドレスは固定する。 IPv6 は使用しない。 ドメインは mk-mode.com を想定。 ネットワークの MTU 最適値は 1454 を想定。 （デフォルトは 1500 だが、環境により最適値は異なるので、算出して設定するとよい。参照： Linux -...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux"],
+        "url": "/2021/09/08/debian-11-initial-setting/",
+        "teaser": null
       }]
