@@ -12106,4 +12106,10 @@ var store = [{
         "tags": ["Debian","Linux"],
         "url": "/2021/09/22/debian-11-automation-security-update/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - rootkit 検出ツール chkrootkit インストール！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11 (bullseye) での作業を想定。 接続元のマシンは Debian GNU/Linux 10 (buster; 64bit) を想定。 chkrootkit が検知できるのは既知の rootkit のみであり、新規の rootkit は検知できないことを認識しておく。 chkrootkit では誤検知もあるので、検知結果は参考程度に留める。 コマンド自体が改竄されてからでは遅いので、 OS インストール直後に行うのがよいらしい。 root ユーザでの作業を想定。 1. chkrootkit のインストール # apt -y install chkrootkit 2. chkrootkit の実行 以下のようにして...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux"],
+        "url": "/2021/09/29/debian-11-chrootkit-installation/",
+        "teaser": null
       }]
