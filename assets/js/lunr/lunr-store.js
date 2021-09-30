@@ -12112,4 +12112,10 @@ var store = [{
         "tags": ["Debian","Linux"],
         "url": "/2021/09/29/debian-11-chrootkit-installation/",
         "teaser": null
+      },{
+        "title": "2021年9月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"10月になりましたので、先月9月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 24,170 66.7716 Mac OS 8,770 24.2279 Linux 1,410 3.8952 Android 1,149 3.1742 Ubuntu Linux 506 1.3979 unknown 156 0.4310 Fedora Linux 28 0.0774 FreeBSD 6 0.0166 NetBSD 3 0.0083 合　計 36,198 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 19,652 54.2903 Mac...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2021/10/01/blog-access/",
+        "teaser": null
       }]
