@@ -1,4 +1,108 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2021-10-05T22:31:21+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - アンチウィルスソフト導入！</title><link href="https://komasaru.github.io/2021/10/06/debian-11-anti-virus-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - アンチウィルスソフト導入！" /><published>2021-10-06T00:20:00+09:00</published><updated>2021-10-06T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/10/06/debian-11-anti-virus-installation</id><content type="html" xml:base="https://komasaru.github.io/2021/10/06/debian-11-anti-virus-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2021-10-12T20:42:45+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - 時刻同期設定(systemd-timesyncd)！</title><link href="https://komasaru.github.io/2021/10/13/debian-11-systemd-timesyncd/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - 時刻同期設定(systemd-timesyncd)！" /><published>2021-10-13T00:20:00+09:00</published><updated>2021-10-13T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/10/13/debian-11-systemd-timesyncd</id><content type="html" xml:base="https://komasaru.github.io/2021/10/13/debian-11-systemd-timesyncd/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11 (bullseye) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;従来からの &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ntpd&lt;/code&gt; ではなく &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chronyd&lt;/code&gt; をインストールする。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ntpd&lt;/code&gt; と &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chronyd&lt;/code&gt; の違いについて、ここでは説明しない。&lt;/li&gt;
+  &lt;li&gt;ローカルネットワークは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.0/24&lt;/code&gt; とする。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-chrony-のインストール&quot;&gt;1. Chrony のインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install chrony
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-設定ファイルの編集&quot;&gt;2. 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/chrony/chrony.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;server ntp.nict.jp iburst           &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+server ntp1.jst.mfeed.ad.jp iburst  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+server ntp2.jst.mfeed.ad.jp iburst  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+server ntp3.jst.mfeed.ad.jp iburst  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+
+allow 192.168.11.0/24                 &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;うるう秒にも対応させるには、以下のような記述も追記する。（参考： &lt;a href=&quot;https://chrony.tuxfamily.org/manual.html&quot; title=&quot;chrony - Documentation&quot;&gt;chrony - Manual for version 2.3&lt;/a&gt;）&lt;br /&gt;
+（うるう秒対策時のみでもよいだろう）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/chrony/chrony.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;leapsecmode slew
+maxslewrate 1000
+smoothtime 400 0.001 leaponly&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;3-chrony-の再起動&quot;&gt;3. Chrony の再起動&lt;/h3&gt;
+
+&lt;p&gt;インストール直後は起動した状態になっているので、変更を有効化するために再起動する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart chrony
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-chrony-の自動起動設定&quot;&gt;4. Chrony の自動起動設定&lt;/h3&gt;
+
+&lt;p&gt;インストール後はデフォルトで自動起動するように設定されているはずだが、自動起動するようなっていなければ設定する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl enable chrony
+Synchronizing state of chrony.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable chrony
+Created symlink /etc/systemd/system/chronyd.service → /lib/systemd/system/chrony.service.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;確認してみる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl is-enabled chrony
+enabled
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;以下のようにして確認してもよい。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl list-unit-files -t service | grep chrony
+chrony-dnssrv@.service                 static
+chrony.service                         enabled
+chronyd.service                        enabled
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-時刻同期状況の確認&quot;&gt;5. 時刻同期状況の確認&lt;/h3&gt;
+
+&lt;p&gt;数分後くらいに同期状況を確認してみる。（ntpd の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ntpq -p&lt;/code&gt; にあたる）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# chronyc sources
+210 Number of sources = 12
+MS Name/IP address         Stratum Poll Reach LastRx Last sample
+===============================================================================
+^? ns1.ooonet.ru                 0   7     0     -     +0ns[   +0ns] +/-    0ns
+^- karhu.miuku.net               2   6    57    24    +51us[  +51us] +/-   82ms
+^- helium.supersandro.de         2   6    37    25  +6171us[+6171us] +/-  179ms
+^- fetchmail.mediainvent.at      2   6    37    26  +2925us[+2925us] +/-  189ms
+^? 2a0b:4341:1500:123::          0   6     0     -     +0ns[   +0ns] +/-    0ns
+^? 2600:70ff:b817::9             0   6     0     -     +0ns[   +0ns] +/-    0ns
+^? 2606:5580:30a:7fca::1         0   6     0     -     +0ns[   +0ns] +/-    0ns
+^? 2001:470:19:301::100          0   6     0     -     +0ns[   +0ns] +/-    0ns
+^- ntp-b2.nict.go.jp             1   6    37    29  +4088us[+4088us] +/-   18ms
+^- ntp1.jst.mfeed.ad.jp          2   6    37    30   -801us[ -801us] +/-   76ms
+^* ntp2.jst.mfeed.ad.jp          2   6    37    32    +88us[ +207ms] +/-   70ms
+^- ntp3.jst.mfeed.ad.jp          2   6    37    28   +925us[ +925us] +/-   97ms
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;１カラム目の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;^&lt;/code&gt; は「サーバ」（他に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;=&lt;/code&gt; は「ピア」、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#&lt;/code&gt; はローカルのハードウェアクロック）&lt;/li&gt;
+  &lt;li&gt;２カラム目の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*&lt;/code&gt; は「同期対象として採用」&lt;/li&gt;
+  &lt;li&gt;２カラム目の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;+&lt;/code&gt; は「同期対象候補」&lt;/li&gt;
+  &lt;li&gt;２カラム目の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-&lt;/code&gt; は「アルゴリズムにより同期対象から除外」&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - アンチウィルスソフト導入！</title><link href="https://komasaru.github.io/2021/10/06/debian-11-anti-virus-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - アンチウィルスソフト導入！" /><published>2021-10-06T00:20:00+09:00</published><updated>2021-10-06T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/10/06/debian-11-anti-virus-installation</id><content type="html" xml:base="https://komasaru.github.io/2021/10/06/debian-11-anti-virus-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -2190,95 +2294,4 @@ foo   &lt;span class=&quot;nv&quot;&gt;ALL&lt;/span&gt;&lt;span class=&quot;o&qu
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">Bash - 年月日ループ！</title><link href="https://komasaru.github.io/2021/07/28/bash-date-loop/" rel="alternate" type="text/html" title="Bash - 年月日ループ！" /><published>2021-07-28T00:20:00+09:00</published><updated>2021-07-28T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/07/28/bash-date-loop</id><content type="html" xml:base="https://komasaru.github.io/2021/07/28/bash-date-loop/">&lt;p&gt;シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 10.10 (64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;GNU bash 5.0.3 での作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-bash-スクリプトの作成&quot;&gt;1. Bash スクリプトの作成&lt;/h3&gt;
-
-&lt;p&gt;以下は、作成例。（Example-1 or Example-2 どちらか）&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;date&lt;/code&gt; コマンドで「1日後」を指定しながらループしているので、日付の妥当性をチェックしなくてもよい。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;date_loop.sh&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;DATE_S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;20201226&quot;&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;DATE_E&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;20210105&quot;&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# Example-1&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;((&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;dt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$DATE_S&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$dt&lt;/span&gt; &amp;lt; &lt;span class=&quot;nv&quot;&gt;$DATE_E&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;dt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$dt&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; 1 day&quot;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;+%Y%m%d&apos;&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
-  &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$dt&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;done
-
-&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;---&quot;&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# Example-2&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;dt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$DATE_S&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$dt&lt;/span&gt; &amp;lt; &lt;span class=&quot;nv&quot;&gt;$DATE_E&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
-  &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$dt&lt;/span&gt;
-  &lt;span class=&quot;nv&quot;&gt;dt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$dt&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; 1 day&quot;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;+%Y%m%d&apos;&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://gist.github.com/komasaru/31178555f140e1b459dae0aecf03984d&quot; title=&quot;GitHub Gist - Bash script to loop by date.&quot;&gt;GitHub Gist - Bash script to loop by date.&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;2-bash-スクリプトの実行&quot;&gt;2. Bash スクリプトの実行&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ./date_loop.sh
-20201226
-20201227
-20201228
-20201229
-20201230
-20201231
-20210101
-20210102
-20210103
-20210104
----
-20201226
-20201227
-20201228
-20201229
-20201230
-20201231
-20210101
-20210102
-20210103
-20210104
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;何かと応用が効くでしょう。&lt;/p&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="PC_Tips" /><category term="Linux" /><category term="Debian" /><category term="bash" /><summary type="html">シェルスクリプト(Bash)で年月日でループ処理を行ってみました。（日付の妥当性をチェックしなくてもよい方法）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>

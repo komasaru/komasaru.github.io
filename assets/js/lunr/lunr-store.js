@@ -12124,4 +12124,10 @@ var store = [{
         "tags": ["Debian","Linux","ウイルス対策"],
         "url": "/2021/10/06/debian-11-anti-virus-installation/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - 時刻同期設定(systemd-timesyncd)！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11 (bullseye) での作業を想定。 従来からの ntpd ではなく chronyd をインストールする。 ntpd と chronyd の違いについて、ここでは説明しない。 ローカルネットワークは 192.168.11.0/24 とする。 root ユーザでの作業を想定。 1. Chrony のインストール # apt -y install chrony 2. 設定ファイルの編集 File: /etc/chrony/chrony.conf server ntp.nict.jp iburst # &lt;= 追加 server ntp1.jst.mfeed.ad.jp...","categories": ["サーバ構築"],
+        "tags": ["Linux","Debian"],
+        "url": "/2021/10/13/debian-11-systemd-timesyncd/",
+        "teaser": null
       }]
