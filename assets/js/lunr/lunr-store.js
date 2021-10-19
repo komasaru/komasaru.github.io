@@ -12130,4 +12130,10 @@ var store = [{
         "tags": ["Linux","Debian"],
         "url": "/2021/10/13/debian-11-systemd-timesyncd/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - ファイアウォール設定！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) でファイアウォールを設定する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11 (bullseye) での作業を想定。 接続元のマシンは Debian GNU/Linux 10 (buster; 64bit) を想定。 ufw (= Uncomplicated Firewall) という iptables のフロントエンドツールを使用する。 ファイアウォールのルールは、取り急ぎ最低限の設定のみ。（運用する環境やインストールしたサービスに合わせて適宜行う） root ユーザでの作業を想定。 1. ufw のインストール 依存する iptables 等もインストールされる。 # apt -y install ufw 2. 設定ファイルの編集 IPv6 を使用しない場合は以下のように編集しておく File: /etc/default/ufw IPV6=no 3....","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","ファイアウォール"],
+        "url": "/2021/10/20/debian-11-firewall-setting/",
+        "teaser": null
       }]
