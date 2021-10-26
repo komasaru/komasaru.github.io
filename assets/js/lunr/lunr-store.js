@@ -12136,4 +12136,10 @@ var store = [{
         "tags": ["Debian","Linux","ファイアウォール"],
         "url": "/2021/10/20/debian-11-firewall-setting/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - サービスの管理！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) でのサービスの管理についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11 (bullseye) での作業を想定。 SystemD の簡単な使用法の説明と SysVinit の導入を行う。 （当方、普段は SystemD でサービスの管理を行うが、有事の際に備えて sysv-rc-conf コマンドも使用できるよう準備しておく（RedHat 系ディストリビューションのサービス管理ツール chkconfig にあたるもの）） root ユーザでの作業を想定。 1. SystemD の使用方法 以下は vsftpd サーバの例。（vsftpd.service が正式なサービス名だが .service は省略可能） $ systemctl start vsftpd # &lt;= vsftpd サービスの起動 $ systemctl stop vsftpd #...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux"],
+        "url": "/2021/10/27/debian-11-service-management/",
+        "teaser": null
       }]
