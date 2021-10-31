@@ -12142,4 +12142,10 @@ var store = [{
         "tags": ["Debian","Linux"],
         "url": "/2021/10/27/debian-11-service-management/",
         "teaser": null
+      },{
+        "title": "2021年10月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"11月になりましたので、先月10月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 28,077 66.4403 Mac OS 10,216 24.1747 Android 1,622 3.8382 Linux 1,480 3.5022 Ubuntu Linux 634 1.5003 unknown 166 0.3928 Fedora Linux 46 0.1089 FreeBSD 8 0.0189 NetBSD 8 0.0189 OpenBSD 2 0.0047 合　計 42,259 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2021/11/01/blog-access/",
+        "teaser": null
       }]
