@@ -1,4 +1,384 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2021-11-01T00:04:41+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">2021年10月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2021/11/01/blog-access/" rel="alternate" type="text/html" title="2021年10月 - OS・ブラウザ別アクセス状況！" /><published>2021-11-01T00:20:00+09:00</published><updated>2021-11-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/11/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2021/11/01/blog-access/">&lt;p&gt;11月になりましたので、先月10月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2021-11-02T09:44:52+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - DNS サーバ BIND9 構築！</title><link href="https://komasaru.github.io/2021/11/03/debian-11-bind-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - DNS サーバ BIND9 構築！" /><published>2021-11-03T00:20:00+09:00</published><updated>2021-11-03T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/11/03/debian-11-bind-installation</id><content type="html" xml:base="https://komasaru.github.io/2021/11/03/debian-11-bind-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;サーバのローカル IP アドレスは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.101&lt;/code&gt;、グローバル IP アドレスは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xxx.yyy.zzz.aaa&lt;/code&gt; を想定。&lt;/li&gt;
+  &lt;li&gt;ドメイン名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mk-mode.com&lt;/code&gt;、マシンのホスト名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vbox&lt;/code&gt;、ネームサーバホスト名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ns&lt;/code&gt; を想定。&lt;/li&gt;
+  &lt;li&gt;セカンダリ DNS は用意しない。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-bind-のインストール&quot;&gt;1. BIND のインストール&lt;/h3&gt;
+
+&lt;p&gt;（dnsutils は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dig&lt;/code&gt; コマンド用）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install bind9 dnsutils
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-bind-設定ファイルの編集&quot;&gt;2. BIND 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/named.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;include &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/named.conf.options&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+include &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/named.conf.local&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#include &quot;/etc/bind/named.conf.default-zones&quot;;  # &amp;lt;= コメント化（内部向け・外部向けゾーンファイルで定義するので）&lt;/span&gt;
+include &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/named.conf.internal-zones&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt; = 追加&lt;/span&gt;
+include &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/named.conf.external-zones&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt; = 追加&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;3-内部向けゾーンファイルの作成&quot;&gt;3. 内部向けゾーンファイルの作成&lt;/h3&gt;
+
+&lt;p&gt;BIND 設定ファイルで指定している内部向けゾーンファイルを以下のように作成する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/named.conf.internal-zones&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;view &lt;span class=&quot;s2&quot;&gt;&quot;internal&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# 内部向け設定の対象範囲定義&lt;/span&gt;
+    match-clients &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        localhost&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        192.168.11.0/24&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# 内部向け正引きゾーン定義&lt;/span&gt;
+    zone &lt;span class=&quot;s2&quot;&gt;&quot;mk-mode.com&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;master&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        file &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/mk-mode.com.lan&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        allow-update &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; none&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# 内部向け逆引きゾーン定義&lt;/span&gt;
+    zone &lt;span class=&quot;s2&quot;&gt;&quot;11.168.192.in-addr.arpa&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;master&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        file &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/11.168.192.db&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        allow-update &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; none&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    include &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/named.conf.default-zones&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    empty-zones-enable no&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;最後の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;empty-zones-enable no;&lt;/code&gt; は、ログに以下のようなメッセージが出力されないための対処。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Warning: view internal: &apos;empty-zones-enable/disable-empty-zone&apos; not set: disabling RFC 1918 empty zones
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-外部向けゾーンファイルの作成&quot;&gt;4. 外部向けゾーンファイルの作成&lt;/h3&gt;
+
+&lt;p&gt;BIND 設定ファイルで指定している外部向けゾーンファイルを以下のように作成する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/named.conf.external-zones&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;view &lt;span class=&quot;s2&quot;&gt;&quot;external&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    match-clients &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; any&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# 全て対象（内部向け範囲以外のホスト）&lt;/span&gt;
+    allow-query &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; any&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;# 問い合わせは全て許可&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;#recursion no;            # 再帰検索禁止&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# 外部向け正引きゾーン定義&lt;/span&gt;
+    zone &lt;span class=&quot;s2&quot;&gt;&quot;mk-mode.com&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;master&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        file &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/mk-mode.com.wan&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        allow-update &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; none&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# 外部向け正引き情報を定義 *注&lt;/span&gt;
+    zone &lt;span class=&quot;s2&quot;&gt;&quot;zzz.yyy.xxx.in-addr.arpa&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;master&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        file &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/zzz.yyy.xxx.db&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        allow-update &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; none&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;5-オプション設定ファイルの編集&quot;&gt;5. オプション設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;その他の設定用ファイルを以下のように編集する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/named.conf.options&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;options &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        directory &lt;span class=&quot;s2&quot;&gt;&quot;/var/cache/bind&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+        // 問合わせを許可する範囲
+        // &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;サーバー、ローカルネットワーク内のホストからの問合せのみ許可&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        allow-query &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; localhost&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; localnets&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+
+        // ゾーン情報の転送を許可する範囲
+        // &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;サーバー、ローカルネットワーク内のホストへのみ転送を許可&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        allow-transfer &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; localhost&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; localnets&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+
+        // 再帰検索を許可する範囲
+        // &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;サーバー、ローカルネットワーク内のホストのみ再検索を許可&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        allow-recursion &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; localhost&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; localnets&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+
+        dnssec-validation auto&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+        auth-nxdomain no&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;# conform to RFC1035&lt;/span&gt;
+
+        // IPv6 は使用しないので無効化
+        //listen-on-v6 &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; any&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        listen-on-v6 &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; none&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# EDNS0 の無効化&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# &quot;error (unexpected RCODE REFUSED) ...&quot; 出力の抑止&lt;/span&gt;
+server 0.0.0.0 &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        edns no&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# &quot;DNS format error ... invalid response&quot; 出力の抑止&lt;/span&gt;
+logging &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        category resolver &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; null&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;6-内部向け正引きゾーン定義ファイルの作成&quot;&gt;6. 内部向け正引きゾーン定義ファイルの作成&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/mk-mode.com.lan&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$TTL&lt;/span&gt; 86400
+@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+        2021083101  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Serial
+        3600        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Refresh
+        1800        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Retry
+        604800      &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Expire
+        86400       &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Minimum TTL
+&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+        IN  NS      ns.mk-mode.com.
+        IN  A       192.168.11.101
+        IN  MX 10   ns.mk-mode.com.
+ns      IN  A       192.168.11.101
+vbox    IN  A       192.168.11.101
+hoge    IN  A       192.168.11.2
+fuga    IN  A       192.168.11.3
+www     IN  CNAME   ns.mk-mode.com.
+ftp     IN  CNAME   ns.mk-mode.com.
+mail    IN  CNAME   ns.mk-mode.com.&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hoge&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fuga&lt;/code&gt; はローカルネットワーク内の別のマシン。&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;www&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ftp&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mail&lt;/code&gt; は別名定義。&lt;/p&gt;
+
+&lt;h3 id=&quot;7-外部向け正引きゾーン定義ファイルの作成&quot;&gt;7. 外部向け正引きゾーン定義ファイルの作成&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/mk-mode.com.wan&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$TTL&lt;/span&gt; 86400
+@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+        2021083101  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Serial
+        3600        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Refresh
+        1800        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Retry
+        604800      &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Expire
+        86400       &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Minimum TTL
+&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+        IN  NS      ns.mk-mode.com.
+        IN  A       xxx.yyy.zzz.aaa
+        IN  MX 10   ns.mk-mode.com.
+ns      IN  A       xxx.yyy.zzz.aaa&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;8-内部向け逆引きゾーン定義ファイルの作成&quot;&gt;8. 内部向け逆引きゾーン定義ファイルの作成&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/11.168.192.db&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$TTL&lt;/span&gt; 86400
+@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+        2021083101  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Serial
+        3600        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Refresh
+        1800        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Retry
+        604800      &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Expire
+        86400       &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Minimum TTL
+&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+        IN  NS      ns.mk-mode.com.
+        IN  PTR     mk-mode.com.
+        IN  A       255.255.255.0
+101     IN  PTR     ns.mk-mode.com.
+101     IN  PTR     vbox.mk-mode.com.
+2       IN  PTR     hoge.mk-mode.com.
+3       IN  PTR     fuga.mk-mode.com.&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;9-外部向け逆引きゾーン定義ファイルの作成&quot;&gt;9. 外部向け逆引きゾーン定義ファイルの作成&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/zzz.yyy.xxx.db&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$TTL&lt;/span&gt; 86400
+@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+        2021083101  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Serial
+        3600        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Refresh
+        1800        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Retry
+        604800      &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Expire
+        86400       &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Minimum TTL
+&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+        IN  NS      ns.mk-mode.com.
+        IN  PTR     mk-mode.com.
+        IN  A       255.255.255.254
+aaa     IN  PTR     ns.mk-mode.com.&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;255.255.255.254&lt;/code&gt; はグローバル IP が１個のみの場合の設定値）&lt;/p&gt;
+
+&lt;h3 id=&quot;10-問合せ先-dns-サーバの追加&quot;&gt;10. 問合せ先 DNS サーバの追加&lt;/h3&gt;
+
+&lt;p&gt;DNS サーバー自身も問合せ先に追加する。&lt;br /&gt;
+最初から記載のあるルータの IP アドレス（インストール・初期設定時のもの）をセカンダリ、今回構築のサーバ自身をプライマリに設定するので、ルータより先に記述する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/resolv.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#domain localdomain        # &amp;lt;= コメント化&lt;/span&gt;
+domain mk-mode.com         &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#search localdomain        # &amp;lt;= コメント化&lt;/span&gt;
+search mk-mode.com         &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+nameserver 192.168.11.101  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+nameserver 192.168.11.1    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ルータの IP アドレス&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;11-ipv6-の無効化設定&quot;&gt;11. IPv6 の無効化設定&lt;/h3&gt;
+
+&lt;p&gt;システムとして IPv6 を無効にしている場合は、以下のように &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/named&lt;/code&gt; を編集する。&lt;br /&gt;
+（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/log/syslog&lt;/code&gt; に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;... named[9999]: error (network unreachable) resolving ...&lt;/code&gt; のようなエラーが出力されないようにするため）&lt;br /&gt;
+※かつては、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;named&lt;/code&gt; というファイル名ではなく &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bind9&lt;/code&gt; というファイル名だった。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/named&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;OPTIONS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;-u bind -4&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;12-bind-の再起動&quot;&gt;12. BIND の再起動&lt;/h3&gt;
+
+&lt;p&gt;設定を有効化するために BIND を再起動する。（サービス名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bind9&lt;/code&gt; も可）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart named
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;13-動作確認&quot;&gt;13. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;DNS サーバが正常に機能する（正引きで IP アドレス、逆引きでホスト名が返ってくる）か、確認してみる。&lt;/p&gt;
+
+&lt;p&gt;【内部向け正引きテスト】&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# dig ns.mk-mode.com.
+
+; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.16.15-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; ns.mk-mode.com.
+;; global options: +cmd
+;; Got answer:
+;; -&amp;gt;&amp;gt;HEADER&amp;lt;&amp;lt;- opcode: QUERY, status: NOERROR, id: 42607
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: feae014ca532b70b01000000612d88232c502b8a27dff786 (good)
+;; QUESTION SECTION:
+;ns.mk-mode.com.                        IN      A
+
+;; ANSWER SECTION:
+ns.mk-mode.com.         86400   IN      A       192.168.11.101
+
+;; Query time: 8 msec
+;; SERVER: 192.168.11.101#53(192.168.11.101)
+;; WHEN: Tue Aug 31 10:38:43 JST 2021
+;; MSG SIZE  rcvd: 87
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;【内部向け逆引きテスト】&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# dig -x 192.168.11.101
+
+; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.16.15-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; -x 192.168.11.101
+;; global options: +cmd
+;; Got answer:
+;; -&amp;gt;&amp;gt;HEADER&amp;lt;&amp;lt;- opcode: QUERY, status: NOERROR, id: 30868
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 1a0f1c91c39ba3aa01000000612d885de1fc62bcd5c5375a (good)
+;; QUESTION SECTION:
+;101.11.168.192.in-addr.arpa.   IN      PTR
+
+;; ANSWER SECTION:
+101.11.168.192.in-addr.arpa. 86400 IN   PTR     ns.mk-mode.com.
+101.11.168.192.in-addr.arpa. 86400 IN   PTR     vbox.mk-mode.com.
+
+;; Query time: 3 msec
+;; SERVER: 192.168.11.101#53(192.168.11.101)
+;; WHEN: Tue Aug 31 10:39:41 JST 2021
+;; MSG SIZE  rcvd: 131
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;【外部向け正引きテスト】&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# dig www.isc.org
+
+; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.16.15-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; www.isc.org
+;; global options: +cmd
+;; Got answer:
+;; -&amp;gt;&amp;gt;HEADER&amp;lt;&amp;lt;- opcode: QUERY, status: NOERROR, id: 1984
+;; flags: qr rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;www.isc.org.                   IN      A
+
+;; ANSWER SECTION:
+www.isc.org.            60      IN      CNAME   dualstack.osff2.map.fastly.net.
+dualstack.osff2.map.fastly.net. 4 IN    A       151.101.90.217
+
+;; Query time: 175 msec
+;; SERVER: 192.168.11.1#53(192.168.11.1)
+;; WHEN: Tue Aug 31 10:40:24 JST 2021
+;; MSG SIZE  rcvd: 100
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;【外部向け逆引きテスト】&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# dig -x 151.101.90.217
+
+; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.16.15-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; -x 151.101.90.217
+;; global options: +cmd
+;; Got answer:
+;; -&amp;gt;&amp;gt;HEADER&amp;lt;&amp;lt;- opcode: QUERY, status: NXDOMAIN, id: 60481
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;217.90.101.151.in-addr.arpa.   IN      PTR
+
+;; AUTHORITY SECTION:
+151.in-addr.arpa.       749     IN      SOA     pri.authdns.ripe.net. dns.ripe.net. 1630366598 3600 600 864000 3600
+
+;; Query time: 55 msec
+;; SERVER: 192.168.11.1#53(192.168.11.1)
+;; WHEN: Tue Aug 31 10:40:49 JST 2021
+;; MSG SIZE  rcvd: 116
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;14-ファイアウォール-ufw-の設定&quot;&gt;14. ファイアウォール (ufw) の設定&lt;/h3&gt;
+
+&lt;p&gt;実際に運用する場合は、外部からのTCP/UDP53番ポート(DNS)へのアクセスを許可する必要がある。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 53
+Rule added
+
+# ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+9999/tcp                   ALLOW       192.168.11.0/24
+53                         ALLOW       Anywhere
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="DNS" /><summary type="html">Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">2021年10月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2021/11/01/blog-access/" rel="alternate" type="text/html" title="2021年10月 - OS・ブラウザ別アクセス状況！" /><published>2021-11-01T00:20:00+09:00</published><updated>2021-11-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/11/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2021/11/01/blog-access/">&lt;p&gt;11月になりましたので、先月10月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -1745,297 +2125,4 @@ Last login: Mon Aug 30 09:58:32 2021 from 192.168.11.13
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="SSH" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上に SSH サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - サーバ初期設定！</title><link href="https://komasaru.github.io/2021/09/08/debian-11-initial-setting/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - サーバ初期設定！" /><published>2021-09-08T00:20:00+09:00</published><updated>2021-09-08T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/09/08/debian-11-initial-setting</id><content type="html" xml:base="https://komasaru.github.io/2021/09/08/debian-11-initial-setting/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) インストール後の初期設定についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;「&lt;a href=&quot;/2021/09/02/debian-11-installation-for-small-server&quot; title=&quot;Debian 11 (bullseye) - インストール（サーバ用途・最小構成）！&quot;&gt;Debian 11 (bullseye) - インストール（サーバ用途・最小構成）！&lt;/a&gt;」の方法でインストールが完了していることを想定。&lt;/li&gt;
-  &lt;li&gt;一般ユーザ名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;foo&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;以下の作業は全て root ユーザで行うことを想定。&lt;/li&gt;
-  &lt;li&gt;コマンドラインプロンプト &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#&lt;/code&gt; は root ユーザ、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$&lt;/code&gt; は一般ユーザであることを理解しておく。&lt;br /&gt;
-コメントしての &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#&lt;/code&gt; と混同しないよう注意する。&lt;/li&gt;
-  &lt;li&gt;ネットワークカードは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;enp0s3&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;IP アドレスは固定する。&lt;/li&gt;
-  &lt;li&gt;IPv6 は使用しない。&lt;/li&gt;
-  &lt;li&gt;ドメインは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mk-mode.com&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;ネットワークの MTU 最適値は 1454 を想定。&lt;br /&gt;
-（デフォルトは 1500 だが、環境により最適値は異なるので、算出して設定するとよい。参照： &lt;a href=&quot;httpss://www.mk-mode.com/blog/2015/11/26/linux-mtu-best-effort/&quot; title=&quot;Linux - MTU 最適値の導出！&quot;&gt;Linux - MTU 最適値の導出！&lt;/a&gt;）&lt;/li&gt;
-  &lt;li&gt;各種設定ファイルの編集方法までは説明しない。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vi&lt;/code&gt; コマンドについての初歩的な知識があることが前提）&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-ネットワークの設定&quot;&gt;1. ネットワークの設定&lt;/h3&gt;
-
-&lt;p&gt;デフォルトでは DHCP で IP アドレスが付与されるので、固定する。&lt;br /&gt;
-root でログイン後 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/network/interfaces&lt;/code&gt; を編集する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/network/interfaces&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;c&quot;&gt;# This file describes the network interfaces available on your system&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# and how to activate them. For more information, see interfaces(5).&lt;/span&gt;
-
-&lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt; /etc/network/interfaces.d/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# The loopback network interface&lt;/span&gt;
-auto lo
-iface lo inet loopback
-
-&lt;span class=&quot;c&quot;&gt;# The primary network interface&lt;/span&gt;
-allow-hotplug enp0s3
-auto enp0s3                         &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（自動起動）&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#iface enp0s3 inet dhcp             # &amp;lt;= コメント化（DHCP を使用しない）&lt;/span&gt;
-iface enp0s3 inet static            &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（IP アドレス固定化）&lt;/span&gt;
-    address         192.168.11.101  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（IP アドレス）&lt;/span&gt;
-    network         192.168.11.0    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（ネットワークアドレス）&lt;/span&gt;
-    netmask         255.255.255.0   &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（ネットマスク）&lt;/span&gt;
-    broadcast       192.168.11.255  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（ブロードキャストアドレス）&lt;/span&gt;
-    gateway         192.168.11.1    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（デフォルトゲートウェイ（ルータの IP アドレス））&lt;/span&gt;
-    dns-nameservers 192.168.11.1    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（ネームサーバ（現時点ではルータの IP アドレス））&lt;/span&gt;
-    dns-search      mk-mode.com     &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（DNS 検索）&lt;/span&gt;
-    mtu             1454            &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（MTU 最適値）&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;そして、設定変更を反映させるために、システムを再起動する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl reboot
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;ネットワーク再起動後は、以下のコマンドで確認してみるとよい。（もはや &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ifconfig&lt;/code&gt; は非推奨）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ip addr show
-1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    inet 127.0.0.1/8 scope host lo
-       valid_lft forever preferred_lft forever
-    inet6 ::1/128 scope host
-       valid_lft forever preferred_lft forever
-2: enp0s3: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1454 qdisc pfifo_fast state UP group default qlen 1000
-    link/ether 08:00:27:58:a6:7d brd ff:ff:ff:ff:ff:ff
-    inet 192.168.11.101/24 brd 192.168.11.255 scope global enp0s3
-       valid_lft forever preferred_lft forever
-    inet6 fe80::a00:27ff:fe48:1484/64 scope link
-       valid_lft forever preferred_lft forever
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip addr show&lt;/code&gt; は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip a&lt;/code&gt; でもよい）&lt;/p&gt;
-
-&lt;h3 id=&quot;2-ipv6-の無効化&quot;&gt;2. IPv6 の無効化&lt;/h3&gt;
-
-&lt;p&gt;IPv6 は使用しないので無効にしておく。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/sysctl.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# 最終行に追加&lt;/span&gt;
-net.ipv6.conf.all.disable_ipv6 &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;そして、即時反映。（マシンを再起動してもよい）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# sysctl -p
-net.ipv6.conf.all.disable_ipv6 = 1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;以下のコマンドで IPv6 が無効になっていることを確認してみるとよい。（もはや &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ifconfig&lt;/code&gt; は非推奨）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ip addr show
-1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    inet 127.0.0.1/8 scope host lo
-       valid_lft forever preferred_lft forever
-2: enp0s3: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1454 qdisc pfifo_fast state UP group default qlen 1000
-    link/ether 08:00:27:58:a6:7d brd ff:ff:ff:ff:ff:ff
-    inet 192.168.11.101/24 brd 192.168.11.255 scope global enp0s3
-       valid_lft forever preferred_lft forever
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip addr show&lt;/code&gt; は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip a&lt;/code&gt; でもよい）&lt;/p&gt;
-
-&lt;h3 id=&quot;3-管理用ユーザの設定&quot;&gt;3. 管理用ユーザの設定&lt;/h3&gt;
-
-&lt;p&gt;root でログインし、インストール時に作成した一般ユーザを管理ユーザにし、 root になれるよう設定する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# usermod -G adm foo
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/pam.d/su&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# 15行目当たり、コメント解除し編集&lt;/span&gt;
-auth       required   pam_wheel.so  &lt;span class=&quot;nv&quot;&gt;group&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;adm&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;ちなみに、RedHat 系の場合 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;adm&lt;/code&gt; ではなく &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wheel&lt;/code&gt; である。&lt;/p&gt;
-
-&lt;p&gt;（— 以下、ローカルマシンから一般ユーザで SSH 接続し root になって作業 —）&lt;br /&gt;
-まだ、 SSH の設定を行っていないので、実際には &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh foo@vbox&lt;/code&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;4-コマンドエイリアスの設定&quot;&gt;4. コマンドエイリアスの設定&lt;/h3&gt;
-
-&lt;p&gt;よく使用するコマンド＋オプションのエイリアスを設定しておく。&lt;br /&gt;
-取り急ぎ、当方がよく使用するコマンドのみ。&lt;/p&gt;
-
-&lt;p&gt;root に適用する場合は、root ユーザでログインして以下のように設定する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/profile&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# 最終行に追記&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;alias &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;ll&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;ls $LS_OPTIONS -l --color=auto&apos;&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;alias &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;ls $LS_OPTIONS -lA --color=auto&apos;&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;alias rm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;rm -i&apos;&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;alias cp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;cp -i&apos;&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;alias mv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;mv -i&apos;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;（各ユーザに適用する場合は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/username/.profile&lt;/code&gt; か &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/username/.bashrc&lt;/code&gt; を編集する）&lt;/p&gt;
-
-&lt;p&gt;即時適用。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# source /etc/profile
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-コマンドプロンプトの変更&quot;&gt;5. コマンドプロンプトの変更&lt;/h3&gt;
-
-&lt;p&gt;root では、コマンドプロンプトがデフォルトで以下のように表示される。&lt;br /&gt;
-例えば、以下のようにディレクトリが深くなるとコマンドプロンプトも長くなってしまう。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@vbox:~# cd /var/lib/apt/mirrors/partial
-root@vbox:/var/lib/apt/mirrors/partial#
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/profile&lt;/code&gt; に以下を追記する。（好みに応じて編集する。当方、実際はより複雑な編集をしている）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/profile&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;PS1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;[\u@\h \W]\$ &apos;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 最終行に追記&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;以下のコマンドで即時反映する。（マシン再起動でもよい）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# source /etc/profile
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;以下のようなコマンドプロントになる。&lt;br /&gt;
-ディレクトリが深くなっても一番深いディレクトリ名のみ表示されるので、コマンドプロンプトが長くなることはない。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[root@vbox ~]# cd /var/lib/apt/mirrors/partial
-[root@vbox partial]#
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;6-システムの最新化&quot;&gt;6. システムの最新化&lt;/h3&gt;
-
-&lt;p&gt;システムの各種パッケージのバージョンが古い可能性もあるので、ネットワーク経由で最新にしておく。&lt;/p&gt;
-
-&lt;p&gt;まず、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list&lt;/code&gt; 内の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cdrom&lt;/code&gt; の行がコメントアウトされてなければ、コメントアウトしておく。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# deb cdrom:[Debian GNU/Linux 11.0.0 _Bullseye_ - Official amd64 NETINST 20210814-10:07]/ bullseye main&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#deb cdrom:[Debian GNU/Linux 11.0.0 _Bullseye_ - Official amd64 NETINST 20210814-10:07]/ bullseye main&lt;/span&gt;
-
-         :
-&lt;span class=&quot;o&quot;&gt;===&lt;/span&gt;&amp;lt; 以下、省略 &lt;span class=&quot;o&quot;&gt;&amp;gt;===&lt;/span&gt;
-         :&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;そして、次を実行。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y update   # &amp;lt;= パッケージリスト最新化
-# apt -y upgrade  # &amp;lt;= システム最新化
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-vim-のインストール&quot;&gt;7. Vim のインストール&lt;/h3&gt;
-
-&lt;p&gt;テキストエディタ Vi の高機能版 Vim をインストール・設定する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install vim
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/profile&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;alias &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;vi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;vim&apos;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# 最終行に追加&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;即時適用。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# source /etc/profile
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;必要に応じて Vim 設定ファイル（”~/.vimrc” or “/etc/vim/vimrc”）を編集する。（ここでは説明しない）&lt;/p&gt;
-
-&lt;h3 id=&quot;8-sudo-のインストール&quot;&gt;8. sudo のインストール&lt;/h3&gt;
-
-&lt;p&gt;権限移譲を実現する sudo をインストール・設定する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install sudo
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;visudo&lt;/code&gt; コマンドで設定。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;visudo&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# 最終行に追加（foo に root 権限全てを付与）&lt;/span&gt;
-foo   &lt;span class=&quot;nv&quot;&gt;ALL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=(&lt;/span&gt;ALL&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;   ALL&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;保存は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CTRL + O&lt;/code&gt; で、ファイル名を &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudoers&lt;/code&gt; にする。&lt;br /&gt;
-終了は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CTRL + X&lt;/code&gt; を押下する。&lt;/p&gt;
-
-&lt;p&gt;これで、一般ユーザでログイン時に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo ＜コマンド＞&lt;/code&gt; で root ユーザでのコマンド実行が可能になる。&lt;br /&gt;
-通常はこれで充分だが、コマンド別に権限を詳細に設定すること等も可能である。（ここでは説明しない）&lt;/p&gt;
-
-&lt;h3 id=&quot;9-システム起動時にメッセージ出力&quot;&gt;9. システム起動時にメッセージ出力&lt;/h3&gt;
-
-&lt;p&gt;デフォルトでは、システム起動時に各種メッセージが画面出力されない。&lt;br /&gt;
-システム起動時に各種メッセージが画面出力するようにするには、以下のようにする。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/grub&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#GRUB_CMDLINE_LINUX_DEFAULT=&quot;quiet&quot;  # &amp;lt;= コメントアウト&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;GRUB_CMDLINE_LINUX_DEFAULT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;        &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# update-grub
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;これで、次回起動時にメッセージが画面出力される。&lt;/p&gt;
-
-&lt;h3 id=&quot;10-less-コマンドへのシンタックスハイライトの設定必要なら&quot;&gt;10. less コマンドへのシンタックスハイライトの設定（必要なら）&lt;/h3&gt;
-
-&lt;p&gt;まず、 source-highlight をインストールする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install source-highlight
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/profile&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# 最終行に以下の2行を追記&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LESS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;-NR&apos;&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LESSOPEN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;| /usr/share/source-highlight/src-hilite-lesspipe.sh %s&apos;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;そして、即時適用。（ログインし直してもよい）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# source /etc/profile
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html">Debian GNU/Linux 11 (bullseye) インストール後の初期設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="SSH" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上に SSH サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>

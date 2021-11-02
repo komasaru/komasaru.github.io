@@ -12148,4 +12148,10 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2021/11/01/blog-access/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - DNS サーバ BIND9 構築！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 サーバのローカル IP アドレスは 192.168.11.101、グローバル IP アドレスは xxx.yyy.zzz.aaa を想定。 ドメイン名は mk-mode.com、マシンのホスト名は vbox、ネームサーバホスト名は ns を想定。 セカンダリ DNS は用意しない。 root ユーザでの作業を想定。 1. BIND のインストール （dnsutils は dig コマンド用） # apt -y install bind9 dnsutils 2. BIND...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","DNS"],
+        "url": "/2021/11/03/debian-11-bind-installation/",
+        "teaser": null
       }]

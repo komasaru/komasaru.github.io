@@ -1,0 +1,1124 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Debian 11 (bullseye) - DNS サーバ BIND9 構築！ - mk-mode BLOG</title>
+<meta name="description" content="Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。（当然ながら、興味がなければスルーしてください）">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="mk-mode BLOG">
+<meta property="og:title" content="Debian 11 (bullseye) - DNS サーバ BIND9 構築！">
+<meta property="og:url" content="https://komasaru.github.io/2021/11/03/debian-11-bind-installation/">
+
+
+  <meta property="og:description" content="Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。（当然ながら、興味がなければスルーしてください）">
+
+
+
+  <meta property="og:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+
+
+
+  <meta name="twitter:site" content="@rsm_mzk">
+  <meta name="twitter:title" content="Debian 11 (bullseye) - DNS サーバ BIND9 構築！">
+  <meta name="twitter:description" content="Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。（当然ながら、興味がなければスルーしてください）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2021/11/03/debian-11-bind-installation/">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+      <meta name="twitter:image" content="https://www.mk-mode.com/blog/assets/images/about_me.png">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2021-11-03T00:20:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://komasaru.github.io/2021/11/03/debian-11-bind-installation/">
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://komasaru.github.io",
+      "logo": "https://www.mk-mode.com/blog/assets/images/about_me.png"
+    }
+  </script>
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "mk-mode.com",
+      "url": "https://komasaru.github.io",
+      "sameAs": null
+    }
+  </script>
+
+
+
+  <meta name="google-site-verification" content="0kSwKhNo71fC7OeEFLllD3S11F8Pa-z_OqsBTSFxXAk" />
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://www.mk-mode.com/blog/atom.xml" type="application/atom+xml" rel="alternate" title="mk-mode BLOG Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+  
+    
+    <script defer src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+    <!-- start custom head snippets -->
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+<link rel="dns-prefetch" href="//cm.g.doubleclick.net" />
+<link rel="dns-prefetch" href="//www.gstatic.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+<link rel="dns-prefetch" href="//twitter.com" />
+<link rel="dns-prefetch" href="//www.facebook.com" />
+
+<link rel="icon" href="/assets/images/favicon.ico">
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7320193476057758",
+      enable_page_level_ads: true
+    });
+  </script>
+
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">mk-mode BLOG</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/year-archive/" >Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/calendar/calendar" >Calendar</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://www.mk-mode.com/rails/jmaxml" >JMAXML</a>
+            </li><li class="masthead__menu-item">
+              <a href="/privacy.html" >Privacy Policy</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/about_me.png" alt="mk-mode.com" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">mk-mode.com</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Linux, Debian, IT, Server, PG, Ruby, Rails, Python, C++, Fortran, PC, MariaDB, math, GIS, etc...
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Ruby City MATSUE</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+            <li><a href="https://www.mk-mode.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode SITE</a></li>
+          
+        
+          
+            <li><a href="https://komasaru.github.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode BLOG (clone)</a></li>
+          
+        
+          
+            <li><a href="https://mk-mode.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode TUMBLR</a></li>
+          
+        
+          
+            <li><a href="https://mk-ephemeris.tumblr.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> mk-mode EPHEMERIS</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Debian 11 (bullseye) - DNS サーバ BIND9 構築！">
+    <meta itemprop="description" content="Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。（当然ながら、興味がなければスルーしてください）">
+    <meta itemprop="datePublished" content="November 03, 2021">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <!-- div id="google-ad-1"></div -->
+          <h1 id="page-title" class="page__title" itemprop="headline">Debian 11 (bullseye) - DNS サーバ BIND9 構築！
+</h1>
+          
+          
+            
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2021-11-03T00:20:00+09:00">2021-11-03 00:20</time></small></p>
+          
+        </header>
+      
+      <div id="google-ad-2"></div>
+      <br />
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。</p>
+
+<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
+（当然ながら、興味がなければスルーしてください）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。</li>
+  <li>サーバのローカル IP アドレスは <code class="language-plaintext highlighter-rouge">192.168.11.101</code>、グローバル IP アドレスは <code class="language-plaintext highlighter-rouge">xxx.yyy.zzz.aaa</code> を想定。</li>
+  <li>ドメイン名は <code class="language-plaintext highlighter-rouge">mk-mode.com</code>、マシンのホスト名は <code class="language-plaintext highlighter-rouge">vbox</code>、ネームサーバホスト名は <code class="language-plaintext highlighter-rouge">ns</code> を想定。</li>
+  <li>セカンダリ DNS は用意しない。</li>
+  <li>root ユーザでの作業を想定。</li>
+</ul>
+
+<h3 id="1-bind-のインストール">1. BIND のインストール</h3>
+
+<p>（dnsutils は <code class="language-plaintext highlighter-rouge">dig</code> コマンド用）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install bind9 dnsutils
+</code></pre></div></div>
+
+<h3 id="2-bind-設定ファイルの編集">2. BIND 設定ファイルの編集</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">include <span class="s2">"/etc/bind/named.conf.options"</span><span class="p">;</span>
+include <span class="s2">"/etc/bind/named.conf.local"</span><span class="p">;</span>
+<span class="c">#include "/etc/bind/named.conf.default-zones";  # &lt;= コメント化（内部向け・外部向けゾーンファイルで定義するので）</span>
+include <span class="s2">"/etc/bind/named.conf.internal-zones"</span><span class="p">;</span>  <span class="c"># &lt; = 追加</span>
+include <span class="s2">"/etc/bind/named.conf.external-zones"</span><span class="p">;</span>  <span class="c"># &lt; = 追加</span></code></pre></figure>
+
+<h3 id="3-内部向けゾーンファイルの作成">3. 内部向けゾーンファイルの作成</h3>
+
+<p>BIND 設定ファイルで指定している内部向けゾーンファイルを以下のように作成する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.internal-zones</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">view <span class="s2">"internal"</span> <span class="o">{</span>
+    <span class="c"># 内部向け設定の対象範囲定義</span>
+    match-clients <span class="o">{</span>
+        localhost<span class="p">;</span>
+        192.168.11.0/24<span class="p">;</span>
+    <span class="o">}</span><span class="p">;</span>
+
+    <span class="c"># 内部向け正引きゾーン定義</span>
+    zone <span class="s2">"mk-mode.com"</span> <span class="o">{</span>
+        <span class="nb">type </span>master<span class="p">;</span>
+        file <span class="s2">"/etc/bind/mk-mode.com.lan"</span><span class="p">;</span>
+        allow-update <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+    <span class="o">}</span><span class="p">;</span>
+
+    <span class="c"># 内部向け逆引きゾーン定義</span>
+    zone <span class="s2">"11.168.192.in-addr.arpa"</span> <span class="o">{</span>
+        <span class="nb">type </span>master<span class="p">;</span>
+        file <span class="s2">"/etc/bind/11.168.192.db"</span><span class="p">;</span>
+        allow-update <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+    <span class="o">}</span><span class="p">;</span>
+    include <span class="s2">"/etc/bind/named.conf.default-zones"</span><span class="p">;</span>
+
+    empty-zones-enable no<span class="p">;</span>
+<span class="o">}</span><span class="p">;</span></code></pre></figure>
+
+<p>最後の <code class="language-plaintext highlighter-rouge">empty-zones-enable no;</code> は、ログに以下のようなメッセージが出力されないための対処。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Warning: view internal: 'empty-zones-enable/disable-empty-zone' not set: disabling RFC 1918 empty zones
+</code></pre></div></div>
+
+<h3 id="4-外部向けゾーンファイルの作成">4. 外部向けゾーンファイルの作成</h3>
+
+<p>BIND 設定ファイルで指定している外部向けゾーンファイルを以下のように作成する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.external-zones</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">view <span class="s2">"external"</span> <span class="o">{</span>
+    match-clients <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>  <span class="c"># 全て対象（内部向け範囲以外のホスト）</span>
+    allow-query <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>    <span class="c"># 問い合わせは全て許可</span>
+    <span class="c">#recursion no;            # 再帰検索禁止</span>
+
+    <span class="c"># 外部向け正引きゾーン定義</span>
+    zone <span class="s2">"mk-mode.com"</span> <span class="o">{</span>
+        <span class="nb">type </span>master<span class="p">;</span>
+        file <span class="s2">"/etc/bind/mk-mode.com.wan"</span><span class="p">;</span>
+        allow-update <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+    <span class="o">}</span><span class="p">;</span>
+
+    <span class="c"># 外部向け正引き情報を定義 *注</span>
+    zone <span class="s2">"zzz.yyy.xxx.in-addr.arpa"</span> <span class="o">{</span>
+        <span class="nb">type </span>master<span class="p">;</span>
+        file <span class="s2">"/etc/bind/zzz.yyy.xxx.db"</span><span class="p">;</span>
+        allow-update <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+    <span class="o">}</span><span class="p">;</span>
+<span class="o">}</span><span class="p">;</span></code></pre></figure>
+
+<h3 id="5-オプション設定ファイルの編集">5. オプション設定ファイルの編集</h3>
+
+<p>その他の設定用ファイルを以下のように編集する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.options</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">options <span class="o">{</span>
+        directory <span class="s2">"/var/cache/bind"</span><span class="p">;</span>
+
+        // 問合わせを許可する範囲
+        // <span class="o">(</span>サーバー、ローカルネットワーク内のホストからの問合せのみ許可<span class="o">)</span>
+        allow-query <span class="o">{</span> localhost<span class="p">;</span> localnets<span class="p">;</span> <span class="o">}</span><span class="p">;</span>      <span class="c"># &lt;= 追加</span>
+
+        // ゾーン情報の転送を許可する範囲
+        // <span class="o">(</span>サーバー、ローカルネットワーク内のホストへのみ転送を許可<span class="o">)</span>
+        allow-transfer <span class="o">{</span> localhost<span class="p">;</span> localnets<span class="p">;</span> <span class="o">}</span><span class="p">;</span>   <span class="c"># &lt;= 追加</span>
+
+        // 再帰検索を許可する範囲
+        // <span class="o">(</span>サーバー、ローカルネットワーク内のホストのみ再検索を許可<span class="o">)</span>
+        allow-recursion <span class="o">{</span> localhost<span class="p">;</span> localnets<span class="p">;</span> <span class="o">}</span><span class="p">;</span>  <span class="c"># &lt;= 追加</span>
+
+        dnssec-validation auto<span class="p">;</span>
+
+        auth-nxdomain no<span class="p">;</span>     <span class="c"># conform to RFC1035</span>
+
+        // IPv6 は使用しないので無効化
+        //listen-on-v6 <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+        listen-on-v6 <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+
+<span class="c"># EDNS0 の無効化</span>
+<span class="c"># "error (unexpected RCODE REFUSED) ..." 出力の抑止</span>
+server 0.0.0.0 <span class="o">{</span>
+        edns no<span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+
+<span class="c"># "DNS format error ... invalid response" 出力の抑止</span>
+logging <span class="o">{</span>
+        category resolver <span class="o">{</span> null<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+<span class="o">}</span><span class="p">;</span></code></pre></figure>
+
+<h3 id="6-内部向け正引きゾーン定義ファイルの作成">6. 内部向け正引きゾーン定義ファイルの作成</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/mk-mode.com.lan</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$TTL</span> 86400
+@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. <span class="o">(</span>
+        2021083101  <span class="p">;</span>Serial
+        3600        <span class="p">;</span>Refresh
+        1800        <span class="p">;</span>Retry
+        604800      <span class="p">;</span>Expire
+        86400       <span class="p">;</span>Minimum TTL
+<span class="o">)</span>
+
+        IN  NS      ns.mk-mode.com.
+        IN  A       192.168.11.101
+        IN  MX 10   ns.mk-mode.com.
+ns      IN  A       192.168.11.101
+vbox    IN  A       192.168.11.101
+hoge    IN  A       192.168.11.2
+fuga    IN  A       192.168.11.3
+www     IN  CNAME   ns.mk-mode.com.
+ftp     IN  CNAME   ns.mk-mode.com.
+mail    IN  CNAME   ns.mk-mode.com.</code></pre></figure>
+
+<p><code class="language-plaintext highlighter-rouge">hoge</code>, <code class="language-plaintext highlighter-rouge">fuga</code> はローカルネットワーク内の別のマシン。<br />
+<code class="language-plaintext highlighter-rouge">www</code>, <code class="language-plaintext highlighter-rouge">ftp</code>, <code class="language-plaintext highlighter-rouge">mail</code> は別名定義。</p>
+
+<h3 id="7-外部向け正引きゾーン定義ファイルの作成">7. 外部向け正引きゾーン定義ファイルの作成</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/mk-mode.com.wan</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$TTL</span> 86400
+@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. <span class="o">(</span>
+        2021083101  <span class="p">;</span>Serial
+        3600        <span class="p">;</span>Refresh
+        1800        <span class="p">;</span>Retry
+        604800      <span class="p">;</span>Expire
+        86400       <span class="p">;</span>Minimum TTL
+<span class="o">)</span>
+
+        IN  NS      ns.mk-mode.com.
+        IN  A       xxx.yyy.zzz.aaa
+        IN  MX 10   ns.mk-mode.com.
+ns      IN  A       xxx.yyy.zzz.aaa</code></pre></figure>
+
+<h3 id="8-内部向け逆引きゾーン定義ファイルの作成">8. 内部向け逆引きゾーン定義ファイルの作成</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/11.168.192.db</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$TTL</span> 86400
+@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. <span class="o">(</span>
+        2021083101  <span class="p">;</span>Serial
+        3600        <span class="p">;</span>Refresh
+        1800        <span class="p">;</span>Retry
+        604800      <span class="p">;</span>Expire
+        86400       <span class="p">;</span>Minimum TTL
+<span class="o">)</span>
+
+        IN  NS      ns.mk-mode.com.
+        IN  PTR     mk-mode.com.
+        IN  A       255.255.255.0
+101     IN  PTR     ns.mk-mode.com.
+101     IN  PTR     vbox.mk-mode.com.
+2       IN  PTR     hoge.mk-mode.com.
+3       IN  PTR     fuga.mk-mode.com.</code></pre></figure>
+
+<h3 id="9-外部向け逆引きゾーン定義ファイルの作成">9. 外部向け逆引きゾーン定義ファイルの作成</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/zzz.yyy.xxx.db</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$TTL</span> 86400
+@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. <span class="o">(</span>
+        2021083101  <span class="p">;</span>Serial
+        3600        <span class="p">;</span>Refresh
+        1800        <span class="p">;</span>Retry
+        604800      <span class="p">;</span>Expire
+        86400       <span class="p">;</span>Minimum TTL
+<span class="o">)</span>
+
+        IN  NS      ns.mk-mode.com.
+        IN  PTR     mk-mode.com.
+        IN  A       255.255.255.254
+aaa     IN  PTR     ns.mk-mode.com.</code></pre></figure>
+
+<p>（<code class="language-plaintext highlighter-rouge">255.255.255.254</code> はグローバル IP が１個のみの場合の設定値）</p>
+
+<h3 id="10-問合せ先-dns-サーバの追加">10. 問合せ先 DNS サーバの追加</h3>
+
+<p>DNS サーバー自身も問合せ先に追加する。<br />
+最初から記載のあるルータの IP アドレス（インストール・初期設定時のもの）をセカンダリ、今回構築のサーバ自身をプライマリに設定するので、ルータより先に記述する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#domain localdomain        # &lt;= コメント化</span>
+domain mk-mode.com         <span class="c"># &lt;= 追加</span>
+<span class="c">#search localdomain        # &lt;= コメント化</span>
+search mk-mode.com         <span class="c"># &lt;= 追加</span>
+nameserver 192.168.11.101  <span class="c"># &lt;= 追加</span>
+nameserver 192.168.11.1    <span class="c"># &lt;= ルータの IP アドレス</span></code></pre></figure>
+
+<h3 id="11-ipv6-の無効化設定">11. IPv6 の無効化設定</h3>
+
+<p>システムとして IPv6 を無効にしている場合は、以下のように <code class="language-plaintext highlighter-rouge">/etc/default/named</code> を編集する。<br />
+（<code class="language-plaintext highlighter-rouge">/var/log/syslog</code> に <code class="language-plaintext highlighter-rouge">... named[9999]: error (network unreachable) resolving ...</code> のようなエラーが出力されないようにするため）<br />
+※かつては、 <code class="language-plaintext highlighter-rouge">named</code> というファイル名ではなく <code class="language-plaintext highlighter-rouge">bind9</code> というファイル名だった。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/default/named</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">OPTIONS</span><span class="o">=</span><span class="s2">"-u bind -4"</span></code></pre></figure>
+
+<h3 id="12-bind-の再起動">12. BIND の再起動</h3>
+
+<p>設定を有効化するために BIND を再起動する。（サービス名は <code class="language-plaintext highlighter-rouge">bind9</code> も可）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl restart named
+</code></pre></div></div>
+
+<h3 id="13-動作確認">13. 動作確認</h3>
+
+<p>DNS サーバが正常に機能する（正引きで IP アドレス、逆引きでホスト名が返ってくる）か、確認してみる。</p>
+
+<p>【内部向け正引きテスト】</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dig ns.mk-mode.com.
+
+; &lt;&lt;&gt;&gt; DiG 9.16.15-Debian &lt;&lt;&gt;&gt; ns.mk-mode.com.
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 42607
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: feae014ca532b70b01000000612d88232c502b8a27dff786 (good)
+;; QUESTION SECTION:
+;ns.mk-mode.com.                        IN      A
+
+;; ANSWER SECTION:
+ns.mk-mode.com.         86400   IN      A       192.168.11.101
+
+;; Query time: 8 msec
+;; SERVER: 192.168.11.101#53(192.168.11.101)
+;; WHEN: Tue Aug 31 10:38:43 JST 2021
+;; MSG SIZE  rcvd: 87
+
+</code></pre></div></div>
+
+<p>【内部向け逆引きテスト】</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dig -x 192.168.11.101
+
+; &lt;&lt;&gt;&gt; DiG 9.16.15-Debian &lt;&lt;&gt;&gt; -x 192.168.11.101
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 30868
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 1a0f1c91c39ba3aa01000000612d885de1fc62bcd5c5375a (good)
+;; QUESTION SECTION:
+;101.11.168.192.in-addr.arpa.   IN      PTR
+
+;; ANSWER SECTION:
+101.11.168.192.in-addr.arpa. 86400 IN   PTR     ns.mk-mode.com.
+101.11.168.192.in-addr.arpa. 86400 IN   PTR     vbox.mk-mode.com.
+
+;; Query time: 3 msec
+;; SERVER: 192.168.11.101#53(192.168.11.101)
+;; WHEN: Tue Aug 31 10:39:41 JST 2021
+;; MSG SIZE  rcvd: 131
+
+</code></pre></div></div>
+
+<p>【外部向け正引きテスト】</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dig www.isc.org
+
+; &lt;&lt;&gt;&gt; DiG 9.16.15-Debian &lt;&lt;&gt;&gt; www.isc.org
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 1984
+;; flags: qr rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;www.isc.org.                   IN      A
+
+;; ANSWER SECTION:
+www.isc.org.            60      IN      CNAME   dualstack.osff2.map.fastly.net.
+dualstack.osff2.map.fastly.net. 4 IN    A       151.101.90.217
+
+;; Query time: 175 msec
+;; SERVER: 192.168.11.1#53(192.168.11.1)
+;; WHEN: Tue Aug 31 10:40:24 JST 2021
+;; MSG SIZE  rcvd: 100
+
+</code></pre></div></div>
+
+<p>【外部向け逆引きテスト】</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dig -x 151.101.90.217
+
+; &lt;&lt;&gt;&gt; DiG 9.16.15-Debian &lt;&lt;&gt;&gt; -x 151.101.90.217
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NXDOMAIN, id: 60481
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;217.90.101.151.in-addr.arpa.   IN      PTR
+
+;; AUTHORITY SECTION:
+151.in-addr.arpa.       749     IN      SOA     pri.authdns.ripe.net. dns.ripe.net. 1630366598 3600 600 864000 3600
+
+;; Query time: 55 msec
+;; SERVER: 192.168.11.1#53(192.168.11.1)
+;; WHEN: Tue Aug 31 10:40:49 JST 2021
+;; MSG SIZE  rcvd: 116
+
+</code></pre></div></div>
+
+<h3 id="14-ファイアウォール-ufw-の設定">14. ファイアウォール (ufw) の設定</h3>
+
+<p>実際に運用する場合は、外部からのTCP/UDP53番ポート(DNS)へのアクセスを許可する必要がある。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ufw allow 53
+Rule added
+
+# ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+9999/tcp                   ALLOW       192.168.11.0/24
+53                         ALLOW       Anywhere
+</code></pre></div></div>
+
+<hr />
+
+<p>以上。</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/debian" class="page__taxonomy-item" rel="tag">Debian</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/dns" class="page__taxonomy-item" rel="tag">DNS</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/%E3%82%B5%E3%83%BC%E3%83%90%E6%A7%8B%E7%AF%89" class="page__taxonomy-item" rel="tag">サーバ構築</a>
+    
+    </span>
+  </p>
+
+
+        
+          
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2021-11-03T00:20:00+09:00">2021-11-03 00:20</time></p>
+        
+        <br />
+      </footer>
+      <div id="google-ad-3"></div>
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Debian+11+%28bullseye%29+-+DNS+%E3%82%B5%E3%83%BC%E3%83%90+BIND9+%E6%A7%8B%E7%AF%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2021%2F11%2F03%2Fdebian-11-bind-installation%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2021%2F11%2F03%2Fdebian-11-bind-installation%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  
+
+  <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2021%2F11%2F03%2Fdebian-11-bind-installation%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      <section>
+        &nbsp;
+        <h4>Sponsored Link</h4>
+        <div id="rakuten-ad"></div>
+        <div id="amazon-ad-1"></div>
+      </section>
+      &nbsp;
+      
+  <nav class="pagination">
+    
+      <a href="/2021/11/01/blog-access/" class="pagination--pager" title="2021年10月 - OS・ブラウザ別アクセス状況！
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <div id="google-ad-4"></div>
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/11/01/blog-access/" rel="permalink">2021年10月 - OS・ブラウザ別アクセス状況！
+</a>
+        &nbsp;<small>(2021-11-01)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">11月になりましたので、先月10月分の当ブログアクセス状況を公開します。（※自分用の記録）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/10/27/debian-11-service-management/" rel="permalink">Debian 11 (bullseye) - サービスの管理！
+</a>
+        &nbsp;<small>(2021-10-27)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 11 (bullseye) でのサービスの管理についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/10/20/debian-11-firewall-setting/" rel="permalink">Debian 11 (bullseye) - ファイアウォール設定！
+</a>
+        &nbsp;<small>(2021-10-20)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 11 (bullseye) でファイアウォールを設定する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2021/10/13/debian-11-systemd-timesyncd/" rel="permalink">Debian 11 (bullseye) - 時刻同期設定(systemd-timesyncd)！
+</a>
+        &nbsp;<small>(2021-10-13)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 11 (bullseye) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければス...</p>
+  </article>
+</div>
+
+        
+      </div>
+      <!-- &nbsp;
+      <div id="amazon-wd"></div -->
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <input type="text" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    </form>
+    <div id="results" class="results">
+        <gcse:searchresults-only></gcse:searchresults-only>    
+    </div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<div id="qr"><img src="/assets/images/qr.png" alt="mk-mode BLOG"></div>
+<div id="google-ad-5"></div>
+<div class="page__footer-etc">
+  <strong>ブログ開設日</strong> <tt>2009-01-05</tt><br />
+  <strong>サーバ連続稼働時間</strong> <tt id="uptime">Loading...</tt><br />
+  <strong>Page View</strong><br />
+  &emsp;合計 <tt id="pv-total">Loading...</tt><br />
+  &emsp;今日 <tt id="pv-today">Loading...</tt><br />
+  &emsp;昨日 <tt id="pv-yesterday">Loading...</tt><br />
+  <small>※<a href="/privacy.html" title="「プライバシーポリシー」ページへ">プライバシーポリシー</a></small>
+</div>
+<p id="page-top">
+  <a href="#">
+    <i class="fa fa-angle-double-up fa-2x" aria-hidden="true"></i>
+  </a>
+</p>
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/rsm_mzk" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/komasaru" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="https://www.mk-mode.com/blog/atom.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script defer src="/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.6.0/js/all.js" integrity="sha384-z9ZOvGHHo21RqN5De4rfJMoAxYpaVoiYhuJXPyVmSs8yn20IE3PmBM534CffwSJI" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/my_custom.js"></script>
+
+
+<script>
+  (function () {
+    var cx = 'partner-pub-7320193476057758:6328726109';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+
+  function googleCustomSearchExecute() {
+    var input = document.getElementById('cse-search-input-box-id');
+    var element = google.search.cse.element.getElement('searchresults-only0');
+    if (input.value == '') {
+      element.clearAllResults();
+    } else {
+      element.execute(input.value);
+    }
+    return false;
+  }
+
+  
+</script>
+
+
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18154748-1']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://komasaru.github.io/2021/11/03/debian-11-bind-installation/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2021/11/03/debian-11-bind-installation"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkmodeblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>
