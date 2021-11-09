@@ -12154,4 +12154,10 @@ var store = [{
         "tags": ["Debian","Linux","DNS"],
         "url": "/2021/11/03/debian-11-bind-installation/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - DNS サーバ BIND9 の chroot 化！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に構築した DNS サーバを chroot 化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 DNS サーバ BIND が構築済みであることを想定。 chroot ディレクトリは /var/named/chroot/ とする。 root ユーザでの作業を想定。 1. BIND の停止 BIND が起動していると設定に失敗するので、BIND が起動している場合は停止する。 # systemctl stop named 2. 起動オプションの編集 起動時のオプションを変更するよう /etc/default/named を編集する。 File: /etc/default/named #OPTIONS=\"-u bind -4\" OPTIONS=\"-u...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","DNS"],
+        "url": "/2021/11/10/debian-11-bind-chroot/",
+        "teaser": null
       }]
