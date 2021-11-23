@@ -1,4 +1,158 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2021-11-16T14:09:09+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - FTP サーバ構築！</title><link href="https://komasaru.github.io/2021/11/17/debian-11-ftp-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - FTP サーバ構築！" /><published>2021-11-17T00:20:00+09:00</published><updated>2021-11-17T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/11/17/debian-11-ftp-installation</id><content type="html" xml:base="https://komasaru.github.io/2021/11/17/debian-11-ftp-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に FTP サーバを構築する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2021-11-23T09:41:15+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - NFS サーバ構築！</title><link href="https://komasaru.github.io/2021/11/24/debian-11-nfs-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - NFS サーバ構築！" /><published>2021-11-24T00:20:00+09:00</published><updated>2021-11-24T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/11/24/debian-11-nfs-installation</id><content type="html" xml:base="https://komasaru.github.io/2021/11/24/debian-11-nfs-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に NFS サーバを構築する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseyes) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;接続元のマシンは Debian GNU/Linux 10 (buster; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;接続可能なマシンのネットワークは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.0/24&lt;/code&gt; を想定。&lt;/li&gt;
+  &lt;li&gt;ドメイン名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mk-mode.com&lt;/code&gt;、サーバホスト名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vbox&lt;/code&gt; を想定。&lt;/li&gt;
+  &lt;li&gt;NFS 用ディレクトリを新たに作成する。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var&lt;/code&gt; 配下に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/exports&lt;/code&gt; ディレクトリを作成する）&lt;/li&gt;
+  &lt;li&gt;クライアント側でマウントに使用するディレクトリも &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/exports&lt;/code&gt; とする。&lt;/li&gt;
+  &lt;li&gt;サーバ側は root で作業することを想定、クライアント側は一般ユーザで作業することを想定している。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-nfs-サーバのインストール&quot;&gt;1. NFS サーバのインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install nfs-kernel-server
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-idmapd-設定の編集&quot;&gt;2. idmapd 設定の編集&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/idmapd.conf&lt;/code&gt; というユーザー名・グループ名と UID/GID のマッピングを保持するデーモンの設定ファイルを以下のように編集する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/idmapd.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;Domain &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; mk-mode.com  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除＆自ドメイン名に変更&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;3-nfs-用ディレクトリの作成&quot;&gt;3. NFS 用ディレクトリの作成&lt;/h3&gt;
+
+&lt;p&gt;共有 NFS ディレクトリを以下のようにして作成する。&lt;br /&gt;
+所有者・所有グループは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/idmapd.conf&lt;/code&gt; に記載されている &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nobody&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nogroup&lt;/code&gt; とする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir /var/exports
+# chown -R nobody:nogroup /var/exports
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-exports-の編集&quot;&gt;4. exports の編集&lt;/h3&gt;
+
+&lt;p&gt;設定ファイル &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/exports&lt;/code&gt; を以下のように編集（追記）する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/exports&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;/var/exports 192.168.11.0/24&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;rw,sync,fsid&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0,no_root_squash,no_subtree_check&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;5-ファイアウォール-ufw-の無効化&quot;&gt;5. ファイアウォール (ufw) の無効化&lt;/h3&gt;
+
+&lt;p&gt;NFS サーバは都度ポート番号が変更になるため、ファイアウォールで開放するポートを指定できない。&lt;br /&gt;
+ファイアウォール ufw を「一時的」にオフにする。&lt;br /&gt;
+（別途、NFS サーバのポートを固定する措置を施せばよい（別記事））&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw disable
+Firewall stopped and disabled on system startup
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-nfs-サーバ再起動&quot;&gt;6. NFS サーバ再起動&lt;/h3&gt;
+
+&lt;p&gt;設定を反映させるため、NFS サーバを再起動する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart nfs-kernel-server
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;
+&lt;br /&gt;
+【以下、クライアント側・ローカルユーザでの作業】&lt;/p&gt;
+
+&lt;h3 id=&quot;7-nfs-クライアントのインストール&quot;&gt;7. NFS クライアントのインストール&lt;/h3&gt;
+
+&lt;p&gt;NFS クライアントを以下のようにしてインストールする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo apt install -y nfs-client
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Linux ディストリビューションによっては &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apt command [options]&lt;/code&gt; でなく &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apt [options] command&lt;/code&gt; のことがあるので注意。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;8-idmapd-設定の編集&quot;&gt;8. idmapd 設定の編集&lt;/h3&gt;
+
+&lt;p&gt;NFS サーバ同様 “etc/idmapd.conf” という設定ファイルを、以下のように編集する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/idmapd.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;Domain &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; mk-mode.com  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除＆自ドメイン名に変更&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;9-nfs-クライアントの再起動&quot;&gt;9. NFS クライアントの再起動&lt;/h3&gt;
+
+&lt;p&gt;設定を反映させるため、NFS クライアントを再起動する。&lt;br /&gt;
+&lt;strong&gt;Debian 9 stretch 以降は、 nfs-common は不要&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo systemctl restart nfs-common
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;ちなみに、nfs-common は自動起動するようになっているが、普段使用しない場合は、以下のように自動起動しないように設定しておいてもよいだろう。（NFS を使用したい時のみ nfs-common を起動させる）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo /etc/init.d/nfs-common restart
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;10-マウント用ディレクトリの作成&quot;&gt;10. マウント用ディレクトリの作成&lt;/h3&gt;
+
+&lt;p&gt;マウントするディレクトリを作成する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo mkdir /var/exports
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;11-マウント&quot;&gt;11. マウント&lt;/h3&gt;
+
+&lt;p&gt;NFS サーバのディレクトリ使用するために、クライアントマシンでマウントする。&lt;br /&gt;
+以下では、クライアントマシンの &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/exports&lt;/code&gt; ディレクトリにマウントしている。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo mount -t nfs noah.mk-mode.com:/var/exports /var/exports
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;12-確認&quot;&gt;12. 確認&lt;/h3&gt;
+
+&lt;p&gt;マウントできているか &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;df&lt;/code&gt; コマンドで確認する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# df -h
+ファイルシス                  サイズ  使用  残り 使用% マウント位置
+         :
+====&amp;lt; 途中省略 &amp;gt;====
+         :
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;その他、クライアントマシンからファイルを貼り付けてみたり、削除してみたりしてみる。&lt;/p&gt;
+
+&lt;h3 id=&quot;13-自動マウントの設定&quot;&gt;13. 自動マウントの設定&lt;/h3&gt;
+
+&lt;p&gt;上記の方法ではクライアントマシンを再起動するたびにマウントしないといけないので、マシン起動時に自動マウントするようにしたければ以下のように &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fstab&lt;/code&gt; を設定する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/fstab&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;vbox.mk-mode.com:/var/exports   /var/exports  nfs     defaults        0       0&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;クライアントマシン再起動時にマウントされるかも確認しておく。&lt;/p&gt;
+
+&lt;h3 id=&quot;14-ファイアウォール-ufw-の有効化&quot;&gt;14. ファイアウォール (ufw) の有効化&lt;/h3&gt;
+
+&lt;p&gt;テストのために無効化していたファイアウォールを有効化に戻す。※サーバ側&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw enable
+Command may disrupt existing ssh connections. Proceed with operation (y|n)? y
+Firewall is active and enabled on system startup
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;実際に運用する場会は、 NFS サーバのポートを固定する設定を施す。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="NFS" /><summary type="html">Debian GNU/Linux 11 (bullseye) に NFS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - FTP サーバ構築！</title><link href="https://komasaru.github.io/2021/11/17/debian-11-ftp-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - FTP サーバ構築！" /><published>2021-11-17T00:20:00+09:00</published><updated>2021-11-17T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/11/17/debian-11-ftp-installation</id><content type="html" xml:base="https://komasaru.github.io/2021/11/17/debian-11-ftp-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に FTP サーバを構築する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -2089,43 +2243,4 @@ ExcludePath ^/sys/
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">10月になりましたので、先月9月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">Debian 11 (bullseye) - rootkit 検出ツール chkrootkit インストール！</title><link href="https://komasaru.github.io/2021/09/29/debian-11-chrootkit-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - rootkit 検出ツール chkrootkit インストール！" /><published>2021-09-29T00:20:00+09:00</published><updated>2021-09-29T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/09/29/debian-11-chrootkit-installation</id><content type="html" xml:base="https://komasaru.github.io/2021/09/29/debian-11-chrootkit-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11 (bullseye) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;接続元のマシンは Debian GNU/Linux 10 (buster; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;chkrootkit が検知できるのは既知の rootkit のみであり、新規の rootkit は検知できないことを認識しておく。&lt;/li&gt;
-  &lt;li&gt;chkrootkit では誤検知もあるので、検知結果は参考程度に留める。&lt;/li&gt;
-  &lt;li&gt;コマンド自体が改竄されてからでは遅いので、 OS インストール直後に行うのがよいらしい。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-chkrootkit-のインストール&quot;&gt;1. chkrootkit のインストール&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install chkrootkit
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-chkrootkit-の実行&quot;&gt;2. chkrootkit の実行&lt;/h3&gt;
-
-&lt;p&gt;以下のようにして chkrootkit を実行してみる。&lt;br /&gt;
-問題のある（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;INFECTED&lt;/code&gt; の）場合のみ出力する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# chkrootkit | grep INFECTED
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;3-自動実行用スクリプト作成&quot;&gt;3. 自動実行用スクリプト作成&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;今は自動で /etc/cron.daily/chkrtootkit が作成され、毎日自動で実行されるので、この作業は不要&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;これで、rootkit が仕掛けられていた場合に root 宛にメールが届くようになる。&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html">Debian GNU/Linux 11 (bullseye) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">10月になりましたので、先月9月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>

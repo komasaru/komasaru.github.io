@@ -12166,4 +12166,10 @@ var store = [{
         "tags": ["Debian","Linux","FTP"],
         "url": "/2021/11/17/debian-11-ftp-installation/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - NFS サーバ構築！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に NFS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseyes) での作業を想定。 接続元のマシンは Debian GNU/Linux 10 (buster; 64bit) を想定。 接続可能なマシンのネットワークは 192.168.11.0/24 を想定。 ドメイン名は mk-mode.com、サーバホスト名は vbox を想定。 NFS 用ディレクトリを新たに作成する。（/var 配下に /exports ディレクトリを作成する） クライアント側でマウントに使用するディレクトリも /var/exports とする。 サーバ側は root で作業することを想定、クライアント側は一般ユーザで作業することを想定している。 root ユーザでの作業を想定。 1. NFS サーバのインストール # apt -y install...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","NFS"],
+        "url": "/2021/11/24/debian-11-nfs-installation/",
+        "teaser": null
       }]
