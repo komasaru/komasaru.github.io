@@ -12172,4 +12172,10 @@ var store = [{
         "tags": ["Debian","Linux","NFS"],
         "url": "/2021/11/24/debian-11-nfs-installation/",
         "teaser": null
+      },{
+        "title": "2021年11月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"12月になりましたので、先月11月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 25,379 65.4891 Mac OS 9,941 25.6522 Linux 1,384 3.5713 Android 1,300 3.3546 Ubuntu Linux 518 1.3367 unknown 194 0.5006 Fedora Linux 29 0.0748 FreeBSD 4 0.0103 NetBSD 2 0.0052 OpenBSD 1 0.0026 PlayStation 1 0.0026 合　計 38,753 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2021/12/01/blog-access/",
+        "teaser": null
       }]
