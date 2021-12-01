@@ -1,4 +1,135 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2021-12-01T00:08:57+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">2021年11月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2021/12/01/blog-access/" rel="alternate" type="text/html" title="2021年11月 - OS・ブラウザ別アクセス状況！" /><published>2021-12-01T00:20:00+09:00</published><updated>2021-12-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2021/12/01/blog-access/">&lt;p&gt;12月になりましたので、先月11月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2021-12-01T22:56:04+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - NFS サーバのポート固定！</title><link href="https://komasaru.github.io/2021/12/02/debian-11-nfs-port-fixing/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - NFS サーバのポート固定！" /><published>2021-12-02T00:20:00+09:00</published><updated>2021-12-02T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/02/debian-11-nfs-port-fixing</id><content type="html" xml:base="https://komasaru.github.io/2021/12/02/debian-11-nfs-port-fixing/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に NFS サーバで使用するポートを固定化する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;接続元のマシンは Debian GNU/Linux 10 (buster; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;NFS サーバ構築済み。&lt;br /&gt;
+（参照：「&lt;a href=&quot;/2021/11/24/debian-11-nfs-installation&quot; title=&quot;Debian 11 (bullseye) - NFS サーバ構築！&quot;&gt;Debian 11 (bullseye) - NFS サーバ構築！&lt;/a&gt;」）&lt;/li&gt;
+  &lt;li&gt;ファイアウォール iptables が構築済み。
+（参照：「&lt;a href=&quot;/2021/10/20/debian-11-firewall-setting&quot; title=&quot;Debian 11 (bullseye) - ファイアウォール設定！&quot;&gt;Debian 11 (bullseye) - ファイアウォール設定！&lt;/a&gt;」）&lt;/li&gt;
+  &lt;li&gt;以下で設定するポート番号は&lt;a href=&quot;https://wiki.debian.org/SecuringNFS&quot; title=&quot;SecuringNFS - Debian Wiki&quot;&gt;参考サイト&lt;/a&gt;によるもであり、任意に設定可能。&lt;/li&gt;
+  &lt;li&gt;quota は使用していないので、&lt;a href=&quot;https://wiki.debian.org/SecuringNFS&quot; title=&quot;SecuringNFS - Debian Wiki&quot;&gt;参考サイト&lt;/a&gt;にある quota の設定はしない。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-前提知識&quot;&gt;1. 前提知識&lt;/h3&gt;
+
+&lt;p&gt;NFS サーバが使用するポートは以下のとおり。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;portmapper =&amp;gt; TCP: 111, UDP: 111
+nfs        =&amp;gt; TCP:2049, UDP:2049
+statd      =&amp;gt; TCP:不定, UDP:不定
+mountd     =&amp;gt; TCP:不定, UDP:不定
+nlockmgrq  =&amp;gt; TCP:不定, UDP:不定
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-statd-用ポートの固定&quot;&gt;2. statd 用ポートの固定&lt;/h3&gt;
+
+&lt;p&gt;statd のポートを固定するには &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-common&lt;/code&gt; を以下のようにする。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-common&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;STATDOPTS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;--port 32765 --outgoing-port 32766&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;3-mountd-用ポートの固定&quot;&gt;3. mountd 用ポートの固定&lt;/h3&gt;
+
+&lt;p&gt;mountd のポートを固定するには &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-kernel-server&lt;/code&gt; を以下のようにする。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-p 32767&lt;/code&gt; を追加）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-kernel-server&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;RPCMOUNTDOPTS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;--manage-gids -p 32767&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;4-lockd-モジュールの設定&quot;&gt;4. lockd モジュールの設定&lt;/h3&gt;
+
+&lt;p&gt;オプション付き lockd モジュールを提供するために、以下のように &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/modprobe.d/local.conf&lt;/code&gt; を作成する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/modprobe.d/local.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;options lockd &lt;span class=&quot;nv&quot;&gt;nlm_udpport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32768 &lt;span class=&quot;nv&quot;&gt;nlm_tcpport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32768
+options nfs &lt;span class=&quot;nv&quot;&gt;callback_tcpport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32764&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;5-マシンの再起動&quot;&gt;5. マシンの再起動&lt;/h3&gt;
+
+&lt;p&gt;設定を反映させるため、マシンを再起動する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl reboot
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-設定の確認&quot;&gt;6. 設定の確認&lt;/h3&gt;
+
+&lt;p&gt;以下のようにして、RPC 情報（ポートの設定）を確認してみる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# rpcinfo -p
+   program vers proto   port  service
+    100000    4   tcp    111  portmapper
+    100000    3   tcp    111  portmapper
+    100000    2   tcp    111  portmapper
+    100000    4   udp    111  portmapper
+    100000    3   udp    111  portmapper
+    100000    2   udp    111  portmapper
+    100005    1   udp  32767  mountd
+    100005    1   tcp  32767  mountd
+    100005    2   udp  32767  mountd
+    100005    2   tcp  32767  mountd
+    100005    3   udp  32767  mountd
+    100005    3   tcp  32767  mountd
+    100003    3   tcp   2049  nfs
+    100003    4   tcp   2049  nfs
+    100227    3   tcp   2049
+    100003    3   udp   2049  nfs
+    100227    3   udp   2049
+    100021    1   udp  32768  nlockmgr
+    100021    3   udp  32768  nlockmgr
+    100021    4   udp  32768  nlockmgr
+    100021    1   tcp  32768  nlockmgr
+    100021    3   tcp  32768  nlockmgr
+    100021    4   tcp  32768  nlockmgr
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-ファイアウォールufwの設定&quot;&gt;7. ファイアウォール(ufw)の設定&lt;/h3&gt;
+
+&lt;p&gt;NFS サーバが使用するポートが固定されたので、ufw でファイアウォールの設定を行う。（以下はローカルネットワーク内からのみアクセス可能にする例）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow proto tcp from 192.168.11.0/24 to any port 111,2049,32765,32767,32768
+Rule added
+# ufw allow proto udp from 192.168.11.0/24 to any port 111,2049,32765,32767,32768
+Rule added
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;確認。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+
+===&amp;lt; 中略 &amp;gt;===
+
+111,2049,32765,32767,32768/tcp ALLOW       192.168.11.0/24
+111,2049,32765,32767,32768/udp ALLOW       192.168.11.0/24
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;8-動作確認&quot;&gt;8. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;クライアントマシンでマウントして接続できることも確認しておく。&lt;/p&gt;
+
+&lt;h3 id=&quot;9-参考サイト&quot;&gt;9. 参考サイト&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://wiki.debian.org/SecuringNFS&quot; title=&quot;SecuringNFS - Debian Wiki&quot;&gt;SecuringNFS - Debian Wiki&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="NFS" /><summary type="html">Debian GNU/Linux 11 (bullseye) に NFS サーバで使用するポートを固定化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">2021年11月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2021/12/01/blog-access/" rel="alternate" type="text/html" title="2021年11月 - OS・ブラウザ別アクセス状況！" /><published>2021-12-01T00:20:00+09:00</published><updated>2021-12-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2021/12/01/blog-access/">&lt;p&gt;12月になりましたので、先月11月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -2024,239 +2155,4 @@ MS Name/IP address         Stratum Poll Reach LastRx Last sample
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - アンチウィルスソフト導入！</title><link href="https://komasaru.github.io/2021/10/06/debian-11-anti-virus-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - アンチウィルスソフト導入！" /><published>2021-10-06T00:20:00+09:00</published><updated>2021-10-06T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/10/06/debian-11-anti-virus-installation</id><content type="html" xml:base="https://komasaru.github.io/2021/10/06/debian-11-anti-virus-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11 (bullseye) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;Apt でインストールする。（但し、Apt のパッケージはバージョンが古い。最新版が良ければ、&lt;a href=&quot;https://sourceforge.net/projects/clamav/files/&quot; title=&quot;Clam AntiVirus - Browse Files at SourceForge.net&quot;&gt;こちら&lt;/a&gt;からダウンロードしてビルドするとよい）&lt;/li&gt;
-  &lt;li&gt;毎日自動でウィルススキャンを実行するようにする。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-clamav-のインストール&quot;&gt;1. ClamAV のインストール&lt;/h3&gt;
-
-&lt;p&gt;以下のようにして、アンチウィルスソフト ClamAV, ClamAV Daemon をインストールする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install clamav clamav-daemon
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-ウィルス定義ファイルの最新化&quot;&gt;2. ウィルス定義ファイルの最新化&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;freshclam&lt;/code&gt; コマンドでウィルス定義ファイルを最新に更新する。&lt;/p&gt;
-
-&lt;p&gt;しかし、デフォルトの状態では以下のようになってしまう。（以前はこのような事態にはならなかったが）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# freshclam
-ERROR: /var/log/clamav/freshclam.log is locked by another process
-ERROR: Problem with internal logger (UpdateLogFile = /var/log/clamav/freshclam.log).
-ERROR: initialize: libfreshclam init failed.
-ERROR: Initialization error!
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;そこで、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/log/clamav/freshclam.log&lt;/code&gt; を作り直す。&lt;br /&gt;
-（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamav:adm&lt;/code&gt; となっている所有者・グループを &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamav:clamav&lt;/code&gt; に変更するだけはうまく行かない）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# rm -f /var/log/clamav/freshclam.log
-# touch /var/log/clamav/freshclam.log
-# chown clamav:clamav /var/log/clamav/freshclam.log
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;そして、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;freshclam&lt;/code&gt; を実行&lt;br /&gt;
-（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;freshclam&lt;/code&gt; を実行する際は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamav-freshclam&lt;/code&gt; を停止する）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl stop clamav-freshclam
-
-# freshclam
-Mon Aug 30 10:22:37 2021 -&amp;gt; ClamAV update process started at Mon Aug 30 10:22:37 2021
-Mon Aug 30 10:22:38 2021 -&amp;gt; ^Your ClamAV installation is OUTDATED!
-Mon Aug 30 10:22:38 2021 -&amp;gt; ^Local version: 0.103.2 Recommended version: 0.103.3
-Mon Aug 30 10:22:38 2021 -&amp;gt; DON&apos;T PANIC! Read https://www.clamav.net/documents/upgrading-clamav
-Mon Aug 30 10:22:38 2021 -&amp;gt; daily.cld database is up-to-date (version: 26278, sigs: 1969151, f-level: 90, builder: raynman)
-Mon Aug 30 10:22:38 2021 -&amp;gt; main.cvd database is up-to-date (version: 61, sigs: 6607162, f-level: 90, builder: sigmgr)
-Mon Aug 30 10:22:38 2021 -&amp;gt; bytecode.cvd database is up-to-date (version: 333, sigs: 92, f-level: 63, builder: awillia2)
-
-# systemctl start clamav-freshclam
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;（インストールした ClamAV のバージョンが古い場合に警告メッセージが出力されるが、特に問題はないので無視してよい）&lt;/p&gt;
-
-&lt;h3 id=&quot;3-ウィルススキャンのテストウィルス無しの場合&quot;&gt;3. ウィルススキャンのテスト（ウィルス無しの場合）&lt;/h3&gt;
-
-&lt;p&gt;以下のようにして、ウィルススキャンを行ってみる。&lt;br /&gt;
-（スキャンするディレクトリを指定するなら、最後にディレクトリを指定する）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# clamscan --infected --remove --recursive
-
------------ SCAN SUMMARY -----------
-Known viruses: 8561077
-Engine version: 0.103.2
-Scanned directories: 4
-Scanned files: 4
-Infected files: 0
-Data scanned: 0.02 MB
-Data read: 0.01 MB (ratio 2.00:1)
-Time: 1470.707 sec (24 m 30 s)
-Start Date: 2021:08:30 10:23:55
-End Date:   2021:08:30 10:48:26
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-ウィルススキャンのテストウィルス有りの場合&quot;&gt;4. ウィルススキャンのテスト（ウィルス有りの場合）&lt;/h3&gt;
-
-&lt;p&gt;ウィルスが有る場合に正常に機能するかをテストするために、まずテスト用ウィルスを用意する。&lt;br /&gt;
-今回は以下の４つのテストウィルスをダウンロードしてみた。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wget http://www.eicar.org/download/eicar.com \
-http://www.eicar.org/download/eicar.com.txt \
-http://www.eicar.org/download/eicar_com.zip \
-http://www.eicar.org/download/eicarcom2.zip
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;そして、ウィルススキャンを行ってみる。&lt;br /&gt;
-４つとも検知し削除されているのが分かる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# clamscan --infected --remove --recursive
-/root/eicarcom2.zip: Win.Test.EICAR_HDB-1 FOUND
-/root/eicarcom2.zip: Removed.
-/root/eicar_com.zip: Win.Test.EICAR_HDB-1 FOUND
-/root/eicar_com.zip: Removed.
-/root/eicar.com.txt: Win.Test.EICAR_HDB-1 FOUND
-/root/eicar.com.txt: Removed.
-/root/eicar.com: Win.Test.EICAR_HDB-1 FOUND
-/root/eicar.com: Removed.
-
------------ SCAN SUMMARY -----------
-Known viruses: 8561077
-Engine version: 0.103.2
-Scanned directories: 4
-Scanned files: 8
-Infected files: 4
-Data scanned: 0.02 MB
-Data read: 0.01 MB (ratio 2.00:1)
-Time: 1606.701 sec (26 m 46 s)
-Start Date: 2021:08:30 10:50:49
-End Date:   2021:08:30 11:17:36
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-ウィルススキャン実行用スクリプトの作成&quot;&gt;5. ウィルススキャン実行用スクリプトの作成&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamscan&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
-
-&lt;span class=&quot;nv&quot;&gt;PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/bin:/bin
-
-&lt;span class=&quot;c&quot;&gt;# スキャン除外設定&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# （clamdscan でなく clamscan を使用する場合はコメント解除）&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#excludelist=/root/clamscan.exclude&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#if [ -s $excludelist ]; then&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#    for i in `cat $excludelist`&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#    do&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#        if [ $(echo &quot;$i&quot;|grep \/$) ]; then&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#            i=`echo $i|sed -e &apos;s/^\([^ ]*\)\/$/\1/p&apos; -e d`&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#            excludeopt=&quot;${excludeopt} --exclude-dir=^$i&quot;&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#        else&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#            excludeopt=&quot;${excludeopt} --exclude=^$i&quot;&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#        fi&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#    done&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#fi&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# ウィルス定義ファイル最新化&lt;/span&gt;
-freshclam &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; /dev/null
-
-&lt;span class=&quot;c&quot;&gt;# ウィルススキャン&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;CLAMSCANTMP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mktemp&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# （clamdscan では --remove オプションが使用できない）&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#clamscan --recursive --remove ${excludeopt} / &amp;gt; $CLAMSCANTMP 2&amp;gt;&amp;amp;1&lt;/span&gt;
-clamdscan &lt;span class=&quot;nt&quot;&gt;--recursive&lt;/span&gt; / &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$CLAMSCANTMP&lt;/span&gt; 2&amp;gt;&amp;amp;1
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-z&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;grep &lt;/span&gt;FOUND&lt;span class=&quot;nv&quot;&gt;$ $CLAMSCANTMP&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# レポートのメール送信&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;grep &lt;/span&gt;FOUND&lt;span class=&quot;nv&quot;&gt;$ $CLAMSCANTMP&lt;/span&gt; | mail &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Virus Found in &lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;hostname&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; root
-&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$CLAMSCANTMP&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;6-ウィルススキャン実行用スクリプトに実行権限付与&quot;&gt;6. ウィルススキャン実行用スクリプトに実行権限付与&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# chmod +x clamscan
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-スキャン対象外ファイルの編集&quot;&gt;7. スキャン対象外ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;ウィルススキャンを行わないディレクトリがあれば、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamscan.exclude&lt;/code&gt; ファイルに記述する。（但し、 clamscan を使用する場合）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamscan.exclude&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
-2
-3
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;/dev/   &lt;span class=&quot;c&quot;&gt;# &amp;lt;= &quot;dev&quot;  ディレクトリをスキャン対象外にする場合&lt;/span&gt;
-/proc/  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= &quot;proc&quot; ディレクトリをスキャン対象外にする場合&lt;/span&gt;
-/sys/   &lt;span class=&quot;c&quot;&gt;# &amp;lt;= &quot;sys&quot;  ディレクトリをスキャン対象外にする場合&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;ウィルススキャン実行用スクリプト内で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamscan&lt;/code&gt; でなく &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamdscan&lt;/code&gt; を使用するようにしている場合は、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamscan.exclude&lt;/code&gt; を作成せず、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/clamav/clamd.conf&lt;/code&gt; に以下のように追記する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/clamav/clamd.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
-2
-3
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;ExcludePath ^/dev/
-ExcludePath ^/proc/
-ExcludePath ^/sys/
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;8-スクリプトの実行&quot;&gt;8. スクリプトの実行&lt;/h3&gt;
-
-&lt;p&gt;作成したウィルススキャン実行スクリプトが正常に実行されるか試しに動かしてみる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ./clamscan
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;9-自動実行の設定&quot;&gt;9. 自動実行の設定&lt;/h3&gt;
-
-&lt;p&gt;ウィルススキャン実行スクリプトに問題がなければ、毎日自動で実行させるために cron ディレクトリへ移動する。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;daily&lt;/code&gt; でなく &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;weekly&lt;/code&gt; や &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;monthly&lt;/code&gt; でもよい。好みの問題）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mv clamscan /etc/cron.daily/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="ウイルス対策" /><summary type="html">Debian GNU/Linux 11 (bullseye) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
