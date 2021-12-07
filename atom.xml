@@ -1,4 +1,177 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2021-12-01T22:56:04+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - NFS サーバのポート固定！</title><link href="https://komasaru.github.io/2021/12/02/debian-11-nfs-port-fixing/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - NFS サーバのポート固定！" /><published>2021-12-02T00:20:00+09:00</published><updated>2021-12-02T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/02/debian-11-nfs-port-fixing</id><content type="html" xml:base="https://komasaru.github.io/2021/12/02/debian-11-nfs-port-fixing/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に NFS サーバで使用するポートを固定化する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2021-12-07T11:14:06+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - SMTP サーバ Postfix 構築！</title><link href="https://komasaru.github.io/2021/12/08/debian-11-postfix-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - SMTP サーバ Postfix 構築！" /><published>2021-12-08T00:20:00+09:00</published><updated>2021-12-08T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/08/debian-11-postfix-installation</id><content type="html" xml:base="https://komasaru.github.io/2021/12/08/debian-11-postfix-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に SMTP サーバ Postfix を構築する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;接続可能なマシンのネットワークは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.0/24&lt;/code&gt; を想定。&lt;/li&gt;
+  &lt;li&gt;ドメイン名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xxxxxxxx.com&lt;/code&gt;、サーバホスト名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mail&lt;/code&gt; を想定。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-postfix-のインストール&quot;&gt;1. Postfix のインストール&lt;/h3&gt;
+
+&lt;p&gt;SMTP サーバ Postfix を以下のようにしてインストールする。&lt;br /&gt;
+途中でどの設定を選択するか確認されるが、後で設定を行うので &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;No Configuration&lt;/code&gt;（設定なし）を選択する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install postfix sasl2-bin
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-設定ファイルの編集&quot;&gt;2. 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;設定ファイル雛形(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/main.cf.proto&lt;/code&gt;)から &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cf&lt;/code&gt; を複製後、編集する。（ちなみに、同じ雛形は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/share/postfix&lt;/code&gt; にもある）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cp /etc/postfix/main.cf{.proto,}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/main.cf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;mail_owner &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; postfix                   &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メール所有者&lt;/span&gt;
+
+myhostname &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; mail.xxxxxxxx.com          &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ホスト名&lt;/span&gt;
+
+mydomain &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; xxxxxxxx.com                 &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ドメイン名&lt;/span&gt;
+
+myorigin &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;                   &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ローカルからのメール送信時の送信元メールアドレス@以降にドメイン名を付加&lt;/span&gt;
+
+inet_interfaces &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; all                  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 外部からのメール受信を許可&lt;/span&gt;
+
+mydestination &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$myhostname&lt;/span&gt;, localhost.&lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;, localhost, &lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;, vbox.&lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 自ドメイン宛メールを受信できるようにする&lt;/span&gt;
+
+local_recipient_maps &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; unix:passwd.byname &lt;span class=&quot;nv&quot;&gt;$alias_maps&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= サーバにアカウントがあれば、その人宛に届く&lt;/span&gt;
+
+mynetworks &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 127.0.0.0/8, 192.168.11.0/24  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 自ネットワーク&lt;/span&gt;
+
+alias_maps &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;hash&lt;/span&gt;:/etc/aliases         &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 受信メールの再転送先ファイル&lt;/span&gt;
+
+alias_database &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;hash&lt;/span&gt;:/etc/aliases     &lt;span class=&quot;c&quot;&gt;# &amp;lt;= newaliasesコマンドの実行対象&lt;/span&gt;
+
+home_mailbox &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; Maildir/                &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メールボックス形式を Maildir 形式に&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)&lt;/span&gt;
+smtpd_banner &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$myhostname&lt;/span&gt; ESMTP       &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メールサーバーソフト名の隠蔽化&lt;/span&gt;
+
+sendmail_path &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /usr/sbin/postfix      &lt;span class=&quot;c&quot;&gt;# &amp;lt;= Postfix sendmail コマンドの場所&lt;/span&gt;
+
+newaliases_path &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /usr/bin/newaliases  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= Postfix newaliases コマンドの場所&lt;/span&gt;
+
+mailq_path &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /usr/bin/mailq            &lt;span class=&quot;c&quot;&gt;# &amp;lt;= Postfix mailq コマンドの場所&lt;/span&gt;
+
+setgid_group &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; postdrop                &lt;span class=&quot;c&quot;&gt;# &amp;lt;= set-gid Postfix コマンドおよびグループ書き込み可能な Postfix ディレクトリを所有するグループ&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#html_directory =                      # &amp;lt;= コメント化&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#manpage_directory =                   # &amp;lt;= コメント化&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#sample_directory =                    # &amp;lt;= コメント化&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#readme_directory =                    # &amp;lt;= コメント化&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 最終行へ追加&lt;/span&gt;
+message_size_limit &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 10485760          &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 送受信メールサイズを10Mに制限&lt;/span&gt;
+mailbox_size_limit &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1073741824        &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メールボックスサイズを1Gに制限&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# SMTP-Auth用&lt;/span&gt;
+smtpd_sasl_type &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; dovecot
+smtpd_sasl_path &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; private/auth
+smtpd_sasl_auth_enable &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;yes
+&lt;/span&gt;smtpd_sasl_security_options &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; noanonymous
+smtpd_sasl_local_domain &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$myhostname&lt;/span&gt;
+smtpd_client_restrictions &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; permit_mynetworks,reject_unknown_client,permit
+smtpd_recipient_restrictions &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; permit_mynetworks,permit_auth_destination,permit_sasl_authenticated,reject
+
+&lt;span class=&quot;c&quot;&gt;# 特定ドメイン／アドレス受信拒否（必要であれば）&lt;/span&gt;
+smtpd_sender_restrictions &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; reject_unknown_sender_domain, reject_non_fqdn_sender, &lt;span class=&quot;nb&quot;&gt;hash&lt;/span&gt;:/etc/postfix/reject_sender&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;2-1-上記で特定のドメインアドレスを受信拒否する設定にした場合&quot;&gt;2-1. 上記で特定のドメイン／アドレスを受信拒否する設定にした場合&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/reject_sender&lt;/code&gt; を作成して、設定したいドメイン／アドレスを記述する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/reject_sender&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;xxxxxxxxxx.xxx REJECT&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;REJECT&lt;/code&gt;: 拒否をし、その旨のメッセージを返信する&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DISCARD&lt;/code&gt;: 拒否をし、その旨のメッセージも返信しない&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;そして、ハッシュマップの生成。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# postmap /etc/postfix/reject_sender
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;最後に、 Postfix を再起動（or リロード）。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart postfix
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-saslauthd-の編集&quot;&gt;3. saslauthd の編集&lt;/h3&gt;
+
+&lt;p&gt;マシン起動時に saslauthd を自動起動させるために &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;saslauthd&lt;/code&gt; を編集する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/saslauthd&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;START&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= no を yes に変更&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;これをしないと saslauthd 起動時に以下のような警告が出力される。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;To enable saslauthd, edit /etc/default/saslauthd and set START=yes (warning).
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-saslauthd-の再起動&quot;&gt;4. saslauthd の再起動&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart saslauthd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-postfix-の再起動&quot;&gt;5. Postfix の再起動&lt;/h3&gt;
+
+&lt;p&gt;設定を反映させるためにエイリアスの変更を反映させ、 Postfix を再起動する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# newaliases
+# systemctl restart postfix
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-ファイアウォールufwの設定&quot;&gt;6. ファイアウォール(ufw)の設定&lt;/h3&gt;
+
+&lt;p&gt;実際に運用する場合は、TCP ポート 25(SMTP) を開放する必要がある。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 25/tcp
+Rule added
+
+# ufw status
+    :
+25/tcp                     ALLOW       Anywhere
+    :
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-メールの転送設定&quot;&gt;7. メールの転送設定&lt;/h3&gt;
+
+&lt;p&gt;root や postmaster 等宛に届いたメールを一般ユーザに転送するには &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/aliases&lt;/code&gt; を編集する。&lt;br /&gt;
+以下は一例。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/aliases&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;postmaster: root
+root:       masaru&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;この設定を有効にするために以下のようにする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# newaliases                 # &amp;lt;= エイリアスの即時反映
+# systemctl restart postfix  # &amp;lt;= Postfix の再起動
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/main.cf&lt;/code&gt; 内で説明されているとおり、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;newaliases&lt;/code&gt; の代わりに &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;postalias /etc/aliases&lt;/code&gt; でもよい。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><summary type="html">Debian GNU/Linux 11 (bullseye) に SMTP サーバ Postfix を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - NFS サーバのポート固定！</title><link href="https://komasaru.github.io/2021/12/02/debian-11-nfs-port-fixing/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - NFS サーバのポート固定！" /><published>2021-12-02T00:20:00+09:00</published><updated>2021-12-02T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/02/debian-11-nfs-port-fixing</id><content type="html" xml:base="https://komasaru.github.io/2021/12/02/debian-11-nfs-port-fixing/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に NFS サーバで使用するポートを固定化する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -2051,108 +2224,4 @@ To                         Action      From
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="ファイアウォール" /><summary type="html">Debian GNU/Linux 11 (bullseye) でファイアウォールを設定する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - 時刻同期設定(systemd-timesyncd)！</title><link href="https://komasaru.github.io/2021/10/13/debian-11-systemd-timesyncd/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - 時刻同期設定(systemd-timesyncd)！" /><published>2021-10-13T00:20:00+09:00</published><updated>2021-10-13T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/10/13/debian-11-systemd-timesyncd</id><content type="html" xml:base="https://komasaru.github.io/2021/10/13/debian-11-systemd-timesyncd/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11 (bullseye) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;従来からの &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ntpd&lt;/code&gt; ではなく &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chronyd&lt;/code&gt; をインストールする。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ntpd&lt;/code&gt; と &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chronyd&lt;/code&gt; の違いについて、ここでは説明しない。&lt;/li&gt;
-  &lt;li&gt;ローカルネットワークは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.0/24&lt;/code&gt; とする。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-chrony-のインストール&quot;&gt;1. Chrony のインストール&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install chrony
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-設定ファイルの編集&quot;&gt;2. 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/chrony/chrony.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;server ntp.nict.jp iburst           &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-server ntp1.jst.mfeed.ad.jp iburst  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-server ntp2.jst.mfeed.ad.jp iburst  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-server ntp3.jst.mfeed.ad.jp iburst  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-
-allow 192.168.11.0/24                 &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;うるう秒にも対応させるには、以下のような記述も追記する。（参考： &lt;a href=&quot;https://chrony.tuxfamily.org/manual.html&quot; title=&quot;chrony - Documentation&quot;&gt;chrony - Manual for version 2.3&lt;/a&gt;）&lt;br /&gt;
-（うるう秒対策時のみでもよいだろう）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/chrony/chrony.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;leapsecmode slew
-maxslewrate 1000
-smoothtime 400 0.001 leaponly&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;3-chrony-の再起動&quot;&gt;3. Chrony の再起動&lt;/h3&gt;
-
-&lt;p&gt;インストール直後は起動した状態になっているので、変更を有効化するために再起動する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart chrony
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-chrony-の自動起動設定&quot;&gt;4. Chrony の自動起動設定&lt;/h3&gt;
-
-&lt;p&gt;インストール後はデフォルトで自動起動するように設定されているはずだが、自動起動するようなっていなければ設定する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl enable chrony
-Synchronizing state of chrony.service with SysV service script with /lib/systemd/systemd-sysv-install.
-Executing: /lib/systemd/systemd-sysv-install enable chrony
-Created symlink /etc/systemd/system/chronyd.service → /lib/systemd/system/chrony.service.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;確認してみる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl is-enabled chrony
-enabled
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;以下のようにして確認してもよい。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl list-unit-files -t service | grep chrony
-chrony-dnssrv@.service                 static
-chrony.service                         enabled
-chronyd.service                        enabled
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-時刻同期状況の確認&quot;&gt;5. 時刻同期状況の確認&lt;/h3&gt;
-
-&lt;p&gt;数分後くらいに同期状況を確認してみる。（ntpd の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ntpq -p&lt;/code&gt; にあたる）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# chronyc sources
-210 Number of sources = 12
-MS Name/IP address         Stratum Poll Reach LastRx Last sample
-===============================================================================
-^? ns1.ooonet.ru                 0   7     0     -     +0ns[   +0ns] +/-    0ns
-^- karhu.miuku.net               2   6    57    24    +51us[  +51us] +/-   82ms
-^- helium.supersandro.de         2   6    37    25  +6171us[+6171us] +/-  179ms
-^- fetchmail.mediainvent.at      2   6    37    26  +2925us[+2925us] +/-  189ms
-^? 2a0b:4341:1500:123::          0   6     0     -     +0ns[   +0ns] +/-    0ns
-^? 2600:70ff:b817::9             0   6     0     -     +0ns[   +0ns] +/-    0ns
-^? 2606:5580:30a:7fca::1         0   6     0     -     +0ns[   +0ns] +/-    0ns
-^? 2001:470:19:301::100          0   6     0     -     +0ns[   +0ns] +/-    0ns
-^- ntp-b2.nict.go.jp             1   6    37    29  +4088us[+4088us] +/-   18ms
-^- ntp1.jst.mfeed.ad.jp          2   6    37    30   -801us[ -801us] +/-   76ms
-^* ntp2.jst.mfeed.ad.jp          2   6    37    32    +88us[ +207ms] +/-   70ms
-^- ntp3.jst.mfeed.ad.jp          2   6    37    28   +925us[ +925us] +/-   97ms
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;１カラム目の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;^&lt;/code&gt; は「サーバ」（他に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;=&lt;/code&gt; は「ピア」、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#&lt;/code&gt; はローカルのハードウェアクロック）&lt;/li&gt;
-  &lt;li&gt;２カラム目の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*&lt;/code&gt; は「同期対象として採用」&lt;/li&gt;
-  &lt;li&gt;２カラム目の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;+&lt;/code&gt; は「同期対象候補」&lt;/li&gt;
-  &lt;li&gt;２カラム目の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-&lt;/code&gt; は「アルゴリズムにより同期対象から除外」&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="ファイアウォール" /><summary type="html">Debian GNU/Linux 11 (bullseye) でファイアウォールを設定する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>

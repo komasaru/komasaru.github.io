@@ -12184,4 +12184,10 @@ var store = [{
         "tags": ["Debian","Linux","NFS"],
         "url": "/2021/12/02/debian-11-nfs-port-fixing/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - SMTP サーバ Postfix 構築！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に SMTP サーバ Postfix を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。 接続可能なマシンのネットワークは 192.168.11.0/24 を想定。 ドメイン名は xxxxxxxx.com、サーバホスト名は mail を想定。 root ユーザでの作業を想定。 1. Postfix のインストール SMTP サーバ Postfix を以下のようにしてインストールする。 途中でどの設定を選択するか確認されるが、後で設定を行うので No Configuration（設定なし）を選択する。 # apt -y install postfix...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Postfix"],
+        "url": "/2021/12/08/debian-11-postfix-installation/",
+        "teaser": null
       }]
