@@ -12190,4 +12190,10 @@ var store = [{
         "tags": ["Debian","Linux","Postfix"],
         "url": "/2021/12/08/debian-11-postfix-installation/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - POP/IMAP サーバ Dovecot 構築！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。 接続可能なマシンのネットワークは 192.168.11.0/24 を想定。 root ユーザでの作業を想定。 1. Dovecot のインストール POP/IMAP サーバ Dovecot を以下のようにしてインストールする。 # apt -y install dovecot-common dovecot-pop3d dovecot-imapd 2. 設定ファイル dovecot.conf の編集 File:...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Dovecot"],
+        "url": "/2021/12/15/debian-11-dovecot-installation/",
+        "teaser": null
       }]
