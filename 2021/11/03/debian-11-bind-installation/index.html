@@ -391,7 +391,7 @@
 <ul>
   <li>Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。</li>
   <li>サーバのローカル IP アドレスは <code class="language-plaintext highlighter-rouge">192.168.11.101</code>、グローバル IP アドレスは <code class="language-plaintext highlighter-rouge">xxx.yyy.zzz.aaa</code> を想定。</li>
-  <li>ドメイン名は <code class="language-plaintext highlighter-rouge">mk-mode.com</code>、マシンのホスト名は <code class="language-plaintext highlighter-rouge">vbox</code>、ネームサーバホスト名は <code class="language-plaintext highlighter-rouge">ns</code> を想定。</li>
+  <li>ドメイン名は <code class="language-plaintext highlighter-rouge">xxxxxxxx.com</code>、マシンのホスト名は <code class="language-plaintext highlighter-rouge">foo</code>、ネームサーバホスト名は <code class="language-plaintext highlighter-rouge">ns</code> を想定。</li>
   <li>セカンダリ DNS は用意しない。</li>
   <li>root ユーザでの作業を想定。</li>
 </ul>
@@ -427,9 +427,9 @@ include <span class="s2">"/etc/bind/named.conf.external-zones"</span><span class
     <span class="o">}</span><span class="p">;</span>
 
     <span class="c"># 内部向け正引きゾーン定義</span>
-    zone <span class="s2">"mk-mode.com"</span> <span class="o">{</span>
+    zone <span class="s2">"xxxxxxxx.com"</span> <span class="o">{</span>
         <span class="nb">type </span>master<span class="p">;</span>
-        file <span class="s2">"/etc/bind/mk-mode.com.lan"</span><span class="p">;</span>
+        file <span class="s2">"/etc/bind/xxxxxxxx.com.lan"</span><span class="p">;</span>
         allow-update <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
     <span class="o">}</span><span class="p">;</span>
 
@@ -461,9 +461,9 @@ include <span class="s2">"/etc/bind/named.conf.external-zones"</span><span class
     <span class="c">#recursion no;            # 再帰検索禁止</span>
 
     <span class="c"># 外部向け正引きゾーン定義</span>
-    zone <span class="s2">"mk-mode.com"</span> <span class="o">{</span>
+    zone <span class="s2">"xxxxxxxx.com"</span> <span class="o">{</span>
         <span class="nb">type </span>master<span class="p">;</span>
-        file <span class="s2">"/etc/bind/mk-mode.com.wan"</span><span class="p">;</span>
+        file <span class="s2">"/etc/bind/xxxxxxxx.com.wan"</span><span class="p">;</span>
         allow-update <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
     <span class="o">}</span><span class="p">;</span>
 
@@ -518,10 +518,10 @@ logging <span class="o">{</span>
 
 <h3 id="6-内部向け正引きゾーン定義ファイルの作成">6. 内部向け正引きゾーン定義ファイルの作成</h3>
 
-<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/mk-mode.com.lan</code></p>
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/xxxxxxxx.com.lan</code></p>
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$TTL</span> 86400
-@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. <span class="o">(</span>
+@   IN  SOA     ns.xxxxxxxx.com. root.xxxxxxxx.com. <span class="o">(</span>
         2021083101  <span class="p">;</span>Serial
         3600        <span class="p">;</span>Refresh
         1800        <span class="p">;</span>Retry
@@ -529,26 +529,26 @@ logging <span class="o">{</span>
         86400       <span class="p">;</span>Minimum TTL
 <span class="o">)</span>
 
-        IN  NS      ns.mk-mode.com.
+        IN  NS      ns.xxxxxxxx.com.
         IN  A       192.168.11.101
-        IN  MX 10   ns.mk-mode.com.
+        IN  MX 10   ns.xxxxxxxx.com.
 ns      IN  A       192.168.11.101
-vbox    IN  A       192.168.11.101
+foo    IN  A       192.168.11.101
 hoge    IN  A       192.168.11.2
 fuga    IN  A       192.168.11.3
-www     IN  CNAME   ns.mk-mode.com.
-ftp     IN  CNAME   ns.mk-mode.com.
-mail    IN  CNAME   ns.mk-mode.com.</code></pre></figure>
+www     IN  CNAME   ns.xxxxxxxx.com.
+ftp     IN  CNAME   ns.xxxxxxxx.com.
+mail    IN  CNAME   ns.xxxxxxxx.com.</code></pre></figure>
 
 <p><code class="language-plaintext highlighter-rouge">hoge</code>, <code class="language-plaintext highlighter-rouge">fuga</code> はローカルネットワーク内の別のマシン。<br />
 <code class="language-plaintext highlighter-rouge">www</code>, <code class="language-plaintext highlighter-rouge">ftp</code>, <code class="language-plaintext highlighter-rouge">mail</code> は別名定義。</p>
 
 <h3 id="7-外部向け正引きゾーン定義ファイルの作成">7. 外部向け正引きゾーン定義ファイルの作成</h3>
 
-<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/mk-mode.com.wan</code></p>
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/xxxxxxxx.com.wan</code></p>
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$TTL</span> 86400
-@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. <span class="o">(</span>
+@   IN  SOA     ns.xxxxxxxx.com. root.xxxxxxxx.com. <span class="o">(</span>
         2021083101  <span class="p">;</span>Serial
         3600        <span class="p">;</span>Refresh
         1800        <span class="p">;</span>Retry
@@ -556,9 +556,9 @@ mail    IN  CNAME   ns.mk-mode.com.</code></pre></figure>
         86400       <span class="p">;</span>Minimum TTL
 <span class="o">)</span>
 
-        IN  NS      ns.mk-mode.com.
+        IN  NS      ns.xxxxxxxx.com.
         IN  A       xxx.yyy.zzz.aaa
-        IN  MX 10   ns.mk-mode.com.
+        IN  MX 10   ns.xxxxxxxx.com.
 ns      IN  A       xxx.yyy.zzz.aaa</code></pre></figure>
 
 <h3 id="8-内部向け逆引きゾーン定義ファイルの作成">8. 内部向け逆引きゾーン定義ファイルの作成</h3>
@@ -566,7 +566,7 @@ ns      IN  A       xxx.yyy.zzz.aaa</code></pre></figure>
 <p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/11.168.192.db</code></p>
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$TTL</span> 86400
-@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. <span class="o">(</span>
+@   IN  SOA     ns.xxxxxxxx.com. root.xxxxxxxx.com. <span class="o">(</span>
         2021083101  <span class="p">;</span>Serial
         3600        <span class="p">;</span>Refresh
         1800        <span class="p">;</span>Retry
@@ -574,20 +574,20 @@ ns      IN  A       xxx.yyy.zzz.aaa</code></pre></figure>
         86400       <span class="p">;</span>Minimum TTL
 <span class="o">)</span>
 
-        IN  NS      ns.mk-mode.com.
-        IN  PTR     mk-mode.com.
+        IN  NS      ns.xxxxxxxx.com.
+        IN  PTR     xxxxxxxx.com.
         IN  A       255.255.255.0
-101     IN  PTR     ns.mk-mode.com.
-101     IN  PTR     vbox.mk-mode.com.
-2       IN  PTR     hoge.mk-mode.com.
-3       IN  PTR     fuga.mk-mode.com.</code></pre></figure>
+101     IN  PTR     ns.xxxxxxxx.com.
+101     IN  PTR     foo.xxxxxxxx.com.
+2       IN  PTR     hoge.xxxxxxxx.com.
+3       IN  PTR     fuga.xxxxxxxx.com.</code></pre></figure>
 
 <h3 id="9-外部向け逆引きゾーン定義ファイルの作成">9. 外部向け逆引きゾーン定義ファイルの作成</h3>
 
 <p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/zzz.yyy.xxx.db</code></p>
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$TTL</span> 86400
-@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. <span class="o">(</span>
+@   IN  SOA     ns.xxxxxxxx.com. root.xxxxxxxx.com. <span class="o">(</span>
         2021083101  <span class="p">;</span>Serial
         3600        <span class="p">;</span>Refresh
         1800        <span class="p">;</span>Retry
@@ -595,10 +595,10 @@ ns      IN  A       xxx.yyy.zzz.aaa</code></pre></figure>
         86400       <span class="p">;</span>Minimum TTL
 <span class="o">)</span>
 
-        IN  NS      ns.mk-mode.com.
-        IN  PTR     mk-mode.com.
+        IN  NS      ns.xxxxxxxx.com.
+        IN  PTR     xxxxxxxx.com.
         IN  A       255.255.255.254
-aaa     IN  PTR     ns.mk-mode.com.</code></pre></figure>
+aaa     IN  PTR     ns.xxxxxxxx.com.</code></pre></figure>
 
 <p>（<code class="language-plaintext highlighter-rouge">255.255.255.254</code> はグローバル IP が１個のみの場合の設定値）</p>
 
@@ -610,9 +610,9 @@ aaa     IN  PTR     ns.mk-mode.com.</code></pre></figure>
 <p>File: <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code></p>
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#domain localdomain        # &lt;= コメント化</span>
-domain mk-mode.com         <span class="c"># &lt;= 追加</span>
+domain xxxxxxxx.com         <span class="c"># &lt;= 追加</span>
 <span class="c">#search localdomain        # &lt;= コメント化</span>
-search mk-mode.com         <span class="c"># &lt;= 追加</span>
+search xxxxxxxx.com         <span class="c"># &lt;= 追加</span>
 nameserver 192.168.11.101  <span class="c"># &lt;= 追加</span>
 nameserver 192.168.11.1    <span class="c"># &lt;= ルータの IP アドレス</span></code></pre></figure>
 
@@ -639,9 +639,9 @@ nameserver 192.168.11.1    <span class="c"># &lt;= ルータの IP アドレス<
 
 <p>【内部向け正引きテスト】</p>
 
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dig ns.mk-mode.com.
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dig ns.xxxxxxxx.com.
 
-; &lt;&lt;&gt;&gt; DiG 9.16.15-Debian &lt;&lt;&gt;&gt; ns.mk-mode.com.
+; &lt;&lt;&gt;&gt; DiG 9.16.15-Debian &lt;&lt;&gt;&gt; ns.xxxxxxxx.com.
 ;; global options: +cmd
 ;; Got answer:
 ;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 42607
@@ -651,10 +651,10 @@ nameserver 192.168.11.1    <span class="c"># &lt;= ルータの IP アドレス<
 ; EDNS: version: 0, flags:; udp: 1232
 ; COOKIE: feae014ca532b70b01000000612d88232c502b8a27dff786 (good)
 ;; QUESTION SECTION:
-;ns.mk-mode.com.                        IN      A
+;ns.xxxxxxxx.com.                        IN      A
 
 ;; ANSWER SECTION:
-ns.mk-mode.com.         86400   IN      A       192.168.11.101
+ns.xxxxxxxx.com.         86400   IN      A       192.168.11.101
 
 ;; Query time: 8 msec
 ;; SERVER: 192.168.11.101#53(192.168.11.101)
@@ -680,8 +680,8 @@ ns.mk-mode.com.         86400   IN      A       192.168.11.101
 ;101.11.168.192.in-addr.arpa.   IN      PTR
 
 ;; ANSWER SECTION:
-101.11.168.192.in-addr.arpa. 86400 IN   PTR     ns.mk-mode.com.
-101.11.168.192.in-addr.arpa. 86400 IN   PTR     vbox.mk-mode.com.
+101.11.168.192.in-addr.arpa. 86400 IN   PTR     ns.xxxxxxxx.com.
+101.11.168.192.in-addr.arpa. 86400 IN   PTR     foo.xxxxxxxx.com.
 
 ;; Query time: 3 msec
 ;; SERVER: 192.168.11.101#53(192.168.11.101)
@@ -892,6 +892,30 @@ To                         Action      From
     
     <h3 class="archive__item-title" itemprop="headline">
       
+        <a href="/2021/12/22/debian-11-mail-ssl-setting/" rel="permalink">Debian 11 (bullseye) - メールサーバ SSL 設定！
+</a>
+        &nbsp;<small>(2021-12-22)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 11 (bullseye) に導入したメールサーバを SSL 設定する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
         <a href="/2021/12/15/debian-11-dovecot-installation/" rel="permalink">Debian 11 (bullseye) - POP/IMAP サーバ Dovecot 構築！
 </a>
         &nbsp;<small>(2021-12-15)</small>
@@ -949,27 +973,6 @@ To                         Action      From
 
 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
 （当然ながら、興味がなければスルーしてください）
-
-</p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h3 class="archive__item-title" itemprop="headline">
-      
-        <a href="/2021/12/01/blog-access/" rel="permalink">2021年11月 - OS・ブラウザ別アクセス状況！
-</a>
-        &nbsp;<small>(2021-12-01)</small>
-    </h3>
-    
-    <p class="archive__item-excerpt" itemprop="description">12月になりましたので、先月11月分の当ブログアクセス状況を公開します。（※自分用の記録）
 
 </p>
   </article>

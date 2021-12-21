@@ -12090,7 +12090,7 @@ var store = [{
         "teaser": null
       },{
         "title": "Debian 11 (bullseye) - サーバ初期設定！",
-        "excerpt":"Debian GNU/Linux 11 (bullseye) インストール後の初期設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 「Debian 11 (bullseye) - インストール（サーバ用途・最小構成）！」の方法でインストールが完了していることを想定。 一般ユーザ名は foo を想定。 以下の作業は全て root ユーザで行うことを想定。 コマンドラインプロンプト # は root ユーザ、 $ は一般ユーザであることを理解しておく。 コメントしての # と混同しないよう注意する。 ネットワークカードは enp0s3 を想定。 IP アドレスは固定する。 IPv6 は使用しない。 ドメインは mk-mode.com を想定。 ネットワークの MTU 最適値は 1454 を想定。 （デフォルトは 1500 だが、環境により最適値は異なるので、算出して設定するとよい。参照： Linux -...","categories": ["サーバ構築"],
+        "excerpt":"Debian GNU/Linux 11 (bullseye) インストール後の初期設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 「Debian 11 (bullseye) - インストール（サーバ用途・最小構成）！」の方法でインストールが完了していることを想定。 一般ユーザ名は foo を想定。 以下の作業は全て root ユーザで行うことを想定。 コマンドラインプロンプト # は root ユーザ、 $ は一般ユーザであることを理解しておく。 コメントしての # と混同しないよう注意する。 ネットワークカードは enp0s3 を想定。 IP アドレスは固定する。 IPv6 は使用しない。 ドメインは xxxxxxxx.com を想定。 ネットワークの MTU 最適値は 1454 を想定。 （デフォルトは 1500 だが、環境により最適値は異なるので、算出して設定するとよい。参照： Linux -...","categories": ["サーバ構築"],
         "tags": ["Debian","Linux"],
         "url": "/2021/09/08/debian-11-initial-setting/",
         "teaser": null
@@ -12108,7 +12108,7 @@ var store = [{
         "teaser": null
       },{
         "title": "Debian 11 (bullseye) - rootkit 検出ツール chkrootkit インストール！",
-        "excerpt":"Debian GNU/Linux 11 (bullseye) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11 (bullseye) での作業を想定。 接続元のマシンは Debian GNU/Linux 10 (buster; 64bit) を想定。 chkrootkit が検知できるのは既知の rootkit のみであり、新規の rootkit は検知できないことを認識しておく。 chkrootkit では誤検知もあるので、検知結果は参考程度に留める。 コマンド自体が改竄されてからでは遅いので、 OS インストール直後に行うのがよいらしい。 root ユーザでの作業を想定。 1. chkrootkit のインストール # apt -y install chkrootkit 2. chkrootkit の実行 以下のようにして...","categories": ["サーバ構築"],
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11 (bullseye) での作業を想定。 接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。 chkrootkit が検知できるのは既知の rootkit のみであり、新規の rootkit は検知できないことを認識しておく。 chkrootkit では誤検知もあるので、検知結果は参考程度に留める。 コマンド自体が改竄されてからでは遅いので、 OS インストール直後に行うのがよいらしい。 root ユーザでの作業を想定。 1. chkrootkit のインストール # apt -y install chkrootkit 2. chkrootkit の実行 以下のようにして...","categories": ["サーバ構築"],
         "tags": ["Debian","Linux"],
         "url": "/2021/09/29/debian-11-chrootkit-installation/",
         "teaser": null
@@ -12132,7 +12132,7 @@ var store = [{
         "teaser": null
       },{
         "title": "Debian 11 (bullseye) - ファイアウォール設定！",
-        "excerpt":"Debian GNU/Linux 11 (bullseye) でファイアウォールを設定する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11 (bullseye) での作業を想定。 接続元のマシンは Debian GNU/Linux 10 (buster; 64bit) を想定。 ufw (= Uncomplicated Firewall) という iptables のフロントエンドツールを使用する。 ファイアウォールのルールは、取り急ぎ最低限の設定のみ。（運用する環境やインストールしたサービスに合わせて適宜行う） root ユーザでの作業を想定。 1. ufw のインストール 依存する iptables 等もインストールされる。 # apt -y install ufw 2. 設定ファイルの編集 IPv6 を使用しない場合は以下のように編集しておく File: /etc/default/ufw IPV6=no 3....","categories": ["サーバ構築"],
+        "excerpt":"Debian GNU/Linux 11 (bullseye) でファイアウォールを設定する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11 (bullseye) での作業を想定。 接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。 ufw (= Uncomplicated Firewall) という iptables のフロントエンドツールを使用する。 ファイアウォールのルールは、取り急ぎ最低限の設定のみ。（運用する環境やインストールしたサービスに合わせて適宜行う） root ユーザでの作業を想定。 1. ufw のインストール 依存する iptables 等もインストールされる。 # apt -y install ufw 2. 設定ファイルの編集 IPv6 を使用しない場合は以下のように編集しておく File: /etc/default/ufw IPV6=no 3....","categories": ["サーバ構築"],
         "tags": ["Debian","Linux","ファイアウォール"],
         "url": "/2021/10/20/debian-11-firewall-setting/",
         "teaser": null
@@ -12150,7 +12150,7 @@ var store = [{
         "teaser": null
       },{
         "title": "Debian 11 (bullseye) - DNS サーバ BIND9 構築！",
-        "excerpt":"Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 サーバのローカル IP アドレスは 192.168.11.101、グローバル IP アドレスは xxx.yyy.zzz.aaa を想定。 ドメイン名は mk-mode.com、マシンのホスト名は vbox、ネームサーバホスト名は ns を想定。 セカンダリ DNS は用意しない。 root ユーザでの作業を想定。 1. BIND のインストール （dnsutils は dig コマンド用） # apt -y install bind9 dnsutils 2. BIND...","categories": ["サーバ構築"],
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 サーバのローカル IP アドレスは 192.168.11.101、グローバル IP アドレスは xxx.yyy.zzz.aaa を想定。 ドメイン名は xxxxxxxx.com、マシンのホスト名は foo、ネームサーバホスト名は ns を想定。 セカンダリ DNS は用意しない。 root ユーザでの作業を想定。 1. BIND のインストール （dnsutils は dig コマンド用） # apt -y install bind9 dnsutils 2. BIND...","categories": ["サーバ構築"],
         "tags": ["Debian","Linux","DNS"],
         "url": "/2021/11/03/debian-11-bind-installation/",
         "teaser": null
@@ -12162,13 +12162,13 @@ var store = [{
         "teaser": null
       },{
         "title": "Debian 11 (bullseye) - FTP サーバ構築！",
-        "excerpt":"Debian GNU/Linux 11 (bullseye) に FTP サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 接続元のマシンは Debian GNU/Linux 10 (buster; 64bit) を想定。 接続テストでは FileZilla という FTP クライアントを使用する。 root ユーザでの作業を想定。 1. vsftpd のインストール # apt -y install vsftpd 2. vsftpd 設定ファイルの編集 File: /etc/vsftpd.conf # anonymous によるログインを無効化 anonymous_enable=NO # ローカルアクセスの許可...","categories": ["サーバ構築"],
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に FTP サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。 接続テストでは FileZilla という FTP クライアントを使用する。 root ユーザでの作業を想定。 1. vsftpd のインストール # apt -y install vsftpd 2. vsftpd 設定ファイルの編集 File: /etc/vsftpd.conf # anonymous によるログインを無効化 anonymous_enable=NO # ローカルアクセスの許可...","categories": ["サーバ構築"],
         "tags": ["Debian","Linux","FTP"],
         "url": "/2021/11/17/debian-11-ftp-installation/",
         "teaser": null
       },{
         "title": "Debian 11 (bullseye) - NFS サーバ構築！",
-        "excerpt":"Debian GNU/Linux 11 (bullseye) に NFS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseyes) での作業を想定。 接続元のマシンは Debian GNU/Linux 10 (buster; 64bit) を想定。 接続可能なマシンのネットワークは 192.168.11.0/24 を想定。 ドメイン名は mk-mode.com、サーバホスト名は vbox を想定。 NFS 用ディレクトリを新たに作成する。（/var 配下に /exports ディレクトリを作成する） クライアント側でマウントに使用するディレクトリも /var/exports とする。 サーバ側は root で作業することを想定、クライアント側は一般ユーザで作業することを想定している。 root ユーザでの作業を想定。 1. NFS サーバのインストール # apt -y install...","categories": ["サーバ構築"],
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に NFS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseyes) での作業を想定。 接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。 接続可能なマシンのネットワークは 192.168.11.0/24 を想定。 ドメイン名は mk-mode.com、サーバホスト名は vbox を想定。 NFS 用ディレクトリを新たに作成する。（/var 配下に /exports ディレクトリを作成する） クライアント側でマウントに使用するディレクトリも /var/exports とする。 サーバ側は root で作業することを想定、クライアント側は一般ユーザで作業することを想定している。 root ユーザでの作業を想定。 1. NFS サーバのインストール # apt -y install...","categories": ["サーバ構築"],
         "tags": ["Debian","Linux","NFS"],
         "url": "/2021/11/24/debian-11-nfs-installation/",
         "teaser": null
@@ -12180,7 +12180,7 @@ var store = [{
         "teaser": null
       },{
         "title": "Debian 11 (bullseye) - NFS サーバのポート固定！",
-        "excerpt":"Debian GNU/Linux 11 (bullseye) に NFS サーバで使用するポートを固定化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 接続元のマシンは Debian GNU/Linux 10 (buster; 64bit) を想定。 NFS サーバ構築済み。 （参照：「Debian 11 (bullseye) - NFS サーバ構築！」） ファイアウォール iptables が構築済み。 （参照：「Debian 11 (bullseye) - ファイアウォール設定！」） 以下で設定するポート番号は参考サイトによるもであり、任意に設定可能。 quota は使用していないので、参考サイトにある quota の設定はしない。 root ユーザでの作業を想定。 1. 前提知識 NFS...","categories": ["サーバ構築"],
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に NFS サーバで使用するポートを固定化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。 NFS サーバ構築済み。 （参照：「Debian 11 (bullseye) - NFS サーバ構築！」） ファイアウォール iptables が構築済み。 （参照：「Debian 11 (bullseye) - ファイアウォール設定！」） 以下で設定するポート番号は参考サイトによるもであり、任意に設定可能。 quota は使用していないので、参考サイトにある quota の設定はしない。 root ユーザでの作業を想定。 1. 前提知識 NFS...","categories": ["サーバ構築"],
         "tags": ["Debian","Linux","NFS"],
         "url": "/2021/12/02/debian-11-nfs-port-fixing/",
         "teaser": null
@@ -12195,5 +12195,11 @@ var store = [{
         "excerpt":"Debian GNU/Linux 11 (bullseye) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。 接続可能なマシンのネットワークは 192.168.11.0/24 を想定。 root ユーザでの作業を想定。 1. Dovecot のインストール POP/IMAP サーバ Dovecot を以下のようにしてインストールする。 # apt -y install dovecot-common dovecot-pop3d dovecot-imapd 2. 設定ファイル dovecot.conf の編集 File:...","categories": ["サーバ構築"],
         "tags": ["Debian","Linux","Dovecot"],
         "url": "/2021/12/15/debian-11-dovecot-installation/",
+        "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - メールサーバ SSL 設定！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に導入したメールサーバを SSL 設定する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.1.0 (bullseye; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。 SMTP サーバは Postfix, POP/IMAP サーバは Dovecot を想定。 Postfix を「Debian 11 (bullseye) - SMTP サーバ Postfix 構築！」の方法で導入済み。 Dovecot を「Debian 11 (bullseye) - POP/IMAP サーバ Dovecot 構築！」の方法で導入済み。 接続可能なマシンのネットワークは...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Postfix","Dovecot","SSL"],
+        "url": "/2021/12/22/debian-11-mail-ssl-setting/",
         "teaser": null
       }]
