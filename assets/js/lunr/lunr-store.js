@@ -12202,4 +12202,10 @@ var store = [{
         "tags": ["Debian","Linux","Postfix","Dovecot","SSL"],
         "url": "/2021/12/22/debian-11-mail-ssl-setting/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - Postfix ウィルス・スパム対策(ClamAV + SpamAssassin)！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) にアンチウイルスソフト ClamAV とスパム対策ソフト SpamAssassin をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 SMTP サーバ Postfix を「Debian 11 (bullseye) - SMTP サーバ Postfix 構築！」の方法で導入済み。 アンチウィルスソフト ClamAV 導入済み。 スパムフィルタも運用する。 アンチウィルス ClamAV との連携には、 ClamAV daemon を使用する方法の他に、ClamSMTP を使用する方法もある。 スパムフィルタ SpamAssassin との連携には、 amavisd-new を使用する方法の他に SpamPD を使用する方法もある。 root ユーザでの作業を想定。...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Postfix","ウイルス対策","スパム対策"],
+        "url": "/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin/",
+        "teaser": null
       }]

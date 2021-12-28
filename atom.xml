@@ -1,4 +1,204 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2021-12-21T23:05:20+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - メールサーバ SSL 設定！</title><link href="https://komasaru.github.io/2021/12/22/debian-11-mail-ssl-setting/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - メールサーバ SSL 設定！" /><published>2021-12-22T00:20:00+09:00</published><updated>2021-12-22T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/22/debian-11-mail-ssl-setting</id><content type="html" xml:base="https://komasaru.github.io/2021/12/22/debian-11-mail-ssl-setting/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に導入したメールサーバを SSL 設定する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2021-12-28T17:33:54+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Postfix ウィルス・スパム対策(ClamAV + SpamAssassin)！</title><link href="https://komasaru.github.io/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Postfix ウィルス・スパム対策(ClamAV + SpamAssassin)！" /><published>2021-12-29T00:20:00+09:00</published><updated>2021-12-29T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin</id><content type="html" xml:base="https://komasaru.github.io/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にアンチウイルスソフト ClamAV とスパム対策ソフト SpamAssassin をインストールする方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;SMTP サーバ Postfix を「&lt;a href=&quot;/2021/12/08/debian-11-postfix-installation&quot; title=&quot;Debian 11 (bullseye) - SMTP サーバ Postfix 構築！&quot;&gt;Debian 11 (bullseye) - SMTP サーバ Postfix 構築！&lt;/a&gt;」の方法で導入済み。&lt;/li&gt;
+  &lt;li&gt;アンチウィルスソフト ClamAV 導入済み。&lt;/li&gt;
+  &lt;li&gt;スパムフィルタも運用する。&lt;/li&gt;
+  &lt;li&gt;アンチウィルス ClamAV との連携には、 ClamAV daemon を使用する方法の他に、ClamSMTP を使用する方法もある。&lt;/li&gt;
+  &lt;li&gt;スパムフィルタ SpamAssassin との連携には、 amavisd-new を使用する方法の他に SpamPD を使用する方法もある。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-インストール&quot;&gt;1. インストール&lt;/h3&gt;
+
+&lt;p&gt;Postfix を ClamAV と連携させてウィルススキャン・スパムフィルタを行うのに必要な ClamAV daemon, amavisd-new, SpamAssassinを、以下のようにしてインストールする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install clamav-daemon amavisd-new spamassassin
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-spamassassin-設定ファイルの編集&quot;&gt;2. SpamAssassin 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/spamassassin&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;ENABLED&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= スパムフィルタも有効化（追加）&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;3-amavisd-new-設定ファイルの編集&quot;&gt;3. amavisd-new 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;Postfix と ClamAV, SpamAssassin を連携するのに必要な amavisd-new の設定ファイルを用意し、編集する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cp /usr/share/doc/amavisd-new/examples/amavisd.conf-default /etc/amavis/amavisd.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/amavis/amavisd.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$myhostname&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;mail.mk-mode.com&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ホスト名&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;mk-mode.com&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;         &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ドメイン名&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;$daemon_user&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;amavis&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;           &lt;span class=&quot;c&quot;&gt;# &amp;lt;= amavis デーモンユーザ名&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$daemon_group&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;amavis&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;           &lt;span class=&quot;c&quot;&gt;# &amp;lt;= amavis デーモングループ名&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;$MYHOME&lt;/span&gt;        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;/var/lib/amavis&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= amavisd ホーム&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# $virus_admin = undef;             # &amp;lt;= コメント化されていることを確認（ウィルス検知を都度通知しない）&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;4-15-content_filter_mode-の編集&quot;&gt;4. 15-content_filter_mode の編集&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/amavis/conf.d/15-content_filter_mode&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;@bypass_virus_checks_maps &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;                                                    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
+   &lt;span class=&quot;se&quot;&gt;\%&lt;/span&gt;bypass_virus_checks, &lt;span class=&quot;se&quot;&gt;\@&lt;/span&gt;bypass_virus_checks_acl, &lt;span class=&quot;se&quot;&gt;\$&lt;/span&gt;bypass_virus_checks_re&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
+
+@bypass_spam_checks_maps &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;                                                     &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
+   &lt;span class=&quot;se&quot;&gt;\%&lt;/span&gt;bypass_spam_checks, &lt;span class=&quot;se&quot;&gt;\@&lt;/span&gt;bypass_spam_checks_acl, &lt;span class=&quot;se&quot;&gt;\$&lt;/span&gt;bypass_spam_checks_re&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;ちなみに、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amavisd.conf&lt;/code&gt; にも同じ記述がある。どちらを有効にしても良いだろう。&lt;/p&gt;
+
+&lt;h3 id=&quot;5-15-av_scanners-の編集&quot;&gt;5. 15-av_scanners の編集&lt;/h3&gt;
+
+&lt;p&gt;メールのウィルスチェックの度に clamscan が作動するとマシンが非力な場合は非常に重くなるため、 clamav-daemon が動作する今回の環境では clamdscan でウィルスチェックを行うこととする。（clamscan と clamdscan の違いについては、ここでは説明しない）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/amavis/conf.d/15-av_scanners&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;  &lt;span class=&quot;c&quot;&gt;#[&apos;ClamAV-clamscan&apos;, &apos;clamscan&apos;,  # &amp;lt;= コメント化&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;ClamAV-clamscan&apos;&lt;/span&gt;, &lt;span class=&quot;s1&quot;&gt;&apos;clamdscan&apos;&lt;/span&gt;,  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;6-20-debian_defaults-の編集&quot;&gt;6. 20-debian_defaults の編集&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Considered UNSOLICITED BULK EMAIL, apparently from you&lt;/code&gt; というタイトルのメールが届くことがあるので、それを抑止するための設定を行う。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/amavis/conf.d/20-debian_defaults&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#$final_banned_destiny     = D_DISCARD;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$final_banned_destiny&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; D_REJECT&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D_PASS&lt;/code&gt; … メールは受信者に配送される&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D_REJECT&lt;/code&gt; … メールは配送されないが、送信者に配送されなかった事を伝える&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D_BOUNCE&lt;/code&gt; … メールは配送されないが、送信者に配送されなかった事を伝える。例外で伝えない場合もある&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D_DISCARD&lt;/code&gt; … メールは配送されず、送信者にも配送されなかった事を伝えない&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;7-postfix---maincf-の編集&quot;&gt;7. Postfix - main.cf の編集&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/main.cf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# 最終行へ追加&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;content_filter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;smtp-amavis:[[127.0.0.1]]:10024&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;8-postfix---mastercf-の編集&quot;&gt;8. Postfix - master.cf の編集&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/master.cf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# 最終行へ追加&lt;/span&gt;
+smtp-amavis unix -       -       n      -     2 smtp
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtp_data_done_timeout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1200
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtp_send_xforward_command&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;disable_dns_lookups&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes
+&lt;/span&gt;127.0.0.1:10025 inet n     -     n     -     - smtpd
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;content_filter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;local_recipient_maps&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;relay_recipient_maps&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_restriction_classes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_client_restrictions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_helo_restrictions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_sender_restrictions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_recipient_restrictions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;permit_mynetworks,reject
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;mynetworks&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;127.0.0.0/8
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;strict_rfc821_envelopes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_error_sleep_time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_soft_error_limit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1001
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_hard_error_limit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1000&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;9-その他の設定&quot;&gt;9. その他の設定&lt;/h3&gt;
+
+&lt;p&gt;処理に必要なファイルを作成したり、権限設定、ユーザ作成を行う。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# touch /etc/mailname
+# chmod -R 775 /var/lib/amavis/tmp
+# usermod -G amavis clamav
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;10-サービスの再起動&quot;&gt;10. サービスの再起動&lt;/h3&gt;
+
+&lt;p&gt;ClamAV daemon, Postfix, Amavisd を再起動、SpamAssassin を起動する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart clamav-daemon
+# systemctl restart postfix
+# systemctl restart amavis
+# systemctl start spamassassin
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;11-サービス自動起動の設定&quot;&gt;11. サービス自動起動の設定&lt;/h3&gt;
+
+&lt;p&gt;デフォルトで自動起動する設定になっているはずだが、なっていなければ、自動起動するよう設定する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl enable spamassassin
+Synchronizing state of spamassassin.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable spamassassin
+insserv: warning: current start runlevel(s) (empty) of script `spamassassin&apos; overrides LSB defaults (2 3 4 5).
+insserv: warning: current stop runlevel(s) (0 1 2 3 4 5 6) of script `spamassassin&apos; overrides LSB defaults (0 1 6).
+Created symlink /etc/systemd/system/multi-user.target.wants/spamassassin.service → /lib/systemd/system/spamassassin.service.
+
+# systemctl is-enabled clamav-daemon
+enabled
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;12-動作確認&quot;&gt;12. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;メールを送信してみる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# echo test | mail -s &quot;TEST&quot; root
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;受信メールのヘッダに &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;X-Virus-Scanned: Debian amavisd-new at&lt;/code&gt; の文字列が存在することが確認できれば成功である。（メールソフトでヘッダを表示できる。または、サーバ内に届いたメールファイル(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/&amp;lt;user_name&amp;gt;/Maildir/new/***&lt;/code&gt;)を開いてみる）&lt;/p&gt;
+
+&lt;p&gt;メール送信コマンド &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mail&lt;/code&gt; が使用できない場合は、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mailutils&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;heirloom-mailx&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bsd-mailx&lt;/code&gt; 等をインストールする。複数ある場合は、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;update-alternatives --config mailx&lt;/code&gt; でデフォルト設定をする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+===&amp;lt; 中略 &amp;gt;===
+
+X-Virus-Scanned: Debian amavisd-new at
+
+===&amp;lt; 中略 &amp;gt;===
+
+Subject: TEST
+
+===&amp;lt; 中略 &amp;gt;===
+
+test
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;13-誤検知対策&quot;&gt;13. 誤検知対策&lt;/h3&gt;
+
+&lt;p&gt;スパムメールをそうでないメールと誤検知したり、スパムでないメールをスパムと誤検知する場合は、以下のように &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;local.cf&lt;/code&gt; に追記する。（以下は一例）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mail/spamassassin/local.cf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# 最終行に追記&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Whitelist&lt;/span&gt;
+whitelist_from xxxx@xxxxxxxx.ne.jp
+whitelist_from yyyy@yyyyyyyy.co.jp
+whitelist_from zzzz@zzzzzzzz.com
+
+&lt;span class=&quot;c&quot;&gt;# Blacklist&lt;/span&gt;
+blacklist_from &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;@aaaaaaaa.biz
+blacklist_from &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;@bbbbbbbb.co.jp
+blacklist_from &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;@cccccccc.info
+blacklist_from xxxx@dddddddd.co.jp
+blacklist_from yyyy@eeeeeeee.ne.jp
+blacklist_from zzzz@ffffffff.info&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><category term="ウイルス対策" /><category term="スパム対策" /><summary type="html">Debian GNU/Linux 11 (bullseye) にアンチウイルスソフト ClamAV とスパム対策ソフト SpamAssassin をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - メールサーバ SSL 設定！</title><link href="https://komasaru.github.io/2021/12/22/debian-11-mail-ssl-setting/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - メールサーバ SSL 設定！" /><published>2021-12-22T00:20:00+09:00</published><updated>2021-12-22T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/22/debian-11-mail-ssl-setting</id><content type="html" xml:base="https://komasaru.github.io/2021/12/22/debian-11-mail-ssl-setting/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に導入したメールサーバを SSL 設定する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -1826,416 +2026,4 @@ To                         Action      From
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="DNS" /><summary type="html">Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">2021年10月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2021/11/01/blog-access/" rel="alternate" type="text/html" title="2021年10月 - OS・ブラウザ別アクセス状況！" /><published>2021-11-01T00:20:00+09:00</published><updated>2021-11-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/11/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2021/11/01/blog-access/">&lt;p&gt;11月になりましたので、先月10月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;1-アクセスをos別に集計&quot;&gt;1. アクセスをOS別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;28,077&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;66.4403&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;10,216&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;24.1747&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,622&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.8382&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,480&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.5022&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;634&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.5003&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;166&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.3928&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;46&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1089&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0189&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0189&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;OpenBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0047&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;42,259&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;2-アクセスをosバージョン別に集計&quot;&gt;2. アクセスをOS・バージョン別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;10&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;22,849&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;54.0690&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;10,216&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;24.1747&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;7&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,663&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;11.0343&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,622&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.8382&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,480&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.5022&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;634&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.5003&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;493&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.1666&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;166&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.3928&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;46&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1089&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;42&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0994&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;XP&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;23&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0544&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0189&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0189&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Vista&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0071&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;OpenBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0047&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;2000&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0047&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;98&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0047&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;42,259&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;3-アクセスをブラウザ別に集計&quot;&gt;3. アクセスをブラウザ別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;26,644&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;63.0493&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6,256&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;14.8039&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,526&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;10.7101&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,013&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;9.4962&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;809&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.9144&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla SeaMonkey&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0189&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0047&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0024&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;42,259&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;4-アクセスをブラウザバージョン別に集計上位20件&quot;&gt;4. アクセスをブラウザ・バージョン別に集計（上位20件）&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;94.0.4606.81&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;9,709&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;22.9750&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;94.0.4606.71&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5,937&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;14.0491&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;5.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,526&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;10.7101&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;95.0.4638.54&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3,758&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8.8928&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;94.0.4606.61&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3,101&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;7.3381&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;604.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3,046&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;7.2079&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;93.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,149&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5.0853&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;9537.53&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,889&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.4701&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;605.1.15&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,295&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.0644&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;93.0.4577.82&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,057&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2.5012&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;11.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;789&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.8671&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;92.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;789&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.8671&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;78.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;604&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.4293&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;94.0.4606.85&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;450&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.0649&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;93.0.4577.63&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;335&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.7927&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;92.0.4515.159&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;283&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.6697&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;95.0.4638.50&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;150&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.3550&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;92.0.4515.131&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;145&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.3431&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;95.0.4638.69&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;124&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2934&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;92.0.4515.107&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2366&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;42,259&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">11月になりましたので、先月10月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="DNS" /><summary type="html">Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
