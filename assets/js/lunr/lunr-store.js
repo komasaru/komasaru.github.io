@@ -11891,7 +11891,7 @@ var store = [{
         "url": "/2020/12/16/cpp-lorenz-attractor-by-runge-kutta-method/",
         "teaser": null
       },{
-        "title": "2021年12月 - OS・ブラウザ別アクセス状況！",
+        "title": "2020年12月 - OS・ブラウザ別アクセス状況！",
         "excerpt":"旧年中はお世話になりました。 本年もどうぞよろしくお願いします。 話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 22,809 69.0450 Mac OS 6,658 20.1544 Android 1,360 4.1168 Linux 1,321 3.9988 Ubuntu Linux 610 1.8465 unknown 217 0.6569 Fedora Linux 24 0.0727 OpenBSD 18 0.0545 FreeBSD 11 0.0333 NetBSD 5 0.0151 Solaris 2 0.0061 合　計 33,035 100.0000 2. アクセスをOS・バージョン別に集計 OS...","categories": ["ブログ"],
         "tags": ["Jekyll"],
         "url": "/2021/01/01/blog-access/",
@@ -12209,7 +12209,7 @@ var store = [{
         "url": "/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin/",
         "teaser": null
       },{
-        "title": "2022年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）",
+        "title": "2021年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）",
         "excerpt":"旧年明けまして、新年おめでとうございます。 旧年中はお世話になりました。 本年もどうぞよろしくお願いします。 話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 22,278 65.3678 Mac OS 8,894 26.0967 Android 1,177 3.4535 Linux 1,168 3.4271 Ubuntu Linux 400 1.1737 unknown 129 0.3785 Fedora Linux 21 0.0616 FreeBSD 12 0.0352 NetBSD 1 0.0029 Debian GNU/Linux 1 0.0029 合　計 34,081 100.0000 2. アクセスをOS・バージョン別に集計 OS Version...","categories": ["ブログ"],
         "tags": ["Jekyll"],
         "url": "/2022/01/01/blog-access/",
