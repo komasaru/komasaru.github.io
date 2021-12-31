@@ -1,4 +1,419 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2021-12-28T17:33:54+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Postfix ウィルス・スパム対策(ClamAV + SpamAssassin)！</title><link href="https://komasaru.github.io/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Postfix ウィルス・スパム対策(ClamAV + SpamAssassin)！" /><published>2021-12-29T00:20:00+09:00</published><updated>2021-12-29T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin</id><content type="html" xml:base="https://komasaru.github.io/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にアンチウイルスソフト ClamAV とスパム対策ソフト SpamAssassin をインストールする方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-01-01T00:08:26+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">2022年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）</title><link href="https://komasaru.github.io/2022/01/01/blog-access/" rel="alternate" type="text/html" title="2022年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）" /><published>2022-01-01T00:20:00+09:00</published><updated>2022-01-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2022/01/01/blog-access/">&lt;p&gt;旧年明けまして、新年おめでとうございます。&lt;/p&gt;
+
+&lt;p&gt;旧年中はお世話になりました。 本年もどうぞよろしくお願いします。&lt;/p&gt;
+
+&lt;p&gt;話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;1-アクセスをos別に集計&quot;&gt;1. アクセスをOS別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;22,278&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;65.3678&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8,894&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;26.0967&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,177&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.4535&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,168&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.4271&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;400&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.1737&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;129&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3785&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;21&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0616&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;12&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0352&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0029&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Debian GNU/Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0029&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;34,081&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;2-アクセスをosバージョン別に集計&quot;&gt;2. アクセスをOS・バージョン別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;10&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;17,537&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;51.4568&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;X&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8,894&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;26.0967&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,384&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;12.8635&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,177&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.4535&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,168&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.4271&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;400&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.1737&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;8.1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;312&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.9155&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;129&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3785&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;8&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;31&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0910&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;21&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0616&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;12&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0352&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;XP&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;9&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0264&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Vista&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0088&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;98&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0059&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0029&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Debian GNU/Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0029&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;34,081&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;3-アクセスをブラウザ別に集計&quot;&gt;3. アクセスをブラウザ別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;20,499&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;60.1479&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;5,839&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;17.1327&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,291&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;12.5906&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,927&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8.5884&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;511&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.4994&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0235&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0088&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla SeaMonkey&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0059&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Epiphany&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0029&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;34,081&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;4-アクセスをブラウザバージョン別に集計上位20件&quot;&gt;4. アクセスをブラウザ・バージョン別に集計（上位20件）&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.110&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7,279&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;21.3579&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.45&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,297&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;12.6082&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;5.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,291&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;12.5906&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.93&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3,571&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;10.4780&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;9537.53&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,668&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7.8284&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.55&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,541&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7.4558&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;604.1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,145&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6.2938&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;95.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,291&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.7880&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;605.1.15&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,003&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.9430&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;94.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;806&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.3650&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;95.0.4638.69&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;639&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.8749&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;11.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;495&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.4524&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.104&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;422&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.2382&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;78.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;297&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.8715&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;94.0.4606.81&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;254&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.7453&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;91.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;239&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.7013&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.92&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;177&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.5194&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.113&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;94&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.2758&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;95.0.4638.54&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;89&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.2611&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;90.0.4430.210&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;52&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.1526&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;34,081&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">旧年明けまして、新年おめでとうございます。 旧年中はお世話になりました。 本年もどうぞよろしくお願いします。 話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">Debian 11 (bullseye) - Postfix ウィルス・スパム対策(ClamAV + SpamAssassin)！</title><link href="https://komasaru.github.io/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Postfix ウィルス・スパム対策(ClamAV + SpamAssassin)！" /><published>2021-12-29T00:20:00+09:00</published><updated>2021-12-29T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin</id><content type="html" xml:base="https://komasaru.github.io/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にアンチウイルスソフト ClamAV とスパム対策ソフト SpamAssassin をインストールする方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -1646,384 +2061,4 @@ root hints ファイルも移動する。&lt;/p&gt;
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="DNS" /><summary type="html">Debian GNU/Linux 11 (bullseye) に構築した DNS サーバを chroot 化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - DNS サーバ BIND9 構築！</title><link href="https://komasaru.github.io/2021/11/03/debian-11-bind-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - DNS サーバ BIND9 構築！" /><published>2021-11-03T00:20:00+09:00</published><updated>2021-11-03T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/11/03/debian-11-bind-installation</id><content type="html" xml:base="https://komasaru.github.io/2021/11/03/debian-11-bind-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;サーバのローカル IP アドレスは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.101&lt;/code&gt;、グローバル IP アドレスは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xxx.yyy.zzz.aaa&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;ドメイン名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xxxxxxxx.com&lt;/code&gt;、マシンのホスト名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;foo&lt;/code&gt;、ネームサーバホスト名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ns&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;セカンダリ DNS は用意しない。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-bind-のインストール&quot;&gt;1. BIND のインストール&lt;/h3&gt;
-
-&lt;p&gt;（dnsutils は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dig&lt;/code&gt; コマンド用）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install bind9 dnsutils
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-bind-設定ファイルの編集&quot;&gt;2. BIND 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/named.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;include &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/named.conf.options&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-include &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/named.conf.local&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#include &quot;/etc/bind/named.conf.default-zones&quot;;  # &amp;lt;= コメント化（内部向け・外部向けゾーンファイルで定義するので）&lt;/span&gt;
-include &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/named.conf.internal-zones&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt; = 追加&lt;/span&gt;
-include &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/named.conf.external-zones&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt; = 追加&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;3-内部向けゾーンファイルの作成&quot;&gt;3. 内部向けゾーンファイルの作成&lt;/h3&gt;
-
-&lt;p&gt;BIND 設定ファイルで指定している内部向けゾーンファイルを以下のように作成する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/named.conf.internal-zones&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;view &lt;span class=&quot;s2&quot;&gt;&quot;internal&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;# 内部向け設定の対象範囲定義&lt;/span&gt;
-    match-clients &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        localhost&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        192.168.11.0/24&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;c&quot;&gt;# 内部向け正引きゾーン定義&lt;/span&gt;
-    zone &lt;span class=&quot;s2&quot;&gt;&quot;xxxxxxxx.com&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;master&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        file &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/xxxxxxxx.com.lan&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        allow-update &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; none&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;c&quot;&gt;# 内部向け逆引きゾーン定義&lt;/span&gt;
-    zone &lt;span class=&quot;s2&quot;&gt;&quot;11.168.192.in-addr.arpa&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;master&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        file &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/11.168.192.db&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        allow-update &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; none&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    include &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/named.conf.default-zones&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-    empty-zones-enable no&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;最後の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;empty-zones-enable no;&lt;/code&gt; は、ログに以下のようなメッセージが出力されないための対処。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Warning: view internal: &apos;empty-zones-enable/disable-empty-zone&apos; not set: disabling RFC 1918 empty zones
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-外部向けゾーンファイルの作成&quot;&gt;4. 外部向けゾーンファイルの作成&lt;/h3&gt;
-
-&lt;p&gt;BIND 設定ファイルで指定している外部向けゾーンファイルを以下のように作成する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/named.conf.external-zones&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;view &lt;span class=&quot;s2&quot;&gt;&quot;external&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    match-clients &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; any&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# 全て対象（内部向け範囲以外のホスト）&lt;/span&gt;
-    allow-query &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; any&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;# 問い合わせは全て許可&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;#recursion no;            # 再帰検索禁止&lt;/span&gt;
-
-    &lt;span class=&quot;c&quot;&gt;# 外部向け正引きゾーン定義&lt;/span&gt;
-    zone &lt;span class=&quot;s2&quot;&gt;&quot;xxxxxxxx.com&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;master&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        file &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/xxxxxxxx.com.wan&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        allow-update &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; none&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;c&quot;&gt;# 外部向け正引き情報を定義 *注&lt;/span&gt;
-    zone &lt;span class=&quot;s2&quot;&gt;&quot;zzz.yyy.xxx.in-addr.arpa&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;master&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        file &lt;span class=&quot;s2&quot;&gt;&quot;/etc/bind/zzz.yyy.xxx.db&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        allow-update &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; none&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;5-オプション設定ファイルの編集&quot;&gt;5. オプション設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;その他の設定用ファイルを以下のように編集する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/named.conf.options&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;options &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        directory &lt;span class=&quot;s2&quot;&gt;&quot;/var/cache/bind&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-        // 問合わせを許可する範囲
-        // &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;サーバー、ローカルネットワーク内のホストからの問合せのみ許可&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-        allow-query &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; localhost&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; localnets&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-
-        // ゾーン情報の転送を許可する範囲
-        // &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;サーバー、ローカルネットワーク内のホストへのみ転送を許可&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-        allow-transfer &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; localhost&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; localnets&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-
-        // 再帰検索を許可する範囲
-        // &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;サーバー、ローカルネットワーク内のホストのみ再検索を許可&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-        allow-recursion &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; localhost&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; localnets&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-
-        dnssec-validation auto&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-        auth-nxdomain no&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;# conform to RFC1035&lt;/span&gt;
-
-        // IPv6 は使用しないので無効化
-        //listen-on-v6 &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; any&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        listen-on-v6 &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; none&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# EDNS0 の無効化&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# &quot;error (unexpected RCODE REFUSED) ...&quot; 出力の抑止&lt;/span&gt;
-server 0.0.0.0 &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        edns no&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# &quot;DNS format error ... invalid response&quot; 出力の抑止&lt;/span&gt;
-logging &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        category resolver &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; null&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;6-内部向け正引きゾーン定義ファイルの作成&quot;&gt;6. 内部向け正引きゾーン定義ファイルの作成&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/xxxxxxxx.com.lan&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$TTL&lt;/span&gt; 86400
-@   IN  SOA     ns.xxxxxxxx.com. root.xxxxxxxx.com. &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
-        2021083101  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Serial
-        3600        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Refresh
-        1800        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Retry
-        604800      &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Expire
-        86400       &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Minimum TTL
-&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-
-        IN  NS      ns.xxxxxxxx.com.
-        IN  A       192.168.11.101
-        IN  MX 10   ns.xxxxxxxx.com.
-ns      IN  A       192.168.11.101
-foo    IN  A       192.168.11.101
-hoge    IN  A       192.168.11.2
-fuga    IN  A       192.168.11.3
-www     IN  CNAME   ns.xxxxxxxx.com.
-ftp     IN  CNAME   ns.xxxxxxxx.com.
-mail    IN  CNAME   ns.xxxxxxxx.com.&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hoge&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fuga&lt;/code&gt; はローカルネットワーク内の別のマシン。&lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;www&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ftp&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mail&lt;/code&gt; は別名定義。&lt;/p&gt;
-
-&lt;h3 id=&quot;7-外部向け正引きゾーン定義ファイルの作成&quot;&gt;7. 外部向け正引きゾーン定義ファイルの作成&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/xxxxxxxx.com.wan&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$TTL&lt;/span&gt; 86400
-@   IN  SOA     ns.xxxxxxxx.com. root.xxxxxxxx.com. &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
-        2021083101  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Serial
-        3600        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Refresh
-        1800        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Retry
-        604800      &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Expire
-        86400       &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Minimum TTL
-&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-
-        IN  NS      ns.xxxxxxxx.com.
-        IN  A       xxx.yyy.zzz.aaa
-        IN  MX 10   ns.xxxxxxxx.com.
-ns      IN  A       xxx.yyy.zzz.aaa&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;8-内部向け逆引きゾーン定義ファイルの作成&quot;&gt;8. 内部向け逆引きゾーン定義ファイルの作成&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/11.168.192.db&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$TTL&lt;/span&gt; 86400
-@   IN  SOA     ns.xxxxxxxx.com. root.xxxxxxxx.com. &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
-        2021083101  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Serial
-        3600        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Refresh
-        1800        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Retry
-        604800      &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Expire
-        86400       &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Minimum TTL
-&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-
-        IN  NS      ns.xxxxxxxx.com.
-        IN  PTR     xxxxxxxx.com.
-        IN  A       255.255.255.0
-101     IN  PTR     ns.xxxxxxxx.com.
-101     IN  PTR     foo.xxxxxxxx.com.
-2       IN  PTR     hoge.xxxxxxxx.com.
-3       IN  PTR     fuga.xxxxxxxx.com.&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;9-外部向け逆引きゾーン定義ファイルの作成&quot;&gt;9. 外部向け逆引きゾーン定義ファイルの作成&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/bind/zzz.yyy.xxx.db&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$TTL&lt;/span&gt; 86400
-@   IN  SOA     ns.xxxxxxxx.com. root.xxxxxxxx.com. &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
-        2021083101  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Serial
-        3600        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Refresh
-        1800        &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Retry
-        604800      &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Expire
-        86400       &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;Minimum TTL
-&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-
-        IN  NS      ns.xxxxxxxx.com.
-        IN  PTR     xxxxxxxx.com.
-        IN  A       255.255.255.254
-aaa     IN  PTR     ns.xxxxxxxx.com.&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;255.255.255.254&lt;/code&gt; はグローバル IP が１個のみの場合の設定値）&lt;/p&gt;
-
-&lt;h3 id=&quot;10-問合せ先-dns-サーバの追加&quot;&gt;10. 問合せ先 DNS サーバの追加&lt;/h3&gt;
-
-&lt;p&gt;DNS サーバー自身も問合せ先に追加する。&lt;br /&gt;
-最初から記載のあるルータの IP アドレス（インストール・初期設定時のもの）をセカンダリ、今回構築のサーバ自身をプライマリに設定するので、ルータより先に記述する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/resolv.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#domain localdomain        # &amp;lt;= コメント化&lt;/span&gt;
-domain xxxxxxxx.com         &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#search localdomain        # &amp;lt;= コメント化&lt;/span&gt;
-search xxxxxxxx.com         &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-nameserver 192.168.11.101  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-nameserver 192.168.11.1    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ルータの IP アドレス&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;11-ipv6-の無効化設定&quot;&gt;11. IPv6 の無効化設定&lt;/h3&gt;
-
-&lt;p&gt;システムとして IPv6 を無効にしている場合は、以下のように &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/named&lt;/code&gt; を編集する。&lt;br /&gt;
-（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/log/syslog&lt;/code&gt; に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;... named[9999]: error (network unreachable) resolving ...&lt;/code&gt; のようなエラーが出力されないようにするため）&lt;br /&gt;
-※かつては、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;named&lt;/code&gt; というファイル名ではなく &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bind9&lt;/code&gt; というファイル名だった。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/named&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;OPTIONS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;-u bind -4&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;12-bind-の再起動&quot;&gt;12. BIND の再起動&lt;/h3&gt;
-
-&lt;p&gt;設定を有効化するために BIND を再起動する。（サービス名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bind9&lt;/code&gt; も可）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart named
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;13-動作確認&quot;&gt;13. 動作確認&lt;/h3&gt;
-
-&lt;p&gt;DNS サーバが正常に機能する（正引きで IP アドレス、逆引きでホスト名が返ってくる）か、確認してみる。&lt;/p&gt;
-
-&lt;p&gt;【内部向け正引きテスト】&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# dig ns.xxxxxxxx.com.
-
-; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.16.15-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; ns.xxxxxxxx.com.
-;; global options: +cmd
-;; Got answer:
-;; -&amp;gt;&amp;gt;HEADER&amp;lt;&amp;lt;- opcode: QUERY, status: NOERROR, id: 42607
-;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: feae014ca532b70b01000000612d88232c502b8a27dff786 (good)
-;; QUESTION SECTION:
-;ns.xxxxxxxx.com.                        IN      A
-
-;; ANSWER SECTION:
-ns.xxxxxxxx.com.         86400   IN      A       192.168.11.101
-
-;; Query time: 8 msec
-;; SERVER: 192.168.11.101#53(192.168.11.101)
-;; WHEN: Tue Aug 31 10:38:43 JST 2021
-;; MSG SIZE  rcvd: 87
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;【内部向け逆引きテスト】&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# dig -x 192.168.11.101
-
-; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.16.15-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; -x 192.168.11.101
-;; global options: +cmd
-;; Got answer:
-;; -&amp;gt;&amp;gt;HEADER&amp;lt;&amp;lt;- opcode: QUERY, status: NOERROR, id: 30868
-;; flags: qr aa rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: 1a0f1c91c39ba3aa01000000612d885de1fc62bcd5c5375a (good)
-;; QUESTION SECTION:
-;101.11.168.192.in-addr.arpa.   IN      PTR
-
-;; ANSWER SECTION:
-101.11.168.192.in-addr.arpa. 86400 IN   PTR     ns.xxxxxxxx.com.
-101.11.168.192.in-addr.arpa. 86400 IN   PTR     foo.xxxxxxxx.com.
-
-;; Query time: 3 msec
-;; SERVER: 192.168.11.101#53(192.168.11.101)
-;; WHEN: Tue Aug 31 10:39:41 JST 2021
-;; MSG SIZE  rcvd: 131
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;【外部向け正引きテスト】&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# dig www.isc.org
-
-; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.16.15-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; www.isc.org
-;; global options: +cmd
-;; Got answer:
-;; -&amp;gt;&amp;gt;HEADER&amp;lt;&amp;lt;- opcode: QUERY, status: NOERROR, id: 1984
-;; flags: qr rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 512
-;; QUESTION SECTION:
-;www.isc.org.                   IN      A
-
-;; ANSWER SECTION:
-www.isc.org.            60      IN      CNAME   dualstack.osff2.map.fastly.net.
-dualstack.osff2.map.fastly.net. 4 IN    A       151.101.90.217
-
-;; Query time: 175 msec
-;; SERVER: 192.168.11.1#53(192.168.11.1)
-;; WHEN: Tue Aug 31 10:40:24 JST 2021
-;; MSG SIZE  rcvd: 100
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;【外部向け逆引きテスト】&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# dig -x 151.101.90.217
-
-; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.16.15-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; -x 151.101.90.217
-;; global options: +cmd
-;; Got answer:
-;; -&amp;gt;&amp;gt;HEADER&amp;lt;&amp;lt;- opcode: QUERY, status: NXDOMAIN, id: 60481
-;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 512
-;; QUESTION SECTION:
-;217.90.101.151.in-addr.arpa.   IN      PTR
-
-;; AUTHORITY SECTION:
-151.in-addr.arpa.       749     IN      SOA     pri.authdns.ripe.net. dns.ripe.net. 1630366598 3600 600 864000 3600
-
-;; Query time: 55 msec
-;; SERVER: 192.168.11.1#53(192.168.11.1)
-;; WHEN: Tue Aug 31 10:40:49 JST 2021
-;; MSG SIZE  rcvd: 116
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;14-ファイアウォール-ufw-の設定&quot;&gt;14. ファイアウォール (ufw) の設定&lt;/h3&gt;
-
-&lt;p&gt;実際に運用する場合は、外部からのTCP/UDP53番ポート(DNS)へのアクセスを許可する必要がある。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 53
-Rule added
-
-# ufw status
-Status: active
-
-To                         Action      From
---                         ------      ----
-9999/tcp                   ALLOW       192.168.11.0/24
-53                         ALLOW       Anywhere
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="DNS" /><summary type="html">Debian GNU/Linux 11 (bullseye) に DNS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="DNS" /><summary type="html">Debian GNU/Linux 11 (bullseye) に構築した DNS サーバを chroot 化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
