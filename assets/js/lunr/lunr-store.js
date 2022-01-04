@@ -12220,4 +12220,10 @@ var store = [{
         "tags": ["Twitter","Ruby","MySQL","MariaDB","MeCab"],
         "url": "/2022/01/02/tweet-summary-2021/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - Postfix ログ解析！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に導入した SMTP サーバ Postfix のログを解析する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。 SMTP サーバ Postfix を「Debian 11 (bullseye) - SMTP サーバ Postfix 構築！」の方法で導入済み。 ログローテート（logrotate）でメールログがローテーションされていることを想定。（デフォルトでなっているはず） root ユーザでの作業を想定。 1. pflogsumm のインストール Postfix のログ解析ツールである pflogsumm を、以下のようにしてインストールする。 # apt -y...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Postfix"],
+        "url": "/2022/01/05/debian-11-postfix-log-analysis/",
+        "teaser": null
       }]
