@@ -12226,4 +12226,10 @@ var store = [{
         "tags": ["Debian","Linux","Postfix"],
         "url": "/2022/01/05/debian-11-postfix-log-analysis/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) にカラムストア機能付き全文検索エンジン Groonga を Groonga の公式リポジトリを使用して導入する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 当記事執筆時点で最新の Groonga 11.0.6 をインストールする。 トークナイザとして MeCab を使用することを想定。 トークンフィルタとして TokenFilterStem を使用することを想定。 ノーマライザとして MySQL 互換の groonga-normalizer-mysql を使用することを想定。（将来、 Mroonga を使用することを想定） ここでは、全文検索がどういうものかという説明はしない。 root ユーザでの作業を想定。 以下の説明内で出力するデータは、可読性を考慮して整形している。 1. 日本語形態素解析器 MeCab のインストール トークナイザとして MeCab を使用する予定なので、インストールしておく。 # apt -y...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Groonga"],
+        "url": "/2022/01/12/debian-11-groonga-installation-by-official-apt/",
+        "teaser": null
       }]
