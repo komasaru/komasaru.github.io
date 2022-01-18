@@ -1,4 +1,316 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-01-11T23:22:54+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！</title><link href="https://komasaru.github.io/2022/01/12/debian-11-groonga-installation-by-official-apt/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！" /><published>2022-01-12T00:20:00+09:00</published><updated>2022-01-12T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/12/debian-11-groonga-installation-by-official-apt</id><content type="html" xml:base="https://komasaru.github.io/2022/01/12/debian-11-groonga-installation-by-official-apt/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にカラムストア機能付き全文検索エンジン Groonga を Groonga の公式リポジトリを使用して導入する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-01-18T15:51:52+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！</title><link href="https://komasaru.github.io/2022/01/19/debian-11-mariadb-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！" /><published>2022-01-19T00:20:00+09:00</published><updated>2022-01-19T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/19/debian-11-mariadb-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/01/19/debian-11-mariadb-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) 上に DB サーバ MariaDB（10.5系）を構築する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;インストールする MariaDB は、当記事執筆時点で 10.5 系最新の 10.5.12 とする。&lt;br /&gt;
+（当記事執筆時点、 10.6 系は全文検索エンジン Mroonga 最新版が未対応）&lt;/li&gt;
+  &lt;li&gt;MariaDB とは言っても中身は MySQL が元になっているので、各所で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysql&lt;/code&gt; のキーワードが出現する。&lt;/li&gt;
+  &lt;li&gt;データディレクトリは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/lib/mysql&lt;/code&gt; ディレクトリ配下とする。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-sourceslist-ファイルの編集&quot;&gt;1. sources.list ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;今回は MariaDB をソースをビルドしてインストールするので、本来は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sources.list&lt;/code&gt; の編集は必要ないが、 MariaDB のビルドに依存するパッケージをインストールすために使用するので、編集する。&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list&lt;/code&gt; に直接記述してもよいが、今回は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list.d/mariadb.list&lt;/code&gt; に新規作成する。&lt;br /&gt;
+記述する内容は「&lt;a href=&quot;https://downloads.mariadb.org/mariadb/repositories/&quot; title=&quot;Setting up MariaDB Repositories&quot;&gt;こちら(Setting up MariaDB Repositories)&lt;/a&gt;」で確認可能。（ミラーサイトは隣国を適当に選択する）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list.d/mariadb.list&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# MariaDB 10.5 repository list - created 2021-09-08 00:56 UTC&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# http://downloads.mariadb.org/mariadb/repositories/&lt;/span&gt;
+deb &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;arch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;amd64,arm64,ppc64el] https://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.5/debian bullseye main
+deb-src https://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.5/debian bullseye main&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sources.list&lt;/code&gt; を使用しない方法等については「&lt;a href=&quot;https://downloads.mariadb.org/mariadb/repositories/&quot; title=&quot;Setting up MariaDB Repositories&quot;&gt;こちら&lt;/a&gt;」を参照。&lt;/p&gt;
+
+&lt;h3 id=&quot;2-パッケージリストの更新&quot;&gt;2. パッケージリストの更新&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sources.list&lt;/code&gt; を編集したので、パッケージリストを更新する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y update
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;      :
+===&amp;lt; 中略 &amp;gt;===
+      :
+
+Err:5 https://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.5/debian bullseye InRelease
+  The following signatures couldn&apos;t be verified because the public key is not available: NO_PUBKEY F1656F24C74CD1D8
+Reading package lists... Done
+W: GPG error: https://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.5/debian bullseye InRelease: The following signatures couldn&apos;t be verified because the public key is not available: NO_PUBKEY F1656F24C74CD1D8
+E: The repository &apos;https://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.5/debian bullseye InRelease&apos; is not signed.
+N: Updating from such a repository can&apos;t be done securely, and is therefore disabled by default.
+N: See apt-secure(8) manpage for repository creation and user configuration details.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;上記のように、 GPG 公開鍵に関するエラーが出力される場合は、以下のようにした後に再試行する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F1656F24C74CD1D8
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;これまで GPG 公開鍵の登録に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apt-key&lt;/code&gt; コマンドを使用してきたが、このコマンドは近い将来廃止される予定。（Debian は 12 bookworm で廃止）&lt;br /&gt;
+廃止後は GnuPG を使用する方法となるが、今から GnuPG を使用する方法で登録することも可能。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;3-依存パッケージのインストール&quot;&gt;3. 依存パッケージのインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install -y build-essential bison
+# apt build-dep mariadb-server
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;または、「&lt;a href=&quot;https://mariadb.com/kb/en/library/Build_Environment_Setup_for_Linux/&quot; title=&quot;Build Environment Setup for Linux - MariaDB Knowledge Base&quot;&gt;こちら&lt;/a&gt;」を参考に、ビルドに必要なパッケージをインストールしてもよい。（但し、インストール漏れに注意）&lt;/p&gt;
+
+&lt;h3 id=&quot;4-sourceslist-ファイルの削除&quot;&gt;4. sources.list ファイルの削除&lt;/h3&gt;
+
+&lt;p&gt;1 で作成した MariaDB 用 sources.list ファイル &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list.d/mariadb.list&lt;/code&gt; はもう不要なので削除しておく。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list&lt;/code&gt; を直接編集したのなら、 MariaDB に関する記述を削除する）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# rm -f /etc/apt/sources.list.d/mariadb.list
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-アーカイブの取得&quot;&gt;5. アーカイブの取得&lt;/h3&gt;
+
+&lt;p&gt;「&lt;a href=&quot;https://downloads.mariadb.org/&quot; title=&quot;Downloads - MariaDB&quot;&gt;こちら&lt;/a&gt;」から MariaDB の最新 Stable 版をダウンロードし、適当なディレクトリに配置する。（今回、当方はダウンロードした &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mariadb-10.5.12.tar.gz&lt;/code&gt; を &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/src&lt;/code&gt; ディレクトリ配下に配置した）&lt;/p&gt;
+
+&lt;p&gt;そして、展開する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /usr/local/src
+# tar xvf mariadb-10.5.12.tar.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-ソースのビルドインストール&quot;&gt;6. ソースのビルド＆インストール&lt;/h3&gt;
+
+&lt;p&gt;先ほど展開したディレクトリと同じ階層にビルド用のディレクトリを作成し、そのディレクトリ内で cmake する。（以下の各種ビルドオプションは当方の例）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir build-mariadb
+# cd build-mariadb
+# cmake ../mariadb-10.5.12 -DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
+ -DMYSQL_DATADIR=/var/lib/mysql \
+ -DMYSQL_UNIX_ADDR=/var/run/mysqld/mysqld.sock \
+ -DENABLED_LOCAL_INFILE=1 \
+ -DDEFAULT_CHARSET=utf8_mb4 \
+ -DDEFAULT_COLLATION=utf8_general_ci \
+ -DWITH_EXTRA_CHARSETS=all \
+ -DWITH_INNOBASE_STORAGE_ENGINE=1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;そして、 make 後、インストールする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# make -j$(grep &apos;^processor&apos; /proc/cpuinfo | wc -l)
+# make install
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make&lt;/code&gt; コマンドの &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-j&lt;/code&gt; はなくても問題ない。（並列ビルド（高速化）しないなら）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;以下のようなエラーで make が中断した場合、それは swap メモリが不足しているからのようだ。 swap を増やした後、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make clean&lt;/code&gt; してから &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make&lt;/code&gt; し直してみる。（どれくらい swap を増やせべよいのかは不明）&lt;br /&gt;
+（参考「&lt;a href=&quot;/2015/10/20/linux-create-swap-area&quot; title=&quot;Linux - スワップ領域の作成！ - mk-mode BLOG&quot;&gt;Linux - スワップ領域の作成！ - mk-mode BLOG&lt;/a&gt;」）&lt;br /&gt;
+※もしくは、物理メモリを増設することも検討。（今さら無理なので、今後、サーバ構築する際にでも）&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[ 61%] Building C object storage/mroonga/vendor/groonga/lib/CMakeFiles/libgroonga.dir/expr.c.o
+cc: fatal error: Killed signal terminated program cc1
+compilation terminated.
+make[2]: *** [storage/mroonga/vendor/groonga/lib/CMakeFiles/libgroonga.dir/build.make:251: storage/mroonga/vendor/groonga/lib/CMakeFiles/libgroonga.dir/expr.c.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:7037: storage/mroonga/vendor/groonga/lib/CMakeFiles/libgroonga.dir/all] Error 2
+make: *** [Makefile:182: all] Error 2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-ユーザグループ作成&quot;&gt;7. ユーザ・グループ作成&lt;/h3&gt;
+
+&lt;p&gt;MySQL 用のユーザとグループを作成する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# groupadd mysql
+# useradd -r -g mysql mysql
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;8-データディレクトリ作成&quot;&gt;8. データディレクトリ作成&lt;/h3&gt;
+
+&lt;p&gt;データディレクトリが無ければ作成し、所有者・グループを設定しておく。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir /var/lib/mysql
+# chown -R mysql. /var/lib/mysql
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;9-ログディレクトリ作成&quot;&gt;9. ログディレクトリ作成&lt;/h3&gt;
+
+&lt;p&gt;ログ用ディレクトリを作成し、所有者・グループを設定しておく。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir /var/log/mysql
+# chown -R mysql. /var/log/mysql/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;10-ソケットpidディレクトリ作成&quot;&gt;10. ソケット・PIDディレクトリ作成&lt;/h3&gt;
+
+&lt;p&gt;ソケット・プロセスID用ディレクトリの所有者・グループを設定する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir /var/run/mysqld
+# chown -R mysql. /var/run/mysqld
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;11-設定ファイルの編集&quot;&gt;11. 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql&lt;/code&gt; ディレクトリ内の設定ファイルを適宜編集する。&lt;br /&gt;
+もしくは、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/my.cnf&lt;/code&gt; を別途作成する。&lt;/p&gt;
+
+&lt;p&gt;【注意】&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/my.cnf&lt;/code&gt; より後に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/my.cnf&lt;/code&gt; が読み込まれる（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/my.cnf&lt;/code&gt; の内容よりも &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/my.cnf&lt;/code&gt; の内容が優先される）ので、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/my.cnf&lt;/code&gt; のみを使用したければ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/my.cnf&lt;/code&gt; を削除するか、（拡張子が &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.cnf&lt;/code&gt; で終わらないよう）リネームするなどする。&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/my.cnf&lt;/code&gt; を作成せず、最初から &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/my.cnf&lt;/code&gt; を編集する方法でも良いだろう。&lt;/p&gt;
+
+&lt;h3 id=&quot;12-初期-db-の生成&quot;&gt;12. 初期 DB の生成&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /usr/local/mysql
+# scripts/mysql_install_db --user=mysql --basedir=/usr/local/mysql --datadir=/var/lib/mysql --defaults-file=/etc/my.cnf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;13-起動スクリプトsysv-systemdの準備&quot;&gt;13. 起動スクリプト(SysV, SystemD)の準備&lt;/h3&gt;
+
+&lt;p&gt;SysV（init スクリプト）でも、 SystemD(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;systemctl&lt;/code&gt;) でも起動できるようにしている。&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mariadb&lt;/code&gt; の他、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysqld&lt;/code&gt; でも起動できるようシンボリックリンクを張っている。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cp support-files/mysql.server /etc/init.d/mysqld
+# chmod +x /etc/init.d/mysqld
+# ln -fns /etc/init.d/{mysqld,mariadb}
+
+# cp support-files/systemd/mariadb.service /lib/systemd/system/
+# ln -fns /lib/systemd/system/{mariadb,mysqld}.service
+# systemctl daemon-reload
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;14-pid-ディレクトリの自動生成&quot;&gt;14. PID ディレクトリの自動生成&lt;/h3&gt;
+
+&lt;p&gt;前項の方法で起動スクリプトを用意した場合、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/run&lt;/code&gt;(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/run&lt;/code&gt;) 配下のディレクトリは自動で生成してくれないので、自動で生成するよう、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/lib/tmpfiles.d/var.conf&lt;/code&gt; に以下の1行を追加する。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/run&lt;/code&gt;(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/run&lt;/code&gt;) ディレクトリは tmpfs を使用しているため、 OS 再起動後には消滅する。通常は、起動スクリプト内で生成するよう設定されていることが多いが、今回使用したスクリプト内では設定されていなかった。）&lt;br /&gt;
+（当方ブログ過去記事「&lt;a href=&quot;https://www.mk-mode.com/octopress/2015/12/08/linux-dir-file-automatic-creation-on-boot/&quot; title=&quot;Linux - マシン起動時にディレクトリ・ファイルを自動作成！&quot;&gt;Linux - マシン起動時にディレクトリ・ファイルを自動作成！&lt;/a&gt;」も参照）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/lib/tmpfiles.d/var.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;d /var/run/mysqld 0755 mysql mysql -&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;もしくは、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysqld_save&lt;/code&gt; コマンド実行直前に以下のような記述を追加してもよいだろう。（当方、未確認）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/init.d/mysqld&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; /var/run/mysqld &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; 755 &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; mysql &lt;span class=&quot;nt&quot;&gt;-g&lt;/span&gt; root &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; /var/run/mysqld&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;15-環境変数-path-の設定&quot;&gt;15. 環境変数 PATH の設定&lt;/h3&gt;
+
+&lt;p&gt;mysql コマンドへのパスを設定するために /etc/profile の最終行に以下の記述を追加する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/profile&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/local/mysql/bin:&lt;span class=&quot;nv&quot;&gt;$PATH&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;PATH&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;そして、即時有効化。（マシン再起動でもよい）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# source /etc/profile
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;16-起動再起動ステータス確認停止のテスト&quot;&gt;16. 起動・再起動・ステータス確認・停止のテスト&lt;/h3&gt;
+
+&lt;p&gt;起動・再起動・ステータス確認・停止ができるか確認する。(SystemD)&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl start mariadb
+# systemctl restart mariadb
+# systemctl status mariadb
+# systemctl stop mariadb
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;また、 init スクリプトでも起動・再起動・ステータス確認・停止ができるはず。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# /etc/init.d/mysqld start
+# /etc/init.d/mysqld restart
+# /etc/init.d/mysqld status
+# /etc/init.d/mysqld stop
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;もちろん、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;service&lt;/code&gt; コマンドでも起動・再起動・ステータス確認・停止ができるはず。&lt;/p&gt;
+
+&lt;h3 id=&quot;17-セキュリティ設定&quot;&gt;17. セキュリティ設定&lt;/h3&gt;
+
+&lt;p&gt;MariaDB サーバが起動していることを確認し、root のバスワード設定、テストDB削除等を行う。
+（Unix socket authentication では &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;n&lt;/code&gt; 応答。 root のパスワードを設定。後はデフォルト（エンター押下）。但し、 root によるリモート接続を行いたければ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Disallow root login remotely?&lt;/code&gt; で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;n&lt;/code&gt; 応答）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /usr/local/mysql/bin
+# ./mysql_secure_installation
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;18-動作確認&quot;&gt;18. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;MariaDB サーバにログインしてみる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mariadb -u root -p
+Enter password:
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 11
+Server version: 10.5.12-MariaDB Source distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type &apos;help;&apos; or &apos;\h&apos; for help. Type &apos;\c&apos; to clear the current input statement.
+
+root@localhost:(none) 16:24:29&amp;gt; show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
++--------------------+
+3 rows in set (0.096 sec)
+
+root@localhost:(none) 16:24:34&amp;gt; exit
+Bye
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mariadb&lt;/code&gt; コマンドは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysql&lt;/code&gt; でも OK.&lt;/li&gt;
+  &lt;li&gt;上記の（やや複雑な）プロンプトは当方の設定によるもの。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;19-自動起動の設定&quot;&gt;19. 自動起動の設定&lt;/h3&gt;
+
+&lt;p&gt;OS 起動時に自動で起動するように設定するには次のようにする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl is-enabled mariadb
+disabled
+
+# systemctl enable mariadb
+Synchronizing state of mariadb.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable mariadb
+insserv: script mysqld: service mysql already provided!
+insserv: script mysqld: service mysql already provided!
+Created symlink /etc/systemd/system/multi-user.target.wants/mariadb.service → /lib/systemd/system/mariadb.service.
+
+# systemctl is-enabled mariadb
+enabled
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;20-ファイアウォールufwの設定&quot;&gt;20. ファイアウォール(ufw)の設定&lt;/h3&gt;
+
+&lt;p&gt;リモートで MariaDB サーバにアクセスする場合（GUI ツールを使用する場合等）は、TCP ポート 3306 を開放する必要がある。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 3306/tcp
+Rule added
+
+# ufw status
+    :
+3306/tcp                   ALLOW       Anywhere
+    :
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><category term="MariaDB" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上に DB サーバ MariaDB（10.5系）を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！</title><link href="https://komasaru.github.io/2022/01/12/debian-11-groonga-installation-by-official-apt/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！" /><published>2022-01-12T00:20:00+09:00</published><updated>2022-01-12T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/12/debian-11-groonga-installation-by-official-apt</id><content type="html" xml:base="https://komasaru.github.io/2022/01/12/debian-11-groonga-installation-by-official-apt/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にカラムストア機能付き全文検索エンジン Groonga を Groonga の公式リポジトリを使用して導入する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -1863,416 +2175,4 @@ To                         Action      From
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="NFS" /><summary type="html">Debian GNU/Linux 11 (bullseye) に NFS サーバで使用するポートを固定化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">2021年11月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2021/12/01/blog-access/" rel="alternate" type="text/html" title="2021年11月 - OS・ブラウザ別アクセス状況！" /><published>2021-12-01T00:20:00+09:00</published><updated>2021-12-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2021/12/01/blog-access/">&lt;p&gt;12月になりましたので、先月11月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;1-アクセスをos別に集計&quot;&gt;1. アクセスをOS別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;25,379&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;65.4891&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;9,941&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;25.6522&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,384&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.5713&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,300&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.3546&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;518&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.3367&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;194&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.5006&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;29&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0748&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0103&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0052&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;OpenBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0026&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;PlayStation&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0026&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;38,753&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;2-アクセスをosバージョン別に集計&quot;&gt;2. アクセスをOS・バージョン別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;10&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;20,300&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;52.3830&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;9,941&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;25.6522&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;7&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,586&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;11.8339&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,384&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.5713&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,300&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.3546&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;518&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.3367&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;415&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.0709&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;194&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.5006&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;XP&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;37&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0955&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;35&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0903&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;29&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0748&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;98&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0129&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0103&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0052&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Vista&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0026&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;OpenBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0026&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;PlayStation&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0026&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;38,753&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;3-アクセスをブラウザ別に集計&quot;&gt;3. アクセスをブラウザ別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;23,817&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;61.4585&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6,380&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;16.4632&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,433&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;11.4391&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3,426&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8.8406&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;690&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.7805&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0103&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla SeaMonkey&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0077&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;38,753&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;4-アクセスをブラウザバージョン別に集計上位20件&quot;&gt;4. アクセスをブラウザ・バージョン別に集計（上位20件）&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;95.0.4638.69&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;11,491&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;29.6519&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.45&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,862&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12.5461&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;5.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,433&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;11.4391&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;95.0.4638.54&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,907&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;7.5014&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;604.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,700&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6.9672&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;9537.53&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,444&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6.3066&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;94.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,918&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.9493&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;605.1.15&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,211&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.1249&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;94.0.4606.81&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,006&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2.5959&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.55&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;933&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2.4076&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;11.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;652&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.6825&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;93.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;516&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.3315&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;78.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;462&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.1922&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;95.0.4638.74&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;452&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.1664&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;94.0.4606.114&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;288&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.7432&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;94.0.4606.71&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;161&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.4155&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;91.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;157&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.4051&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;92.0.4515.159&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;122&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.3148&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;93.0.4577.82&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;113&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2916&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;95.0.4638.50&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;110&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2838&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;38,753&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">12月になりましたので、先月11月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="NFS" /><summary type="html">Debian GNU/Linux 11 (bullseye) に NFS サーバで使用するポートを固定化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>

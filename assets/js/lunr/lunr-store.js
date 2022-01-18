@@ -12232,4 +12232,10 @@ var store = [{
         "tags": ["Debian","Linux","Groonga"],
         "url": "/2022/01/12/debian-11-groonga-installation-by-official-apt/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) 上に DB サーバ MariaDB（10.5系）を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。 インストールする MariaDB は、当記事執筆時点で 10.5 系最新の 10.5.12 とする。 （当記事執筆時点、 10.6 系は全文検索エンジン Mroonga 最新版が未対応） MariaDB とは言っても中身は MySQL が元になっているので、各所で mysql のキーワードが出現する。 データディレクトリは /var/lib/mysql ディレクトリ配下とする。 root ユーザでの作業を想定。 1. sources.list...","categories": ["サーバ構築"],
+        "tags": ["Linux","Debian","MariaDB"],
+        "url": "/2022/01/19/debian-11-mariadb-installation-by-src/",
+        "teaser": null
       }]
