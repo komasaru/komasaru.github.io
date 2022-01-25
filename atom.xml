@@ -1,4 +1,138 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-01-18T15:51:52+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！</title><link href="https://komasaru.github.io/2022/01/19/debian-11-mariadb-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！" /><published>2022-01-19T00:20:00+09:00</published><updated>2022-01-19T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/19/debian-11-mariadb-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/01/19/debian-11-mariadb-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) 上に DB サーバ MariaDB（10.5系）を構築する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-01-25T21:00:23+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Mroonga インストール（ソースビルド）！</title><link href="https://komasaru.github.io/2022/01/26/debian-11-mroonga-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Mroonga インストール（ソースビルド）！" /><published>2022-01-26T00:20:00+09:00</published><updated>2022-01-26T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/26/debian-11-mroonga-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/01/26/debian-11-mroonga-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) 上に全文検索エンジン Mroonga をインストールする方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;当記事執筆時点で最新の Mroonga 11.06 をインストールする。&lt;/li&gt;
+  &lt;li&gt;Groonga 11.0.6 がインストール済みであることを想定。&lt;br /&gt;
+（参照「&lt;a href=&quot;/2022/01/12/debian-11-groonga-installation-by-official-apt&quot; title=&quot;Debian 11 (bullseye) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！&quot;&gt;Debian 11 (bullseye) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！&lt;/a&gt;」）&lt;/li&gt;
+  &lt;li&gt;MariaDB 10.5.12 をソースをビルドしてインストールしていること。（Mroonga のビルドに MySQL のソースが必要なため。MariaDB をパッケージでインストールしている場合にも、ソースが必要となる）&lt;br /&gt;
+（参照「&lt;a href=&quot;/2022/01/19/debian-11-mariadb-installation-by-src&quot; title=&quot;Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！&quot;&gt;Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！&lt;/a&gt;」）&lt;/li&gt;
+  &lt;li&gt;MariaDB 10.5.12 は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/mysql&lt;/code&gt; ディレクトリにインストールされていることを想定。&lt;/li&gt;
+  &lt;li&gt;MariaDB 10.5.12 のインストールに使用したソースは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/src/mariadb-10.5.12&lt;/code&gt; ディレクトリに存在することを想定。&lt;/li&gt;
+  &lt;li&gt;MariaDB 10.5.12 のビルド用ディレクトリは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/src/build-mariadb&lt;/code&gt; であることを想定。&lt;/li&gt;
+  &lt;li&gt;環境の相違等のために以下の方法ではうまく行かないこともあるだろう。&lt;br /&gt;
+ログを確認して適宜対処すること。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-必要ライブラリのインストール&quot;&gt;1. 必要ライブラリのインストール&lt;/h3&gt;
+
+&lt;p&gt;Groonga 開発ライブラリをインストール。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install libgroonga-dev
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;トクーナイザとして MeCab を使用する予定があるなら、次を実行。（当方は実行）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y -V install groonga-tokenizer-mecab
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;トークンフィルタとして TokeFilterStem を使用する予定があるなら、次を実行。（当方は実行）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y -V install groonga-token-filter-stem
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;ノーマライザとして groonga-normalizer-mysql を使用する予定があるなら、次を実行。（当方は実行）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y -V install groonga-normalizer-mysql
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-ソースの取得&quot;&gt;2. ソースの取得&lt;/h3&gt;
+
+&lt;p&gt;アーカイブファイルを取得、展開後、ディレクトリを移動しておく。（ダウンロード先は一般ユーザホームディレクトリとした）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /usr/local/src
+# wget http://packages.groonga.org/source/mroonga/mroonga-11.06.tar.gz
+# tar xvf mroonga-11.06.tar.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-makefile-の生成&quot;&gt;3. Makefile の生成&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd mroonga-11.06
+# ./configure \
+ --with-mysql-source=/usr/local/src/mariadb-10.5.12 \
+ --with-mysql-build=/usr/local/src/build-mariadb \
+ --with-mysql-config=/usr/local/mysql/bin/mysql_config
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-ビルドインストール&quot;&gt;4. ビルド＆インストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# make -j$(grep &apos;^processor&apos; /proc/cpuinfo | wc -l)
+# make install
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make&lt;/code&gt; の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-j$(grep &apos;^processor&apos; /proc/cpuinfo | wc -l)&lt;/code&gt; の部分はプロセッサ数が明確なら &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-j4&lt;/code&gt; のように指定してもよいし、速度を気にしないのなら単に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make&lt;/code&gt; のみでもよい。&lt;/p&gt;
+
+&lt;h3 id=&quot;5-mariadb-への-mroonga-プラグインの適用&quot;&gt;5. MariaDB への Mroonga プラグインの適用&lt;/h3&gt;
+
+&lt;p&gt;MariaDB サーバが起動していることを確認してから以下を実行する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mariadb -u root &amp;lt; /usr/local/share/mroonga/install.sql
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mariadb&lt;/code&gt; コマンドは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysql&lt;/code&gt; でもよい。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;... does not exist&lt;/code&gt; のメッセージが出力されるかもしれないが問題ない。（おそらく）&lt;/p&gt;
+
+&lt;h3 id=&quot;6-mroonga-導入の確認&quot;&gt;6. Mroonga 導入の確認&lt;/h3&gt;
+
+&lt;p&gt;MariaDB サーバに root でログインして確認してみる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ mariadb -u root -p
+Enter password:
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 15
+Server version: 10.5.12-MariaDB Source distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type &apos;help;&apos; or &apos;\h&apos; for help. Type &apos;\c&apos; to clear the current input statement.
+
+root@localhost:(none) 16:48:05&amp;gt; show engines;
++--------------------+---------+-------------------------------------------------------------------------------------------------+--------------+------+------------+
+| Engine             | Support | Comment                                                                                         | Transactions | XA   | Savepoints |
++--------------------+---------+-------------------------------------------------------------------------------------------------+--------------+------+------------+
+| CSV                | YES     | Stores tables as CSV files                                                                      | NO           | NO   | NO         |
+| MRG_MyISAM         | YES     | Collection of identical MyISAM tables                                                           | NO           | NO   | NO         |
+| MEMORY             | YES     | Hash based, stored in memory, useful for temporary tables                                       | NO           | NO   | NO         |
+| Aria               | YES     | Crash-safe tables with MyISAM heritage. Used for internal temporary tables and privilege tables | NO           | NO   | NO         |
+| MyISAM             | YES     | Non-transactional engine with good performance and small data footprint                         | NO           | NO   | NO         |
+| SEQUENCE           | YES     | Generated tables filled with sequential values                                                  | YES          | NO   | YES        |
+| Mroonga            | YES     | CJK-ready fulltext search, column store                                                         | NO           | NO   | NO         |
+| PERFORMANCE_SCHEMA | YES     | Performance Schema                                                                              | NO           | NO   | NO         |
+| InnoDB             | DEFAULT | Supports transactions, row-level locking, foreign keys and encryption for tables                | YES          | YES  | YES        |
++--------------------+---------+-------------------------------------------------------------------------------------------------+--------------+------+------------+
+9 rows in set (0.056 sec)
+
+root@localhost:(none) 16:48:18&amp;gt; exit
+Bye
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Mroonga&lt;/code&gt; 行が存在することを確認する。&lt;/p&gt;
+
+&lt;p&gt;その他、 Mroonga の簡単な使用方法は以下の過去記事等を参照。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;/2015/08/21/mariadb-mroonga-installation&quot; title=&quot;MariaDB 10.0.x - Mroonga プラグインの有効化！&quot;&gt;MariaDB 10.0.x - Mroonga プラグインの有効化！&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;7-参考サイト&quot;&gt;7. 参考サイト&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mroonga.org/ja/docs/install/others.html&quot; title=&quot;2.8. その他 — Mroonga v11.06 documentation&quot;&gt;2.8. その他 — Mroonga v11.06 documentation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><category term="MariaDB" /><category term="Mroonga" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上に全文検索エンジン Mroonga をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！</title><link href="https://komasaru.github.io/2022/01/19/debian-11-mariadb-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！" /><published>2022-01-19T00:20:00+09:00</published><updated>2022-01-19T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/19/debian-11-mariadb-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/01/19/debian-11-mariadb-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) 上に DB サーバ MariaDB（10.5系）を構築する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -2044,135 +2178,4 @@ root:       masaru&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><summary type="html">Debian GNU/Linux 11 (bullseye) に SMTP サーバ Postfix を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - NFS サーバのポート固定！</title><link href="https://komasaru.github.io/2021/12/02/debian-11-nfs-port-fixing/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - NFS サーバのポート固定！" /><published>2021-12-02T00:20:00+09:00</published><updated>2021-12-02T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/02/debian-11-nfs-port-fixing</id><content type="html" xml:base="https://komasaru.github.io/2021/12/02/debian-11-nfs-port-fixing/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に NFS サーバで使用するポートを固定化する方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;NFS サーバ構築済み。&lt;br /&gt;
-（参照：「&lt;a href=&quot;/2021/11/24/debian-11-nfs-installation&quot; title=&quot;Debian 11 (bullseye) - NFS サーバ構築！&quot;&gt;Debian 11 (bullseye) - NFS サーバ構築！&lt;/a&gt;」）&lt;/li&gt;
-  &lt;li&gt;ファイアウォール iptables が構築済み。
-（参照：「&lt;a href=&quot;/2021/10/20/debian-11-firewall-setting&quot; title=&quot;Debian 11 (bullseye) - ファイアウォール設定！&quot;&gt;Debian 11 (bullseye) - ファイアウォール設定！&lt;/a&gt;」）&lt;/li&gt;
-  &lt;li&gt;以下で設定するポート番号は&lt;a href=&quot;https://wiki.debian.org/SecuringNFS&quot; title=&quot;SecuringNFS - Debian Wiki&quot;&gt;参考サイト&lt;/a&gt;によるもであり、任意に設定可能。&lt;/li&gt;
-  &lt;li&gt;quota は使用していないので、&lt;a href=&quot;https://wiki.debian.org/SecuringNFS&quot; title=&quot;SecuringNFS - Debian Wiki&quot;&gt;参考サイト&lt;/a&gt;にある quota の設定はしない。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-前提知識&quot;&gt;1. 前提知識&lt;/h3&gt;
-
-&lt;p&gt;NFS サーバが使用するポートは以下のとおり。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;portmapper =&amp;gt; TCP: 111, UDP: 111
-nfs        =&amp;gt; TCP:2049, UDP:2049
-statd      =&amp;gt; TCP:不定, UDP:不定
-mountd     =&amp;gt; TCP:不定, UDP:不定
-nlockmgrq  =&amp;gt; TCP:不定, UDP:不定
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-statd-用ポートの固定&quot;&gt;2. statd 用ポートの固定&lt;/h3&gt;
-
-&lt;p&gt;statd のポートを固定するには &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-common&lt;/code&gt; を以下のようにする。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-common&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;STATDOPTS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;--port 32765 --outgoing-port 32766&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;3-mountd-用ポートの固定&quot;&gt;3. mountd 用ポートの固定&lt;/h3&gt;
-
-&lt;p&gt;mountd のポートを固定するには &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-kernel-server&lt;/code&gt; を以下のようにする。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-p 32767&lt;/code&gt; を追加）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-kernel-server&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;RPCMOUNTDOPTS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;--manage-gids -p 32767&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;4-lockd-モジュールの設定&quot;&gt;4. lockd モジュールの設定&lt;/h3&gt;
-
-&lt;p&gt;オプション付き lockd モジュールを提供するために、以下のように &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/modprobe.d/local.conf&lt;/code&gt; を作成する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/modprobe.d/local.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;options lockd &lt;span class=&quot;nv&quot;&gt;nlm_udpport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32768 &lt;span class=&quot;nv&quot;&gt;nlm_tcpport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32768
-options nfs &lt;span class=&quot;nv&quot;&gt;callback_tcpport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32764&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;5-マシンの再起動&quot;&gt;5. マシンの再起動&lt;/h3&gt;
-
-&lt;p&gt;設定を反映させるため、マシンを再起動する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl reboot
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;6-設定の確認&quot;&gt;6. 設定の確認&lt;/h3&gt;
-
-&lt;p&gt;以下のようにして、RPC 情報（ポートの設定）を確認してみる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# rpcinfo -p
-   program vers proto   port  service
-    100000    4   tcp    111  portmapper
-    100000    3   tcp    111  portmapper
-    100000    2   tcp    111  portmapper
-    100000    4   udp    111  portmapper
-    100000    3   udp    111  portmapper
-    100000    2   udp    111  portmapper
-    100005    1   udp  32767  mountd
-    100005    1   tcp  32767  mountd
-    100005    2   udp  32767  mountd
-    100005    2   tcp  32767  mountd
-    100005    3   udp  32767  mountd
-    100005    3   tcp  32767  mountd
-    100003    3   tcp   2049  nfs
-    100003    4   tcp   2049  nfs
-    100227    3   tcp   2049
-    100003    3   udp   2049  nfs
-    100227    3   udp   2049
-    100021    1   udp  32768  nlockmgr
-    100021    3   udp  32768  nlockmgr
-    100021    4   udp  32768  nlockmgr
-    100021    1   tcp  32768  nlockmgr
-    100021    3   tcp  32768  nlockmgr
-    100021    4   tcp  32768  nlockmgr
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-ファイアウォールufwの設定&quot;&gt;7. ファイアウォール(ufw)の設定&lt;/h3&gt;
-
-&lt;p&gt;NFS サーバが使用するポートが固定されたので、ufw でファイアウォールの設定を行う。（以下はローカルネットワーク内からのみアクセス可能にする例）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow proto tcp from 192.168.11.0/24 to any port 111,2049,32765,32767,32768
-Rule added
-# ufw allow proto udp from 192.168.11.0/24 to any port 111,2049,32765,32767,32768
-Rule added
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;確認。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw status
-Status: active
-
-To                         Action      From
---                         ------      ----
-
-===&amp;lt; 中略 &amp;gt;===
-
-111,2049,32765,32767,32768/tcp ALLOW       192.168.11.0/24
-111,2049,32765,32767,32768/udp ALLOW       192.168.11.0/24
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;8-動作確認&quot;&gt;8. 動作確認&lt;/h3&gt;
-
-&lt;p&gt;クライアントマシンでマウントして接続できることも確認しておく。&lt;/p&gt;
-
-&lt;h3 id=&quot;9-参考サイト&quot;&gt;9. 参考サイト&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://wiki.debian.org/SecuringNFS&quot; title=&quot;SecuringNFS - Debian Wiki&quot;&gt;SecuringNFS - Debian Wiki&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="NFS" /><summary type="html">Debian GNU/Linux 11 (bullseye) に NFS サーバで使用するポートを固定化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><summary type="html">Debian GNU/Linux 11 (bullseye) に SMTP サーバ Postfix を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>

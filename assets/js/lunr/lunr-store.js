@@ -12238,4 +12238,10 @@ var store = [{
         "tags": ["Linux","Debian","MariaDB"],
         "url": "/2022/01/19/debian-11-mariadb-installation-by-src/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - Mroonga インストール（ソースビルド）！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) 上に全文検索エンジン Mroonga をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 当記事執筆時点で最新の Mroonga 11.06 をインストールする。 Groonga 11.0.6 がインストール済みであることを想定。 （参照「Debian 11 (bullseye) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！」） MariaDB 10.5.12 をソースをビルドしてインストールしていること。（Mroonga のビルドに MySQL のソースが必要なため。MariaDB をパッケージでインストールしている場合にも、ソースが必要となる） （参照「Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！」） MariaDB 10.5.12 は...","categories": ["サーバ構築"],
+        "tags": ["Linux","Debian","MariaDB","Mroonga"],
+        "url": "/2022/01/26/debian-11-mroonga-installation-by-src/",
+        "teaser": null
       }]
