@@ -12244,4 +12244,10 @@ var store = [{
         "tags": ["Linux","Debian","MariaDB","Mroonga"],
         "url": "/2022/01/26/debian-11-mroonga-installation-by-src/",
         "teaser": null
+      },{
+        "title": "2022年1月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"2月になりましたので、先月1月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 21,787 66.5211 Mac OS 7,677 23.4398 Linux 1,424 4.3478 Android 1,197 3.6547 Ubuntu Linux 393 1.1999 unknown 215 0.6564 Fedora Linux 41 0.1252 FreeBSD 16 0.0489 NetBSD 2 0.0061 合　計 32,752 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 16,759 51.1694 Mac...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2022/02/01/blog-access/",
+        "teaser": null
       }]

@@ -1,4 +1,696 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-01-25T21:00:23+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Mroonga インストール（ソースビルド）！</title><link href="https://komasaru.github.io/2022/01/26/debian-11-mroonga-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Mroonga インストール（ソースビルド）！" /><published>2022-01-26T00:20:00+09:00</published><updated>2022-01-26T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/26/debian-11-mroonga-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/01/26/debian-11-mroonga-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) 上に全文検索エンジン Mroonga をインストールする方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-02-01T00:25:20+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">2022年1月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2022/02/01/blog-access/" rel="alternate" type="text/html" title="2022年1月 - OS・ブラウザ別アクセス状況！" /><published>2022-02-01T00:20:00+09:00</published><updated>2022-02-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/02/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2022/02/01/blog-access/">&lt;p&gt;2月になりましたので、先月1月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;1-アクセスをos別に集計&quot;&gt;1. アクセスをOS別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;21,787&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;66.5211&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7,677&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;23.4398&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,424&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4.3478&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,197&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.6547&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;393&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.1999&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;215&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.6564&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;41&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.1252&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;16&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0489&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0061&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32,752&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;2-アクセスをosバージョン別に集計&quot;&gt;2. アクセスをOS・バージョン別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;10&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;16,759&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;51.1694&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;X&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7,677&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;23.4398&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,707&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;14.3716&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,424&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4.3478&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,197&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.6547&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;393&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.1999&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;8.1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;279&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.8519&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;215&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.6564&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;41&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.1252&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;XP&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;19&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0580&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;8&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;18&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0550&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;16&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0489&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;98&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0092&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Vista&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0061&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0061&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32,752&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;2-アクセスをosバージョン別に集計-1&quot;&gt;2. アクセスをOS・バージョン別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;10&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;16,759&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;51.1694&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;X&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7,677&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;23.4398&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,707&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;14.3716&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,424&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4.3478&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,197&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.6547&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;393&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.1999&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;8.1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;279&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.8519&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;215&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.6564&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;41&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.1252&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;XP&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;19&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0580&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;8&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;18&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0550&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;16&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0489&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;98&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0092&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Vista&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0061&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0061&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32,752&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;3-アクセスをブラウザ別に集計&quot;&gt;3. アクセスをブラウザ別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;19,600&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;59.8437&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,924&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;15.0342&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,604&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;14.0572&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3,172&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;9.6849&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;452&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.3801&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32,752&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;3-アクセスをブラウザ別に集計-1&quot;&gt;3. アクセスをブラウザ別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;19,600&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;59.8437&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,924&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;15.0342&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,604&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;14.0572&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3,172&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;9.6849&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;452&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.3801&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32,752&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;4-アクセスをブラウザバージョン別に集計上位20件&quot;&gt;4. アクセスをブラウザ・バージョン別に集計（上位20件）&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;97.0.4692.71&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8,037&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;24.5390&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;5.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,604&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;14.0572&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.110&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,599&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;14.0419&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;97.0.4692.99&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,261&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;13.0099&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;9537.53&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,028&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6.1920&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;604.1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,950&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;5.9538&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,163&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.5509&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;95.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;922&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.8151&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;605.1.15&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;917&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.7998&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;91.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;466&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.4228&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;11.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;412&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.2579&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;97.0.4692.98&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;291&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.8885&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;97.0.4692.87&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;286&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.8732&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.104&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;246&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.7511&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.93&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;228&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.6961&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;60.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;222&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.6778&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;97.0.4692.70&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;145&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.4427&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;95.0.4638.69&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;116&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3542&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;78.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3053&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.45&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;98&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.2992&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32,752&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;
+
+&lt;h3 id=&quot;4-アクセスをブラウザバージョン別に集計上位20件-1&quot;&gt;4. アクセスをブラウザ・バージョン別に集計（上位20件）&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;97.0.4692.71&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8,037&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;24.5390&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;5.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,604&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;14.0572&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.110&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,599&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;14.0419&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;97.0.4692.99&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,261&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;13.0099&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;9537.53&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,028&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6.1920&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;604.1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,950&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;5.9538&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,163&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.5509&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;95.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;922&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.8151&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;605.1.15&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;917&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.7998&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;91.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;466&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.4228&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;11.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;412&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.2579&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;97.0.4692.98&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;291&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.8885&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;97.0.4692.87&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;286&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.8732&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.104&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;246&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.7511&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.93&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;228&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.6961&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;60.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;222&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.6778&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;97.0.4692.70&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;145&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.4427&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;95.0.4638.69&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;116&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3542&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;78.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3053&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.45&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;98&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.2992&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32,752&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">2月になりましたので、先月1月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">Debian 11 (bullseye) - Mroonga インストール（ソースビルド）！</title><link href="https://komasaru.github.io/2022/01/26/debian-11-mroonga-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Mroonga インストール（ソースビルド）！" /><published>2022-01-26T00:20:00+09:00</published><updated>2022-01-26T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/26/debian-11-mroonga-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/01/26/debian-11-mroonga-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) 上に全文検索エンジン Mroonga をインストールする方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -2005,177 +2697,4 @@ Rule added
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Dovecot" /><summary type="html">Debian GNU/Linux 11 (bullseye) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - SMTP サーバ Postfix 構築！</title><link href="https://komasaru.github.io/2021/12/08/debian-11-postfix-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - SMTP サーバ Postfix 構築！" /><published>2021-12-08T00:20:00+09:00</published><updated>2021-12-08T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/08/debian-11-postfix-installation</id><content type="html" xml:base="https://komasaru.github.io/2021/12/08/debian-11-postfix-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に SMTP サーバ Postfix を構築する方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;接続可能なマシンのネットワークは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.0/24&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;ドメイン名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xxxxxxxx.com&lt;/code&gt;、サーバホスト名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mail&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-postfix-のインストール&quot;&gt;1. Postfix のインストール&lt;/h3&gt;
-
-&lt;p&gt;SMTP サーバ Postfix を以下のようにしてインストールする。&lt;br /&gt;
-途中でどの設定を選択するか確認されるが、後で設定を行うので &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;No Configuration&lt;/code&gt;（設定なし）を選択する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install postfix sasl2-bin
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-設定ファイルの編集&quot;&gt;2. 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;設定ファイル雛形(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/main.cf.proto&lt;/code&gt;)から &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cf&lt;/code&gt; を複製後、編集する。（ちなみに、同じ雛形は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/share/postfix&lt;/code&gt; にもある）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cp /etc/postfix/main.cf{.proto,}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/main.cf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;mail_owner &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; postfix                   &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メール所有者&lt;/span&gt;
-
-myhostname &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; mail.xxxxxxxx.com          &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ホスト名&lt;/span&gt;
-
-mydomain &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; xxxxxxxx.com                 &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ドメイン名&lt;/span&gt;
-
-myorigin &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;                   &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ローカルからのメール送信時の送信元メールアドレス@以降にドメイン名を付加&lt;/span&gt;
-
-inet_interfaces &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; all                  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 外部からのメール受信を許可&lt;/span&gt;
-
-mydestination &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$myhostname&lt;/span&gt;, localhost.&lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;, localhost, &lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;, vbox.&lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 自ドメイン宛メールを受信できるようにする&lt;/span&gt;
-
-local_recipient_maps &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; unix:passwd.byname &lt;span class=&quot;nv&quot;&gt;$alias_maps&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= サーバにアカウントがあれば、その人宛に届く&lt;/span&gt;
-
-mynetworks &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 127.0.0.0/8, 192.168.11.0/24  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 自ネットワーク&lt;/span&gt;
-
-alias_maps &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;hash&lt;/span&gt;:/etc/aliases         &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 受信メールの再転送先ファイル&lt;/span&gt;
-
-alias_database &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;hash&lt;/span&gt;:/etc/aliases     &lt;span class=&quot;c&quot;&gt;# &amp;lt;= newaliasesコマンドの実行対象&lt;/span&gt;
-
-home_mailbox &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; Maildir/                &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メールボックス形式を Maildir 形式に&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)&lt;/span&gt;
-smtpd_banner &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$myhostname&lt;/span&gt; ESMTP       &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メールサーバーソフト名の隠蔽化&lt;/span&gt;
-
-sendmail_path &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /usr/sbin/postfix      &lt;span class=&quot;c&quot;&gt;# &amp;lt;= Postfix sendmail コマンドの場所&lt;/span&gt;
-
-newaliases_path &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /usr/bin/newaliases  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= Postfix newaliases コマンドの場所&lt;/span&gt;
-
-mailq_path &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /usr/bin/mailq            &lt;span class=&quot;c&quot;&gt;# &amp;lt;= Postfix mailq コマンドの場所&lt;/span&gt;
-
-setgid_group &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; postdrop                &lt;span class=&quot;c&quot;&gt;# &amp;lt;= set-gid Postfix コマンドおよびグループ書き込み可能な Postfix ディレクトリを所有するグループ&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#html_directory =                      # &amp;lt;= コメント化&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#manpage_directory =                   # &amp;lt;= コメント化&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#sample_directory =                    # &amp;lt;= コメント化&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#readme_directory =                    # &amp;lt;= コメント化&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# 最終行へ追加&lt;/span&gt;
-message_size_limit &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 10485760          &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 送受信メールサイズを10Mに制限&lt;/span&gt;
-mailbox_size_limit &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1073741824        &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メールボックスサイズを1Gに制限&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# SMTP-Auth用&lt;/span&gt;
-smtpd_sasl_type &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; dovecot
-smtpd_sasl_path &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; private/auth
-smtpd_sasl_auth_enable &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;yes
-&lt;/span&gt;smtpd_sasl_security_options &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; noanonymous
-smtpd_sasl_local_domain &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$myhostname&lt;/span&gt;
-smtpd_client_restrictions &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; permit_mynetworks,reject_unknown_client,permit
-smtpd_recipient_restrictions &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; permit_mynetworks,permit_auth_destination,permit_sasl_authenticated,reject
-
-&lt;span class=&quot;c&quot;&gt;# 特定ドメイン／アドレス受信拒否（必要であれば）&lt;/span&gt;
-smtpd_sender_restrictions &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; reject_unknown_sender_domain, reject_non_fqdn_sender, &lt;span class=&quot;nb&quot;&gt;hash&lt;/span&gt;:/etc/postfix/reject_sender&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h4 id=&quot;2-1-上記で特定のドメインアドレスを受信拒否する設定にした場合&quot;&gt;2-1. 上記で特定のドメイン／アドレスを受信拒否する設定にした場合&lt;/h4&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/reject_sender&lt;/code&gt; を作成して、設定したいドメイン／アドレスを記述する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/reject_sender&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;xxxxxxxxxx.xxx REJECT&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;REJECT&lt;/code&gt;: 拒否をし、その旨のメッセージを返信する&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DISCARD&lt;/code&gt;: 拒否をし、その旨のメッセージも返信しない&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;そして、ハッシュマップの生成。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# postmap /etc/postfix/reject_sender
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;最後に、 Postfix を再起動（or リロード）。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart postfix
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;3-saslauthd-の編集&quot;&gt;3. saslauthd の編集&lt;/h3&gt;
-
-&lt;p&gt;マシン起動時に saslauthd を自動起動させるために &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;saslauthd&lt;/code&gt; を編集する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/saslauthd&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;START&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= no を yes に変更&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;これをしないと saslauthd 起動時に以下のような警告が出力される。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;To enable saslauthd, edit /etc/default/saslauthd and set START=yes (warning).
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-saslauthd-の再起動&quot;&gt;4. saslauthd の再起動&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart saslauthd
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-postfix-の再起動&quot;&gt;5. Postfix の再起動&lt;/h3&gt;
-
-&lt;p&gt;設定を反映させるためにエイリアスの変更を反映させ、 Postfix を再起動する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# newaliases
-# systemctl restart postfix
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;6-ファイアウォールufwの設定&quot;&gt;6. ファイアウォール(ufw)の設定&lt;/h3&gt;
-
-&lt;p&gt;実際に運用する場合は、TCP ポート 25(SMTP) を開放する必要がある。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 25/tcp
-Rule added
-
-# ufw status
-    :
-25/tcp                     ALLOW       Anywhere
-    :
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-メールの転送設定&quot;&gt;7. メールの転送設定&lt;/h3&gt;
-
-&lt;p&gt;root や postmaster 等宛に届いたメールを一般ユーザに転送するには &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/aliases&lt;/code&gt; を編集する。&lt;br /&gt;
-以下は一例。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/aliases&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;postmaster: root
-root:       masaru&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;この設定を有効にするために以下のようにする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# newaliases                 # &amp;lt;= エイリアスの即時反映
-# systemctl restart postfix  # &amp;lt;= Postfix の再起動
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/main.cf&lt;/code&gt; 内で説明されているとおり、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;newaliases&lt;/code&gt; の代わりに &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;postalias /etc/aliases&lt;/code&gt; でもよい。&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><summary type="html">Debian GNU/Linux 11 (bullseye) に SMTP サーバ Postfix を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Dovecot" /><summary type="html">Debian GNU/Linux 11 (bullseye) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
