@@ -12250,4 +12250,10 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2022/02/01/blog-access/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に Web サーバ Nginx を Nginx 公式リポジトリを使用して導入する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。 Debian 公式リポジトリの Nginx はバージョンが古いため、Nginx リポジトリを使用して 1.21.3（当記事執筆時点最新安定版）をインストールする。 実際に運用する際は、ドキュメントルートを変更する等、設定を編集すること。 root ユーザでの作業を想定。 1. 依存パッケージのインストール # apt -y install curl gnupg2 ca-certificates lsb-release debian-archive-keyring 2. 署名鍵のインポート...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Nginx"],
+        "url": "/2022/02/02/debian-11-nginx-installation-by-official-apt/",
+        "teaser": null
       }]

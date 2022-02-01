@@ -1,4 +1,132 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-02-01T00:25:20+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">2022年1月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2022/02/01/blog-access/" rel="alternate" type="text/html" title="2022年1月 - OS・ブラウザ別アクセス状況！" /><published>2022-02-01T00:20:00+09:00</published><updated>2022-02-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/02/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2022/02/01/blog-access/">&lt;p&gt;2月になりましたので、先月1月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-02-01T16:35:21+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！</title><link href="https://komasaru.github.io/2022/02/02/debian-11-nginx-installation-by-official-apt/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！" /><published>2022-02-02T00:20:00+09:00</published><updated>2022-02-02T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/02/02/debian-11-nginx-installation-by-official-apt</id><content type="html" xml:base="https://komasaru.github.io/2022/02/02/debian-11-nginx-installation-by-official-apt/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に Web サーバ Nginx を Nginx 公式リポジトリを使用して導入する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;Debian 公式リポジトリの Nginx はバージョンが古いため、Nginx リポジトリを使用して 1.21.3（当記事執筆時点最新安定版）をインストールする。&lt;/li&gt;
+  &lt;li&gt;実際に運用する際は、ドキュメントルートを変更する等、設定を編集すること。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-依存パッケージのインストール&quot;&gt;1. 依存パッケージのインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install curl gnupg2 ca-certificates lsb-release debian-archive-keyring
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-署名鍵のインポート&quot;&gt;2. 署名鍵のインポート&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
+  | tee /usr/share/keyrings/nginx-archive-keyring.gpg &amp;gt;/dev/null
+
+# gpg --dry-run --quiet --import --import-options import-show \
+  /usr/share/keyrings/nginx-archive-keyring.gpg
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;フィンガープリントが &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62&lt;/code&gt; であることを確認。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;3-リポジトリの追加設定&quot;&gt;3. リポジトリの追加設定&lt;/h3&gt;
+
+&lt;p&gt;リポジトリの追加、 APT のデフォルト優先度の設定を行う。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# echo &quot;deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
+  http://nginx.org/packages/mainline/debian `lsb_release -cs` nginx&quot; \
+  | tee /etc/apt/sources.list.d/nginx.list
+
+# echo -e &quot;Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n&quot; \
+  | tee /etc/apt/preferences.d/99nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-nginx-のインストール&quot;&gt;4. Nginx のインストール&lt;/h3&gt;
+
+&lt;p&gt;Apt パッケージリストを更新後、 Nginx をインストールする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y update
+# apt -y install nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-インストールの確認&quot;&gt;5. インストールの確認&lt;/h3&gt;
+
+&lt;p&gt;Nginx がインストールできたか確認してみる。(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-v&lt;/code&gt; の代わりに &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-V&lt;/code&gt; オプションを使用すると詳細に表示される）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# nginx -v
+nginx version: nginx/1.21.3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-設定&quot;&gt;6. 設定&lt;/h3&gt;
+
+&lt;p&gt;今回のインストール環境の場合、基本的（グローバル）な設定のファイルは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/nginx.conf&lt;/code&gt; で、このファイルから &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/conf.d&lt;/code&gt; ディレクトリ配下の設定ファイルを読み込む形式となっている。&lt;br /&gt;
+取り急ぎ、デフォルトのままとした。（当方、最終的には詳細に設定している）&lt;br /&gt;
+詳細な設定は、「&lt;a href=&quot;https://www.mk-mode.com/blog/tags/nginx/&quot; title=&quot;Tag: Nginx - mk-mode BLOG&quot;&gt;当ブログ Nginx 関連の過去記事&lt;/a&gt;」を参照。&lt;/p&gt;
+
+&lt;h3 id=&quot;7-ファイアウォールufwの設定&quot;&gt;7. ファイアウォール(ufw)の設定&lt;/h3&gt;
+
+&lt;p&gt;TCP ポート 80 を開放する必要がある。（HTTPS の場合は TCP: 443）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 80/tcp
+Rule added
+
+# ufw status
+    :
+80/tcp                     ALLOW       Anywhere
+    :
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;8-サーバの起動&quot;&gt;8. サーバの起動&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl start nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;9-起動確認&quot;&gt;9. 起動確認&lt;/h3&gt;
+
+&lt;p&gt;ブラウザで &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://＜サーバアドレス or ホスト名＞/&lt;/code&gt; にアクセスしてみる。&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Welcome to nginx!&lt;/code&gt; と以下5行くらい表示されば成功。&lt;/p&gt;
+
+&lt;h3 id=&quot;10-自動起動の設定&quot;&gt;10. 自動起動の設定&lt;/h3&gt;
+
+&lt;p&gt;マシン起動時に自動で Nginx を起動させるには以下のようにする。（インストール直後は自動起動するようになっているはずなので、そうなっていない場合）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl enable nginx
+nginx.service is not a native service, redirecting to systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable nginx
+
+# systemctl is-enabled nginx
+enabled
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nginx&lt;/code&gt; はネイティブなサービスでないため、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;systemd-sysv-install&lt;/code&gt; にリダイレクトされる）&lt;/p&gt;
+
+&lt;p&gt;自動起動しないようにするには、&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl disable nginx
+nginx.service is not a native service, redirecting to systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install disable nginx
+insserv: warning: current start runlevel(s) (empty) of script `nginx&apos; overrides LSB defaults (2 3 4 5).
+insserv: warning: current stop runlevel(s) (0 1 2 3 4 5 6) of script `nginx&apos; overrides LSB defaults (0 1 6).
+
+# systemctl is-enabled nginx
+nginx.service is not a native service, redirecting to systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install is-enabled nginx
+disabled
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;11-参考サイト&quot;&gt;11. 参考サイト&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://nginx.org/en/linux_packages.html#Debian&quot; title=&quot;nginx: Linux packages&quot;&gt;nginx: Linux packages&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Nginx" /><summary type="html">Debian GNU/Linux 11 (bullseye) に Web サーバ Nginx を Nginx 公式リポジトリを使用して導入する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">2022年1月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2022/02/01/blog-access/" rel="alternate" type="text/html" title="2022年1月 - OS・ブラウザ別アクセス状況！" /><published>2022-02-01T00:20:00+09:00</published><updated>2022-02-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/02/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2022/02/01/blog-access/">&lt;p&gt;2月になりましたので、先月1月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -2606,95 +2734,4 @@ Rule added
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><category term="Dovecot" /><category term="SSL" /><summary type="html">Debian GNU/Linux 11 (bullseye) に導入したメールサーバを SSL 設定する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - POP/IMAP サーバ Dovecot 構築！</title><link href="https://komasaru.github.io/2021/12/15/debian-11-dovecot-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - POP/IMAP サーバ Dovecot 構築！" /><published>2021-12-15T00:20:00+09:00</published><updated>2021-12-15T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/15/debian-11-dovecot-installation</id><content type="html" xml:base="https://komasaru.github.io/2021/12/15/debian-11-dovecot-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;接続可能なマシンのネットワークは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.0/24&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-dovecot-のインストール&quot;&gt;1. Dovecot のインストール&lt;/h3&gt;
-
-&lt;p&gt;POP/IMAP サーバ Dovecot を以下のようにしてインストールする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install dovecot-common dovecot-pop3d dovecot-imapd
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-設定ファイル-dovecotconf-の編集&quot;&gt;2. 設定ファイル dovecot.conf の編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/dovecot/dovecot.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;listen &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= IPv6を使用しない場合&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;3-設定ファイル-10-authconf-の編集&quot;&gt;3. 設定ファイル 10-auth.conf の編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/dovecot/conf.d/10-auth.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;disable_plaintext_auth &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; no    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= プレーンテキスト認証も許可&lt;/span&gt;
-
-auth_mechanisms &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; plain login  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 認証時のパスフレーズ送信方式&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;4-設定ファイル-10-mailconf-の編集&quot;&gt;4. 設定ファイル 10-mail.conf の編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/dovecot/conf.d/10-mail.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;mail_location &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; maildir:~/Maildir  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メールボックス形式をMaildir形式&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;5-設定ファイル-10-masterconf-の編集&quot;&gt;5. 設定ファイル 10-master.conf の編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/dovecot/conf.d/10-master.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Postfix smtp-auth&lt;/span&gt;
-unix_listener /var/spool/postfix/private/auth &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
-    mode &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0666                                  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
-    user &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; postfix                               &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（ユーザ）&lt;/span&gt;
-    group &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; postfix                              &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（グループ）&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;                                                &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;6-dovecot-の再起動&quot;&gt;6. Dovecot の再起動&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart dovecot
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-ファイアウォールufwの設定&quot;&gt;7. ファイアウォール(ufw)の設定&lt;/h3&gt;
-
-&lt;p&gt;実際に運用する場合は、TCPポート 110(POP3), 143(IMAP) を開放する必要がある。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 110,143/tcp
-Rule added
-
-# ufw status
-    :
-110,143/tcp                ALLOW       Anywhere
-    :
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;8-メールソフトの設定&quot;&gt;8. メールソフトの設定&lt;/h3&gt;
-
-&lt;p&gt;Postfix, Dovecot 構築が完了すれば、メールソフトでメールの送受信が可能になる。&lt;br /&gt;
-メールソフトでは以下のように設定すればよい。&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;メールアドレス：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;アカウント名@メールホスト名&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;パスワード：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;アカウントのパスワード&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;受信メールサーバ：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;POP&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IMAP&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;受信メールサーバアドレス：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;メールホスト名&lt;/code&gt;（内部なら &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;サーバローカルIPアドレス&lt;/code&gt; でもよい）&lt;/li&gt;
-  &lt;li&gt;受信メールサーバポート番号：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;110&lt;/code&gt;(POP) or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;143&lt;/code&gt;(IMAP)&lt;/li&gt;
-  &lt;li&gt;ログオンユーザ：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;アカウント名&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;送信メールサーバアドレス：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;メールホスト名&lt;/code&gt;（内部なら &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;サーバローカルIPアドレス&lt;/code&gt; でもよい）&lt;/li&gt;
-  &lt;li&gt;送信メールサーバポート番号：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;25&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;送信認証：「必要」&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Dovecot" /><summary type="html">Debian GNU/Linux 11 (bullseye) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><category term="Dovecot" /><category term="SSL" /><summary type="html">Debian GNU/Linux 11 (bullseye) に導入したメールサーバを SSL 設定する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
