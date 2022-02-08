@@ -12256,4 +12256,10 @@ var store = [{
         "tags": ["Debian","Linux","Nginx"],
         "url": "/2022/02/02/debian-11-nginx-installation-by-official-apt/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - Web サーバ Nginx で SSL 接続！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 クライアント側も Debian GNU/Linux 11 (bullseye; 64bit) を想定。 サーバ用途なので、作業は基本的に全て一般ユーザから root になって行う。 Web(HTTP)サーバ Nginx が「Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！」の方法で導入済みであることを想定。 今回は SSL サーバ証明書は自分で作成するが、後日、Let’s Encrypt で無料で証明書を取得するようにする。 当方はメールサーバ構築時に SSL 証明書作成済みであったので、以下の...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Nginx","SSL"],
+        "url": "/2022/02/09/debian-11-nginx-ssl-connection-setting/",
+        "teaser": null
       }]
