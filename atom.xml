@@ -1,4 +1,188 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-02-08T14:46:53+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Web サーバ Nginx で SSL 接続！</title><link href="https://komasaru.github.io/2022/02/09/debian-11-nginx-ssl-connection-setting/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Web サーバ Nginx で SSL 接続！" /><published>2022-02-09T00:20:00+09:00</published><updated>2022-02-09T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/02/09/debian-11-nginx-ssl-connection-setting</id><content type="html" xml:base="https://komasaru.github.io/2022/02/09/debian-11-nginx-ssl-connection-setting/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-02-15T11:19:48+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Let’s Encrypt で常時 SSL 化(on Nginx)！</title><link href="https://komasaru.github.io/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Let’s Encrypt で常時 SSL 化(on Nginx)！" /><published>2022-02-16T00:20:00+09:00</published><updated>2022-02-16T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt</id><content type="html" xml:base="https://komasaru.github.io/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;クライアント側も Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;Web(HTTP)サーバ Nginx が「&lt;a href=&quot;/2022/02/02/debian-11-nginx-installation-by-official-apt&quot; title=&quot;Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！&quot;&gt;Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！&lt;/a&gt;」の方法で導入済みであることを想定。&lt;/li&gt;
+  &lt;li&gt;Nginx 1.21.3 での作業を想定。（稼働していること。稼働していない場合は方法が若干異なる）&lt;/li&gt;
+  &lt;li&gt;ACME(Automatic Certificate Management Environment) クライアントに Certbot を使用することを想定。&lt;/li&gt;
+  &lt;li&gt;バーチャルホストは使用しない。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-acme-クライアント-certbot-のインストール&quot;&gt;1. ACME クライアント Certbot のインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install certbot
+
+# certbot --version
+certbot 1.12.0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;当記事執筆時点、 1.12.0 がインストールされた。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;2-ポートの開放&quot;&gt;2. ポートの開放&lt;/h3&gt;
+
+&lt;p&gt;ドメイン所有者の認証のために TCP ポートの 80 番と 443 番に接続されるので、開放されてなければ開放しておく。&lt;/p&gt;
+
+&lt;p&gt;ufw コマンドによるポート開放については、過去記事「&lt;a href=&quot;/2021/10/20/debian-11-firewall-setting&quot; title=&quot;Debian 11 (bullseye) - ファイアウォール設定！&quot;&gt;Debian 11 (bullseye) - ファイアウォール設定！&lt;/a&gt;」を参照。&lt;/p&gt;
+
+&lt;h3 id=&quot;3-certbot-クライアントの起動&quot;&gt;3. Certbot クライアントの起動&lt;/h3&gt;
+
+&lt;p&gt;証明書発行のために Certbot クライアントを起動する。ドキュメントルートにするディレクトリが存在しなければ、作成しておく。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir -p /var/www/html
+# certbot certonly --webroot -w /var/www/html -d example.jp -d www.example.jp
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;example.jp&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;www.example.jp&lt;/code&gt; は自分のものに置き換えること。&lt;/li&gt;
+  &lt;li&gt;起動後の設定は次項。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;4-メールアドレス等の設定&quot;&gt;4. メールアドレス等の設定&lt;/h3&gt;
+
+&lt;p&gt;メールアドレスの登録と利用条件への同意を行う。（初回のみ）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Plugins selected: Authenticator webroot, Installer None
+Enter email address (used for urgent renewal and security notices)
+ (Enter &apos;c&apos; to cancel): webmaster@example.jp
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Please read the Terms of Service at
+https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf. You must
+agree in order to register with the ACME server. Do you agree?
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+(Y)es/(N)o: Y
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Would you be willing, once your first certificate is successfully issued, to
+share your email address with the Electronic Frontier Foundation, a founding
+partner of the Let&apos;s Encrypt project and the non-profit organization that
+develops Certbot? We&apos;d like to send you email about our work encrypting the web,
+EFF news, campaigns, and ways to support digital freedom.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+(Y)es/(N)o: Y
+Account registered.
+Requesting a certificate for example.jp and www.example.jp
+Performing the following challenges:
+http-01 challenge for example.jp
+http-01 challenge for www.example.jp
+Using the webroot path /var/www/html for all unmatched domains.
+Waiting for verification...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;ルータでポート開放してからでないと失敗する。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;5-ssltls-サーバ証明書の取得完了&quot;&gt;5. SSL/TLS サーバ証明書の取得完了&lt;/h3&gt;
+
+&lt;p&gt;しばらく待つと、SSL/TLS サーバ証明書の取得プロセスが完了する。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;サーバ証明書の実体（ファイル）は、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/letsencrypt/archive/ドメイン名&lt;/code&gt; ディレクトリ配下に保存される。
+    &lt;ul&gt;
+      &lt;li&gt;サーバ証明書（公開鍵） … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;certN.pem&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;中間証明書 … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chainN.pem&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;サーバ証明書と中間証明書の結合ファイル … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fullchainN.pem&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;秘密鍵 … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;privkeyN.pem&lt;/code&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;シンボリックリンクは、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/letsencrypt/live/ドメイン名&lt;/code&gt; ディレクトリ配下に保存される。
+    &lt;ul&gt;
+      &lt;li&gt;サーバ証明書（公開鍵） … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cert.pem&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;中間証明書 … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chain.pem&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;サーバ証明書と中間証明書の結合ファイル … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fullchain.pem&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;秘密鍵 … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;privkey.pem&lt;/code&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;SSL/TLS サーバ証明書の取得に失敗した場合は、ポート開放等の設定を再確認する。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;6-nginx-設定ファイルの編集&quot;&gt;6. Nginx 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;環境により設定ファイルの配置ディレクトリやファイル名、記述方法等が異なるかもしれない。適宜置き換えること。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/conf.d/default.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;server &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    listen 80&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# ===&amp;lt; 中略 &amp;gt;===&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return &lt;/span&gt;301 https://&lt;span class=&quot;nv&quot;&gt;$host$request_uri&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# ===&amp;lt; 中略 &amp;gt;===&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/conf.d/ssl.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;server &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    listen 443 ssl&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# ===&amp;lt; 中略 &amp;gt;===&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
+    ssl on&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;                                                               &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;                            &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+    ssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# ===&amp;lt; 中略 &amp;gt;===&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;7-nginx-設定ファイルの文法チェック&quot;&gt;7. Nginx 設定ファイルの文法チェック&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;問題があれば、設定ファイルの内容を見直す。&lt;/p&gt;
+
+&lt;h3 id=&quot;8-web-サーバ-の再起動&quot;&gt;8. Web サーバ の再起動&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;9-証明書の更新&quot;&gt;9. 証明書の更新&lt;/h3&gt;
+
+&lt;p&gt;Certbot にはタイマーが搭載されているので、自動で定期的に証明書が更新される。&lt;/p&gt;
+
+&lt;p&gt;Certbot タイマーの詳細を確認するなら、以下を実行。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl status certbot.timer
+
+# systemctl list-timers certbot.timer --no-pager
+
+# systemctl cat certbot.timer
+
+# systemctl cat certbot.service
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;タイマーによる更新でなく、手動で更新したい場合は以下を実行。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# certbot renew
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;10-参考サイト&quot;&gt;10. 参考サイト&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://certbot.eff.org/docs/using.html#certbot-command-line-options&quot; title=&quot;Certbot command-line options&quot;&gt;Certbot command-line options&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Nginx" /><category term="SSL" /><summary type="html">Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - Web サーバ Nginx で SSL 接続！</title><link href="https://komasaru.github.io/2022/02/09/debian-11-nginx-ssl-connection-setting/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Web サーバ Nginx で SSL 接続！" /><published>2022-02-09T00:20:00+09:00</published><updated>2022-02-09T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/02/09/debian-11-nginx-ssl-connection-setting</id><content type="html" xml:base="https://komasaru.github.io/2022/02/09/debian-11-nginx-ssl-connection-setting/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -2550,204 +2734,4 @@ pflogsumm &lt;span class=&quot;nt&quot;&gt;--problems_first&lt;/span&gt; &lt;spa
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">旧年明けまして、新年おめでとうございます。 旧年中はお世話になりました。 本年もどうぞよろしくお願いします。 話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">Debian 11 (bullseye) - Postfix ウィルス・スパム対策(ClamAV + SpamAssassin)！</title><link href="https://komasaru.github.io/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Postfix ウィルス・スパム対策(ClamAV + SpamAssassin)！" /><published>2021-12-29T00:20:00+09:00</published><updated>2021-12-29T00:20:00+09:00</updated><id>https://komasaru.github.io/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin</id><content type="html" xml:base="https://komasaru.github.io/2021/12/29/debian-11-postfix-anti-virus-with-clamav-spamassassin/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にアンチウイルスソフト ClamAV とスパム対策ソフト SpamAssassin をインストールする方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;SMTP サーバ Postfix を「&lt;a href=&quot;/2021/12/08/debian-11-postfix-installation&quot; title=&quot;Debian 11 (bullseye) - SMTP サーバ Postfix 構築！&quot;&gt;Debian 11 (bullseye) - SMTP サーバ Postfix 構築！&lt;/a&gt;」の方法で導入済み。&lt;/li&gt;
-  &lt;li&gt;アンチウィルスソフト ClamAV 導入済み。&lt;/li&gt;
-  &lt;li&gt;スパムフィルタも運用する。&lt;/li&gt;
-  &lt;li&gt;アンチウィルス ClamAV との連携には、 ClamAV daemon を使用する方法の他に、ClamSMTP を使用する方法もある。&lt;/li&gt;
-  &lt;li&gt;スパムフィルタ SpamAssassin との連携には、 amavisd-new を使用する方法の他に SpamPD を使用する方法もある。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-インストール&quot;&gt;1. インストール&lt;/h3&gt;
-
-&lt;p&gt;Postfix を ClamAV と連携させてウィルススキャン・スパムフィルタを行うのに必要な ClamAV daemon, amavisd-new, SpamAssassinを、以下のようにしてインストールする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install clamav-daemon amavisd-new spamassassin
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-spamassassin-設定ファイルの編集&quot;&gt;2. SpamAssassin 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/spamassassin&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;ENABLED&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= スパムフィルタも有効化（追加）&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;3-amavisd-new-設定ファイルの編集&quot;&gt;3. amavisd-new 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;Postfix と ClamAV, SpamAssassin を連携するのに必要な amavisd-new の設定ファイルを用意し、編集する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cp /usr/share/doc/amavisd-new/examples/amavisd.conf-default /etc/amavis/amavisd.conf
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/amavis/amavisd.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$myhostname&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;mail.mk-mode.com&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ホスト名&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;mk-mode.com&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;         &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ドメイン名&lt;/span&gt;
-
-&lt;span class=&quot;nv&quot;&gt;$daemon_user&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;amavis&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;           &lt;span class=&quot;c&quot;&gt;# &amp;lt;= amavis デーモンユーザ名&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$daemon_group&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;amavis&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;           &lt;span class=&quot;c&quot;&gt;# &amp;lt;= amavis デーモングループ名&lt;/span&gt;
-
-&lt;span class=&quot;nv&quot;&gt;$MYHOME&lt;/span&gt;        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;/var/lib/amavis&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= amavisd ホーム&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# $virus_admin = undef;             # &amp;lt;= コメント化されていることを確認（ウィルス検知を都度通知しない）&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;4-15-content_filter_mode-の編集&quot;&gt;4. 15-content_filter_mode の編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/amavis/conf.d/15-content_filter_mode&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;@bypass_virus_checks_maps &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;                                                    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
-   &lt;span class=&quot;se&quot;&gt;\%&lt;/span&gt;bypass_virus_checks, &lt;span class=&quot;se&quot;&gt;\@&lt;/span&gt;bypass_virus_checks_acl, &lt;span class=&quot;se&quot;&gt;\$&lt;/span&gt;bypass_virus_checks_re&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
-
-@bypass_spam_checks_maps &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;                                                     &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
-   &lt;span class=&quot;se&quot;&gt;\%&lt;/span&gt;bypass_spam_checks, &lt;span class=&quot;se&quot;&gt;\@&lt;/span&gt;bypass_spam_checks_acl, &lt;span class=&quot;se&quot;&gt;\$&lt;/span&gt;bypass_spam_checks_re&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;ちなみに、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amavisd.conf&lt;/code&gt; にも同じ記述がある。どちらを有効にしても良いだろう。&lt;/p&gt;
-
-&lt;h3 id=&quot;5-15-av_scanners-の編集&quot;&gt;5. 15-av_scanners の編集&lt;/h3&gt;
-
-&lt;p&gt;メールのウィルスチェックの度に clamscan が作動するとマシンが非力な場合は非常に重くなるため、 clamav-daemon が動作する今回の環境では clamdscan でウィルスチェックを行うこととする。（clamscan と clamdscan の違いについては、ここでは説明しない）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/amavis/conf.d/15-av_scanners&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;  &lt;span class=&quot;c&quot;&gt;#[&apos;ClamAV-clamscan&apos;, &apos;clamscan&apos;,  # &amp;lt;= コメント化&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;ClamAV-clamscan&apos;&lt;/span&gt;, &lt;span class=&quot;s1&quot;&gt;&apos;clamdscan&apos;&lt;/span&gt;,  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;6-20-debian_defaults-の編集&quot;&gt;6. 20-debian_defaults の編集&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Considered UNSOLICITED BULK EMAIL, apparently from you&lt;/code&gt; というタイトルのメールが届くことがあるので、それを抑止するための設定を行う。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/amavis/conf.d/20-debian_defaults&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#$final_banned_destiny     = D_DISCARD;&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$final_banned_destiny&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; D_REJECT&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D_PASS&lt;/code&gt; … メールは受信者に配送される&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D_REJECT&lt;/code&gt; … メールは配送されないが、送信者に配送されなかった事を伝える&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D_BOUNCE&lt;/code&gt; … メールは配送されないが、送信者に配送されなかった事を伝える。例外で伝えない場合もある&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D_DISCARD&lt;/code&gt; … メールは配送されず、送信者にも配送されなかった事を伝えない&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;7-postfix---maincf-の編集&quot;&gt;7. Postfix - main.cf の編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/main.cf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# 最終行へ追加&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;content_filter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;smtp-amavis:[[127.0.0.1]]:10024&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;8-postfix---mastercf-の編集&quot;&gt;8. Postfix - master.cf の編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/master.cf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# 最終行へ追加&lt;/span&gt;
-smtp-amavis unix -       -       n      -     2 smtp
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtp_data_done_timeout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1200
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtp_send_xforward_command&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;disable_dns_lookups&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes
-&lt;/span&gt;127.0.0.1:10025 inet n     -     n     -     - smtpd
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;content_filter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;local_recipient_maps&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;relay_recipient_maps&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_restriction_classes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_client_restrictions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_helo_restrictions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_sender_restrictions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_recipient_restrictions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;permit_mynetworks,reject
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;mynetworks&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;127.0.0.0/8
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;strict_rfc821_envelopes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_error_sleep_time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_soft_error_limit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1001
-      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_hard_error_limit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1000&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;9-その他の設定&quot;&gt;9. その他の設定&lt;/h3&gt;
-
-&lt;p&gt;処理に必要なファイルを作成したり、権限設定、ユーザ作成を行う。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# touch /etc/mailname
-# chmod -R 775 /var/lib/amavis/tmp
-# usermod -G amavis clamav
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;10-サービスの再起動&quot;&gt;10. サービスの再起動&lt;/h3&gt;
-
-&lt;p&gt;ClamAV daemon, Postfix, Amavisd を再起動、SpamAssassin を起動する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart clamav-daemon
-# systemctl restart postfix
-# systemctl restart amavis
-# systemctl start spamassassin
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;11-サービス自動起動の設定&quot;&gt;11. サービス自動起動の設定&lt;/h3&gt;
-
-&lt;p&gt;デフォルトで自動起動する設定になっているはずだが、なっていなければ、自動起動するよう設定する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl enable spamassassin
-Synchronizing state of spamassassin.service with SysV service script with /lib/systemd/systemd-sysv-install.
-Executing: /lib/systemd/systemd-sysv-install enable spamassassin
-insserv: warning: current start runlevel(s) (empty) of script `spamassassin&apos; overrides LSB defaults (2 3 4 5).
-insserv: warning: current stop runlevel(s) (0 1 2 3 4 5 6) of script `spamassassin&apos; overrides LSB defaults (0 1 6).
-Created symlink /etc/systemd/system/multi-user.target.wants/spamassassin.service → /lib/systemd/system/spamassassin.service.
-
-# systemctl is-enabled clamav-daemon
-enabled
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;12-動作確認&quot;&gt;12. 動作確認&lt;/h3&gt;
-
-&lt;p&gt;メールを送信してみる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# echo test | mail -s &quot;TEST&quot; root
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;受信メールのヘッダに &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;X-Virus-Scanned: Debian amavisd-new at&lt;/code&gt; の文字列が存在することが確認できれば成功である。（メールソフトでヘッダを表示できる。または、サーバ内に届いたメールファイル(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/&amp;lt;user_name&amp;gt;/Maildir/new/***&lt;/code&gt;)を開いてみる）&lt;/p&gt;
-
-&lt;p&gt;メール送信コマンド &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mail&lt;/code&gt; が使用できない場合は、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mailutils&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;heirloom-mailx&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bsd-mailx&lt;/code&gt; 等をインストールする。複数ある場合は、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;update-alternatives --config mailx&lt;/code&gt; でデフォルト設定をする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-===&amp;lt; 中略 &amp;gt;===
-
-X-Virus-Scanned: Debian amavisd-new at
-
-===&amp;lt; 中略 &amp;gt;===
-
-Subject: TEST
-
-===&amp;lt; 中略 &amp;gt;===
-
-test
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;13-誤検知対策&quot;&gt;13. 誤検知対策&lt;/h3&gt;
-
-&lt;p&gt;スパムメールをそうでないメールと誤検知したり、スパムでないメールをスパムと誤検知する場合は、以下のように &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;local.cf&lt;/code&gt; に追記する。（以下は一例）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mail/spamassassin/local.cf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# 最終行に追記&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# Whitelist&lt;/span&gt;
-whitelist_from xxxx@xxxxxxxx.ne.jp
-whitelist_from yyyy@yyyyyyyy.co.jp
-whitelist_from zzzz@zzzzzzzz.com
-
-&lt;span class=&quot;c&quot;&gt;# Blacklist&lt;/span&gt;
-blacklist_from &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;@aaaaaaaa.biz
-blacklist_from &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;@bbbbbbbb.co.jp
-blacklist_from &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;@cccccccc.info
-blacklist_from xxxx@dddddddd.co.jp
-blacklist_from yyyy@eeeeeeee.ne.jp
-blacklist_from zzzz@ffffffff.info&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><category term="ウイルス対策" /><category term="スパム対策" /><summary type="html">Debian GNU/Linux 11 (bullseye) にアンチウイルスソフト ClamAV とスパム対策ソフト SpamAssassin をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">旧年明けまして、新年おめでとうございます。 旧年中はお世話になりました。 本年もどうぞよろしくお願いします。 話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>

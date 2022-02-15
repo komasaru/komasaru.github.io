@@ -12262,4 +12262,10 @@ var store = [{
         "tags": ["Debian","Linux","Nginx","SSL"],
         "url": "/2022/02/09/debian-11-nginx-ssl-connection-setting/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - Let's Encrypt で常時 SSL 化(on Nginx)！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11 (bullseye; 64bit) での作業を想定。 クライアント側も Debian GNU/Linux 11 (bullseye; 64bit) を想定。 Web(HTTP)サーバ Nginx が「Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！」の方法で導入済みであることを想定。 Nginx 1.21.3 での作業を想定。（稼働していること。稼働していない場合は方法が若干異なる） ACME(Automatic Certificate Management Environment)...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Nginx","SSL"],
+        "url": "/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt/",
+        "teaser": null
       }]
