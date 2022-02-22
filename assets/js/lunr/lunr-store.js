@@ -12268,4 +12268,10 @@ var store = [{
         "tags": ["Debian","Linux","Nginx","SSL"],
         "url": "/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - Ruby 3.0 インストール（ソースビルド）！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に Ruby 3.0 をソースをビルドしてインストール方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.1.0 (bullseye; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。 インストールするは当記事執筆時点で最新の Ruby は 3.0.2. root ユーザでの作業を想定。 1. 必要パッケージのインストール Ruby のインストールに必要なパッケージを予めインストールする。（他に必要なものがあればインストールする） # apt -y install libffi-dev zlib1g-dev libssl-dev libreadline-dev \\ libgdbm-dev libbison-dev libmariadb-dev 2. アーカイブファイルのダウンロード＆展開 アーカイブファイルをダンロードし、展開する。（ダンロード先は...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Ruby"],
+        "url": "/2022/02/23/debian-11-ruby-3-0-installation-by-src/",
+        "teaser": null
       }]

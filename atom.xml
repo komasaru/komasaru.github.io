@@ -1,4 +1,92 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-02-15T11:19:48+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Let’s Encrypt で常時 SSL 化(on Nginx)！</title><link href="https://komasaru.github.io/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Let’s Encrypt で常時 SSL 化(on Nginx)！" /><published>2022-02-16T00:20:00+09:00</published><updated>2022-02-16T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt</id><content type="html" xml:base="https://komasaru.github.io/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-02-22T17:24:44+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Ruby 3.0 インストール（ソースビルド）！</title><link href="https://komasaru.github.io/2022/02/23/debian-11-ruby-3-0-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Ruby 3.0 インストール（ソースビルド）！" /><published>2022-02-23T00:20:00+09:00</published><updated>2022-02-23T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/02/23/debian-11-ruby-3-0-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/02/23/debian-11-ruby-3-0-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に Ruby 3.0 をソースをビルドしてインストール方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.1.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;インストールするは当記事執筆時点で最新の Ruby は 3.0.2.&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-必要パッケージのインストール&quot;&gt;1. 必要パッケージのインストール&lt;/h3&gt;
+
+&lt;p&gt;Ruby のインストールに必要なパッケージを予めインストールする。（他に必要なものがあればインストールする）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install libffi-dev zlib1g-dev libssl-dev libreadline-dev \
+libgdbm-dev libbison-dev libmariadb-dev
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-アーカイブファイルのダウンロード展開&quot;&gt;2. アーカイブファイルのダウンロード＆展開&lt;/h3&gt;
+
+&lt;p&gt;アーカイブファイルをダンロードし、展開する。（ダンロード先は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/src&lt;/code&gt; としている）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /usr/local/src
+# wget https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.2.tar.gz
+# tar xvf ruby-3.0.2.tar.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-ビルドインストール&quot;&gt;3. ビルド＆インストール&lt;/h3&gt;
+
+&lt;p&gt;ビルドインストールは以下のように行う。（よくある &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.configure&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make install&lt;/code&gt;）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd ruby-3.0.2
+# ./configure
+# make -j$(grep &apos;^processor&apos; /proc/cpuinfo | wc -l)
+# make install
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-インストールの確認&quot;&gt;4. インストールの確認&lt;/h3&gt;
+
+&lt;p&gt;バージョンを表示させてみて、インストールできているか確認する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ruby -v
+ruby 3.0.2p107 (2021-07-07 revision 0db68f0233) [x86_64-linux]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-ドキュメントの非インストール設定&quot;&gt;5. ドキュメントの非インストール設定&lt;/h3&gt;
+
+&lt;p&gt;サーバ環境には RubyGems ライブラリのドキュメントは不要なので、 RubyGems ライブラリインストール時にドキュメントをインストールしないように設定する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.gemrc&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt;: &lt;span class=&quot;nt&quot;&gt;--no-document&lt;/span&gt;
+update: &lt;span class=&quot;nt&quot;&gt;--no-document&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;6-gem-の最新化&quot;&gt;6. gem の最新化&lt;/h3&gt;
+
+&lt;p&gt;今後のために、gem を最新に更新しておく。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# gem -v
+3.2.22
+
+# gem update --system
+
+# gem -v
+3.2.27
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-動作確認&quot;&gt;7. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;適当にコーディングして、正常に動作するか確認する。&lt;br /&gt;
+Ruby スクリプトファイルを作成して実行してもよいし、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;irb&lt;/code&gt; や &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pry&lt;/code&gt; でコーディングしてもよい。以下はコマンドラインから実行した例。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ruby -e &apos;5.times {puts &quot;Hello Ruby!&quot;}&apos;
+Hello Ruby!
+Hello Ruby!
+Hello Ruby!
+Hello Ruby!
+Hello Ruby!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Ruby" /><summary type="html">Debian GNU/Linux 11 (bullseye) に Ruby 3.0 をソースをビルドしてインストール方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - Let’s Encrypt で常時 SSL 化(on Nginx)！</title><link href="https://komasaru.github.io/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Let’s Encrypt で常時 SSL 化(on Nginx)！" /><published>2022-02-16T00:20:00+09:00</published><updated>2022-02-16T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt</id><content type="html" xml:base="https://komasaru.github.io/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
 
@@ -2319,419 +2407,4 @@ pflogsumm &lt;span class=&quot;nt&quot;&gt;--problems_first&lt;/span&gt; &lt;spa
 
 &lt;p&gt;単純に数を集計するだけではなく、形態素解析を利用して集計するのも面白いものです。&lt;/p&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="SNS" /><category term="Twitter" /><category term="Ruby" /><category term="MySQL" /><category term="MariaDB" /><category term="MeCab" /><summary type="html">改めまして、旧年明けまして、新年おめでとうございます。 2021年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。 当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Ruby + Twitter API で本家からデータを取得して保存） ほとんど SQL で集計可能でしたが、品詞・単語別の集計は形態素解析エンジン MeCab を使用しました。</summary></entry><entry><title type="html">2021年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）</title><link href="https://komasaru.github.io/2022/01/01/blog-access/" rel="alternate" type="text/html" title="2021年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）" /><published>2022-01-01T00:20:00+09:00</published><updated>2022-01-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2022/01/01/blog-access/">&lt;p&gt;旧年明けまして、新年おめでとうございます。&lt;/p&gt;
-
-&lt;p&gt;旧年中はお世話になりました。 本年もどうぞよろしくお願いします。&lt;/p&gt;
-
-&lt;p&gt;話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;1-アクセスをos別に集計&quot;&gt;1. アクセスをOS別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;22,278&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;65.3678&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8,894&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;26.0967&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,177&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.4535&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,168&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.4271&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;400&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.1737&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;129&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.3785&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;21&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0616&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0352&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0029&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Debian GNU/Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0029&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;34,081&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;2-アクセスをosバージョン別に集計&quot;&gt;2. アクセスをOS・バージョン別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;10&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;17,537&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;51.4568&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8,894&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;26.0967&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;7&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,384&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12.8635&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,177&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.4535&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,168&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.4271&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;400&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.1737&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;312&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.9155&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;129&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.3785&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;31&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0910&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;21&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0616&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0352&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;XP&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;9&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0264&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Vista&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0088&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;98&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0059&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0029&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Debian GNU/Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0029&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;34,081&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;3-アクセスをブラウザ別に集計&quot;&gt;3. アクセスをブラウザ別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;20,499&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;60.1479&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5,839&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;17.1327&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,291&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12.5906&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,927&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8.5884&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;511&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.4994&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0235&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0088&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla SeaMonkey&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0059&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Epiphany&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0029&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;34,081&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;4-アクセスをブラウザバージョン別に集計上位20件&quot;&gt;4. アクセスをブラウザ・バージョン別に集計（上位20件）&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.110&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;7,279&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;21.3579&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.45&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,297&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12.6082&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;5.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,291&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12.5906&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.93&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3,571&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;10.4780&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;9537.53&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,668&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;7.8284&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.55&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,541&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;7.4558&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;604.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,145&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6.2938&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;95.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,291&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.7880&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;605.1.15&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,003&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2.9430&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;94.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;806&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2.3650&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;95.0.4638.69&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;639&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.8749&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;11.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;495&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.4524&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.104&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;422&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.2382&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;78.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;297&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.8715&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;94.0.4606.81&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;254&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.7453&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;91.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;239&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.7013&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.92&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;177&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.5194&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.113&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;94&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2758&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;95.0.4638.54&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;89&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2611&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;90.0.4430.210&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;52&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1526&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;34,081&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">旧年明けまして、新年おめでとうございます。 旧年中はお世話になりました。 本年もどうぞよろしくお願いします。 話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="SNS" /><category term="Twitter" /><category term="Ruby" /><category term="MySQL" /><category term="MariaDB" /><category term="MeCab" /><summary type="html">改めまして、旧年明けまして、新年おめでとうございます。 2021年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。 当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Ruby + Twitter API で本家からデータを取得して保存） ほとんど SQL で集計可能でしたが、品詞・単語別の集計は形態素解析エンジン MeCab を使用しました。</summary></entry></feed>
