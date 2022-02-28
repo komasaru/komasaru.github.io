@@ -12274,4 +12274,10 @@ var store = [{
         "tags": ["Debian","Linux","Ruby"],
         "url": "/2022/02/23/debian-11-ruby-3-0-installation-by-src/",
         "teaser": null
+      },{
+        "title": "2022年2月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"3月になりましたので、先月2月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 20,005 67.4796 Mac OS 6,967 23.5006 Linux 1,221 4.1186 Android 974 3.2854 Ubuntu Linux 294 0.9917 unknown 147 0.4959 Fedora Linux 28 0.0944 FreeBSD 6 0.0202 PlayStation 3 0.0101 OpenBSD 1 0.0034 合　計 29,646 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2022/03/01/blog-access/",
+        "teaser": null
       }]
