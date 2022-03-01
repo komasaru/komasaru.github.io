@@ -12280,4 +12280,10 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2022/03/01/blog-access/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - Python 3.9 インストール（ソースビルド）！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に Python 3.9 をソースをビルドしてインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。 クライアント側も Debian GNU/Linux 11 (bullseye; 64bit) を想定。 当作業時で最新の 3.9.7 をソースをビルドしてインストールする。 デフォルトでインストールされている 3.9.2 はアンインストールしない。 （既にインストール・設定済みのパッケージに影響がでないよう） 1. Python のバージョン確認 インストール済み（現状）の Python のバージョンを確認してみる。 # python3 -V Python 3.9.2 --version オプションでもよい。 python3 は python3.9 でもよい。 （python3...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Python"],
+        "url": "/2022/03/02/debian-11-python-3-9-installation-by-src/",
+        "teaser": null
       }]

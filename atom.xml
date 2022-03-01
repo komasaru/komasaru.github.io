@@ -1,4 +1,151 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-03-01T00:22:28+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">2022年2月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2022/03/01/blog-access/" rel="alternate" type="text/html" title="2022年2月 - OS・ブラウザ別アクセス状況！" /><published>2022-03-01T00:20:00+09:00</published><updated>2022-03-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/03/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2022/03/01/blog-access/">&lt;p&gt;3月になりましたので、先月2月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-03-01T09:50:23+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Python 3.9 インストール（ソースビルド）！</title><link href="https://komasaru.github.io/2022/03/02/debian-11-python-3-9-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Python 3.9 インストール（ソースビルド）！" /><published>2022-03-02T00:20:00+09:00</published><updated>2022-03-02T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/03/02/debian-11-python-3-9-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/03/02/debian-11-python-3-9-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に Python 3.9 をソースをビルドしてインストールする方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;クライアント側も Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;当作業時で最新の 3.9.7 をソースをビルドしてインストールする。&lt;/li&gt;
+  &lt;li&gt;デフォルトでインストールされている 3.9.2 はアンインストールしない。&lt;br /&gt;
+（既にインストール・設定済みのパッケージに影響がでないよう）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-python-のバージョン確認&quot;&gt;1. Python のバージョン確認&lt;/h3&gt;
+
+&lt;p&gt;インストール済み（現状）の Python のバージョンを確認してみる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# python3 -V
+Python 3.9.2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--version&lt;/code&gt; オプションでもよい。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;python3&lt;/code&gt; は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;python3.9&lt;/code&gt; でもよい。&lt;br /&gt;
+（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;python3&lt;/code&gt; は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;python3.9&lt;/code&gt; にシンボリックリンクが張られているので）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;2-必要パッケージのインストール&quot;&gt;2. 必要パッケージのインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y update
+# apt -y install build-essential libbz2-dev libdb-dev \
+  libreadline-dev libffi-dev libgdbm-dev liblzma-dev \
+  libncursesw5-dev libsqlite3-dev libssl-dev \
+  zlib1g-dev uuid-dev tk-dev
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;更に必要なものがある場合、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make&lt;/code&gt; 後に出力されるメッセージで確認可能。（再度 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make&lt;/code&gt; する必要があるが）&lt;br /&gt;
+（開発に不要なものなら無視してもよいだろう）&lt;/p&gt;
+
+&lt;h3 id=&quot;3-アーカイブのダウンロード展開&quot;&gt;3. アーカイブのダウンロード＆展開&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.python.org/downloads/release/python-397/&quot; title=&quot;Python Release Python 3.9.7 - Python.org&quot;&gt;こちら&lt;/a&gt; から 3.9 系の最新安定版（当記事執筆時点では 3.9.7）のアーカイブ（今回は tgz 版）をダウンロード・展開する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /usr/local/src
+# wget https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tgz
+# tar xvf Python-3.9.7.tgz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-ビルドインストール&quot;&gt;4. ビルド＆インストール&lt;/h3&gt;
+
+&lt;p&gt;3.9 系以外のバージョンの Python と共存させるら、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--prefix&lt;/code&gt; でインストール先を指定する。
+また、あらゆるサイト等で紹介されている &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--enable-shared&lt;/code&gt; のオプションは、メリットがない（むしろ問題点がある）ので使用しない。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd  Python-3.9.7
+# ./configure
+# make -j$(grep &apos;^processor&apos; /proc/cpuinfo | wc -l)
+# make install
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;もし、ビルドソースに問題がないか等をテストしたければ、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make&lt;/code&gt; のあとで &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make test&lt;/code&gt; でチェックしてみるとよい。&lt;/p&gt;
+
+&lt;h3 id=&quot;5-pip-の更新&quot;&gt;5. pip の更新&lt;/h3&gt;
+
+&lt;p&gt;pip を最新版に更新しておく。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# pip3.9 -V
+pip 21.2.3 from /usr/local/lib/python3.9/site-packages/pip (python 3.9)
+
+# pip3.9 install --upgrade pip
+
+# pip3.9 -V
+pip 21.2.4 from /usr/local/lib/python3.9/site-packages/pip (python 3.9)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-インストールの確認&quot;&gt;6. インストールの確認&lt;/h3&gt;
+
+&lt;p&gt;（ログインし直してから）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# python3.9 -V
+Python 3.9.7
+
+# python3 -V
+Python 3.9.7
+
+# pip3 -V
+pip 21.2.4 from /usr/local/lib/python3.9/site-packages/pip (python 3.9)
+
+# pip3.9 -V
+pip 21.2.4 from /usr/local/lib/python3.9/site-packages/pip (python 3.9)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-動作確認&quot;&gt;7. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;対話形式で確認してみる。（ユークリッドの互除法で再帰的に最大公約数を求めてみる）&lt;br /&gt;
+（対話形式を終了するには &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CTRL-D&lt;/code&gt;）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# python3
+Python 3.9.7 (default, Sep 19 2021, 10:19:01)
+[GCC 10.2.1 20210110] on linux
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&amp;gt;&amp;gt;&amp;gt; def gcd(a, b):
+...     if b == 0:
+...             return a
+...     else:
+...             return gcd(b, a % b)
+...
+&amp;gt;&amp;gt;&amp;gt; print(&quot;TheGCD for (123, 45): {}&quot;.format(gcd(123, 45)))
+TheGCD for (123, 45): 3
+&amp;gt;&amp;gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;上記と同じことをファイルを作成して実行してみる。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcd.py&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+7
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;gcd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gcd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;TheGCD for (123, 45): {}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gcd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;123&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;45&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# python3 gcd.py
+The GCD for (123, 45): 3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;8-参考サイト&quot;&gt;8. 参考サイト&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.python.jp/&quot; title=&quot;プログラミング言語 Python&quot;&gt;プログラミング言語 Python&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Python" /><summary type="html">Debian GNU/Linux 11 (bullseye) に Python 3.9 をソースをビルドしてインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">2022年2月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2022/03/01/blog-access/" rel="alternate" type="text/html" title="2022年2月 - OS・ブラウザ別アクセス状況！" /><published>2022-03-01T00:20:00+09:00</published><updated>2022-03-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/03/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2022/03/01/blog-access/">&lt;p&gt;3月になりましたので、先月2月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -2201,77 +2348,4 @@ configure options: &amp;lt;... （ここに configure オプションの一覧�
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Groonga" /><summary type="html">Debian GNU/Linux 11 (bullseye) にカラムストア機能付き全文検索エンジン Groonga を Groonga の公式リポジトリを使用して導入する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - Postfix ログ解析！</title><link href="https://komasaru.github.io/2022/01/05/debian-11-postfix-log-analysis/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Postfix ログ解析！" /><published>2022-01-05T00:20:00+09:00</published><updated>2022-01-05T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/05/debian-11-postfix-log-analysis</id><content type="html" xml:base="https://komasaru.github.io/2022/01/05/debian-11-postfix-log-analysis/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に導入した SMTP サーバ Postfix のログを解析する方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;SMTP サーバ Postfix を「&lt;a href=&quot;/2021/12/08/debian-11-postfix-installation&quot; title=&quot;Debian 11 (bullseye) - SMTP サーバ Postfix 構築！&quot;&gt;Debian 11 (bullseye) - SMTP サーバ Postfix 構築！&lt;/a&gt;」の方法で導入済み。&lt;/li&gt;
-  &lt;li&gt;ログローテート（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;logrotate&lt;/code&gt;）でメールログがローテーションされていることを想定。（デフォルトでなっているはず）&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-pflogsumm-のインストール&quot;&gt;1. pflogsumm のインストール&lt;/h3&gt;
-
-&lt;p&gt;Postfix のログ解析ツールである pflogsumm を、以下のようにしてインストールする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install pflogsumm
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-pflogsumm-実行用スクリプトの作成&quot;&gt;2. pflogsumm 実行用スクリプトの作成&lt;/h3&gt;
-
-&lt;p&gt;pflogsumm を実行するスクリプト &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pflogsumm_report&lt;/code&gt; を以下のように作成する。&lt;br /&gt;
-単純に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pflogsumm&lt;/code&gt; コマンドを実行するだけでもレポートはできるが、それだとログローテートしている場合に正常に取得できない部分も発生する可能性があるので、それを考慮している。&lt;br /&gt;
-また、以下のスクリプトでは前日のメールログを解析し、結果を &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;postmaster&lt;/code&gt; 宛にメール送信している。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pflogsumm_report&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
-
-&lt;span class=&quot;nv&quot;&gt;LANG&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;C
-&lt;span class=&quot;nv&quot;&gt;MAILLOG&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;mktemp&apos;&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;log &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; /var/log/mail.log&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;|sort &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;do
-    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$log&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$MAILLOG&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;done
-&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;REPORT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mktemp&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
-pflogsumm &lt;span class=&quot;nt&quot;&gt;--problems_first&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--verbose_msg_detail&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--mailq&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; yesterday &lt;span class=&quot;nv&quot;&gt;$MAILLOG&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$REPORT&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$REPORT&lt;/span&gt; | mail &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;head&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-1&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$REPORT&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; in &lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;uname&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; postmaster
-&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$MAILLOG&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$REPORT&lt;/span&gt;
-
-&lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;スクリプト内のメール送信コマンド &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mail&lt;/code&gt; が使用できない場合は、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mailutils&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;heirloom-mailx&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bsd-mailx&lt;/code&gt; 等をインストールする。複数ある場合は、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;update-alternatives --config mailx&lt;/code&gt; でデフォルト設定をする。&lt;/p&gt;
-
-&lt;p&gt;なお、ログローテートしていない場合は、もっと簡単なスクリプトにすることも可能であるし、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pflogsumm&lt;/code&gt; コマンドを直接実行して運用してもよい。&lt;/p&gt;
-
-&lt;h3 id=&quot;3-実行権限の付与&quot;&gt;3. 実行権限の付与&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# chmod 700 pflogsumm_report
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-スクリプトの実行&quot;&gt;4. スクリプトの実行&lt;/h3&gt;
-
-&lt;p&gt;作成したスクリプトを実行してみる。&lt;br /&gt;
-問題がなければ、 postmaster 宛にメールが送信されるはずである。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ./pflogsumm_report
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-自動実行の設定&quot;&gt;5. 自動実行の設定&lt;/h3&gt;
-
-&lt;p&gt;毎日自動で実行するように cron 登録する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mv pflogsumm_report /etc/cron.daily/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><summary type="html">Debian GNU/Linux 11 (bullseye) に導入した SMTP サーバ Postfix のログを解析する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Groonga" /><summary type="html">Debian GNU/Linux 11 (bullseye) にカラムストア機能付き全文検索エンジン Groonga を Groonga の公式リポジトリを使用して導入する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
