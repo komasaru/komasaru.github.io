@@ -1,4 +1,73 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-03-01T09:50:23+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Python 3.9 インストール（ソースビルド）！</title><link href="https://komasaru.github.io/2022/03/02/debian-11-python-3-9-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Python 3.9 インストール（ソースビルド）！" /><published>2022-03-02T00:20:00+09:00</published><updated>2022-03-02T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/03/02/debian-11-python-3-9-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/03/02/debian-11-python-3-9-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に Python 3.9 をソースをビルドしてインストールする方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-03-09T15:32:19+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - ログ解析ツール logwatch インストール！</title><link href="https://komasaru.github.io/2022/03/10/debian-11-logwatch-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - ログ解析ツール logwatch インストール！" /><published>2022-03-10T00:20:00+09:00</published><updated>2022-03-10T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/03/10/debian-11-logwatch-installation</id><content type="html" xml:base="https://komasaru.github.io/2022/03/10/debian-11-logwatch-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にログ監視ツール LogWatch をインストールする方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-logwatch-のインストール&quot;&gt;1. logwatch のインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install logwatch
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-logwatch-設定ファイルの編集&quot;&gt;2. logwatch 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;まず、デフォルトの設定ファイルを複製する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cp /usr/share/logwatch/default.conf/logwatch.conf /etc/logwatch/conf/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;デフォルトの設定で充分であるが、必要なら編集する。&lt;br /&gt;
+メールの送信先等を変更するなら以下のようにする。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/logwatch/conf/logwatch.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;MailTo &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; hoge@xxxx.com  &lt;span class=&quot;c&quot;&gt;# &amp;lt; = メール送信先&lt;/span&gt;
+Detail &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; High           &lt;span class=&quot;c&quot;&gt;# &amp;lt; = ログの詳細レベル (Low(0), Med(5), High(10) か 1～10 の整数)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;3-ディレクトリの作成&quot;&gt;3. ディレクトリの作成&lt;/h3&gt;
+
+&lt;p&gt;キャッシュで使用するディレクトリが無いので作成しておく。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir /var/cache/logwatch
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-動作確認&quot;&gt;4. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;logwatch をインストールするとデフォルトで cron 登録されるので、毎日レポートメールが届くはずである。後はそのメール内容をチェックする。&lt;br /&gt;
+今すぐに確認したければ、以下のようにする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# /etc/cron.daily/00logwatch
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;以下のような内容のメールが届くはずである。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+ ################### Logwatch 7.5.5 (01/22/21) ####################
+        Processing Initiated: Sun Sep 19 16:15:39 2021
+        Date Range Processed: yesterday
+                              ( 2021-Sep-18 )
+                              Period is day.
+        Detail Level of Output: 0
+        Type of Output/Format: mail / text
+        Logfiles for Host: vbox
+ ##################################################################
+
+         :
+====&amp;lt; 以下省略 &amp;gt;====
+         :
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html">Debian GNU/Linux 11 (bullseye) にログ監視ツール LogWatch をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - Python 3.9 インストール（ソースビルド）！</title><link href="https://komasaru.github.io/2022/03/02/debian-11-python-3-9-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Python 3.9 インストール（ソースビルド）！" /><published>2022-03-02T00:20:00+09:00</published><updated>2022-03-02T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/03/02/debian-11-python-3-9-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/03/02/debian-11-python-3-9-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に Python 3.9 をソースをビルドしてインストールする方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -2264,88 +2333,4 @@ Rule added
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><category term="MariaDB" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上に DB サーバ MariaDB（10.5系）を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！</title><link href="https://komasaru.github.io/2022/01/12/debian-11-groonga-installation-by-official-apt/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！" /><published>2022-01-12T00:20:00+09:00</published><updated>2022-01-12T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/12/debian-11-groonga-installation-by-official-apt</id><content type="html" xml:base="https://komasaru.github.io/2022/01/12/debian-11-groonga-installation-by-official-apt/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にカラムストア機能付き全文検索エンジン Groonga を Groonga の公式リポジトリを使用して導入する方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;当記事執筆時点で最新の Groonga 11.0.6 をインストールする。&lt;/li&gt;
-  &lt;li&gt;トークナイザとして MeCab を使用することを想定。&lt;/li&gt;
-  &lt;li&gt;トークンフィルタとして TokenFilterStem を使用することを想定。&lt;/li&gt;
-  &lt;li&gt;ノーマライザとして MySQL 互換の groonga-normalizer-mysql を使用することを想定。（将来、 Mroonga を使用することを想定）&lt;/li&gt;
-  &lt;li&gt;ここでは、全文検索がどういうものかという説明はしない。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-  &lt;li&gt;以下の説明内で出力するデータは、可読性を考慮して整形している。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-日本語形態素解析器-mecab-のインストール&quot;&gt;1. 日本語形態素解析器 MeCab のインストール&lt;/h3&gt;
-
-&lt;p&gt;トークナイザとして MeCab を使用する予定なので、インストールしておく。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install mecab
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-インストール&quot;&gt;2. インストール&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y update
-# wget https://packages.groonga.org/debian/groonga-apt-source-latest-bullseye.deb
-# apt -y -V install ./groonga-apt-source-latest-bullseye.deb
-# apt -y update
-# apt -y -V install groonga
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;3-トークナイザ-mecab-のインストール&quot;&gt;3. トークナイザ MeCab のインストール&lt;/h3&gt;
-
-&lt;p&gt;（トクーナイザとして MeCab を使用しないのなら、この作業は不要）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y -V install groonga-tokenizer-mecab
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-トークンフィルタ-tokefilterstem-のインストール&quot;&gt;4. トークンフィルタ TokeFilterStem のインストール&lt;/h3&gt;
-
-&lt;p&gt;（トークンフィルタとして TokeFilterStem を使用しないのなら、この作業は不要）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y -V install groonga-token-filter-stem
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-munin-プラグインのインストール&quot;&gt;5. Munin プラグインのインストール&lt;/h3&gt;
-
-&lt;p&gt;（Munin プラグインを使用しないのなら、この作業は不要）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y -V install groonga-munin-plugins
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;6-mysql-互換ノーマライザのインストール&quot;&gt;6. MySQL 互換ノーマライザのインストール&lt;/h3&gt;
-
-&lt;p&gt;（ノーマライザとして groonga-normalizer-mysql を使用しないのなら、この作業は不要）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y -V install groonga-normalizer-mysql
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-インストール確認&quot;&gt;7. インストール確認&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ groonga --version
-Groonga 11.0.6 [linux-gnu,x86_64,utf8,match-escalation-threshold=0,nfkc,mecab,message-pack,mruby,onigmo,zlib,lz4,zstandard,epoll,rapidjson,apache-arrow]
-
-configure options: &amp;lt;... （ここに configure オプションの一覧） ...&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;8-動作確認&quot;&gt;8. 動作確認&lt;/h3&gt;
-
-&lt;p&gt;（過去記事「&lt;a href=&quot;/2015/08/09/linux-mint-groonga-installation-by-src/&quot; title=&quot;Linux Mint - Groonga インストール（by ソースビルド）！&quot;&gt;Linux Mint - Groonga インストール（by ソースビルド）！&lt;/a&gt;」を参照）&lt;/p&gt;
-
-&lt;h3 id=&quot;9-参考サイト&quot;&gt;9. 参考サイト&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://groonga.org/ja/&quot; title=&quot;Groonga - カラムストア機能付き全文検索エンジン&quot;&gt;Groonga - カラムストア機能付き全文検索エンジン&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Groonga" /><summary type="html">Debian GNU/Linux 11 (bullseye) にカラムストア機能付き全文検索エンジン Groonga を Groonga の公式リポジトリを使用して導入する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><category term="MariaDB" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上に DB サーバ MariaDB（10.5系）を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
