@@ -12290,6 +12290,6 @@ var store = [{
         "title": "Debian 11 (bullseye) - ログ解析ツール logwatch インストール！",
         "excerpt":"Debian GNU/Linux 11 (bullseye) にログ監視ツール LogWatch をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11 (bullseye; 64bit) での作業を想定。 root ユーザでの作業を想定。 1. logwatch のインストール # apt -y install logwatch 2. logwatch 設定ファイルの編集 まず、デフォルトの設定ファイルを複製する。 # cp /usr/share/logwatch/default.conf/logwatch.conf /etc/logwatch/conf/ デフォルトの設定で充分であるが、必要なら編集する。 メールの送信先等を変更するなら以下のようにする。 File: /etc/logwatch/conf/logwatch.conf MailTo = hoge@xxxx.com # &lt; = メール送信先 Detail = High #...","categories": ["サーバ構築"],
         "tags": ["Debian","Linux"],
-        "url": "/2022/03/10/debian-11-logwatch-installation/",
+        "url": "/2022/03/12/debian-11-logwatch-installation/",
         "teaser": null
       }]
