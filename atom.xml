@@ -1,4 +1,303 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-03-11T23:57:42+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - ログ解析ツール logwatch インストール！</title><link href="https://komasaru.github.io/2022/03/12/debian-11-logwatch-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - ログ解析ツール logwatch インストール！" /><published>2022-03-12T00:20:00+09:00</published><updated>2022-03-12T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/03/12/debian-11-logwatch-installation</id><content type="html" xml:base="https://komasaru.github.io/2022/03/12/debian-11-logwatch-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にログ監視ツール LogWatch をインストールする方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-03-15T21:08:44+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - 自動バックアップ運用！</title><link href="https://komasaru.github.io/2022/03/16/debian-11-automatic-backup-setting/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - 自動バックアップ運用！" /><published>2022-03-16T00:20:00+09:00</published><updated>2022-03-16T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/03/16/debian-11-automatic-backup-setting</id><content type="html" xml:base="https://komasaru.github.io/2022/03/16/debian-11-automatic-backup-setting/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) で自動バックアップ運用する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;バックファイルを配置するディレクトリは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/foo/bak&lt;/code&gt; （foo ユーザのホーム内の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bak&lt;/code&gt; ディレクトリ）とする。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-バックアップスクリプトの作成&quot;&gt;1. バックアップスクリプトの作成&lt;/h3&gt;
+
+&lt;p&gt;以下のような内容でバックアップスクリプトを作成する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/root/backup.sh&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# ローカル内でバックアップ&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;LANG&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;C
+
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 設定開始&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# バックアップ対象リスト名&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# ※バックアップ対象をフルパスで記述したリスト&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;BACKUPLIST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/root/backuplist
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPLIST&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$BACKUPLIST&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; is not found&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; error_exit
+
+&lt;span class=&quot;c&quot;&gt;# バックアップ対象外リスト名&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# ※バックアップ対象外をフルパスで記述したリスト&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;BACKUPNOLIST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/root/backupnolist
+
+&lt;span class=&quot;c&quot;&gt;# バックアップ先ディレクトリ名&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;BACKUPDIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/home/foo/bak
+&lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPDIR&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# バックアップ保存世代数&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# ※当日分を含めた過去分バックアップを保存する世代数&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# ※過去分バックアップを保存しない場合は1を指定する&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;BACKUPGEN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;8
+
+&lt;span class=&quot;c&quot;&gt;# 暗号化・復号化パスフレーズ&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# ※指定がないときは暗号化しない&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;PASS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;&apos;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# バックアップログファイル名&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;BACKUPLOG&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/var/log/backup.log
+
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 設定終了&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 異常終了処理関数定義&lt;/span&gt;
+error_exit &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$TMPBACKUPNOLIST&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;1
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# バックアップファイルをバックアップ対象外リストに追加&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# ※バックアップ先ファイルをバックアップしないようにする&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;TMPBACKUPNOLIST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mktemp&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPNOLIST&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPNOLIST&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$TMPBACKUPNOLIST&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$BACKUPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/*backup.tar.bz2&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$TMPBACKUPNOLIST&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 前回バックアップをリネーム&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPDIR&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;OLDBACKUPFILE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls &lt;/span&gt;backup.tar.bz2&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; 2&amp;gt;/dev/null&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$OLDBACKUPFILE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TIMESTAMP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--full-time&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$OLDBACKUPFILE&lt;/span&gt;|awk &lt;span class=&quot;s1&quot;&gt;&apos;{print $6}&apos;&lt;/span&gt;|tr &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; -&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPDIR&lt;/span&gt;/&lt;span class=&quot;nv&quot;&gt;$OLDBACKUPFILE&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPDIR&lt;/span&gt;/&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TIMESTAMP&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$OLDBACKUPFILE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; /dev/null 2&amp;gt;&amp;amp;1
+&lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# バックアップログファイル作成&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPLOG&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;touch&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPLOG&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;400 &lt;span class=&quot;nv&quot;&gt;$BACKUPLOG&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# バックアップ実行&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; backup start&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPLOG&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# -X オプションが効かない =&amp;gt; 削除&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#tar cjvfP $BACKUPDIR/backup.tar.bz2 -T $BACKUPLIST -X $TMPBACKUPNOLIST &amp;gt;&amp;gt; $BACKUPLOG 2&amp;gt;&amp;amp;1&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;tar &lt;/span&gt;cjvfP &lt;span class=&quot;nv&quot;&gt;$BACKUPDIR&lt;/span&gt;/backup.tar.bz2 &lt;span class=&quot;nt&quot;&gt;-T&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPLIST&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPLOG&lt;/span&gt; 2&amp;gt;&amp;amp;1
+&lt;span class=&quot;nv&quot;&gt;code&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$code&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; 0 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPLOG&lt;/span&gt; | mail &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;BACKUP NG CODE IS &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$code&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; root
+    &lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPDIR&lt;/span&gt;/backup.tar.bz2
+    error_exit
+&lt;span class=&quot;k&quot;&gt;fi
+&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; backup end&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPLOG&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# バックアップ暗号化(暗号化・復号化パスフレーズ指定時のみ)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-z&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PASS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; encrypt start&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPLOG&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$HOME&lt;/span&gt;/.gnupg
+    &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PASS&lt;/span&gt;|gpg &lt;span class=&quot;nt&quot;&gt;--passphrase-fd&lt;/span&gt; 0 &lt;span class=&quot;nt&quot;&gt;--batch&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPDIR&lt;/span&gt;/backup.tar.bz2 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; /dev/null 2&amp;gt;&amp;amp;1
+    &lt;span class=&quot;nv&quot;&gt;code&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$code&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; 0 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+        &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPLOG&lt;/span&gt; | mail &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;BACKUP NG CODE IS &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$code&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; root
+        &lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPDIR&lt;/span&gt;/backup.tar.bz2&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;
+        error_exit
+    &lt;span class=&quot;k&quot;&gt;fi
+    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPDIR&lt;/span&gt;/backup.tar.bz2
+    &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; encrypt end&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPLOG&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# バックアップ保存世代を超えた古いバックアップを削除&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPDIR&lt;/span&gt;/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;backup.tar.bz2&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;|wc &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-gt&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPGEN&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;OLDBACKUPCNT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;expr&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPDIR&lt;/span&gt;/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;backup.tar.bz2&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;|wc &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt; - &lt;span class=&quot;nv&quot;&gt;$BACKUPGEN&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;file &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$BACKUPDIR&lt;/span&gt;/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;backup.tar.bz2&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;|tail &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$OLDBACKUPCNT&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;do
+        &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$file&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;done
+fi&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# バックアップ対象外リスト削除&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$TMPBACKUPNOLIST&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;2-実行権限の付与&quot;&gt;2. 実行権限の付与&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# chmod +x backup.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-バックアップ対象リストの作成&quot;&gt;3. バックアップ対象リストの作成&lt;/h3&gt;
+
+&lt;p&gt;バックアップするディレクトリやファイルを一覧にしたファイル &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;backuplist&lt;/code&gt; を以下のように作成する。（以下は単なる一例。内容は適宜編集すること。そして、最終行で改行しないこと）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/root/backuplist&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/home
+/root
+/var/www
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-バックアップ対象外リストの作成&quot;&gt;4. バックアップ対象外リストの作成&lt;/h3&gt;
+
+&lt;p&gt;バックアップ対象のディレクトリやファイルの中でもバックアップしたくないディレクトリやファイルを一覧にしたファイル &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;backupnolist&lt;/code&gt; を以下のように作成する。（以下は単なる一例。内容は適宜編集すること。そして、最終行で改行しないこと。また、対象外にするディレクトリやファイルが無ければ作成しなくてよい）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/root/backupnolist&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/home/hoge
+/var/www/fuga
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-バックアップの実行&quot;&gt;5. バックアップの実行&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ./backup.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;バックアップディレクトリにアーカイブファイルが作成されるはずである。&lt;br /&gt;
+また、ファイルが増えれば最大８世代残すようになっている。（そういうスクリプトにしているから）（以下は、8日経過後の様子）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ls -l /home/bak/
+total 522
+-rw-r--r-- 1 root root     84205 Jun 30 03:01 20150430backup.tar.bz2
+-rw-r--r-- 1 root root     84276 Jul  1 03:01 20150501backup.tar.bz2
+-rw-r--r-- 1 root root     84336 Jul  2 03:01 20150502backup.tar.bz2
+-rw-r--r-- 1 root root     84133 Jul  3 03:01 20150503backup.tar.bz2
+-rw-r--r-- 1 root root     84140 Jul  4 03:01 20150504backup.tar.bz2
+-rw-r--r-- 1 root root     84029 Jul  5 03:01 20150505backup.tar.bz2
+-rw-r--r-- 1 root root     84124 Jul  6 03:01 20150506backup.tar.bz2
+-rw-r--r-- 1 root root     84128 Jul  7 03:01 backup.tar.bz2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-自動実行の設定&quot;&gt;6. 自動実行の設定&lt;/h3&gt;
+
+&lt;p&gt;毎日定時に実行するよう cron 登録する。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/cron.d/backup&lt;/code&gt; を以下の内容で作成する）&lt;br /&gt;
+以下は毎日午前3時1分にバックアップスクリプトを実行する例。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/cron.d/backup&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1 3 &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; root /root/backup.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-参考サイト&quot;&gt;7. 参考サイト&lt;/h3&gt;
+
+&lt;p&gt;CentOS での自動バックアップ運用を参考にしている（流用している）。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://centossrv.com/backup.shtml&quot; title=&quot;自動バックアップ運用(tar+GnuPG+rsync/ftp) - CentOSで自宅サーバー構築&quot;&gt;自動バックアップ運用(tar+GnuPG+rsync/ftp) - CentOSで自宅サーバー構築&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html">Debian GNU/Linux 11 (bullseye) で自動バックアップ運用する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - ログ解析ツール logwatch インストール！</title><link href="https://komasaru.github.io/2022/03/12/debian-11-logwatch-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - ログ解析ツール logwatch インストール！" /><published>2022-03-12T00:20:00+09:00</published><updated>2022-03-12T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/03/12/debian-11-logwatch-installation</id><content type="html" xml:base="https://komasaru.github.io/2022/03/12/debian-11-logwatch-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にログ監視ツール LogWatch をインストールする方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -2021,316 +2320,4 @@ Bye
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><category term="MariaDB" /><category term="Mroonga" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上に全文検索エンジン Mroonga をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！</title><link href="https://komasaru.github.io/2022/01/19/debian-11-mariadb-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！" /><published>2022-01-19T00:20:00+09:00</published><updated>2022-01-19T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/19/debian-11-mariadb-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/01/19/debian-11-mariadb-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) 上に DB サーバ MariaDB（10.5系）を構築する方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;インストールする MariaDB は、当記事執筆時点で 10.5 系最新の 10.5.12 とする。&lt;br /&gt;
-（当記事執筆時点、 10.6 系は全文検索エンジン Mroonga 最新版が未対応）&lt;/li&gt;
-  &lt;li&gt;MariaDB とは言っても中身は MySQL が元になっているので、各所で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysql&lt;/code&gt; のキーワードが出現する。&lt;/li&gt;
-  &lt;li&gt;データディレクトリは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/lib/mysql&lt;/code&gt; ディレクトリ配下とする。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-sourceslist-ファイルの編集&quot;&gt;1. sources.list ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;今回は MariaDB をソースをビルドしてインストールするので、本来は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sources.list&lt;/code&gt; の編集は必要ないが、 MariaDB のビルドに依存するパッケージをインストールすために使用するので、編集する。&lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list&lt;/code&gt; に直接記述してもよいが、今回は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list.d/mariadb.list&lt;/code&gt; に新規作成する。&lt;br /&gt;
-記述する内容は「&lt;a href=&quot;https://downloads.mariadb.org/mariadb/repositories/&quot; title=&quot;Setting up MariaDB Repositories&quot;&gt;こちら(Setting up MariaDB Repositories)&lt;/a&gt;」で確認可能。（ミラーサイトは隣国を適当に選択する）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list.d/mariadb.list&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# MariaDB 10.5 repository list - created 2021-09-08 00:56 UTC&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# http://downloads.mariadb.org/mariadb/repositories/&lt;/span&gt;
-deb &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;arch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;amd64,arm64,ppc64el] https://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.5/debian bullseye main
-deb-src https://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.5/debian bullseye main&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sources.list&lt;/code&gt; を使用しない方法等については「&lt;a href=&quot;https://downloads.mariadb.org/mariadb/repositories/&quot; title=&quot;Setting up MariaDB Repositories&quot;&gt;こちら&lt;/a&gt;」を参照。&lt;/p&gt;
-
-&lt;h3 id=&quot;2-パッケージリストの更新&quot;&gt;2. パッケージリストの更新&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sources.list&lt;/code&gt; を編集したので、パッケージリストを更新する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y update
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;      :
-===&amp;lt; 中略 &amp;gt;===
-      :
-
-Err:5 https://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.5/debian bullseye InRelease
-  The following signatures couldn&apos;t be verified because the public key is not available: NO_PUBKEY F1656F24C74CD1D8
-Reading package lists... Done
-W: GPG error: https://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.5/debian bullseye InRelease: The following signatures couldn&apos;t be verified because the public key is not available: NO_PUBKEY F1656F24C74CD1D8
-E: The repository &apos;https://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.5/debian bullseye InRelease&apos; is not signed.
-N: Updating from such a repository can&apos;t be done securely, and is therefore disabled by default.
-N: See apt-secure(8) manpage for repository creation and user configuration details.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;上記のように、 GPG 公開鍵に関するエラーが出力される場合は、以下のようにした後に再試行する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F1656F24C74CD1D8
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;これまで GPG 公開鍵の登録に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apt-key&lt;/code&gt; コマンドを使用してきたが、このコマンドは近い将来廃止される予定。（Debian は 12 bookworm で廃止）&lt;br /&gt;
-廃止後は GnuPG を使用する方法となるが、今から GnuPG を使用する方法で登録することも可能。&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;3-依存パッケージのインストール&quot;&gt;3. 依存パッケージのインストール&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install -y build-essential bison
-# apt build-dep mariadb-server
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;または、「&lt;a href=&quot;https://mariadb.com/kb/en/library/Build_Environment_Setup_for_Linux/&quot; title=&quot;Build Environment Setup for Linux - MariaDB Knowledge Base&quot;&gt;こちら&lt;/a&gt;」を参考に、ビルドに必要なパッケージをインストールしてもよい。（但し、インストール漏れに注意）&lt;/p&gt;
-
-&lt;h3 id=&quot;4-sourceslist-ファイルの削除&quot;&gt;4. sources.list ファイルの削除&lt;/h3&gt;
-
-&lt;p&gt;1 で作成した MariaDB 用 sources.list ファイル &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list.d/mariadb.list&lt;/code&gt; はもう不要なので削除しておく。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list&lt;/code&gt; を直接編集したのなら、 MariaDB に関する記述を削除する）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# rm -f /etc/apt/sources.list.d/mariadb.list
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-アーカイブの取得&quot;&gt;5. アーカイブの取得&lt;/h3&gt;
-
-&lt;p&gt;「&lt;a href=&quot;https://downloads.mariadb.org/&quot; title=&quot;Downloads - MariaDB&quot;&gt;こちら&lt;/a&gt;」から MariaDB の最新 Stable 版をダウンロードし、適当なディレクトリに配置する。（今回、当方はダウンロードした &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mariadb-10.5.12.tar.gz&lt;/code&gt; を &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/src&lt;/code&gt; ディレクトリ配下に配置した）&lt;/p&gt;
-
-&lt;p&gt;そして、展開する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /usr/local/src
-# tar xvf mariadb-10.5.12.tar.gz
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;6-ソースのビルドインストール&quot;&gt;6. ソースのビルド＆インストール&lt;/h3&gt;
-
-&lt;p&gt;先ほど展開したディレクトリと同じ階層にビルド用のディレクトリを作成し、そのディレクトリ内で cmake する。（以下の各種ビルドオプションは当方の例）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir build-mariadb
-# cd build-mariadb
-# cmake ../mariadb-10.5.12 -DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
- -DMYSQL_DATADIR=/var/lib/mysql \
- -DMYSQL_UNIX_ADDR=/var/run/mysqld/mysqld.sock \
- -DENABLED_LOCAL_INFILE=1 \
- -DDEFAULT_CHARSET=utf8_mb4 \
- -DDEFAULT_COLLATION=utf8_general_ci \
- -DWITH_EXTRA_CHARSETS=all \
- -DWITH_INNOBASE_STORAGE_ENGINE=1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;そして、 make 後、インストールする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# make -j$(grep &apos;^processor&apos; /proc/cpuinfo | wc -l)
-# make install
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make&lt;/code&gt; コマンドの &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-j&lt;/code&gt; はなくても問題ない。（並列ビルド（高速化）しないなら）&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;以下のようなエラーで make が中断した場合、それは swap メモリが不足しているからのようだ。 swap を増やした後、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make clean&lt;/code&gt; してから &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make&lt;/code&gt; し直してみる。（どれくらい swap を増やせべよいのかは不明）&lt;br /&gt;
-（参考「&lt;a href=&quot;/2015/10/20/linux-create-swap-area&quot; title=&quot;Linux - スワップ領域の作成！ - mk-mode BLOG&quot;&gt;Linux - スワップ領域の作成！ - mk-mode BLOG&lt;/a&gt;」）&lt;br /&gt;
-※もしくは、物理メモリを増設することも検討。（今さら無理なので、今後、サーバ構築する際にでも）&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[ 61%] Building C object storage/mroonga/vendor/groonga/lib/CMakeFiles/libgroonga.dir/expr.c.o
-cc: fatal error: Killed signal terminated program cc1
-compilation terminated.
-make[2]: *** [storage/mroonga/vendor/groonga/lib/CMakeFiles/libgroonga.dir/build.make:251: storage/mroonga/vendor/groonga/lib/CMakeFiles/libgroonga.dir/expr.c.o] Error 1
-make[1]: *** [CMakeFiles/Makefile2:7037: storage/mroonga/vendor/groonga/lib/CMakeFiles/libgroonga.dir/all] Error 2
-make: *** [Makefile:182: all] Error 2
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-ユーザグループ作成&quot;&gt;7. ユーザ・グループ作成&lt;/h3&gt;
-
-&lt;p&gt;MySQL 用のユーザとグループを作成する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# groupadd mysql
-# useradd -r -g mysql mysql
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;8-データディレクトリ作成&quot;&gt;8. データディレクトリ作成&lt;/h3&gt;
-
-&lt;p&gt;データディレクトリが無ければ作成し、所有者・グループを設定しておく。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir /var/lib/mysql
-# chown -R mysql. /var/lib/mysql
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;9-ログディレクトリ作成&quot;&gt;9. ログディレクトリ作成&lt;/h3&gt;
-
-&lt;p&gt;ログ用ディレクトリを作成し、所有者・グループを設定しておく。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir /var/log/mysql
-# chown -R mysql. /var/log/mysql/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;10-ソケットpidディレクトリ作成&quot;&gt;10. ソケット・PIDディレクトリ作成&lt;/h3&gt;
-
-&lt;p&gt;ソケット・プロセスID用ディレクトリの所有者・グループを設定する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir /var/run/mysqld
-# chown -R mysql. /var/run/mysqld
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;11-設定ファイルの編集&quot;&gt;11. 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql&lt;/code&gt; ディレクトリ内の設定ファイルを適宜編集する。&lt;br /&gt;
-もしくは、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/my.cnf&lt;/code&gt; を別途作成する。&lt;/p&gt;
-
-&lt;p&gt;【注意】&lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/my.cnf&lt;/code&gt; より後に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/my.cnf&lt;/code&gt; が読み込まれる（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/my.cnf&lt;/code&gt; の内容よりも &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/my.cnf&lt;/code&gt; の内容が優先される）ので、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/my.cnf&lt;/code&gt; のみを使用したければ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/my.cnf&lt;/code&gt; を削除するか、（拡張子が &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.cnf&lt;/code&gt; で終わらないよう）リネームするなどする。&lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/my.cnf&lt;/code&gt; を作成せず、最初から &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/my.cnf&lt;/code&gt; を編集する方法でも良いだろう。&lt;/p&gt;
-
-&lt;h3 id=&quot;12-初期-db-の生成&quot;&gt;12. 初期 DB の生成&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /usr/local/mysql
-# scripts/mysql_install_db --user=mysql --basedir=/usr/local/mysql --datadir=/var/lib/mysql --defaults-file=/etc/my.cnf
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;13-起動スクリプトsysv-systemdの準備&quot;&gt;13. 起動スクリプト(SysV, SystemD)の準備&lt;/h3&gt;
-
-&lt;p&gt;SysV（init スクリプト）でも、 SystemD(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;systemctl&lt;/code&gt;) でも起動できるようにしている。&lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mariadb&lt;/code&gt; の他、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysqld&lt;/code&gt; でも起動できるようシンボリックリンクを張っている。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cp support-files/mysql.server /etc/init.d/mysqld
-# chmod +x /etc/init.d/mysqld
-# ln -fns /etc/init.d/{mysqld,mariadb}
-
-# cp support-files/systemd/mariadb.service /lib/systemd/system/
-# ln -fns /lib/systemd/system/{mariadb,mysqld}.service
-# systemctl daemon-reload
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;14-pid-ディレクトリの自動生成&quot;&gt;14. PID ディレクトリの自動生成&lt;/h3&gt;
-
-&lt;p&gt;前項の方法で起動スクリプトを用意した場合、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/run&lt;/code&gt;(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/run&lt;/code&gt;) 配下のディレクトリは自動で生成してくれないので、自動で生成するよう、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/lib/tmpfiles.d/var.conf&lt;/code&gt; に以下の1行を追加する。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/run&lt;/code&gt;(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/run&lt;/code&gt;) ディレクトリは tmpfs を使用しているため、 OS 再起動後には消滅する。通常は、起動スクリプト内で生成するよう設定されていることが多いが、今回使用したスクリプト内では設定されていなかった。）&lt;br /&gt;
-（当方ブログ過去記事「&lt;a href=&quot;https://www.mk-mode.com/octopress/2015/12/08/linux-dir-file-automatic-creation-on-boot/&quot; title=&quot;Linux - マシン起動時にディレクトリ・ファイルを自動作成！&quot;&gt;Linux - マシン起動時にディレクトリ・ファイルを自動作成！&lt;/a&gt;」も参照）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/lib/tmpfiles.d/var.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;d /var/run/mysqld 0755 mysql mysql -&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;もしくは、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysqld_save&lt;/code&gt; コマンド実行直前に以下のような記述を追加してもよいだろう。（当方、未確認）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/init.d/mysqld&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; /var/run/mysqld &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; 755 &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; mysql &lt;span class=&quot;nt&quot;&gt;-g&lt;/span&gt; root &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; /var/run/mysqld&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;15-環境変数-path-の設定&quot;&gt;15. 環境変数 PATH の設定&lt;/h3&gt;
-
-&lt;p&gt;mysql コマンドへのパスを設定するために /etc/profile の最終行に以下の記述を追加する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/profile&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/local/mysql/bin:&lt;span class=&quot;nv&quot;&gt;$PATH&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;PATH&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;そして、即時有効化。（マシン再起動でもよい）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# source /etc/profile
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;16-起動再起動ステータス確認停止のテスト&quot;&gt;16. 起動・再起動・ステータス確認・停止のテスト&lt;/h3&gt;
-
-&lt;p&gt;起動・再起動・ステータス確認・停止ができるか確認する。(SystemD)&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl start mariadb
-# systemctl restart mariadb
-# systemctl status mariadb
-# systemctl stop mariadb
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;また、 init スクリプトでも起動・再起動・ステータス確認・停止ができるはず。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# /etc/init.d/mysqld start
-# /etc/init.d/mysqld restart
-# /etc/init.d/mysqld status
-# /etc/init.d/mysqld stop
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;もちろん、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;service&lt;/code&gt; コマンドでも起動・再起動・ステータス確認・停止ができるはず。&lt;/p&gt;
-
-&lt;h3 id=&quot;17-セキュリティ設定&quot;&gt;17. セキュリティ設定&lt;/h3&gt;
-
-&lt;p&gt;MariaDB サーバが起動していることを確認し、root のバスワード設定、テストDB削除等を行う。
-（Unix socket authentication では &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;n&lt;/code&gt; 応答。 root のパスワードを設定。後はデフォルト（エンター押下）。但し、 root によるリモート接続を行いたければ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Disallow root login remotely?&lt;/code&gt; で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;n&lt;/code&gt; 応答）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /usr/local/mysql/bin
-# ./mysql_secure_installation
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;18-動作確認&quot;&gt;18. 動作確認&lt;/h3&gt;
-
-&lt;p&gt;MariaDB サーバにログインしてみる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mariadb -u root -p
-Enter password:
-Welcome to the MariaDB monitor.  Commands end with ; or \g.
-Your MariaDB connection id is 11
-Server version: 10.5.12-MariaDB Source distribution
-
-Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
-
-Type &apos;help;&apos; or &apos;\h&apos; for help. Type &apos;\c&apos; to clear the current input statement.
-
-root@localhost:(none) 16:24:29&amp;gt; show databases;
-+--------------------+
-| Database           |
-+--------------------+
-| information_schema |
-| mysql              |
-| performance_schema |
-+--------------------+
-3 rows in set (0.096 sec)
-
-root@localhost:(none) 16:24:34&amp;gt; exit
-Bye
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mariadb&lt;/code&gt; コマンドは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysql&lt;/code&gt; でも OK.&lt;/li&gt;
-  &lt;li&gt;上記の（やや複雑な）プロンプトは当方の設定によるもの。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;19-自動起動の設定&quot;&gt;19. 自動起動の設定&lt;/h3&gt;
-
-&lt;p&gt;OS 起動時に自動で起動するように設定するには次のようにする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl is-enabled mariadb
-disabled
-
-# systemctl enable mariadb
-Synchronizing state of mariadb.service with SysV service script with /lib/systemd/systemd-sysv-install.
-Executing: /lib/systemd/systemd-sysv-install enable mariadb
-insserv: script mysqld: service mysql already provided!
-insserv: script mysqld: service mysql already provided!
-Created symlink /etc/systemd/system/multi-user.target.wants/mariadb.service → /lib/systemd/system/mariadb.service.
-
-# systemctl is-enabled mariadb
-enabled
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;20-ファイアウォールufwの設定&quot;&gt;20. ファイアウォール(ufw)の設定&lt;/h3&gt;
-
-&lt;p&gt;リモートで MariaDB サーバにアクセスする場合（GUI ツールを使用する場合等）は、TCP ポート 3306 を開放する必要がある。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 3306/tcp
-Rule added
-
-# ufw status
-    :
-3306/tcp                   ALLOW       Anywhere
-    :
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><category term="MariaDB" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上に DB サーバ MariaDB（10.5系）を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><category term="MariaDB" /><category term="Mroonga" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上に全文検索エンジン Mroonga をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>

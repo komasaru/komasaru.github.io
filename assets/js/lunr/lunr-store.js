@@ -12292,4 +12292,10 @@ var store = [{
         "tags": ["Debian","Linux"],
         "url": "/2022/03/12/debian-11-logwatch-installation/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - 自動バックアップ運用！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) で自動バックアップ運用する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。 バックファイルを配置するディレクトリは /home/foo/bak （foo ユーザのホーム内の bak ディレクトリ）とする。 root ユーザでの作業を想定。 1. バックアップスクリプトの作成 以下のような内容でバックアップスクリプトを作成する。 File: /root/backup.sh 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux"],
+        "url": "/2022/03/16/debian-11-automatic-backup-setting/",
+        "teaser": null
       }]
