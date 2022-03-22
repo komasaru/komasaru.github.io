@@ -1,4 +1,132 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-03-15T21:08:44+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - 自動バックアップ運用！</title><link href="https://komasaru.github.io/2022/03/16/debian-11-automatic-backup-setting/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - 自動バックアップ運用！" /><published>2022-03-16T00:20:00+09:00</published><updated>2022-03-16T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/03/16/debian-11-automatic-backup-setting</id><content type="html" xml:base="https://komasaru.github.io/2022/03/16/debian-11-automatic-backup-setting/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) で自動バックアップ運用する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-03-22T15:36:48+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Git インストール（ソースビルド）！</title><link href="https://komasaru.github.io/2022/03/23/debian-11-git-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Git インストール（ソースビルド）！" /><published>2022-03-23T00:20:00+09:00</published><updated>2022-03-23T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/03/23/debian-11-git-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/03/23/debian-11-git-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に Git サーバをソースをビルドしてインストールする方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;Git 2.33.0 （当記事執筆時点で最新）を Git サーバとしてインストールすることを想定。&lt;/li&gt;
+  &lt;li&gt;アーカイブ保存先は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/src&lt;/code&gt; を想定。&lt;/li&gt;
+  &lt;li&gt;インストール先は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local&lt;/code&gt; を想定。&lt;/li&gt;
+  &lt;li&gt;クライアントからアクセスがあった時だけサーバを起動するために xinetd を使用する。&lt;/li&gt;
+  &lt;li&gt;ドキュメント(doc, html, info)はインストールしない。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-依存パッケージのインストール&quot;&gt;1. 依存パッケージのインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install xinetd libcurl4-gnutls-dev libexpat1-dev \
+gettext libz-dev libssl-dev
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-アーカイブファイルの取得展開&quot;&gt;2. アーカイブファイルの取得＆展開&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /usr/local/src
+# wget https://www.kernel.org/pub/software/scm/git/git-2.33.0.tar.gz
+# tar xvf git-2.33.0.tar.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;ちなみに、最新版のソースを使用したければ、以下のように取得すればよい。（既インストールの git を使用して）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# git clone https://github.com/git/git
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-ビルドインストール&quot;&gt;3. ビルド＆インストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd git-2.33.0
+# make configure
+# ./configure --prefix=/usr/local
+# make
+# make install
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-インストールの確認&quot;&gt;4. インストールの確認&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# git --version
+git version 2.33.0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-xinetd-設定ファイルの作成&quot;&gt;5. xinetd 設定ファイルの作成&lt;/h3&gt;
+
+&lt;p&gt;デフォルトでは存在しないので作成する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/xinetd.d/git&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;service git
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        disable         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; no
+        socket_type     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; stream
+        &lt;span class=&quot;nb&quot;&gt;wait&lt;/span&gt;            &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; no
+        user            &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; nobody
+        server          &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /usr/local/libexec/git-core/git-daemon
+        server_args     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--base-path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/var/lib/git &lt;span class=&quot;nt&quot;&gt;--export-all&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--user-path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;public_git &lt;span class=&quot;nt&quot;&gt;--syslog&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--inetd&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--verbose&lt;/span&gt;
+        log_on_failure  +&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; USERID
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-xinetd-の再起動&quot;&gt;6. Xinetd の再起動&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart xinetd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-リポジトリの作成&quot;&gt;7. リポジトリの作成&lt;/h3&gt;
+
+&lt;p&gt;作成先は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/xinetd.d/git&lt;/code&gt; の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--base-path&lt;/code&gt; で指定している &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/lib/git/&lt;/code&gt; とした。（以下は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;test.git&lt;/code&gt; という Git リポジトリを作成する例）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /var/lib/
+# mkdir -p git/public_git
+# cd git/public_git
+# git --bare init --shared test.git
+Initialized empty shared Git repository in /var/lib/git/public_git/test.git/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;8-git-用グループの作成&quot;&gt;8. Git 用グループの作成&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# groupadd git
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;9-権限の変更&quot;&gt;9. 権限の変更&lt;/h3&gt;
+
+&lt;p&gt;リポジトリの所有者・所有グループを変更する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# chown -R root:git test.git
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;10-リポジトリのディレクトリを確認&quot;&gt;10. リポジトリのディレクトリを確認&lt;/h3&gt;
+
+&lt;p&gt;現状のリポジトリ内を確認してみる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ls -l
+合計 32
+-rw-rw-r-- 1 root git   23 10月  2 12:05 HEAD
+drwxrwsr-x 2 root git 4096 10月  2 12:05 branches
+-rw-rw-r-- 1 root git  126 10月  2 12:05 config
+-rw-rw-r-- 1 root git   73 10月  2 12:05 description
+drwxrwsr-x 2 root git 4096 10月  2 12:05 hooks
+drwxrwsr-x 2 root git 4096 10月  2 12:05 info
+drwxrwsr-x 4 root git 4096 10月  2 12:05 objects
+drwxrwsr-x 4 root git 4096 10月  2 12:05 refs
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;11-動作確認&quot;&gt;11. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;ここではクライアント側からの操作について説明はしないが、各種作業を行い問題がないことを確認しておく。&lt;br /&gt;
+(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git status&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git add&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git clone&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git push&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git pull&lt;/code&gt; etc.)&lt;/p&gt;
+
+&lt;h3 id=&quot;12-参考サイト&quot;&gt;12. 参考サイト&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://git-scm.com/downloads&quot; title=&quot;Git - Downloads&quot;&gt;Git - Downloads&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://git-scm.com/book/en/v2/Getting-Started-Installing-Git&quot; title=&quot;Git - Installing Git &quot;&gt;Git - Installing Git &lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Git" /><summary type="html">Debian GNU/Linux 11 (bullseye) に Git サーバをソースをビルドしてインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - 自動バックアップ運用！</title><link href="https://komasaru.github.io/2022/03/16/debian-11-automatic-backup-setting/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - 自動バックアップ運用！" /><published>2022-03-16T00:20:00+09:00</published><updated>2022-03-16T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/03/16/debian-11-automatic-backup-setting</id><content type="html" xml:base="https://komasaru.github.io/2022/03/16/debian-11-automatic-backup-setting/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) で自動バックアップ運用する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -2186,138 +2314,4 @@ disabled
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">2月になりましたので、先月1月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">Debian 11 (bullseye) - Mroonga インストール（ソースビルド）！</title><link href="https://komasaru.github.io/2022/01/26/debian-11-mroonga-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Mroonga インストール（ソースビルド）！" /><published>2022-01-26T00:20:00+09:00</published><updated>2022-01-26T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/01/26/debian-11-mroonga-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/01/26/debian-11-mroonga-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) 上に全文検索エンジン Mroonga をインストールする方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;当記事執筆時点で最新の Mroonga 11.06 をインストールする。&lt;/li&gt;
-  &lt;li&gt;Groonga 11.0.6 がインストール済みであることを想定。&lt;br /&gt;
-（参照「&lt;a href=&quot;/2022/01/12/debian-11-groonga-installation-by-official-apt&quot; title=&quot;Debian 11 (bullseye) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！&quot;&gt;Debian 11 (bullseye) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！&lt;/a&gt;」）&lt;/li&gt;
-  &lt;li&gt;MariaDB 10.5.12 をソースをビルドしてインストールしていること。（Mroonga のビルドに MySQL のソースが必要なため。MariaDB をパッケージでインストールしている場合にも、ソースが必要となる）&lt;br /&gt;
-（参照「&lt;a href=&quot;/2022/01/19/debian-11-mariadb-installation-by-src&quot; title=&quot;Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！&quot;&gt;Debian 11 (bullseye) - MariaDB 10.5 サーバ構築（ソースビルド）！&lt;/a&gt;」）&lt;/li&gt;
-  &lt;li&gt;MariaDB 10.5.12 は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/mysql&lt;/code&gt; ディレクトリにインストールされていることを想定。&lt;/li&gt;
-  &lt;li&gt;MariaDB 10.5.12 のインストールに使用したソースは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/src/mariadb-10.5.12&lt;/code&gt; ディレクトリに存在することを想定。&lt;/li&gt;
-  &lt;li&gt;MariaDB 10.5.12 のビルド用ディレクトリは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/src/build-mariadb&lt;/code&gt; であることを想定。&lt;/li&gt;
-  &lt;li&gt;環境の相違等のために以下の方法ではうまく行かないこともあるだろう。&lt;br /&gt;
-ログを確認して適宜対処すること。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-必要ライブラリのインストール&quot;&gt;1. 必要ライブラリのインストール&lt;/h3&gt;
-
-&lt;p&gt;Groonga 開発ライブラリをインストール。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install libgroonga-dev
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;トクーナイザとして MeCab を使用する予定があるなら、次を実行。（当方は実行）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y -V install groonga-tokenizer-mecab
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;トークンフィルタとして TokeFilterStem を使用する予定があるなら、次を実行。（当方は実行）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y -V install groonga-token-filter-stem
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;ノーマライザとして groonga-normalizer-mysql を使用する予定があるなら、次を実行。（当方は実行）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y -V install groonga-normalizer-mysql
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-ソースの取得&quot;&gt;2. ソースの取得&lt;/h3&gt;
-
-&lt;p&gt;アーカイブファイルを取得、展開後、ディレクトリを移動しておく。（ダウンロード先は一般ユーザホームディレクトリとした）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /usr/local/src
-# wget http://packages.groonga.org/source/mroonga/mroonga-11.06.tar.gz
-# tar xvf mroonga-11.06.tar.gz
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;3-makefile-の生成&quot;&gt;3. Makefile の生成&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd mroonga-11.06
-# ./configure \
- --with-mysql-source=/usr/local/src/mariadb-10.5.12 \
- --with-mysql-build=/usr/local/src/build-mariadb \
- --with-mysql-config=/usr/local/mysql/bin/mysql_config
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-ビルドインストール&quot;&gt;4. ビルド＆インストール&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# make -j$(grep &apos;^processor&apos; /proc/cpuinfo | wc -l)
-# make install
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make&lt;/code&gt; の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-j$(grep &apos;^processor&apos; /proc/cpuinfo | wc -l)&lt;/code&gt; の部分はプロセッサ数が明確なら &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-j4&lt;/code&gt; のように指定してもよいし、速度を気にしないのなら単に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make&lt;/code&gt; のみでもよい。&lt;/p&gt;
-
-&lt;h3 id=&quot;5-mariadb-への-mroonga-プラグインの適用&quot;&gt;5. MariaDB への Mroonga プラグインの適用&lt;/h3&gt;
-
-&lt;p&gt;MariaDB サーバが起動していることを確認してから以下を実行する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mariadb -u root &amp;lt; /usr/local/share/mroonga/install.sql
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mariadb&lt;/code&gt; コマンドは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysql&lt;/code&gt; でもよい。&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;... does not exist&lt;/code&gt; のメッセージが出力されるかもしれないが問題ない。（おそらく）&lt;/p&gt;
-
-&lt;h3 id=&quot;6-mroonga-導入の確認&quot;&gt;6. Mroonga 導入の確認&lt;/h3&gt;
-
-&lt;p&gt;MariaDB サーバに root でログインして確認してみる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ mariadb -u root -p
-Enter password:
-Welcome to the MariaDB monitor.  Commands end with ; or \g.
-Your MariaDB connection id is 15
-Server version: 10.5.12-MariaDB Source distribution
-
-Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
-
-Type &apos;help;&apos; or &apos;\h&apos; for help. Type &apos;\c&apos; to clear the current input statement.
-
-root@localhost:(none) 16:48:05&amp;gt; show engines;
-+--------------------+---------+-------------------------------------------------------------------------------------------------+--------------+------+------------+
-| Engine             | Support | Comment                                                                                         | Transactions | XA   | Savepoints |
-+--------------------+---------+-------------------------------------------------------------------------------------------------+--------------+------+------------+
-| CSV                | YES     | Stores tables as CSV files                                                                      | NO           | NO   | NO         |
-| MRG_MyISAM         | YES     | Collection of identical MyISAM tables                                                           | NO           | NO   | NO         |
-| MEMORY             | YES     | Hash based, stored in memory, useful for temporary tables                                       | NO           | NO   | NO         |
-| Aria               | YES     | Crash-safe tables with MyISAM heritage. Used for internal temporary tables and privilege tables | NO           | NO   | NO         |
-| MyISAM             | YES     | Non-transactional engine with good performance and small data footprint                         | NO           | NO   | NO         |
-| SEQUENCE           | YES     | Generated tables filled with sequential values                                                  | YES          | NO   | YES        |
-| Mroonga            | YES     | CJK-ready fulltext search, column store                                                         | NO           | NO   | NO         |
-| PERFORMANCE_SCHEMA | YES     | Performance Schema                                                                              | NO           | NO   | NO         |
-| InnoDB             | DEFAULT | Supports transactions, row-level locking, foreign keys and encryption for tables                | YES          | YES  | YES        |
-+--------------------+---------+-------------------------------------------------------------------------------------------------+--------------+------+------------+
-9 rows in set (0.056 sec)
-
-root@localhost:(none) 16:48:18&amp;gt; exit
-Bye
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Mroonga&lt;/code&gt; 行が存在することを確認する。&lt;/p&gt;
-
-&lt;p&gt;その他、 Mroonga の簡単な使用方法は以下の過去記事等を参照。&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;/2015/08/21/mariadb-mroonga-installation&quot; title=&quot;MariaDB 10.0.x - Mroonga プラグインの有効化！&quot;&gt;MariaDB 10.0.x - Mroonga プラグインの有効化！&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;7-参考サイト&quot;&gt;7. 参考サイト&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://mroonga.org/ja/docs/install/others.html&quot; title=&quot;2.8. その他 — Mroonga v11.06 documentation&quot;&gt;2.8. その他 — Mroonga v11.06 documentation&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><category term="MariaDB" /><category term="Mroonga" /><summary type="html">Debian GNU/Linux 11 (bullseye) 上に全文検索エンジン Mroonga をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">2月になりましたので、先月1月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>

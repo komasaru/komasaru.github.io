@@ -12298,4 +12298,10 @@ var store = [{
         "tags": ["Debian","Linux"],
         "url": "/2022/03/16/debian-11-automatic-backup-setting/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - Git インストール（ソースビルド）！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に Git サーバをソースをビルドしてインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。 Git 2.33.0 （当記事執筆時点で最新）を Git サーバとしてインストールすることを想定。 アーカイブ保存先は /usr/local/src を想定。 インストール先は /usr/local を想定。 クライアントからアクセスがあった時だけサーバを起動するために xinetd を使用する。 ドキュメント(doc, html, info)はインストールしない。 root ユーザでの作業を想定。 1. 依存パッケージのインストール # apt -y install xinetd libcurl4-gnutls-dev libexpat1-dev \\ gettext libz-dev libssl-dev 2....","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Git"],
+        "url": "/2022/03/23/debian-11-git-installation-by-src/",
+        "teaser": null
       }]
