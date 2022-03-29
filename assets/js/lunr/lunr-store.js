@@ -12304,4 +12304,10 @@ var store = [{
         "tags": ["Debian","Linux","Git"],
         "url": "/2022/03/23/debian-11-git-installation-by-src/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - PHP インストール（Nginx と連携）！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に PHP をソースをビルドしてインストールし、 Web／リバースプロキシサーバ Nginx と連携する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。 サーバ用途なので、作業は基本的に全て一般ユーザから root になって行う。 クライアント側も Debian GNU/Linux 11 (bullseye; 64bit) を想定。 Web サーバとして Apache2 でなく Nginx と連携させることを想定しているので、 Nginx がインストール済みであること。（参照： Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！） 標準リポジトリから PHP 7.4...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","PHP","Nginx"],
+        "url": "/2022/03/30/debian-11-php-installation-by-src-with-nginx-cooperation/",
+        "teaser": null
       }]
