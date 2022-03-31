@@ -12310,4 +12310,10 @@ var store = [{
         "tags": ["Debian","Linux","PHP","Nginx"],
         "url": "/2022/03/30/debian-11-php-installation-by-src-with-nginx-cooperation/",
         "teaser": null
+      },{
+        "title": "2022年3月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"4月になりましたので、先月3月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 20,632 67.9534 Mac OS 6,864 22.6072 Linux 1,367 4.5023 Android 986 3.2475 Ubuntu Linux 310 1.0210 unknown 155 0.5105 Fedora Linux 36 0.1186 FreeBSD 10 0.0329 OpenBSD 1 0.0033 Wii 1 0.0033 合　計 30,362 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2022/04/01/blog-access/",
+        "teaser": null
       }]
