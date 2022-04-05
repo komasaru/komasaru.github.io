@@ -12316,4 +12316,10 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2022/04/01/blog-access/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - サーバ監視ツール munin 導入！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) にサーバ監視ツール munin をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。 Web サーバは Nginx を想定。 munin 用ディレクトリは /var/www/munin とする。 root ユーザでの作業を想定。 1. munin のインストール # apt -y install munin 2. 設定ファイルの編集 File: /etc/munin/munin.conf dbdir /var/lib/munin # &lt;= コメント解除 htmldir /var/www/munin # &lt;= コメント解除＆変更 logdir...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","munin"],
+        "url": "/2022/04/06/debian-11-munin-installation/",
+        "teaser": null
       }]

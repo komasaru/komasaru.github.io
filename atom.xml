@@ -1,4 +1,118 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-04-01T00:02:33+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">2022年3月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2022/04/01/blog-access/" rel="alternate" type="text/html" title="2022年3月 - OS・ブラウザ別アクセス状況！" /><published>2022-04-01T00:20:00+09:00</published><updated>2022-04-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2022/04/01/blog-access/">&lt;p&gt;4月になりましたので、先月3月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-04-05T22:28:38+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - サーバ監視ツール munin 導入！</title><link href="https://komasaru.github.io/2022/04/06/debian-11-munin-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - サーバ監視ツール munin 導入！" /><published>2022-04-06T00:20:00+09:00</published><updated>2022-04-06T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/06/debian-11-munin-installation</id><content type="html" xml:base="https://komasaru.github.io/2022/04/06/debian-11-munin-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にサーバ監視ツール munin をインストールする方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;Web サーバは Nginx を想定。&lt;/li&gt;
+  &lt;li&gt;munin 用ディレクトリは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/www/munin&lt;/code&gt; とする。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-munin-のインストール&quot;&gt;1. munin のインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install munin
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-設定ファイルの編集&quot;&gt;2. 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/munin/munin.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;dbdir   /var/lib/munin    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
+htmldir /var/www/munin    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除＆変更&lt;/span&gt;
+logdir /var/log/munin     &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
+rundir  /var/run/munin    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#[localhost.localdomain]  # &amp;lt;= コメント化（変更したければ）&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;foo.mk-mode.com]        &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加      （変更したければ）&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;3-ディレクトリの作成&quot;&gt;3. ディレクトリの作成&lt;/h3&gt;
+
+&lt;p&gt;munin 用ディレクトリを所定の位置に作成する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir -p /var/www/munin
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;そして、所有者・所有グループを変更する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# chown -R munin:munin /var/www/munin/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-監視項目の確認&quot;&gt;4. 監視項目の確認&lt;/h3&gt;
+
+&lt;p&gt;以下のようにして、監視項目を確認できる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# munin-node-configure
+Plugin                     | Used | Extra information
+------                     | ---- | -----------------
+acpi                       | no   |
+amavis                     | no   |
+apache_accesses            | no   |
+         :
+===&amp;lt; 途中省略 &amp;gt;===
+         :
+vserver_cpu_               | no   |
+vserver_loadavg            | no   |
+vserver_resources          | no   |
+yum                        | no   |
+zimbra_                    | no   |
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-web-サーバの設定&quot;&gt;5. Web サーバの設定&lt;/h3&gt;
+
+&lt;p&gt;Web サーバに Nginx を使用する場合は、設定ファイルに以下のような記述を追加する。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;server&lt;/code&gt; ディレクティブ内に）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/conf.d/default.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;server &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    location /munin &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;alias&lt;/span&gt; /var/www/munin&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        index index.html index.htm index&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        allow 127.0.0.1&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        allow 192.168.11.0/24&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        deny  all&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;6-web-サーバの再起動&quot;&gt;6. Web サーバの再起動&lt;/h3&gt;
+
+&lt;p&gt;設定を有効化するために Web サーバ Nginx を再起動する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-munin-node-の再起動&quot;&gt;7. munin-node の再起動&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart munin-node
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;8-自動実行の設定&quot;&gt;8. 自動実行の設定&lt;/h3&gt;
+
+&lt;p&gt;デフォルトで自動起動するようになっているが、なっていなければ設定する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl enable munin-node
+Synchronizing state of munin-node.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable munin-node
+insserv: warning: current start runlevel(s) (empty) of script `munin-node&apos; overrides LSB defaults (2 3 4 5).
+insserv: warning: current stop runlevel(s) (0 1 2 3 4 5 6) of script `munin-node&apos; overrides LSB defaults (0 1 6).
+
+# systemctl is-enabled munin-node
+enabled
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;9-動作確認&quot;&gt;9. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;５分ほど経過してから、ブラウザで &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://＜Webサーバのホスト名 or IP アドレス＞/munin&lt;/code&gt; にアクセスし、表示されることを確認する。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="munin" /><summary type="html">Debian GNU/Linux 11 (bullseye) にサーバ監視ツール munin をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">2022年3月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2022/04/01/blog-access/" rel="alternate" type="text/html" title="2022年3月 - OS・ブラウザ別アクセス状況！" /><published>2022-04-01T00:20:00+09:00</published><updated>2022-04-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2022/04/01/blog-access/">&lt;p&gt;4月になりましたので、先月3月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -1847,168 +1961,4 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Nginx" /><category term="SSL" /><summary type="html">Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - Web サーバ Nginx で SSL 接続！</title><link href="https://komasaru.github.io/2022/02/09/debian-11-nginx-ssl-connection-setting/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Web サーバ Nginx で SSL 接続！" /><published>2022-02-09T00:20:00+09:00</published><updated>2022-02-09T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/02/09/debian-11-nginx-ssl-connection-setting</id><content type="html" xml:base="https://komasaru.github.io/2022/02/09/debian-11-nginx-ssl-connection-setting/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11.0.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;クライアント側も Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;サーバ用途なので、作業は基本的に全て一般ユーザから root になって行う。&lt;/li&gt;
-  &lt;li&gt;Web(HTTP)サーバ Nginx が「&lt;a href=&quot;/2022/02/02/debian-11-nginx-installation-by-official-apt&quot; title=&quot;Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！&quot;&gt;Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！&lt;/a&gt;」の方法で導入済みであることを想定。&lt;/li&gt;
-  &lt;li&gt;今回は SSL サーバ証明書は自分で作成するが、後日、Let’s Encrypt で無料で証明書を取得するようにする。&lt;/li&gt;
-  &lt;li&gt;当方はメールサーバ構築時に SSL 証明書作成済みであったので、以下の “2” から作業を行なった。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-ssl-証明書の作成&quot;&gt;1. SSL 証明書の作成&lt;/h3&gt;
-
-&lt;p&gt;openssl 未インストールならインストール。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install openssl
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;秘密鍵生成。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /etc/ssl/private
-# openssl genrsa -des3 -out server.key 2048
-Generating RSA private key, 2048 bit long modulus
-...................+++
-.....+++
-e is 65537 (0x10001)
-Enter pass phrase for server.key:              # &amp;lt;= パスフレーズ設定
-Verifying - Enter pass phrase for server.key:  # &amp;lt;= 確認再入力
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;秘密鍵からパスフレーズを削除。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# openssl rsa -in server.key -out server.key
-Enter pass phrase for server.key:              # &amp;lt;= パスフレーズ
-writing RSA key
-
-# openssl req -new -days 3650 -key server.key -out server.csr
-You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter &apos;.&apos;, the field will be left blank.
------
-Country Name (2 letter code) [AU]:JP                                    # &amp;lt;= 国の略名
-State or Province Name (full name) [Some-State]:Shimane                 # &amp;lt;= 都道府県名
-Locality Name (eg, city) []:Matsue                                      # &amp;lt;= 市区町村名
-Organization Name (eg, company) [Internet Widgits Pty Ltd]:mk-mode.com  # &amp;lt;= サイト名（何でもよい）
-Organizational Unit Name (eg, section) []:                              # &amp;lt;= 部署名（空でよい）
-Common Name (e.g. server FQDN or YOUR name) []:www.mk-mode.com          # &amp;lt;= ホスト名
-Email Address []: webmaster@mk-mode.com                                 # &amp;lt;= 管理者メールアドレス
-Please enter the following &apos;extra&apos; attributes
-to be sent with your certificate request
-A challenge password []:                                                # &amp;lt;= 追加属性・空エンターでよい
-An optional company name []:                                            # &amp;lt;= 追加属性・空エンターでよい
-
-# openssl x509 -in server.csr -out server.crt -req -signkey server.key -days 3650
-Signature ok
-subject=C = JP, ST = Shimane, L = Matsue, O = mk-mode.com, CN = www.mk-mode.com, emailAddress = webmaster@mk-mode.com
-Getting Private key
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;権限設定。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# chmod 400 server.*
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-nginx-設定ファイルの編集&quot;&gt;2. Nginx 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;以下のように、Nginx 設定ファイルを作成する。&lt;br /&gt;
-（Nginx のインストール方法やバージョンによっては設定ファイルの構成が異なるので注意。以下は「&lt;a href=&quot;/2022/02/02/debian-11-nginx-installation-by-official-apt&quot; title=&quot;Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！&quot;&gt;Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！&lt;/a&gt;」の方法でインストールした場合）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/conf.d/ssl.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;c&quot;&gt;# HTTPS server&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
-server &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    listen       443 ssl&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    server_name  localhost&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;c&quot;&gt;#ssl_certificate      cert.pem;&lt;/span&gt;
-    ssl_certificate      /etc/ssl/private/server.crt&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;#ssl_certificate_key  cert.key;&lt;/span&gt;
-    ssl_certificate_key  /etc/ssl/private/server.key&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-    ssl_session_cache    shared:SSL:1m&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    ssl_session_timeout  5m&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-    ssl_ciphers  HIGH:!aNULL:!MD5&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    ssl_prefer_server_ciphers  on&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-    location / &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        root   html&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        index  index.html index.htm&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;設定ファイルの文法をチェックするには &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nginx -t&lt;/code&gt; を実行する&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;3-nginx-の再起動&quot;&gt;3. Nginx の再起動&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart nginx
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-ファイアウォールufwの設定&quot;&gt;4. ファイアウォール(ufw)の設定&lt;/h3&gt;
-
-&lt;p&gt;ポート TCP:443 を開放する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 443/tcp
-Rule added
-
-# ufw status
-    :
-443/tcp                    ALLOW       Anywhere
-    :
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-動作確認&quot;&gt;5. 動作確認&lt;/h3&gt;
-
-&lt;p&gt;ブラウザから &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://＜サーバ名 or IPアドレス＞/&lt;/code&gt; にアクセスし、セキュリティに関するページが表示されたら適宜インストールする。&lt;br /&gt;
-ブラウザにより異なるが、 Firefox なら「危険を理解した上で接続するには」をクリック後「例外追加」ボタンをクリックする。そして開いたウィンドウ内で「セキュリティ例外を追加」ボタンをクリックする。&lt;br /&gt;
-認証に成功すると以下のように表示される。&lt;/p&gt;
-
-&lt;h3 id=&quot;6-参考サイト&quot;&gt;6. 参考サイト&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://nginx.org/en/docs/http/configuring_https_servers.html&quot; title=&quot;HTTPS サーバの設定&quot;&gt;HTTPS サーバの設定&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Nginx" /><category term="SSL" /><summary type="html">Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Nginx" /><category term="SSL" /><summary type="html">Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
