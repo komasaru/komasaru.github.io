@@ -1,4 +1,195 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-04-05T22:28:38+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - サーバ監視ツール munin 導入！</title><link href="https://komasaru.github.io/2022/04/06/debian-11-munin-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - サーバ監視ツール munin 導入！" /><published>2022-04-06T00:20:00+09:00</published><updated>2022-04-06T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/06/debian-11-munin-installation</id><content type="html" xml:base="https://komasaru.github.io/2022/04/06/debian-11-munin-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にサーバ監視ツール munin をインストールする方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-04-12T15:56:03+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - munin 各種監視追加！</title><link href="https://komasaru.github.io/2022/04/13/debian-11-munin-additional-setting/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - munin 各種監視追加！" /><published>2022-04-13T00:20:00+09:00</published><updated>2022-04-13T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/13/debian-11-munin-additional-setting</id><content type="html" xml:base="https://komasaru.github.io/2022/04/13/debian-11-munin-additional-setting/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にインストールしたサーバ監視ツール munin に各種監視を追加する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;サーバ監視ツール munin がインストール済み。&lt;/li&gt;
+  &lt;li&gt;ハードディスク温度の監視を追加する。&lt;/li&gt;
+  &lt;li&gt;CPU 温度・電圧・ファン回転数の監視を追加する。&lt;/li&gt;
+  &lt;li&gt;MariaDB の監視を追加する。&lt;/li&gt;
+  &lt;li&gt;Nginx の監視を追加する。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-ハードディスク温度の監視追加&quot;&gt;1. ハードディスク温度の監視追加&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;smartctl&lt;/code&gt; コマンドを使用するので、以下のようにしてインストールしておく。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install smartmontools
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;以下のように設定ファイル &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hddtemp_smartctl&lt;/code&gt; を作成する。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;munin-node&lt;/code&gt; に追記してもよい）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/munin/plugin-conf.d/hddtemp_smartctl&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;hddtemp_smartctl]
+user root
+env.drives sda                 &lt;span class=&quot;c&quot;&gt;# &amp;lt;= sda は監視するハードディスク&lt;/span&gt;
+env.smartctl /usr/sbin/smartctl
+env.args_sda &lt;span class=&quot;nt&quot;&gt;--all&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; ata&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;以下のようにしてシンボリックリンクを張る。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ln -s /usr/share/munin/plugins/hddtemp_smartctl /etc/munin/plugins/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-cpu-温度電圧ファン回転数の監視追加&quot;&gt;2. CPU 温度・電圧・ファン回転数の監視追加&lt;/h3&gt;
+
+&lt;p&gt;まず、センサーツール &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lm-sensors&lt;/code&gt;、依存パッケージをインストールする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install lm-sensors libsensors4-dev fancontrol
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;そして、センサーを検出する。&lt;br /&gt;
+全て「エンター」応答で大丈夫だが、最後に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/modules&lt;/code&gt; へ書き込むかどうか問われたら &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yes&lt;/code&gt; 応答する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# sensors-detect
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;マシンを再起動して、センサーをチェックしてみる。（当然、表示内容は環境により異なる）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# sensors
+dell_smm-virtual-0
+Adapter: Virtual device
+Processor Fan:   1800 RPM
+Motherboard Fan: 1928 RPM
+
+coretemp-isa-0000
+Adapter: ISA adapter
+Core 0:       +43.0°C  (high = +76.0°C, crit = +100.0°C)
+Core 1:       +37.0°C  (high = +76.0°C, crit = +100.0°C)
+
+it8720-isa-0a10
+Adapter: ISA adapter
+in0:          +1.07 V  (min =  +2.54 V, max =  +4.08 V)  ALARM
+in1:          +1.10 V  (min =  +0.00 V, max =  +3.82 V)
+in2:          +2.86 V  (min =  +0.00 V, max =  +3.02 V)
++5V:          +3.02 V  (min =  +4.06 V, max =  +4.08 V)  ALARM
+in4:          +3.31 V  (min =  +0.00 V, max =  +4.08 V)
+in5:          +2.16 V  (min =  +0.00 V, max =  +4.08 V)
+in6:          +2.16 V  (min =  +0.00 V, max =  +4.08 V)
+5VSB:         +2.98 V  (min =  +0.00 V, max =  +4.08 V)
+Vbat:         +3.18 V
+fan1:        1800 RPM  (min =   10 RPM)
+fan2:        1928 RPM  (min =    0 RPM)
+temp1:        +29.0°C  (low  = -65.0°C, high = +127.0°C)  sensor = thermal diode
+temp2:        +22.0°C  (low  =  -2.0°C, high = +127.0°C)  sensor = thermistor
+temp3:        +29.0°C  (low  =  -1.0°C, high = +127.0°C)  sensor = Intel PECI
+cpu0_vid:    +0.000 V
+intrusion0:  ALARM
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;以下のように設定ファイル &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sensors&lt;/code&gt; を作成する。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;munin-node&lt;/code&gt; に追記してもよい）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/munin/plugin-conf.d/sensors&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;sensors_&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+user root&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;以下のようにしてシンボリックリンクを張る。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ln -s /usr/share/munin/plugins/sensors_ /etc/munin/plugins/sensors_volt
+# ln -s /usr/share/munin/plugins/sensors_ /etc/munin/plugins/sensors_temp
+# ln -s /usr/share/munin/plugins/sensors_ /etc/munin/plugins/sensors_fan
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-mariadb-の監視追加&quot;&gt;3. MariaDB の監視追加&lt;/h3&gt;
+
+&lt;p&gt;以下のように設定ファイル &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mariadb&lt;/code&gt; を作成する。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;munin-node&lt;/code&gt; に追記してもよい）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/munin/plugin-conf.d/mariadb&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mariadb&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+env.mysqlopts &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; root &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt;＜root パスワード＞
+env.mysqladmin /usr/local/mysql/bin/mysqladmin   &lt;span class=&quot;c&quot;&gt;# &amp;lt;= mysqladmin フルパス指定&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;以下のようにしてシンボリックリンクを張る。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ln -s /usr/share/munin/plugins/mysql_bytes /etc/munin/plugins/mysql_bytes
+# ln -s /usr/share/munin/plugins/mysql_innodb /etc/munin/plugins/mysql_innodb
+# ln -s /usr/share/munin/plugins/mysql_isam_space_ /etc/munin/plugins/mysql_isam_space_  # &amp;lt;= MyISAM 不使用なら不要
+# ln -s /usr/share/munin/plugins/mysql_queries /etc/munin/plugins/mysql_queries
+# ln -s /usr/share/munin/plugins/mysql_slowqueries /etc/munin/plugins/mysql_slowqueries
+# ln -s /usr/share/munin/plugins/mysql_threads /etc/munin/plugins/mysql_threads
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-nginx-の監視追加&quot;&gt;4. Nginx の監視追加&lt;/h3&gt;
+
+&lt;p&gt;Nginx の設定ファイルに以下のような記述を追加する。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;server&lt;/code&gt; ディレクティブ内）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/conf.d/default.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;server &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# munin&lt;/span&gt;
+    location /nginx_status &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        stub_status on&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        access_log off&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        allow 127.0.0.1&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        allow 192.168.11.0/24&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 内部からのアクセスのみ許可&lt;/span&gt;
+        deny all&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Nginx をソースをビルドしてインストールしている場合は、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;configure&lt;/code&gt; 時に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--with-http_stub_status_module&lt;/code&gt; オプションを指定しなければならない。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;そして、Nginx を再起動する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;以下のように設定ファイル &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nginx&lt;/code&gt; を作成する。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;munin-node&lt;/code&gt; に追記してもよい）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/munin/plugin-conf.d/nginx&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;nginx&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+env.url http://localhost/nginx_status&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;以下のようにしてシンボリックリンクを張る。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ln -s /usr/share/munin/plugins/nginx_request /etc/munin/plugins/nginx_request
+# ln -s /usr/share/munin/plugins/nginx_status /etc/munin/plugins/nginx_status
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;ちなみに、上記以外のプラグインを使用するなら以下のようにする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /usr/local/share
+# mkdir munin
+# cd munin
+# git clone https://github.com/munin-monitoring/contrib.git
+# ln -s /usr/local/share/munin/contrib/plugins/nginx/nginx_connection_request /etc/munin/plugins/nginx_connection_request
+# ln -s /usr/local/share/munin/contrib/plugins/nginx/nginx-combined /etc/munin/plugins/nginx-combined
+# ln -s /usr/local/share/munin/contrib/plugins/nginx/nginx_memory /etc/munin/plugins/nginx_memory
+# ln -s /usr/local/share/munin/contrib/plugins/nginx/nginx_vhost_traffic /etc/munin/plugins/nginx_vhost_traffic
+etc...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-munin-node-の再起動&quot;&gt;5. munin-node の再起動&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart munin-node
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-動作確認&quot;&gt;6. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;ブラウザで &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://＜Webサーバのホスト名 or IP アドレス＞/munin&lt;/code&gt; にアクセスし、表示されることを確認する。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="munin" /><summary type="html">Debian GNU/Linux 11 (bullseye) にインストールしたサーバ監視ツール munin に各種監視を追加する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - サーバ監視ツール munin 導入！</title><link href="https://komasaru.github.io/2022/04/06/debian-11-munin-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - サーバ監視ツール munin 導入！" /><published>2022-04-06T00:20:00+09:00</published><updated>2022-04-06T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/06/debian-11-munin-installation</id><content type="html" xml:base="https://komasaru.github.io/2022/04/06/debian-11-munin-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にサーバ監視ツール munin をインストールする方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -1777,188 +1968,4 @@ Hello Ruby!
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Ruby" /><summary type="html">Debian GNU/Linux 11 (bullseye) に Ruby 3.0 をソースをビルドしてインストール方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - Let’s Encrypt で常時 SSL 化(on Nginx)！</title><link href="https://komasaru.github.io/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Let’s Encrypt で常時 SSL 化(on Nginx)！" /><published>2022-02-16T00:20:00+09:00</published><updated>2022-02-16T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt</id><content type="html" xml:base="https://komasaru.github.io/2022/02/16/debian-11-nginx-ssl-by-lets-encrypt/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;クライアント側も Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;Web(HTTP)サーバ Nginx が「&lt;a href=&quot;/2022/02/02/debian-11-nginx-installation-by-official-apt&quot; title=&quot;Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！&quot;&gt;Debian 11 (bullseye) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！&lt;/a&gt;」の方法で導入済みであることを想定。&lt;/li&gt;
-  &lt;li&gt;Nginx 1.21.3 での作業を想定。（稼働していること。稼働していない場合は方法が若干異なる）&lt;/li&gt;
-  &lt;li&gt;ACME(Automatic Certificate Management Environment) クライアントに Certbot を使用することを想定。&lt;/li&gt;
-  &lt;li&gt;バーチャルホストは使用しない。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-acme-クライアント-certbot-のインストール&quot;&gt;1. ACME クライアント Certbot のインストール&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install certbot
-
-# certbot --version
-certbot 1.12.0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;当記事執筆時点、 1.12.0 がインストールされた。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;2-ポートの開放&quot;&gt;2. ポートの開放&lt;/h3&gt;
-
-&lt;p&gt;ドメイン所有者の認証のために TCP ポートの 80 番と 443 番に接続されるので、開放されてなければ開放しておく。&lt;/p&gt;
-
-&lt;p&gt;ufw コマンドによるポート開放については、過去記事「&lt;a href=&quot;/2021/10/20/debian-11-firewall-setting&quot; title=&quot;Debian 11 (bullseye) - ファイアウォール設定！&quot;&gt;Debian 11 (bullseye) - ファイアウォール設定！&lt;/a&gt;」を参照。&lt;/p&gt;
-
-&lt;h3 id=&quot;3-certbot-クライアントの起動&quot;&gt;3. Certbot クライアントの起動&lt;/h3&gt;
-
-&lt;p&gt;証明書発行のために Certbot クライアントを起動する。ドキュメントルートにするディレクトリが存在しなければ、作成しておく。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir -p /var/www/html
-# certbot certonly --webroot -w /var/www/html -d example.jp -d www.example.jp
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;example.jp&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;www.example.jp&lt;/code&gt; は自分のものに置き換えること。&lt;/li&gt;
-  &lt;li&gt;起動後の設定は次項。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;4-メールアドレス等の設定&quot;&gt;4. メールアドレス等の設定&lt;/h3&gt;
-
-&lt;p&gt;メールアドレスの登録と利用条件への同意を行う。（初回のみ）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Saving debug log to /var/log/letsencrypt/letsencrypt.log
-Plugins selected: Authenticator webroot, Installer None
-Enter email address (used for urgent renewal and security notices)
- (Enter &apos;c&apos; to cancel): webmaster@example.jp
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Please read the Terms of Service at
-https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf. You must
-agree in order to register with the ACME server. Do you agree?
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-(Y)es/(N)o: Y
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Would you be willing, once your first certificate is successfully issued, to
-share your email address with the Electronic Frontier Foundation, a founding
-partner of the Let&apos;s Encrypt project and the non-profit organization that
-develops Certbot? We&apos;d like to send you email about our work encrypting the web,
-EFF news, campaigns, and ways to support digital freedom.
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-(Y)es/(N)o: Y
-Account registered.
-Requesting a certificate for example.jp and www.example.jp
-Performing the following challenges:
-http-01 challenge for example.jp
-http-01 challenge for www.example.jp
-Using the webroot path /var/www/html for all unmatched domains.
-Waiting for verification...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;ルータでポート開放してからでないと失敗する。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;5-ssltls-サーバ証明書の取得完了&quot;&gt;5. SSL/TLS サーバ証明書の取得完了&lt;/h3&gt;
-
-&lt;p&gt;しばらく待つと、SSL/TLS サーバ証明書の取得プロセスが完了する。&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;サーバ証明書の実体（ファイル）は、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/letsencrypt/archive/ドメイン名&lt;/code&gt; ディレクトリ配下に保存される。
-    &lt;ul&gt;
-      &lt;li&gt;サーバ証明書（公開鍵） … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;certN.pem&lt;/code&gt;&lt;/li&gt;
-      &lt;li&gt;中間証明書 … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chainN.pem&lt;/code&gt;&lt;/li&gt;
-      &lt;li&gt;サーバ証明書と中間証明書の結合ファイル … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fullchainN.pem&lt;/code&gt;&lt;/li&gt;
-      &lt;li&gt;秘密鍵 … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;privkeyN.pem&lt;/code&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;シンボリックリンクは、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/letsencrypt/live/ドメイン名&lt;/code&gt; ディレクトリ配下に保存される。
-    &lt;ul&gt;
-      &lt;li&gt;サーバ証明書（公開鍵） … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cert.pem&lt;/code&gt;&lt;/li&gt;
-      &lt;li&gt;中間証明書 … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chain.pem&lt;/code&gt;&lt;/li&gt;
-      &lt;li&gt;サーバ証明書と中間証明書の結合ファイル … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fullchain.pem&lt;/code&gt;&lt;/li&gt;
-      &lt;li&gt;秘密鍵 … &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;privkey.pem&lt;/code&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;SSL/TLS サーバ証明書の取得に失敗した場合は、ポート開放等の設定を再確認する。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;6-nginx-設定ファイルの編集&quot;&gt;6. Nginx 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;環境により設定ファイルの配置ディレクトリやファイル名、記述方法等が異なるかもしれない。適宜置き換えること。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/conf.d/default.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;server &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    listen 80&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;# ===&amp;lt; 中略 &amp;gt;===&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return &lt;/span&gt;301 https://&lt;span class=&quot;nv&quot;&gt;$host$request_uri&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;# ===&amp;lt; 中略 &amp;gt;===&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/conf.d/ssl.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;server &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    listen 443 ssl&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;# ===&amp;lt; 中略 &amp;gt;===&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
-    ssl on&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;                                                               &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;                            &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-    ssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;# ===&amp;lt; 中略 &amp;gt;===&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;#       :&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;7-nginx-設定ファイルの文法チェック&quot;&gt;7. Nginx 設定ファイルの文法チェック&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# nginx -t
-nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
-nginx: configuration file /etc/nginx/nginx.conf test is successful
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;問題があれば、設定ファイルの内容を見直す。&lt;/p&gt;
-
-&lt;h3 id=&quot;8-web-サーバ-の再起動&quot;&gt;8. Web サーバ の再起動&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart nginx
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;9-証明書の更新&quot;&gt;9. 証明書の更新&lt;/h3&gt;
-
-&lt;p&gt;Certbot にはタイマーが搭載されているので、自動で定期的に証明書が更新される。&lt;/p&gt;
-
-&lt;p&gt;Certbot タイマーの詳細を確認するなら、以下を実行。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl status certbot.timer
-
-# systemctl list-timers certbot.timer --no-pager
-
-# systemctl cat certbot.timer
-
-# systemctl cat certbot.service
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;タイマーによる更新でなく、手動で更新したい場合は以下を実行。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# certbot renew
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;10-参考サイト&quot;&gt;10. 参考サイト&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://certbot.eff.org/docs/using.html#certbot-command-line-options&quot; title=&quot;Certbot command-line options&quot;&gt;Certbot command-line options&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Nginx" /><category term="SSL" /><summary type="html">Debian GNU/Linux 11 (bullseye) に構築した Web サーバ Nginx への接続を、 Let’s Encrypt で取得した SSL サーバ証明書で常時 SSL 化するための方法についての記録です。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Ruby" /><summary type="html">Debian GNU/Linux 11 (bullseye) に Ruby 3.0 をソースをビルドしてインストール方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>

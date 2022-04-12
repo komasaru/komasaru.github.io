@@ -12322,4 +12322,10 @@ var store = [{
         "tags": ["Debian","Linux","munin"],
         "url": "/2022/04/06/debian-11-munin-installation/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - munin 各種監視追加！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) にインストールしたサーバ監視ツール munin に各種監視を追加する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。 サーバ監視ツール munin がインストール済み。 ハードディスク温度の監視を追加する。 CPU 温度・電圧・ファン回転数の監視を追加する。 MariaDB の監視を追加する。 Nginx の監視を追加する。 root ユーザでの作業を想定。 1. ハードディスク温度の監視追加 smartctl コマンドを使用するので、以下のようにしてインストールしておく。 # apt -y install smartmontools 以下のように設定ファイル hddtemp_smartctl を作成する。（munin-node に追記してもよい） File: /etc/munin/plugin-conf.d/hddtemp_smartctl [hddtemp_smartctl] user root env.drives sda #...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","munin"],
+        "url": "/2022/04/13/debian-11-munin-additional-setting/",
+        "teaser": null
       }]
