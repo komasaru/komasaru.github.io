@@ -12328,4 +12328,10 @@ var store = [{
         "tags": ["Debian","Linux","munin"],
         "url": "/2022/04/13/debian-11-munin-additional-setting/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - Monit でプロセス監視！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) にプロセス監視ツール monit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。 root ユーザでの作業を想定。 1. monit のインストール # apt -y install monit 2. 設定ファイル編集 設定ファイル /etc/monit/monitrc を編集する。 以下は当方の例。 File: /etc/monit/monitrc set daemon 120 # 監視間隔（秒） set log /var/log/monit.log # ログファイル set idfile /var/lib/monit/id # Monit...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","munin"],
+        "url": "/2022/04/20/debian-11-monit-installation/",
+        "teaser": null
       }]

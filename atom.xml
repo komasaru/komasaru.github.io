@@ -1,4 +1,171 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-04-12T15:56:03+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - munin 各種監視追加！</title><link href="https://komasaru.github.io/2022/04/13/debian-11-munin-additional-setting/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - munin 各種監視追加！" /><published>2022-04-13T00:20:00+09:00</published><updated>2022-04-13T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/13/debian-11-munin-additional-setting</id><content type="html" xml:base="https://komasaru.github.io/2022/04/13/debian-11-munin-additional-setting/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にインストールしたサーバ監視ツール munin に各種監視を追加する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-04-19T12:28:56+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Monit でプロセス監視！</title><link href="https://komasaru.github.io/2022/04/20/debian-11-monit-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Monit でプロセス監視！" /><published>2022-04-20T00:20:00+09:00</published><updated>2022-04-20T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/20/debian-11-monit-installation</id><content type="html" xml:base="https://komasaru.github.io/2022/04/20/debian-11-monit-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にプロセス監視ツール monit をインストールする方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1--monit-のインストール&quot;&gt;1.  monit のインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install monit
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-設定ファイル編集&quot;&gt;2. 設定ファイル編集&lt;/h3&gt;
+
+&lt;p&gt;設定ファイル &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/monit/monitrc&lt;/code&gt; を編集する。&lt;br /&gt;
+以下は当方の例。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/monit/monitrc&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;daemon 120                              &lt;span class=&quot;c&quot;&gt;# 監視間隔（秒）&lt;/span&gt;
+
+  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;log /var/log/monit.log                  &lt;span class=&quot;c&quot;&gt;# ログファイル&lt;/span&gt;
+
+  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;idfile /var/lib/monit/id                &lt;span class=&quot;c&quot;&gt;# Monit インスタンスの ID ファイル&lt;/span&gt;
+
+  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;statefile /var/lib/monit/state          &lt;span class=&quot;c&quot;&gt;# Monitering ステート保存ファイル&lt;/span&gt;
+
+  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;mailserver localhost                    &lt;span class=&quot;c&quot;&gt;# メールサーバ&lt;/span&gt;
+
+  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;eventqueue
+        basedir /var/lib/monit/events         &lt;span class=&quot;c&quot;&gt;# メールサーバが利用できない場合の通知用&lt;/span&gt;
+        slots 100                             &lt;span class=&quot;c&quot;&gt;#   〃&lt;/span&gt;
+
+  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;mail-format &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;                           &lt;span class=&quot;c&quot;&gt;# メール書式&lt;/span&gt;
+    from:    Monit &amp;lt;monit@&lt;span class=&quot;nv&quot;&gt;$HOST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+    subject: monit alert &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  &lt;span class=&quot;nv&quot;&gt;$EVENT&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$SERVICE&lt;/span&gt;
+    message: &lt;span class=&quot;nv&quot;&gt;$EVENT&lt;/span&gt; Service &lt;span class=&quot;nv&quot;&gt;$SERVICE&lt;/span&gt;
+                  Date:        &lt;span class=&quot;nv&quot;&gt;$DATE&lt;/span&gt;
+                  Action:      &lt;span class=&quot;nv&quot;&gt;$ACTION&lt;/span&gt;
+                  Host:        &lt;span class=&quot;nv&quot;&gt;$HOST&lt;/span&gt;
+                  Description: &lt;span class=&quot;nv&quot;&gt;$DESCRIPTION&lt;/span&gt;
+
+             Your faithful employee,
+             Monit
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;alert root@localhost                    &lt;span class=&quot;c&quot;&gt;# 通知先メールアドレス&lt;/span&gt;
+
+  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;httpd port 2812 and
+      allow localhost
+
+    include /etc/monit/conf.d/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;               &lt;span class=&quot;c&quot;&gt;# 別の設定ファイル読み込み&lt;/span&gt;
+    include /etc/monit/conf-enabled/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;         &lt;span class=&quot;c&quot;&gt;#   〃&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set log /var/log/monit.log&lt;/code&gt; を &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set log syslog facility log_daemon&lt;/code&gt; とすると syslog での出力となる。&lt;/li&gt;
+  &lt;li&gt;メールサーバは複数設定可能。&lt;/li&gt;
+  &lt;li&gt;メール通知先も複数設定可能。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set alert root@localhost only on { xxxx }&lt;/code&gt; などとすれば、xxxx アクション発生時のみメール通知するようにする。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set alert root@localhost but not on { xxxx }&lt;/code&gt; などとすれば、xxxx 以外のアクション発生時のみメール通知するようにする。&lt;/li&gt;
+  &lt;li&gt;その他の設定等については、 “monit.conf” 内のコメントや&lt;a href=&quot;https://mmonit.com/monit/documentation/monit.html&quot;&gt;公式ドキュメント&lt;/a&gt;を参照のこと。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;3-アラート機能の設定&quot;&gt;3. アラート機能の設定&lt;/h3&gt;
+
+&lt;p&gt;以下は MariaDB サーバを監視する例。（パスは環境に合わせて適宜置き換えること）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/monit/conf.d/mysqld&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;check process mysql with pidfile /var/run/mysqld/mysqld.pid
+    every 1 cycle
+    start program &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/etc/rc.d/init.d/mysqld start&quot;&lt;/span&gt;
+    stop  program &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/etc/rc.d/init.d/mysqld stop&quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if &lt;/span&gt;failed
+        host localhost port 3306 protocol mysql
+        with &lt;span class=&quot;nb&quot;&gt;timeout &lt;/span&gt;15 seconds &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;3 &lt;span class=&quot;nb&quot;&gt;times &lt;/span&gt;within 4 cycles
+    &lt;span class=&quot;k&quot;&gt;then &lt;/span&gt;restart&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if &lt;/span&gt;failed
+        unixsocket /var/run/mysqld/mysqld.sock protocol mysql
+        &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;3 &lt;span class=&quot;nb&quot;&gt;times &lt;/span&gt;within 4 cycles
+    &lt;span class=&quot;k&quot;&gt;then &lt;/span&gt;restart&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if &lt;/span&gt;5 restarts within 5 cycles &lt;span class=&quot;k&quot;&gt;then &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;timeout&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;`mysqld.pid~ ファイルを1サイクル（今回の設定では 120秒 * 1 = 60秒）毎に監視し、存在しなければ MySQL サーバを再起動する。&lt;/li&gt;
+  &lt;li&gt;TCP ポート 3306 への接続が4回中3回15秒のタイムアウトで失敗する場合は、 MariaDB サーバを再起動する。&lt;/li&gt;
+  &lt;li&gt;Unix ソケットへの接続が4回中3回失敗する場合は、 MariaDB サーバを再起動する。&lt;/li&gt;
+  &lt;li&gt;5回中5回再起動となる場合は、タイムアウトする。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;group xxxx&lt;/code&gt; としてグループ単位で監視の制御をすることも可能。&lt;/li&gt;
+  &lt;li&gt;CPU 使用量やメモリ使用量等を監視することも可能。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;PID ファイルの存在を監視するのではなく、プロセス自体の存在を監視したければ、１行目を以下のようにする。（以下は、プロセス名に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hoge&lt;/code&gt; を含むプロセスを監視する例で、正規表現で指定する）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/monit.d/hoge&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;check process hoge matching &lt;span class=&quot;s2&quot;&gt;&quot;hoge&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;4-構文チェック&quot;&gt;4. 構文チェック&lt;/h3&gt;
+
+&lt;p&gt;予め設定ファイルの構文をチェックすることができる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# monit -t
+Control file syntax OK
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-monit-の再起動&quot;&gt;5. Monit の再起動&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart monit
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-監視状況の確認&quot;&gt;6. 監視状況の確認&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# monit status
+Monit 5.27.2 uptime: 0m
+
+System &apos;vbox&apos;
+  status                       OK
+  monitoring status            Monitored
+  monitoring mode              active
+  on reboot                    start
+  load average                 [1.27] [1.71] [2.43]
+  cpu                          0.0%usr 0.0%sys 0.0%nice 0.0%iowait 0.0%hardirq 0.0%softirq 0.0%steal 0.0%guest 0.0%guestnice
+  memory usage                 946.1 MB [96.9%]
+  swap usage                   1.2 GB [31.3%]
+  uptime                       1h 0m
+  boot time                    Wed, 22 Sep 2021 15:24:00
+  filedescriptors              1888 [0.0% of 9223372036854775807 limit]
+  data collected               Wed, 22 Sep 2021 16:24:14
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;status&lt;/code&gt; が &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Running&lt;/code&gt; であれば、「監視中」である。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;monit summary&lt;/code&gt; だと &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;status&lt;/code&gt; だけを確認できる。&lt;/p&gt;
+
+&lt;h3 id=&quot;7-個別監視の停止起動&quot;&gt;7. 個別監視の停止・起動&lt;/h3&gt;
+
+&lt;p&gt;個別に監視を停止・起動するには以下のようにする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# monit stop xxxx
+# monit start xxxx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;8-グループ単位での監視の停止起動&quot;&gt;8. グループ単位での監視の停止・起動&lt;/h3&gt;
+
+&lt;p&gt;個別の設定ファイル内で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;group xxxx&lt;/code&gt; のように記述していれば、xxxx グループの単位で監視を停止・起動することができる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# monit -g xxxx stop
+# monit -g xxxx start
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;9-参考サイト&quot;&gt;9. 参考サイト&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mmonit.com/monit/&quot; title=&quot;Easy, proactive monitoring of processes, programs, files, directories, filesystems and hosts - Monit&quot;&gt;Easy, proactive monitoring of processes, programs, files, directories, filesystems and hosts - Monit&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="munin" /><summary type="html">Debian GNU/Linux 11 (bullseye) にプロセス監視ツール monit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - munin 各種監視追加！</title><link href="https://komasaru.github.io/2022/04/13/debian-11-munin-additional-setting/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - munin 各種監視追加！" /><published>2022-04-13T00:20:00+09:00</published><updated>2022-04-13T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/13/debian-11-munin-additional-setting</id><content type="html" xml:base="https://komasaru.github.io/2022/04/13/debian-11-munin-additional-setting/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にインストールしたサーバ監視ツール munin に各種監視を追加する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -1880,92 +2047,4 @@ The GCD for (123, 45): 3
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">3月になりましたので、先月2月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">Debian 11 (bullseye) - Ruby 3.0 インストール（ソースビルド）！</title><link href="https://komasaru.github.io/2022/02/23/debian-11-ruby-3-0-installation-by-src/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Ruby 3.0 インストール（ソースビルド）！" /><published>2022-02-23T00:20:00+09:00</published><updated>2022-02-23T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/02/23/debian-11-ruby-3-0-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2022/02/23/debian-11-ruby-3-0-installation-by-src/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に Ruby 3.0 をソースをビルドしてインストール方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11.1.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;接続元のマシンも Debian GNU/Linux 11 (bullseye; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;インストールするは当記事執筆時点で最新の Ruby は 3.0.2.&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-必要パッケージのインストール&quot;&gt;1. 必要パッケージのインストール&lt;/h3&gt;
-
-&lt;p&gt;Ruby のインストールに必要なパッケージを予めインストールする。（他に必要なものがあればインストールする）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install libffi-dev zlib1g-dev libssl-dev libreadline-dev \
-libgdbm-dev libbison-dev libmariadb-dev
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-アーカイブファイルのダウンロード展開&quot;&gt;2. アーカイブファイルのダウンロード＆展開&lt;/h3&gt;
-
-&lt;p&gt;アーカイブファイルをダンロードし、展開する。（ダンロード先は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/src&lt;/code&gt; としている）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /usr/local/src
-# wget https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.2.tar.gz
-# tar xvf ruby-3.0.2.tar.gz
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;3-ビルドインストール&quot;&gt;3. ビルド＆インストール&lt;/h3&gt;
-
-&lt;p&gt;ビルドインストールは以下のように行う。（よくある &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.configure&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make install&lt;/code&gt;）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd ruby-3.0.2
-# ./configure
-# make -j$(grep &apos;^processor&apos; /proc/cpuinfo | wc -l)
-# make install
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-インストールの確認&quot;&gt;4. インストールの確認&lt;/h3&gt;
-
-&lt;p&gt;バージョンを表示させてみて、インストールできているか確認する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ruby -v
-ruby 3.0.2p107 (2021-07-07 revision 0db68f0233) [x86_64-linux]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-ドキュメントの非インストール設定&quot;&gt;5. ドキュメントの非インストール設定&lt;/h3&gt;
-
-&lt;p&gt;サーバ環境には RubyGems ライブラリのドキュメントは不要なので、 RubyGems ライブラリインストール時にドキュメントをインストールしないように設定する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.gemrc&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt;: &lt;span class=&quot;nt&quot;&gt;--no-document&lt;/span&gt;
-update: &lt;span class=&quot;nt&quot;&gt;--no-document&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;6-gem-の最新化&quot;&gt;6. gem の最新化&lt;/h3&gt;
-
-&lt;p&gt;今後のために、gem を最新に更新しておく。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# gem -v
-3.2.22
-
-# gem update --system
-
-# gem -v
-3.2.27
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-動作確認&quot;&gt;7. 動作確認&lt;/h3&gt;
-
-&lt;p&gt;適当にコーディングして、正常に動作するか確認する。&lt;br /&gt;
-Ruby スクリプトファイルを作成して実行してもよいし、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;irb&lt;/code&gt; や &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pry&lt;/code&gt; でコーディングしてもよい。以下はコマンドラインから実行した例。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ruby -e &apos;5.times {puts &quot;Hello Ruby!&quot;}&apos;
-Hello Ruby!
-Hello Ruby!
-Hello Ruby!
-Hello Ruby!
-Hello Ruby!
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Ruby" /><summary type="html">Debian GNU/Linux 11 (bullseye) に Ruby 3.0 をソースをビルドしてインストール方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">3月になりましたので、先月2月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
