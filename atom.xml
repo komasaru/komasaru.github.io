@@ -1,4 +1,115 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-04-19T12:28:56+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - Monit でプロセス監視！</title><link href="https://komasaru.github.io/2022/04/20/debian-11-monit-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Monit でプロセス監視！" /><published>2022-04-20T00:20:00+09:00</published><updated>2022-04-20T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/20/debian-11-monit-installation</id><content type="html" xml:base="https://komasaru.github.io/2022/04/20/debian-11-monit-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にプロセス監視ツール monit をインストールする方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-04-26T22:53:58+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 11 (bullseye) - 地図描画ツール GMT インストール！</title><link href="https://komasaru.github.io/2022/04/27/debian-11-gmt-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - 地図描画ツール GMT インストール！" /><published>2022-04-27T00:20:00+09:00</published><updated>2022-04-27T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/27/debian-11-gmt-installation</id><content type="html" xml:base="https://komasaru.github.io/2022/04/27/debian-11-gmt-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に地図描画ツール GMT(Generic Mapping Tool) をインストールする方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+  &lt;li&gt;以前は海岸線データやポリゴンデータとともにソースをビルドしてインストールしていたが、今回は全て apt インストールする。&lt;/li&gt;
+  &lt;li&gt;root での作業を想定。&lt;/li&gt;
+  &lt;li&gt;GMT 4 系や 5 系とスクリプトの書き方（モジュールの仕様）が多々異なるので、注意！&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-gmt-のインストール&quot;&gt;1. GMT のインストール&lt;/h3&gt;
+
+&lt;p&gt;GMT(6.1.1), DCW(1.1.4), GSHHG(2.3.7) をインストールする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install gmt gmt-dcw gmt-gshhg
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-必要パッケージのインストール&quot;&gt;2. 必要パッケージのインストール&lt;/h3&gt;
+
+&lt;p&gt;他の必要なパッケージもインストールする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install ghostscript
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-追加パッケージのインストール&quot;&gt;3. 追加パッケージのインストール&lt;/h3&gt;
+
+&lt;p&gt;必要なら、追加で以下のパッケージもインストールする。（当方は、念の為、インストール）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install gdal-bin graphicsmagick ffmpeg
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-動作確認&quot;&gt;4. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;GMT のパラメータデフォルト値の一覧を表示してみる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# gmt defaults
+#
+# GMT 6.1.1 Defaults file
+#
+# COLOR Parameters
+#
+COLOR_BACKGROUND               = black
+COLOR_FOREGROUND               = white
+COLOR_NAN                      = 127.5
+COLOR_MODEL                    = none
+COLOR_HSV_MIN_S                = 1
+COLOR_HSV_MAX_S                = 0.1
+COLOR_HSV_MIN_V                = 0.3
+COLOR_HSV_MAX_V                = 1
+#
+         :
+====&amp;lt; 以下省略 &amp;gt;====
+         :
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;ちなみに、 GMT 4, 5 系は以下のようなコマンドだった。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# gmtdefaults -D
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-地図描画スクリプトの作成&quot;&gt;5. 地図描画スクリプトの作成&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/path/to/gmt_test.sh&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#! /bin/bash&lt;/span&gt;
+
+gmt begin MAP_TEST png E100,A+m0.2c+s18c/20c &lt;span class=&quot;nt&quot;&gt;-C&lt;/span&gt;
+  gmt basemap &lt;span class=&quot;nt&quot;&gt;-JM15c&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-R126&lt;/span&gt;/149/25/46 &lt;span class=&quot;nt&quot;&gt;-B&lt;/span&gt;+t&lt;span class=&quot;s2&quot;&gt;&quot;GMT 6 TEST (by mk-mode.com)&quot;&lt;/span&gt;
+  gmt coast &lt;span class=&quot;nt&quot;&gt;-Dh&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-Ba10f5g5&lt;/span&gt;:WSen &lt;span class=&quot;nt&quot;&gt;-Wthinnest&lt;/span&gt;,black &lt;span class=&quot;nt&quot;&gt;-Gwheat&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-S240&lt;/span&gt;/255/255
+gmt end&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;GMT 6 系では GMT モジュールを &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gmt begin&lt;/code&gt; と &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gmt end&lt;/code&gt; で囲む。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gmt begin&lt;/code&gt; 行で、出力フォーマとを指定。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gmt basemap&lt;/code&gt; で、元となる地図を描画。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gmt coast&lt;/code&gt; で、海岸線を描画。&lt;/li&gt;
+  &lt;li&gt;その他、モジュールの詳細については「&lt;a href=&quot;https://docs.generic-mapping-tools.org/6.2/modules.html&quot; title=&quot;Modules — GMT 6.2.0 documentation&quot;&gt;こちら&lt;/a&gt;」を参照。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;6-地図描画スクリプトの実行&quot;&gt;6. 地図描画スクリプトの実行&lt;/h3&gt;
+
+&lt;p&gt;まず、実行権限を付与。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /path/to
+# chmod +x gmt_test.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;そして、実行。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ./gmt_test.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-描画された地図の確認&quot;&gt;7. 描画された地図の確認&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/2022/04/27/MAP_TEST.png&quot; alt=&quot;MAP_TEST&quot; title=&quot;MAP_TEST&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;8-参考サイト&quot;&gt;8. 参考サイト&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.generic-mapping-tools.org/&quot; title=&quot;The Generic Mapping Tools&quot;&gt;The Generic Mapping Tools&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="munin" /><summary type="html">Debian GNU/Linux 11 (bullseye) に地図描画ツール GMT(Generic Mapping Tool) をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - Monit でプロセス監視！</title><link href="https://komasaru.github.io/2022/04/20/debian-11-monit-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Monit でプロセス監視！" /><published>2022-04-20T00:20:00+09:00</published><updated>2022-04-20T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/20/debian-11-monit-installation</id><content type="html" xml:base="https://komasaru.github.io/2022/04/20/debian-11-monit-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にプロセス監視ツール monit をインストールする方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -1630,421 +1741,4 @@ The GCD for (123, 45): 3
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Python" /><summary type="html">Debian GNU/Linux 11 (bullseye) に Python 3.9 をソースをビルドしてインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">2022年2月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2022/03/01/blog-access/" rel="alternate" type="text/html" title="2022年2月 - OS・ブラウザ別アクセス状況！" /><published>2022-03-01T00:20:00+09:00</published><updated>2022-03-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/03/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2022/03/01/blog-access/">&lt;p&gt;3月になりましたので、先月2月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;1-アクセスをos別に集計&quot;&gt;1. アクセスをOS別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;20,005&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;67.4796&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6,967&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;23.5006&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,221&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.1186&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;974&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.2854&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;294&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.9917&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;147&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.4959&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;28&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0944&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0202&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;PlayStation&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0101&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;OpenBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0034&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;29,646&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;2-アクセスをosバージョン別に集計&quot;&gt;2. アクセスをOS・バージョン別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;10&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;16,011&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;54.0073&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6,967&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;23.5006&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;7&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3,688&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12.4401&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,221&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.1186&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;974&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.2854&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;294&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.9917&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;263&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.8871&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;147&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.4959&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;28&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0944&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;23&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0776&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;XP&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;11&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0371&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0202&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Vista&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0169&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;PlayStation&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0101&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;98&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0101&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;OpenBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0034&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Server 2003&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0034&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;29,646&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;3-アクセスをブラウザ別に集計&quot;&gt;3. アクセスをブラウザ別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;18,628&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;62.8348&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,140&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;13.9648&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3,591&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12.1129&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,936&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;9.9035&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;344&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.1604&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0067&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Opera&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0067&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla SeaMonkey&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0067&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0034&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;29,646&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;4-アクセスをブラウザバージョン別に集計上位20件&quot;&gt;4. アクセスをブラウザ・バージョン別に集計（上位20件）&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;98.0.4758.102&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5,393&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;18.1913&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;97.0.4692.99&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,763&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;16.0662&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;5.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3,591&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12.1129&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;98.0.4758.82&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,624&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8.8511&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;98.0.4758.80&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,473&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8.3418&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;9537.53&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,774&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5.9839&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;604.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,529&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5.1575&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;97.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,293&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.3615&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;96.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;896&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.0223&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;605.1.15&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;824&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2.7795&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;98.0.4758.87&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;486&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.6393&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;97.0.4692.71&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;469&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.5820&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;91.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;376&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.2683&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;98.0.4758.81&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;347&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.1705&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;11.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;336&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.1334&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;98.0.4758.101&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;265&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.8939&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.110&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;216&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.7286&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;97.0.4692.98&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;142&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.4790&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;98.0.4758.109&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;141&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.4756&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.93&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;134&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.4520&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;29,646&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">3月になりましたので、先月2月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
+&lt;p&gt;以上&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Python" /><summary type="html">Debian GNU/Linux 11 (bullseye) に Python 3.9 をソースをビルドしてインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>

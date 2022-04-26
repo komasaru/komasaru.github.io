@@ -12334,4 +12334,10 @@ var store = [{
         "tags": ["Debian","Linux","munin"],
         "url": "/2022/04/20/debian-11-monit-installation/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - 地図描画ツール GMT インストール！",
+        "excerpt":"Debian GNU/Linux 11 (bullseye) に地図描画ツール GMT(Generic Mapping Tool) をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。 root ユーザでの作業を想定。 以前は海岸線データやポリゴンデータとともにソースをビルドしてインストールしていたが、今回は全て apt インストールする。 root での作業を想定。 GMT 4 系や 5 系とスクリプトの書き方（モジュールの仕様）が多々異なるので、注意！ 1. GMT のインストール GMT(6.1.1), DCW(1.1.4), GSHHG(2.3.7) をインストールする。 # apt -y install gmt gmt-dcw gmt-gshhg 2. 必要パッケージのインストール 他の必要なパッケージもインストールする。 # apt...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","munin"],
+        "url": "/2022/04/27/debian-11-gmt-installation/",
+        "teaser": null
       }]
