@@ -12340,4 +12340,10 @@ var store = [{
         "tags": ["Debian","Linux","munin"],
         "url": "/2022/04/27/debian-11-gmt-installation/",
         "teaser": null
+      },{
+        "title": "2022年4月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"5月になりましたので、先月4月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 21,100 64.4629 Mac OS 7,344 22.4368 Linux 2,721 8.3130 Android 1,043 3.1865 Ubuntu Linux 305 0.9318 unknown 185 0.5652 Fedora Linux 23 0.0703 FreeBSD 9 0.0275 Debian GNU/Linux 1 0.0031 OpenBSD 1 0.0031 合　計 32,732 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2022/05/01/blog-access/",
+        "teaser": null
       }]
