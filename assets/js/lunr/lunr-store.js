@@ -12346,4 +12346,10 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2022/05/01/blog-access/",
         "teaser": null
+      },{
+        "title": "Debian 11 (bullseye) - GCC 11.2 インストール（ソースビルド）！",
+        "excerpt":"Debian GNU/Linux 11 へ最新版 GCC をソースビルドでインストールする方法についての記録です。 0. 前提条件 Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。 root ユーザでの作業を想定。 パッケージ版 GCC インストール済み。（バージョンは 8.3.0 を想定） 新たにインストールする GCC は 11.2.0 を想定。（当記事執筆時点で最新バージョン） インストール先は /usr/local/gcc-11.2.0 を想定。 コンパイルできるようにする言語は C, C++, Objective-C, Fortran とする。 インストール済みのパッケージ版 GCC は他のパッケージ管理等で影響が出ると面倒なのでアンインストールしない。（GCC 8.3.0 と 11.2.0 を共存させる） 念の為、インストール済みパッケージをアップデートしておく。 1. アーカイブダウンロード ミラーサイト一覧「GCC mirror sites - GNU...","categories": ["プログラミング"],
+        "tags": ["GCC","C言語","Fortran","ObjectiveC","Debian"],
+        "url": "/2022/05/04/debian-11-gcc-installation/",
+        "teaser": null
       }]
