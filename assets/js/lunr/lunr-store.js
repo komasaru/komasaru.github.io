@@ -12364,4 +12364,10 @@ var store = [{
         "tags": ["Fortran"],
         "url": "/2022/05/18/fortran-simultaneous-equation-by-gauss-elimination-pivot/",
         "teaser": null
+      },{
+        "title": "C++ - 連立方程式解法（ガウスの消去法（ピボット選択））！",
+        "excerpt":"かつて、連立方程式を「ガウスの消去法」で解くアルゴリズムを C++ で実装したことを紹介しました。 C++ - 連立方程式解法（ガウスの消去法）！ しかし、計算途中で対角成分がゼロになるケースでは計算ができませんでした。 今回はその問題を解決すべく、「ガウスの消去法（ピボット選択）」で解くアルゴリズムを実装してみました。（少し前に作成していたが、ブログ記事として記録していなかった） ちなみに、前々回、前回は Ruby, Fortran95 で実装しました。 Ruby - 連立方程式解法（ガウスの消去法（ピボット選択））！ Fortran - 連立方程式解法（ガウスの消去法（ピボット選択））！ 0. 前提条件 Debian GNU/Linux 11.3 での作業を想定。 GCC 11.2.0 (G++ 11.2.0) (C++17) でのコンパイルを想定。 連立方程式の解法（ガウスの消去法（ピボット選択））についての説明は割愛。（Web 上等で容易に確認可能） 1. ソースコードの作成 File: gauss_elimination_pivot.cpp 1 2 3 4 5 6 7 8 9 10 11 12 13 14...","categories": ["プログラミング","数学"],
+        "tags": ["Fortran"],
+        "url": "/2022/05/25/cpp-simultaneous-equation-by-gauss-elimination-pivot/",
+        "teaser": null
       }]
