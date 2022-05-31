@@ -12370,4 +12370,10 @@ var store = [{
         "tags": ["Fortran"],
         "url": "/2022/05/25/cpp-simultaneous-equation-by-gauss-elimination-pivot/",
         "teaser": null
+      },{
+        "title": "2022年5月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"6月になりましたので、先月5月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 20,932 66.2972 Mac OS 6,709 21.2492 Linux 2,211 7.0028 Android 1,153 3.6519 Ubuntu Linux 283 0.8963 unknown 255 0.8077 Fedora Linux 16 0.0507 FreeBSD 11 0.0348 NetBSD 2 0.0063 PlayStation 1 0.0032 合　計 31,573 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2022/06/01/blog-access/",
+        "teaser": null
       }]
