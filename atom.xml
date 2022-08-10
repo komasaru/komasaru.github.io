@@ -1,4 +1,500 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-07-12T15:47:30+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">C++ - 単回帰曲線（5次回帰モデル）の計算！</title><link href="https://komasaru.github.io/2022/07/13/cpp-simple-regression-curve-5d/" rel="alternate" type="text/html" title="C++ - 単回帰曲線（5次回帰モデル）の計算！" /><published>2022-07-13T00:20:00+09:00</published><updated>2022-07-13T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/07/13/cpp-simple-regression-curve-5d</id><content type="html" xml:base="https://komasaru.github.io/2022/07/13/cpp-simple-regression-curve-5d/">&lt;p&gt;C++ で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰曲線（5次回帰モデル）を計算する方法についての記録です。&lt;br /&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-08-10T23:18:38+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">ロジスティック回帰分析！</title><link href="https://komasaru.github.io/2022/08/11/logistic-regression/" rel="alternate" type="text/html" title="ロジスティック回帰分析！" /><published>2022-08-11T00:20:00+09:00</published><updated>2022-08-11T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/08/11/logistic-regression</id><content type="html" xml:base="https://komasaru.github.io/2022/08/11/logistic-regression/">&lt;p&gt;説明変数K個・目的変数1個のロジスティック回帰分析のアルゴリズムについて、プログラムとして実装できるようにするために自分なりに理解してまとめたものです。&lt;/p&gt;
+
+&lt;p&gt;ロジスティック回帰分析の実装について調べると、ほとんどが基本的な内容とライブラリを使った実装方法の説明であり、ライブラリに頼らずに自分で実装する方法について知りたいのに、それを詳しく説明しているサイトがなかったので。&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;回帰分析（線型回帰、曲線回帰、重回帰等）についての基本的な知識があること。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-アルゴリズム&quot;&gt;1. アルゴリズム&lt;/h3&gt;
+
+&lt;p&gt;ロジスティック回帰分析では、求める回帰式として次の式を想定する。&lt;br /&gt;
+　（目的変数\(1\)個、説明変数\(K\)個、データ数\(N\)個を想定）&lt;/p&gt;
+
+\[p = \frac{1}{1 + e^{-(\beta_0+\beta_1x_1+\beta_2x_2+\cdots+\beta_Kx_K)}} \tag{1}\]
+
+&lt;p&gt;　(ここの \(p\) は確率（目的変数; \(y\) でもよいが確率なので \(p\) とした）、 \(e\) はネイピア数)&lt;/p&gt;
+
+&lt;p&gt;また、「&lt;strong&gt;シグモイド関数&lt;/strong&gt;」を次の式で定義すると、&lt;/p&gt;
+
+\[\sigma(x) = \frac{1}{1 + e^{(-x)}} \tag{2}\]
+
+&lt;p&gt;式(1)は次のように表される。&lt;/p&gt;
+
+\[p = \sigma(\beta_0+\beta_1x_1+\beta_2x_2+\cdots+\beta_Kx_K) \tag{3}\]
+
+&lt;p&gt;さて、式(1)を変形すると、&lt;/p&gt;
+
+\[\frac{p}{1 - p} = e^{\beta_0+\beta_1x_1+\beta_2x_2+\cdots+\beta_Kx_K} \tag{4}\]
+
+&lt;p&gt;　（ここの \(\frac{p}{1 - p}\) は「&lt;strong&gt;オッズ(odds)&lt;/strong&gt;」と呼ばれるもの）&lt;/p&gt;
+
+&lt;p&gt;対数をとると、&lt;/p&gt;
+
+\[\log\frac{p}{1 - p} = \beta_0+\beta_1x_1+\beta_2x_2+\cdots+\beta_Kx_K \tag{5}\]
+
+&lt;p&gt;　（ここの \(\log\frac{p}{1 - p}\) は「&lt;strong&gt;ロジット(logit)&lt;/strong&gt;」と呼ばれるもの）&lt;/p&gt;
+
+&lt;p&gt;また、式(5)（もしくは元の式(1)）を変形し、 \(i\) 番目のデータについて表現すると、&lt;br /&gt;
+　（また、 \(e\) で表現すると指数部分が小さくなるので、以降 \(\exp\) で表現する）&lt;/p&gt;
+
+\[p_i = \frac{\exp(\beta_0+\beta_1 x_{i1}+\beta_2 x_{i2}+\cdots+\beta_Kx_{iK})}{1 + \exp(\beta_0+\beta_1 x_{i1}+\beta_2 x_{i2}+\cdots+\beta_Kx_{iK})} \tag{6}\]
+
+&lt;p&gt;以下、「&lt;strong&gt;最尤法&lt;/strong&gt;」を用いて係数を推定する。&lt;/p&gt;
+
+&lt;p&gt;まず、\(i\)番目のデータについて、予測値との当てはまりを考えてみる。&lt;/p&gt;
+
+\[P_i = y_i^{t_i}(1 - y_i)^{1 - t_i} \tag{7}\]
+
+&lt;p&gt;（\(y_i\)：\(i\)番目のデータにおける、ロジスティック回帰式から算出される確率（式(1)の\(p\)）、&lt;br /&gt;
+　\(t_i\)：\(i\)番目のデータにおける実際の値（\(0\) or \(1\)））&lt;/p&gt;
+
+&lt;p&gt;\(P_i\)が大きい方が予測式の当てはまりが良いとすると、&lt;br /&gt;
+　　・\(t_i = 1\)の時：\(P_i = y_i\)なので、\(y_i\)は大きい方がいい&lt;br /&gt;
+　　・\(t_i = 0\)の時：\(P_i = 1 - y_i\)なので、\(y_i\)は小さい方がいい&lt;br /&gt;
+ということになる。&lt;/p&gt;
+
+&lt;p&gt;この式(7)を全テータに対して適用すると、&lt;/p&gt;
+
+\[L(\beta) = \prod_{i=1}^{N}y_i^{t_i}(1 - y_i)^{1 - t_i} \tag{8}\]
+
+&lt;p&gt;この\(L(\beta)\)を「&lt;strong&gt;尤度関数&lt;/strong&gt;」と呼び、この式が最大になるように\(\beta\)の値を定めれば、当てはまりが最も良くなると言える。&lt;/p&gt;
+
+&lt;p&gt;式(8)の最大化が目的だが、乗算は計算が複雑な上に、確率の総乗を計算しようとすると、値が限りなく\(0\)に近付いてしまう。（アンダーフロー）　よって、この式(8)の対数をとることによって対処する。&lt;/p&gt;
+
+\[-\log L(\beta) = -\sum_{i=1}^{N}\{t_i\log y_i + (1 - t_i)\log(1 - y_i)\} \tag{9}\]
+
+&lt;p&gt;対数をとったこの負の式(9)の最小化で元の式(8)の最大化となる。&lt;/p&gt;
+
+&lt;p&gt;式(9)の最小値は「&lt;strong&gt;勾配降下法&lt;/strong&gt;」により求める。&lt;/p&gt;
+
+&lt;p&gt;まず、次の式を「&lt;strong&gt;交差エントロピー誤差関数（\(\subset{損失関数}\)&lt;/strong&gt;）」とよぶ。（式(9)を\(E(\beta)\)と置いただけ）&lt;/p&gt;
+
+\[E(\beta) = -\log L(\beta) = -\sum_{i=1}^{N}\{t_i\log y_i + (1 - t_i)\log(1 - y_i)\} \tag{10}\]
+
+&lt;p&gt;この関数をパラメータ\(\beta_i\)について偏微分する。（計算過程省略）&lt;/p&gt;
+
+&lt;p&gt;（\(\beta_0\)はバイアス（定数）なので、\(k=0\)と\(k\in\{1,2,\cdots,K\}\)（今回説明変数はK個を想定）で分ける）&lt;/p&gt;
+
+\[\frac{\partial E(\beta)}{\partial\beta_0} = \sum_{i=1}^{N}(y_i - t_i)\ \ (k=0の場合) \tag{11}\]
+
+\[\frac{\partial E(\beta)}{\partial\beta_k} = \sum_{i=1}^{N}x_{ik}(y_i - t_i)\ \ (k\in\{1,2,\cdots,K\}の場合) \tag{12}\]
+
+&lt;p&gt;この式(11),(12)が\(0\)になるようにパラメータ\(\beta\)を算出すればよいが、解析的には算出できないので、勾配降下法を用いる。&lt;/p&gt;
+
+&lt;p&gt;以下のようにして、パラメータ\(\beta_k\)を更新していく。\(\alpha\)は（機会学習で言うところの）学習率で、\(0.01\)等の数値を使用する。要は、\(\beta_k\)で偏微分した値に学習率を乗じて元の\(\beta_k\)から減算していき、値がほとんど変化しなくなったら、値の更新を終了させる、ということ。&lt;/p&gt;
+
+\[\beta_k \leftarrow \beta_k - \alpha \frac{\partial E(\beta)}{\partial\beta_k} \tag{13}\]
+
+&lt;p&gt;ちなみに、データ数が多いと式(11),(12)の値が大きくなってしまうので、式(11),(12)を次のようにすることもあるようだ。&lt;/p&gt;
+
+\[\frac{\partial E(\beta)}{\partial\beta_0} = \frac{1}{N}\sum_{i=1}^{N}(y_i - t_i)\ \ (k=0の場合) \tag{14}\]
+
+\[\frac{\partial E(\beta)}{\partial\beta_k} = \frac{1}{N}\sum_{i=1}^{N}x_{ik}(y_i - t_i)\ \ (k\in\{1,2,\cdots,K\}の場合) \tag{15}\]
+
+&lt;p&gt;この場合、式(13)は次のようになる。&lt;/p&gt;
+
+\[\beta_k \leftarrow \beta_k - \frac{\alpha}{N}\frac{\partial E(\beta)}{\partial\beta_k} \tag{16}\]
+
+&lt;hr /&gt;
+
+&lt;p&gt;近いうちに、プログラムに実装してみたいです。&lt;/p&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="数学" /><category term="Ruby" /><summary type="html">説明変数K個・目的変数1個のロジスティック回帰分析のアルゴリズムについて、プログラムとして実装できるようにするために自分なりに理解してまとめたものです。 ロジスティック回帰分析の実装について調べると、ほとんどが基本的な内容とライブラリを使った実装方法の説明であり、ライブラリに頼らずに自分で実装する方法について知りたいのに、それを詳しく説明しているサイトがなかったので。</summary></entry><entry><title type="html">2022年7月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2022/08/01/blog-access/" rel="alternate" type="text/html" title="2022年7月 - OS・ブラウザ別アクセス状況！" /><published>2022-08-01T00:20:00+09:00</published><updated>2022-08-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/08/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2022/08/01/blog-access/">&lt;p&gt;8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;1-アクセスをos別に集計&quot;&gt;1. アクセスをOS別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;19,817&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;67.0876&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6,471&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;21.9066&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,610&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;5.4504&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;991&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.3549&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;364&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.2323&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;272&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.9208&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0237&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0203&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0034&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;29,539&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;2-アクセスをosバージョン別に集計&quot;&gt;2. アクセスをOS・バージョン別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;10&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;16,688&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;56.4948&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;X&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6,471&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;21.9066&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,914&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;9.8649&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,610&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;5.4504&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;991&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.3549&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;364&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.2323&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;272&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.9208&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;8.1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;181&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.6127&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;8&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;18&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0609&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;XP&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;12&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0406&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0237&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0203&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Vista&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0102&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;98&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0034&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0034&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;29,539&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;3-アクセスをブラウザ別に集計&quot;&gt;3. アクセスをブラウザ別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;20,603&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;69.7485&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3,293&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;11.1480&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,945&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;9.9699&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,597&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8.7918&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;99&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3352&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0034&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla SeaMonkey&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0034&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;29,539&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;4-アクセスをブラウザバージョン別に集計上位20件&quot;&gt;4. アクセスをブラウザ・バージョン別に集計（上位20件）&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;103.0.0.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;12,942&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;43.8133&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;5.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,945&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;9.9699&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;604.1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,233&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7.5595&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;103.0.5060.114&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,186&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7.4004&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;102.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,570&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;5.3150&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;605.1.15&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,019&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.4497&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;103.0.5060.66&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;874&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.9588&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;102.0.0.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;852&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.8843&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;103.0.5060.134&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;787&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.6643&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;101.0.4951.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;499&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.6893&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;91.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;377&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.2763&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;103.0.5060.53&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;313&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.0596&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;102.0.5005.124&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;232&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.7854&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;101.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;221&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.7482&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;103.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;163&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.5518&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;102.0.5005.63&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;147&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.4976&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;102.0.5005.115&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;105&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3555&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;102.0.5005.148&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;105&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3555&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;101.0.4951.64&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;96&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3250&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;102.0.5005.149&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;93&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3148&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;29,539&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">C++ - 単回帰曲線（5次回帰モデル）の計算！</title><link href="https://komasaru.github.io/2022/07/13/cpp-simple-regression-curve-5d/" rel="alternate" type="text/html" title="C++ - 単回帰曲線（5次回帰モデル）の計算！" /><published>2022-07-13T00:20:00+09:00</published><updated>2022-07-13T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/07/13/cpp-simple-regression-curve-5d</id><content type="html" xml:base="https://komasaru.github.io/2022/07/13/cpp-simple-regression-curve-5d/">&lt;p&gt;C++ で、数値からなる同サイズの配列2つを説明変数・目的変数とみなして単回帰曲線（5次回帰モデル）を計算する方法についての記録です。&lt;br /&gt;
 今回は連立1次方程式を解くのに「ガウスの消去法（ピボット選択）」を使用します。&lt;/p&gt;
 
 &lt;p&gt;先日は Ruby で実装しています。。&lt;/p&gt;
@@ -3328,282 +3824,4 @@ $ ./TestSumF
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">5月になりましたので、先月4月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">Debian 11 (bullseye) - 地図描画ツール GMT インストール！</title><link href="https://komasaru.github.io/2022/04/27/debian-11-gmt-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - 地図描画ツール GMT インストール！" /><published>2022-04-27T00:20:00+09:00</published><updated>2022-04-27T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/27/debian-11-gmt-installation</id><content type="html" xml:base="https://komasaru.github.io/2022/04/27/debian-11-gmt-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) に地図描画ツール GMT(Generic Mapping Tool) をインストールする方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-  &lt;li&gt;以前は海岸線データやポリゴンデータとともにソースをビルドしてインストールしていたが、今回は全て apt インストールする。&lt;/li&gt;
-  &lt;li&gt;root での作業を想定。&lt;/li&gt;
-  &lt;li&gt;GMT 4 系や 5 系とスクリプトの書き方（モジュールの仕様）が多々異なるので、注意！&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-gmt-のインストール&quot;&gt;1. GMT のインストール&lt;/h3&gt;
-
-&lt;p&gt;GMT(6.1.1), DCW(1.1.4), GSHHG(2.3.7) をインストールする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install gmt gmt-dcw gmt-gshhg
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-必要パッケージのインストール&quot;&gt;2. 必要パッケージのインストール&lt;/h3&gt;
-
-&lt;p&gt;他の必要なパッケージもインストールする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install ghostscript
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;3-追加パッケージのインストール&quot;&gt;3. 追加パッケージのインストール&lt;/h3&gt;
-
-&lt;p&gt;必要なら、追加で以下のパッケージもインストールする。（当方は、念の為、インストール）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install gdal-bin graphicsmagick ffmpeg
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-動作確認&quot;&gt;4. 動作確認&lt;/h3&gt;
-
-&lt;p&gt;GMT のパラメータデフォルト値の一覧を表示してみる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# gmt defaults
-#
-# GMT 6.1.1 Defaults file
-#
-# COLOR Parameters
-#
-COLOR_BACKGROUND               = black
-COLOR_FOREGROUND               = white
-COLOR_NAN                      = 127.5
-COLOR_MODEL                    = none
-COLOR_HSV_MIN_S                = 1
-COLOR_HSV_MAX_S                = 0.1
-COLOR_HSV_MIN_V                = 0.3
-COLOR_HSV_MAX_V                = 1
-#
-         :
-====&amp;lt; 以下省略 &amp;gt;====
-         :
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;ちなみに、 GMT 4, 5 系は以下のようなコマンドだった。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# gmtdefaults -D
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-地図描画スクリプトの作成&quot;&gt;5. 地図描画スクリプトの作成&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/path/to/gmt_test.sh&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#! /bin/bash&lt;/span&gt;
-
-gmt begin MAP_TEST png E100,A+m0.2c+s18c/20c &lt;span class=&quot;nt&quot;&gt;-C&lt;/span&gt;
-  gmt basemap &lt;span class=&quot;nt&quot;&gt;-JM15c&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-R126&lt;/span&gt;/149/25/46 &lt;span class=&quot;nt&quot;&gt;-B&lt;/span&gt;+t&lt;span class=&quot;s2&quot;&gt;&quot;GMT 6 TEST (by mk-mode.com)&quot;&lt;/span&gt;
-  gmt coast &lt;span class=&quot;nt&quot;&gt;-Dh&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-Ba10f5g5&lt;/span&gt;:WSen &lt;span class=&quot;nt&quot;&gt;-Wthinnest&lt;/span&gt;,black &lt;span class=&quot;nt&quot;&gt;-Gwheat&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-S240&lt;/span&gt;/255/255
-gmt end&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;GMT 6 系では GMT モジュールを &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gmt begin&lt;/code&gt; と &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gmt end&lt;/code&gt; で囲む。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gmt begin&lt;/code&gt; 行で、出力フォーマとを指定。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gmt basemap&lt;/code&gt; で、元となる地図を描画。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gmt coast&lt;/code&gt; で、海岸線を描画。&lt;/li&gt;
-  &lt;li&gt;その他、モジュールの詳細については「&lt;a href=&quot;https://docs.generic-mapping-tools.org/6.2/modules.html&quot; title=&quot;Modules — GMT 6.2.0 documentation&quot;&gt;こちら&lt;/a&gt;」を参照。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;6-地図描画スクリプトの実行&quot;&gt;6. 地図描画スクリプトの実行&lt;/h3&gt;
-
-&lt;p&gt;まず、実行権限を付与。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /path/to
-# chmod +x gmt_test.sh
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;そして、実行。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ./gmt_test.sh
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-描画された地図の確認&quot;&gt;7. 描画された地図の確認&lt;/h3&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/2022/04/27/MAP_TEST.png&quot; alt=&quot;MAP_TEST&quot; title=&quot;MAP_TEST&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;8-参考サイト&quot;&gt;8. 参考サイト&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.generic-mapping-tools.org/&quot; title=&quot;The Generic Mapping Tools&quot;&gt;The Generic Mapping Tools&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="munin" /><summary type="html">Debian GNU/Linux 11 (bullseye) に地図描画ツール GMT(Generic Mapping Tool) をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 11 (bullseye) - Monit でプロセス監視！</title><link href="https://komasaru.github.io/2022/04/20/debian-11-monit-installation/" rel="alternate" type="text/html" title="Debian 11 (bullseye) - Monit でプロセス監視！" /><published>2022-04-20T00:20:00+09:00</published><updated>2022-04-20T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/04/20/debian-11-monit-installation</id><content type="html" xml:base="https://komasaru.github.io/2022/04/20/debian-11-monit-installation/">&lt;p&gt;Debian GNU/Linux 11 (bullseye) にプロセス監視ツール monit をインストールする方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 11.2.0 (bullseye; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1--monit-のインストール&quot;&gt;1.  monit のインストール&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install monit
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-設定ファイル編集&quot;&gt;2. 設定ファイル編集&lt;/h3&gt;
-
-&lt;p&gt;設定ファイル &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/monit/monitrc&lt;/code&gt; を編集する。&lt;br /&gt;
-以下は当方の例。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/monit/monitrc&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;daemon 120                              &lt;span class=&quot;c&quot;&gt;# 監視間隔（秒）&lt;/span&gt;
-
-  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;log /var/log/monit.log                  &lt;span class=&quot;c&quot;&gt;# ログファイル&lt;/span&gt;
-
-  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;idfile /var/lib/monit/id                &lt;span class=&quot;c&quot;&gt;# Monit インスタンスの ID ファイル&lt;/span&gt;
-
-  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;statefile /var/lib/monit/state          &lt;span class=&quot;c&quot;&gt;# Monitering ステート保存ファイル&lt;/span&gt;
-
-  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;mailserver localhost                    &lt;span class=&quot;c&quot;&gt;# メールサーバ&lt;/span&gt;
-
-  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;eventqueue
-        basedir /var/lib/monit/events         &lt;span class=&quot;c&quot;&gt;# メールサーバが利用できない場合の通知用&lt;/span&gt;
-        slots 100                             &lt;span class=&quot;c&quot;&gt;#   〃&lt;/span&gt;
-
-  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;mail-format &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;                           &lt;span class=&quot;c&quot;&gt;# メール書式&lt;/span&gt;
-    from:    Monit &amp;lt;monit@&lt;span class=&quot;nv&quot;&gt;$HOST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-    subject: monit alert &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  &lt;span class=&quot;nv&quot;&gt;$EVENT&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$SERVICE&lt;/span&gt;
-    message: &lt;span class=&quot;nv&quot;&gt;$EVENT&lt;/span&gt; Service &lt;span class=&quot;nv&quot;&gt;$SERVICE&lt;/span&gt;
-                  Date:        &lt;span class=&quot;nv&quot;&gt;$DATE&lt;/span&gt;
-                  Action:      &lt;span class=&quot;nv&quot;&gt;$ACTION&lt;/span&gt;
-                  Host:        &lt;span class=&quot;nv&quot;&gt;$HOST&lt;/span&gt;
-                  Description: &lt;span class=&quot;nv&quot;&gt;$DESCRIPTION&lt;/span&gt;
-
-             Your faithful employee,
-             Monit
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;alert root@localhost                    &lt;span class=&quot;c&quot;&gt;# 通知先メールアドレス&lt;/span&gt;
-
-  &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;httpd port 2812 and
-      allow localhost
-
-    include /etc/monit/conf.d/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;               &lt;span class=&quot;c&quot;&gt;# 別の設定ファイル読み込み&lt;/span&gt;
-    include /etc/monit/conf-enabled/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;         &lt;span class=&quot;c&quot;&gt;#   〃&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set log /var/log/monit.log&lt;/code&gt; を &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set log syslog facility log_daemon&lt;/code&gt; とすると syslog での出力となる。&lt;/li&gt;
-  &lt;li&gt;メールサーバは複数設定可能。&lt;/li&gt;
-  &lt;li&gt;メール通知先も複数設定可能。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set alert root@localhost only on { xxxx }&lt;/code&gt; などとすれば、xxxx アクション発生時のみメール通知するようにする。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set alert root@localhost but not on { xxxx }&lt;/code&gt; などとすれば、xxxx 以外のアクション発生時のみメール通知するようにする。&lt;/li&gt;
-  &lt;li&gt;その他の設定等については、 “monit.conf” 内のコメントや&lt;a href=&quot;https://mmonit.com/monit/documentation/monit.html&quot;&gt;公式ドキュメント&lt;/a&gt;を参照のこと。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;3-アラート機能の設定&quot;&gt;3. アラート機能の設定&lt;/h3&gt;
-
-&lt;p&gt;以下は MariaDB サーバを監視する例。（パスは環境に合わせて適宜置き換えること）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/monit/conf.d/mysqld&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;check process mysql with pidfile /var/run/mysqld/mysqld.pid
-    every 1 cycle
-    start program &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/etc/rc.d/init.d/mysqld start&quot;&lt;/span&gt;
-    stop  program &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/etc/rc.d/init.d/mysqld stop&quot;&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if &lt;/span&gt;failed
-        host localhost port 3306 protocol mysql
-        with &lt;span class=&quot;nb&quot;&gt;timeout &lt;/span&gt;15 seconds &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;3 &lt;span class=&quot;nb&quot;&gt;times &lt;/span&gt;within 4 cycles
-    &lt;span class=&quot;k&quot;&gt;then &lt;/span&gt;restart&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if &lt;/span&gt;failed
-        unixsocket /var/run/mysqld/mysqld.sock protocol mysql
-        &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;3 &lt;span class=&quot;nb&quot;&gt;times &lt;/span&gt;within 4 cycles
-    &lt;span class=&quot;k&quot;&gt;then &lt;/span&gt;restart&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if &lt;/span&gt;5 restarts within 5 cycles &lt;span class=&quot;k&quot;&gt;then &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;timeout&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;`mysqld.pid~ ファイルを1サイクル（今回の設定では 120秒 * 1 = 60秒）毎に監視し、存在しなければ MySQL サーバを再起動する。&lt;/li&gt;
-  &lt;li&gt;TCP ポート 3306 への接続が4回中3回15秒のタイムアウトで失敗する場合は、 MariaDB サーバを再起動する。&lt;/li&gt;
-  &lt;li&gt;Unix ソケットへの接続が4回中3回失敗する場合は、 MariaDB サーバを再起動する。&lt;/li&gt;
-  &lt;li&gt;5回中5回再起動となる場合は、タイムアウトする。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;group xxxx&lt;/code&gt; としてグループ単位で監視の制御をすることも可能。&lt;/li&gt;
-  &lt;li&gt;CPU 使用量やメモリ使用量等を監視することも可能。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;PID ファイルの存在を監視するのではなく、プロセス自体の存在を監視したければ、１行目を以下のようにする。（以下は、プロセス名に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hoge&lt;/code&gt; を含むプロセスを監視する例で、正規表現で指定する）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/monit.d/hoge&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;check process hoge matching &lt;span class=&quot;s2&quot;&gt;&quot;hoge&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;4-構文チェック&quot;&gt;4. 構文チェック&lt;/h3&gt;
-
-&lt;p&gt;予め設定ファイルの構文をチェックすることができる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# monit -t
-Control file syntax OK
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-monit-の再起動&quot;&gt;5. Monit の再起動&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart monit
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;6-監視状況の確認&quot;&gt;6. 監視状況の確認&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# monit status
-Monit 5.27.2 uptime: 0m
-
-System &apos;vbox&apos;
-  status                       OK
-  monitoring status            Monitored
-  monitoring mode              active
-  on reboot                    start
-  load average                 [1.27] [1.71] [2.43]
-  cpu                          0.0%usr 0.0%sys 0.0%nice 0.0%iowait 0.0%hardirq 0.0%softirq 0.0%steal 0.0%guest 0.0%guestnice
-  memory usage                 946.1 MB [96.9%]
-  swap usage                   1.2 GB [31.3%]
-  uptime                       1h 0m
-  boot time                    Wed, 22 Sep 2021 15:24:00
-  filedescriptors              1888 [0.0% of 9223372036854775807 limit]
-  data collected               Wed, 22 Sep 2021 16:24:14
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;status&lt;/code&gt; が &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Running&lt;/code&gt; であれば、「監視中」である。&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;monit summary&lt;/code&gt; だと &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;status&lt;/code&gt; だけを確認できる。&lt;/p&gt;
-
-&lt;h3 id=&quot;7-個別監視の停止起動&quot;&gt;7. 個別監視の停止・起動&lt;/h3&gt;
-
-&lt;p&gt;個別に監視を停止・起動するには以下のようにする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# monit stop xxxx
-# monit start xxxx
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;8-グループ単位での監視の停止起動&quot;&gt;8. グループ単位での監視の停止・起動&lt;/h3&gt;
-
-&lt;p&gt;個別の設定ファイル内で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;group xxxx&lt;/code&gt; のように記述していれば、xxxx グループの単位で監視を停止・起動することができる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# monit -g xxxx stop
-# monit -g xxxx start
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;9-参考サイト&quot;&gt;9. 参考サイト&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://mmonit.com/monit/&quot; title=&quot;Easy, proactive monitoring of processes, programs, files, directories, filesystems and hosts - Monit&quot;&gt;Easy, proactive monitoring of processes, programs, files, directories, filesystems and hosts - Monit&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="munin" /><summary type="html">Debian GNU/Linux 11 (bullseye) にプロセス監視ツール monit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">5月になりましたので、先月4月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
