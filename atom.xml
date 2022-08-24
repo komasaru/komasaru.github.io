@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-08-10T23:18:38+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">ロジスティック回帰分析！</title><link href="https://komasaru.github.io/2022/08/11/logistic-regression/" rel="alternate" type="text/html" title="ロジスティック回帰分析！" /><published>2022-08-11T00:20:00+09:00</published><updated>2022-08-11T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/08/11/logistic-regression</id><content type="html" xml:base="https://komasaru.github.io/2022/08/11/logistic-regression/">&lt;p&gt;説明変数K個・目的変数1個のロジスティック回帰分析のアルゴリズムについて、プログラムとして実装できるようにするために自分なりに理解してまとめたものです。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2022-08-24T17:14:17+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">ロジスティック回帰分析！</title><link href="https://komasaru.github.io/2022/08/11/logistic-regression/" rel="alternate" type="text/html" title="ロジスティック回帰分析！" /><published>2022-08-11T00:20:00+09:00</published><updated>2022-08-11T00:20:00+09:00</updated><id>https://komasaru.github.io/2022/08/11/logistic-regression</id><content type="html" xml:base="https://komasaru.github.io/2022/08/11/logistic-regression/">&lt;p&gt;説明変数K個・目的変数1個のロジスティック回帰分析のアルゴリズムについて、プログラムとして実装できるようにするために自分なりに理解してまとめたものです。&lt;/p&gt;
 
 &lt;p&gt;ロジスティック回帰分析の実装について調べると、ほとんどが基本的な内容とライブラリを使った実装方法の説明であり、ライブラリに頼らずに自分で実装する方法について知りたいのに、それを詳しく説明しているサイトがなかったので。&lt;/p&gt;
 
@@ -95,10 +95,6 @@
 \[\frac{\partial E(\beta)}{\partial\beta_0} = \frac{1}{N}\sum_{i=1}^{N}(y_i - t_i)\ \ (k=0の場合) \tag{14}\]
 
 \[\frac{\partial E(\beta)}{\partial\beta_k} = \frac{1}{N}\sum_{i=1}^{N}x_{ik}(y_i - t_i)\ \ (k\in\{1,2,\cdots,K\}の場合) \tag{15}\]
-
-&lt;p&gt;この場合、式(13)は次のようになる。&lt;/p&gt;
-
-\[\beta_k \leftarrow \beta_k - \frac{\alpha}{N}\frac{\partial E(\beta)}{\partial\beta_k} \tag{16}\]
 
 &lt;hr /&gt;
 
