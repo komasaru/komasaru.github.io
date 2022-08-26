@@ -13,18 +13,30 @@
             url: 'https://www.mk-mode.com/rails/json_blog?callback=?',
             dataType: 'json',
             data: {http_referer: referer},
-            success: function(d){
+            //success: function(d){
+            //    $("#uptime"      ).html(d.uptime);
+            //    $("#pv-total"    ).text(insertComma(d.pv_total    ));
+            //    $("#pv-today"    ).text(insertComma(d.pv_today    ));
+            //    $("#pv-yesterday").text(insertComma(d.pv_yesterday));
+            //},
+            //error: function(d, s, t) {
+            //    $("#uptime"      ).text('--d--h--m');
+            //    $("#pv-total"    ).text('---');
+            //    $("#pv-today"    ).text('---');
+            //    $("#pv-yesterday").text('---');
+            done(function(d){
                 $("#uptime"      ).html(d.uptime);
                 $("#pv-total"    ).text(insertComma(d.pv_total    ));
                 $("#pv-today"    ).text(insertComma(d.pv_today    ));
                 $("#pv-yesterday").text(insertComma(d.pv_yesterday));
-            },
-            error: function(d, s, t) {
+            }),
+            fail(function(jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.status + "; " + textStatus + "; " + errorThrown.message);
                 $("#uptime"      ).text('--d--h--m');
                 $("#pv-total"    ).text('---');
                 $("#pv-today"    ).text('---');
                 $("#pv-yesterday").text('---');
-            }
+            })
         });
 
         // Scroll Top Buton
