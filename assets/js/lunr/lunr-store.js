@@ -12406,4 +12406,10 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2022/09/01/blog-access/",
         "teaser": null
+      },{
+        "title": "2022年9月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"10月になりましたので、先月9月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 18,809 72.3701 Mac OS 4,774 18.3686 Linux 1,108 4.2632 Android 888 3.4167 Ubuntu Linux 263 1.0119 unknown 139 0.5348 FreeBSD 5 0.0192 Fedora Linux 4 0.0154 合　計 25,990 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 15,097 58.0877 Mac OS X 4,774...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2022/10/03/blog-access/",
+        "teaser": null
       }]
