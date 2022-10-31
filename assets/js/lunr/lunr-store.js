@@ -12418,4 +12418,10 @@ var store = [{
         "tags": ["Ruby"],
         "url": "/2022/10/12/ruby-logistic-regression/",
         "teaser": null
+      },{
+        "title": "2022年10月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"11月になりましたので、先月10月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 21,087 70.5369 Mac OS 5,842 19.5417 Linux 1,252 4.1880 Android 1,079 3.6093 unknown 324 1.0838 Ubuntu Linux 300 1.0035 FreeBSD 6 0.0201 NetBSD 3 0.0100 Chrome OS 1 0.0033 Fedora Linux 1 0.0033 合　計 29,895 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2022/11/01/blog-access/",
+        "teaser": null
       }]
