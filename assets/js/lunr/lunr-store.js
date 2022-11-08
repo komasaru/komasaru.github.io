@@ -12424,4 +12424,10 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2022/11/01/blog-access/",
         "teaser": null
+      },{
+        "title": "C++ - 行列ライブラリ Eigen 試用",
+        "excerpt":"C++ 用の行列（線形代数）ライブラリである Eigen の環境を構築し、試用してみました。 0. 前提条件 Debian GNU/Linux 11.5 (64bit) での作業を想定。 GCC 12.1.0 (G++ 12.1.0) (C++17) でのコンパイルを想定。 1. Eigen のインストール Eigen のページから最新のアーカイブファイルを取得し、適当な場所（/usr/local/include が良かろう）に展開するだけ。（当記事執筆時点では 3.4.0 が最新） $ wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz $ sudo tar xvf eigen-3.4.0.tar.gz -C /usr/local/include Debian の場合、 apt で以下のようにしてもインストールできるが、バージョンが 3.3.9 と少し古い。（当記事執筆時点） よって、今回、当方は上記のアーカイブを取得して展開する方法を採用した。 $ sudo apt -y install libeigen3-dev 2. テスト用ソースコードの作成...","categories": ["プログラミング","数学"],
+        "tags": ["C++"],
+        "url": "/2022/11/09/cpp-matrix-lib-eigen/",
+        "teaser": null
       }]
