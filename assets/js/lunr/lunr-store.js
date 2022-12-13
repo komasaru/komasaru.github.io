@@ -11705,12 +11705,6 @@ var store = [{
         "url": "/2020/07/03/cpp-regression-coefficient-of-determination-2d/",
         "teaser": null
       },{
-        "title": "C++ - 重回帰式計算（説明変数2個）！",
-        "excerpt":"C++ で、数値からなる同サイズの配列3個を説明変数2個・目的変数1個とみなして重回帰式を計算する方法についての記録です。 今回は連立1次方程式を解くのに「ガウスの消去法」を使用します。 過去には Fortran 等で実装しています。 Fortran - 重回帰式計算（説明変数2個）（その2）！ 0. 前提条件 Debian GNU/Linux 10.3 (64bit) での作業を想定。 GCC 9.2.0 (G++ 9.2.0) (C++17) でのコンパイルを想定。 1. アルゴリズム 求める重回帰式を \\(y=b_0+b_1x_1+b_2x_2\\) （説明変数が2個の場合）とすると、残差の二乗和 \\(S\\) は \\[\\begin{eqnarray*} S = \\sum_{i=1}^{N}(y_i - b_0 - b_1x_{1i} - b_2x_{2i})^2 \\end{eqnarray*}\\] となる。 \\(b_0,b_1,b_2\\) それぞれで偏微分したものを \\(0\\) とする。 \\[\\begin{eqnarray*} \\frac{\\partial S}{\\partial b_0} &amp;=&amp;...","categories": ["プログラミング","数学"],
-        "tags": ["C++"],
-        "url": "/2020/07/08/cpp-multiple-regression-equation/",
-        "teaser": null
-      },{
         "title": "C++ - 重回帰式計算（説明変数3個）！",
         "excerpt":"C++ で、数値からなる同サイズの配列4個を説明変数3個・目的変数1個とみなして重回帰式を計算する方法についての記録です。 連立1次方程式を解くのに「ガウスの消去法」を使用します。 過去には Fortran 等で実装しています。 Fortran - 重回帰式計算（説明変数2個）（その2）！ 0. 前提条件 Debian GNU/Linux 10.3 (64bit) での作業を想定。 GCC 9.2.0 (G++ 9.2.0) (C++17) でのコンパイルを想定。 1. アルゴリズム 求める重回帰式を \\(y=b_0+b_1x_1+b_2x_2+b_3x_3\\) とすると、残差の二乗和 \\(S\\) は \\[\\begin{eqnarray*} S = \\sum_{i=1}^{N}(y_i - b_0 - b_1x_{1i} - b_2x_{2i} - b_3x_{3i})^2 \\end{eqnarray*}\\] となる。 \\(b_0,\\ b_1,\\ b_2,\\ b_3\\) それぞれで偏微分したものを \\(0\\) とする。...","categories": ["プログラミング","数学"],
         "tags": ["C++"],
@@ -12429,5 +12423,17 @@ var store = [{
         "excerpt":"C++ 用の行列（線形代数）ライブラリである Eigen の環境を構築し、試用してみました。 0. 前提条件 Debian GNU/Linux 11.5 (64bit) での作業を想定。 GCC 12.1.0 (G++ 12.1.0) (C++17) でのコンパイルを想定。 1. Eigen のインストール Eigen のページから最新のアーカイブファイルを取得し、適当な場所（/usr/local/include が良かろう）に展開するだけ。（当記事執筆時点では 3.4.0 が最新） $ wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz $ sudo tar xvf eigen-3.4.0.tar.gz -C /usr/local/include Debian の場合、 apt で以下のようにしてもインストールできるが、バージョンが 3.3.9 と少し古い。（当記事執筆時点） よって、今回、当方は上記のアーカイブを取得して展開する方法を採用した。 $ sudo apt -y install libeigen3-dev 2. テスト用ソースコードの作成...","categories": ["プログラミング","数学"],
         "tags": ["C++"],
         "url": "/2022/11/09/cpp-matrix-lib-eigen/",
+        "teaser": null
+      },{
+        "title": "2022年11月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"12月になりましたので、先月11月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 21,649 69.7230 Mac OS 6,371 20.5185 Linux 1,266 4.0773 Android 1,120 3.6071 Ubuntu Linux 372 1.1981 unknown 267 0.8599 FreeBSD 3 0.0097 Fedora Linux 2 0.0064 合　計 31,050 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 17,625 56.7633 Mac OS X 6,371...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2022/12/01/blog-access/",
+        "teaser": null
+      },{
+        "title": "C++ - ロジスティック回帰分析！",
+        "excerpt":"少し前に、説明変数K個・目的変数1個のロジスティック回帰分析のアルゴリズムを Ruby で実装したことを紹介しました。 Ruby - ロジスティック回帰分析！ 今回は、説明変数2個・目的変数1個のロジスティック回帰分析のアルゴリズムを C++ で実装してみました。 0. 前提条件 Debian GNU/Linux 11.5 (64bit) での作業を想定。 GCC 12.1.0 (G++ 12.1.0) (C++17) でのコンパイルを想定。 1. アルゴリズム 当ブログ過去記事を参照。 ロジスティック回帰分析！ 2. ソースコードの作成 ファイル読み込み部分、計算部分、実行部分とソースファイルを分けている。 File: file.hpp 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 #ifndef REGRESSION_LOGISTIC_FILE_HPP_ #define...","categories": ["プログラミング","数学"],
+        "tags": ["C++"],
+        "url": "/2022/12/14/cpp-logistic-regression/",
         "teaser": null
       }]
