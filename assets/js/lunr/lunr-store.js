@@ -12436,4 +12436,10 @@ var store = [{
         "tags": ["C++"],
         "url": "/2022/12/14/cpp-logistic-regression/",
         "teaser": null
+      },{
+        "title": "2022年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）",
+        "excerpt":"旧年明けまして、新年おめでとうございます。 旧年中はお世話になりました。 本年もどうぞよろしくお願いします。 話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 21,724 70.8314 Mac OS 5,878 19.1653 Linux 1,253 4.0854 Android 1,213 3.9550 Ubuntu Linux 320 1.0434 unknown 274 0.8934 Fedora Linux 5 0.0163 FreeBSD 3 0.0098 合　計 30,670 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 17,182 56.0222 Mac...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2023/01/01/blog-access/",
+        "teaser": null
       }]
