@@ -12448,4 +12448,10 @@ var store = [{
         "tags": ["Twitter","Ruby","MySQL","MariaDB","MeCab"],
         "url": "/2023/01/02/tweet-summary-2022/",
         "teaser": null
+      },{
+        "title": "2023年1月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"2月になりましたので、先月1月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 18,847 68.6994 Mac OS 5,709 20.8099 Linux 1,244 4.5345 Android 1,053 3.8383 unknown 287 1.0461 Ubuntu Linux 282 1.0279 FreeBSD 4 0.0146 Fedora Linux 4 0.0146 NetBSD 2 0.0073 Wii 2 0.0073 合　計 27,434 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2023/02/01/blog-access/",
+        "teaser": null
       }]
