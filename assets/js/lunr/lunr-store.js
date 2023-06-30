@@ -12478,4 +12478,10 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2023/06/01/blog-access/",
         "teaser": null
+      },{
+        "title": "2023年6月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"7月になりましたので、先月6月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 12,821 66.1081 Mac OS 4,257 21.9501 Android 927 4.7798 Linux 907 4.6767 Ubuntu Linux 269 1.3870 unknown 206 1.0622 Fedora Linux 5 0.0258 FreeBSD 2 0.0103 合　計 19,394 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 12,696 65.4635 Mac OS X 4,257...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2023/07/01/blog-access/",
+        "teaser": null
       }]
