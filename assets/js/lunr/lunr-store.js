@@ -12496,4 +12496,10 @@ var store = [{
         "tags": ["Debian","Linux"],
         "url": "/2023/07/12/debian-12-initial-setting/",
         "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - SSH サーバ構築！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) 上に SSH サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 「Debian 12 (bookwarm) - インストール（サーバ用途・最小構成）！」の方法でインストールが完了していることを想定。 「Debian 12 (bookwarm) - サーバ初期設定！」の方法で初期設定が完了していることを想定。 サーバの IP アドレス 192.168.11.101、ホスト名 vbox、ユーザ名 foo を想定。 DNS サーバは未だ設定していない。 （設定済みなら、ローカルから IP アドレスではなくホスト名で SSH 接続可） クライアント側も Debian GNU/Linux 12.0.0(bookworm; 64bit) を想定。 SSH 接続は端末コンソールから行う。 ポートは、デフォルトの 22 から 9999 に変更することを想定。（9999 は架空） root...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","SSH"],
+        "url": "/2023/07/19/debian-12-ssh-installation/",
+        "teaser": null
       }]

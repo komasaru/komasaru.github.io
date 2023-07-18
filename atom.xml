@@ -1,4 +1,190 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-07-11T23:30:44+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - サーバ初期設定！</title><link href="https://komasaru.github.io/2023/07/12/debian-12-initial-setting/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - サーバ初期設定！" /><published>2023-07-12T00:20:00+09:00</published><updated>2023-07-12T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/07/12/debian-12-initial-setting</id><content type="html" xml:base="https://komasaru.github.io/2023/07/12/debian-12-initial-setting/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) インストール後の初期設定についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-07-18T21:47:44+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - SSH サーバ構築！</title><link href="https://komasaru.github.io/2023/07/19/debian-12-ssh-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - SSH サーバ構築！" /><published>2023-07-19T00:20:00+09:00</published><updated>2023-07-19T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/07/19/debian-12-ssh-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/07/19/debian-12-ssh-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) 上に SSH サーバを構築する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;「&lt;a href=&quot;/2023/07/05/debian-12-installation-for-small-server&quot; title=&quot;Debian 12 (bookwarm) - インストール（サーバ用途・最小構成）！&quot;&gt;Debian 12 (bookwarm) - インストール（サーバ用途・最小構成）！&lt;/a&gt;」の方法でインストールが完了していることを想定。&lt;/li&gt;
+  &lt;li&gt;「&lt;a href=&quot;/2023/07/12/debian-12-initial-setting&quot; title=&quot;Debian 12 (bookwarm) - サーバ初期設定&quot;&gt;Debian 12 (bookwarm) - サーバ初期設定！&lt;/a&gt;」の方法で初期設定が完了していることを想定。&lt;/li&gt;
+  &lt;li&gt;サーバの IP アドレス &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.101&lt;/code&gt;、ホスト名 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vbox&lt;/code&gt;、ユーザ名 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;foo&lt;/code&gt; を想定。&lt;/li&gt;
+  &lt;li&gt;DNS サーバは未だ設定していない。&lt;br /&gt;
+（設定済みなら、ローカルから IP アドレスではなくホスト名で SSH 接続可）&lt;/li&gt;
+  &lt;li&gt;クライアント側も Debian GNU/Linux 12.0.0(bookworm; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;SSH 接続は端末コンソールから行う。&lt;/li&gt;
+  &lt;li&gt;ポートは、デフォルトの &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;22&lt;/code&gt; から &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;9999&lt;/code&gt; に変更することを想定。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;9999&lt;/code&gt; は架空）&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-ssh-サーバのインストール&quot;&gt;1. SSH サーバのインストール&lt;/h3&gt;
+
+&lt;p&gt;Debian インストール時に SSH サーバをインストールしていなければ、以下のようにして SSH サーバをインストールする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install ssh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-ssh-設定ファイルの編集&quot;&gt;2. SSH 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;root でログインできないよう、設定ファイルを編集する。&lt;br /&gt;
+ポートもデフォルトの &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;22&lt;/code&gt; から変更する。（セキュリティ上、必須）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/ssh/sshd_config&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#Port 22&lt;/span&gt;
+Port 9999                         &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 適当に変更&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# rootユーザーのログインはパスワード認証以外のみ許可する&lt;/span&gt;
+PermitRootLogin without-password
+
+&lt;span class=&quot;c&quot;&gt;# SSHプロトコル ver.2 で公開鍵認証を許可する&lt;/span&gt;
+PubkeyAuthentication &lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# パスワード認証を許可する(rootユーザー以外に適用)&lt;/span&gt;
+PasswordAuthentication &lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# キーボード対話型認証を拒否する&lt;/span&gt;
+KbdInteractiveAuthentication no
+
+&lt;span class=&quot;c&quot;&gt;# PAMを使用する&lt;/span&gt;
+UsePAM &lt;span class=&quot;nb&quot;&gt;yes
+
+&lt;/span&gt;AllowUsers root foo               &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ログイン可能なユーザを明示的に設定&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PermitRootLogin without-password&lt;/code&gt; は、root のログインは許可されるものの、ログインを行うには適切な SSH のキーが必要とされるようになるという意味。&lt;/li&gt;
+  &lt;li&gt;かつての &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ChallengeResponseAuthentication&lt;/code&gt;（チャレンジレスポンス認証）は廃止され、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;KbdInteractiveAuthentication&lt;/code&gt;（）キーボード対話型認証(?)）に置き換わっている。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AllowUsers&lt;/code&gt; に複数指定する際、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AllowUsers root&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AllowUsers foo&lt;/code&gt; と複数行に分けてもよい。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;3-ssh-サーバの再起動&quot;&gt;3. SSH サーバの再起動&lt;/h3&gt;
+
+&lt;p&gt;設定を有効化するため、SSH サーバを再起動する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart ssh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-パスワード接続&quot;&gt;4. パスワード接続&lt;/h3&gt;
+
+&lt;p&gt;一旦ログアウト後、再度クライント側の端末コンソールからサーバに接続してみる。&lt;br /&gt;
+“Are you sure you want to continue connecting (yes/no)?” で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yes&lt;/code&gt; 応答、その後パスワードを入力すれば接続できる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ssh -p 9999 192.168.11.101
+The authenticity of host &apos;[vbox]:6835 ([192.168.11.101]:6835)&apos; can&apos;t be established.
+ED25519 key fingerprint is SHA256:ynZekY/dESumFYStmh1RlheVGYvfOU+cB2Jla2mxENw.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added &apos;[vbox]:6835&apos; (ED25519) to the list of known hosts.
+foo@vbox&apos;s password:
+Linux vbox 6.1.0-10-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.37-1 (2023-07-03) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Wed Jul 12 14:32:47 2023 from 192.168.11.12
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;クライアント側のユーザがサーバ側と異なる場合は、以下のようにユーザ名も指定する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ssh -p 9999 hoge@192.168.11.101
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;以降、サーバ操作時にクライアント側の端末コンソールから行なう。&lt;br /&gt;
+クライント側からリモート接続すれば、文字化けしていた日本語も正常に表示されるはず。&lt;/p&gt;
+
+&lt;h3 id=&quot;5-鍵ペア公開秘密の生成&quot;&gt;5. 鍵ペア（公開・秘密）の生成&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;クライアント側で&lt;/strong&gt;以下のコマンドで公開鍵・秘密鍵を生成する。&lt;br /&gt;
+作成先・ファイル名を指定しなければ、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/(ユーザ名)/.ssh/&lt;/code&gt; に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id_rsa&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id_rsa.pub&lt;/code&gt; が作成される。 途中、鍵用のパスワードも入力する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/foo/.ssh/id_rsa): /home/foo/.ssh/id_rsa
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/foo/.ssh/id_rsa.
+Your public key has been saved in /home/foo/.ssh/id_rsa.pub.
+The key fingerprint is:
+96:af:59:18:9c:a0:c2:da:86:7e:d7:24:05:d0:31:da foo@p183
+The key&apos;s randomart image is:
++--[ RSA 2048]-----------------------------------------+
+|   .oo.          |
+|    oo.          |
+|   . Eo          |
+| .   . + o       |
+|  o . . S        |
+| + . . o +       |
+|o o   + . o      |
+|.. . . . +       |
+| .. .   o        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-サーバ側の設定&quot;&gt;6. サーバ側の設定&lt;/h3&gt;
+
+&lt;p&gt;作成した鍵ペアで SSH サーバーへ鍵方式でログインできるように、サーバ側の「ログインしようとする一般ユーザ」で設定する。&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/authorized_keys&lt;/code&gt; には、先ほど作成した鍵ペアの公開鍵ファイル（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xxxx.pub&lt;/code&gt;）の内容をそのまま貼り付ける。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ mkdir ~/.ssh
+
+$ chmod 700 ~/.ssh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.ssh/authorized_keys&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssh-rsa .........
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ chmod 600 ~/.ssh/authorized_keys
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-ssh-設定ファイルの編集&quot;&gt;7. SSH 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;パスワード認証をできないようにするため、 SSH 設定ファイルを編集する。&lt;br /&gt;
+今度は一般ユーザではなく、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;su -&lt;/code&gt; で root になって（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo&lt;/code&gt; コマンドを導入していれば、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo vi ...&lt;/code&gt; でもよい）。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/ssh/sshd_config&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;PasswordAuthentication no  # &amp;lt;= 変更
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;8-ssh-サーバの再起動&quot;&gt;8. SSH サーバの再起動&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart ssh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;9-鍵認証接続のテスト&quot;&gt;9. 鍵認証接続のテスト&lt;/h3&gt;
+
+&lt;p&gt;一旦ログアウトし、再度接続する。&lt;br /&gt;
+パスワード認証ではなく、鍵認証なので以下のようなコマンドとなる。（指定する秘密キーのファイル名は、ペア作成時に指定したファイル名）&lt;br /&gt;
+鍵用のパスワード問い合わせダイアログが表示されるので応答する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ssh -i ~/.ssh/id_rsa -p 9999 192.168.11.101
+Linux vbox 6.1.0-10-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.37-1 (2023-07-03) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Wed Jul 12 14:38:34 2023 from 192.168.11.12
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;2回目からは以下のコマンドでよい。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ssh -p 9999 192.168.11.101
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="SSH" /><summary type="html">Debian GNU/Linux 12 (bookworm) 上に SSH サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - サーバ初期設定！</title><link href="https://komasaru.github.io/2023/07/12/debian-12-initial-setting/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - サーバ初期設定！" /><published>2023-07-12T00:20:00+09:00</published><updated>2023-07-12T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/07/12/debian-12-initial-setting</id><content type="html" xml:base="https://komasaru.github.io/2023/07/12/debian-12-initial-setting/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) インストール後の初期設定についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -69,6 +255,28 @@ export LANG
 &lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# source /etc/profile
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
+&lt;p&gt;しかし、マシンリブート後に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C&lt;/code&gt; に戻ってしまうこともある。&lt;br /&gt;
+それは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/profile&lt;/code&gt; 読み込み後に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.profile&lt;/code&gt; で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C&lt;/code&gt; を設定しているからかもしれない。&lt;/p&gt;
+
+&lt;p&gt;当方の環境では実際、以下のようになっていた。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.profile&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;      :
+&lt;span class=&quot;o&quot;&gt;===&lt;/span&gt;&amp;lt; 中略 &lt;span class=&quot;o&quot;&gt;&amp;gt;===&lt;/span&gt;
+      :
+
+&lt;span class=&quot;c&quot;&gt;# Installed by Debian Installer:&quot;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  no localization for root because ja_JP.UTF-8&quot;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  cannot be properly displayed at the Linux console&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;LANG&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;C&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;LANGUAGE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;C
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;root ユーザは日本語を使わないほうがよいらしい。&lt;/p&gt;
+
+&lt;p&gt;それでも日本語にしたければ、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LANG&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LANGUAGE&lt;/code&gt; 行をコメントアウトすればよい。※自己責任で&lt;br /&gt;
+もしくは、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/profile&lt;/code&gt; は編集せず、最初から &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.profile&lt;/code&gt; で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ja_JP.UTF-8&lt;/code&gt; を設定してもよいだろう。&lt;/p&gt;
 &lt;h3 id=&quot;2-ネットワークの設定&quot;&gt;2. ネットワークの設定&lt;/h3&gt;
 
 &lt;p&gt;デフォルトでは DHCP で IP アドレスが付与されるので、固定する。&lt;br /&gt;
@@ -3305,371 +3513,4 @@ export LESSOPEN=&apos;| /usr/share/source-highlight/src-hilite-lesspipe.sh %s&ap
 
 &lt;p&gt;単純に数を集計するだけではなく、形態素解析を利用して集計するのも面白いものです。&lt;/p&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="SNS" /><category term="Twitter" /><category term="Ruby" /><category term="MySQL" /><category term="MariaDB" /><category term="MeCab" /><summary type="html">改めまして、旧年明けまして、新年おめでとうございます。 2022年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。 当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Ruby + Twitter API で本家からデータを取得して保存） ほとんど SQL で集計可能でしたが、品詞・単語別の集計は形態素解析エンジン MeCab を使用しました。</summary></entry><entry><title type="html">2022年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）</title><link href="https://komasaru.github.io/2023/01/01/blog-access/" rel="alternate" type="text/html" title="2022年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）" /><published>2023-01-01T00:20:00+09:00</published><updated>2023-01-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/01/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2023/01/01/blog-access/">&lt;p&gt;旧年明けまして、新年おめでとうございます。&lt;/p&gt;
-
-&lt;p&gt;旧年中はお世話になりました。 本年もどうぞよろしくお願いします。&lt;/p&gt;
-
-&lt;p&gt;話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;1-アクセスをos別に集計&quot;&gt;1. アクセスをOS別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;21,724&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;70.8314&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5,878&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;19.1653&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,253&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.0854&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,213&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.9550&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;320&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.0434&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;274&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.8934&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0163&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0098&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;30,670&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;2-アクセスをosバージョン別に集計&quot;&gt;2. アクセスをOS・バージョン別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;10&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;17,182&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;56.0222&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5,878&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;19.1653&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;7&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,409&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;14.3756&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,253&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.0854&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,213&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.9550&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;320&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.0434&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;274&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.8934&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;93&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.3032&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;28&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0913&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;XP&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;10&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0326&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0163&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0098&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Vista&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0065&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;30,670&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;3-アクセスをブラウザ別に集計&quot;&gt;3. アクセスをブラウザ別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;20,734&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;67.6035&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,538&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;14.7962&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,894&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;9.4359&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,443&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;7.9654&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;61&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1989&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;30,670&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;4-アクセスをブラウザバージョン別に集計上位20件&quot;&gt;4. アクセスをブラウザ・バージョン別に集計（上位20件）&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;108.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;15,030&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;49.0055&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;5.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,538&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;14.7962&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;107.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,223&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;13.7692&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;604.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,034&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6.6319&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;107.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,099&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.5833&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;605.1.15&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;857&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2.7943&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;108.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;691&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2.2530&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;106.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;458&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.4933&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;102.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;312&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.0173&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;105.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;108&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.3521&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;104.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;96&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.3130&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;91.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;67&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2185&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;11.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;60&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1956&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;106.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;52&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1695&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;103.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;38&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1239&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;91.0.4472.124&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;33&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1076&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;78.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;31&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1011&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;96.0.4664.104&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;30&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0978&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;85.0.4183.83&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;28&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0913&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;104.0.5112.102&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;26&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0848&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;30,670&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">旧年明けまして、新年おめでとうございます。 旧年中はお世話になりました。 本年もどうぞよろしくお願いします。 話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="SNS" /><category term="Twitter" /><category term="Ruby" /><category term="MySQL" /><category term="MariaDB" /><category term="MeCab" /><summary type="html">改めまして、旧年明けまして、新年おめでとうございます。 2022年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。 当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Ruby + Twitter API で本家からデータを取得して保存） ほとんど SQL で集計可能でしたが、品詞・単語別の集計は形態素解析エンジン MeCab を使用しました。</summary></entry></feed>

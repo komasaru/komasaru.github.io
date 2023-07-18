@@ -450,6 +450,28 @@ export LANG
 <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># source /etc/profile
 </code></pre></div></div>
 
+<p>しかし、マシンリブート後に <code class="language-plaintext highlighter-rouge">C</code> に戻ってしまうこともある。<br />
+それは <code class="language-plaintext highlighter-rouge">/etc/profile</code> 読み込み後に <code class="language-plaintext highlighter-rouge">~/.profile</code> で <code class="language-plaintext highlighter-rouge">C</code> を設定しているからかもしれない。</p>
+
+<p>当方の環境では実際、以下のようになっていた。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">~/.profile</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      :
+<span class="o">===</span>&lt; 中略 <span class="o">&gt;===</span>
+      :
+
+<span class="c"># Installed by Debian Installer:"</span>
+<span class="c">#  no localization for root because ja_JP.UTF-8"</span>
+<span class="c">#  cannot be properly displayed at the Linux console"</span>
+<span class="nv">LANG</span><span class="o">=</span>C<span class="err">$</span>
+<span class="nv">LANGUAGE</span><span class="o">=</span>C
+</code></pre></div></div>
+
+<p>root ユーザは日本語を使わないほうがよいらしい。</p>
+
+<p>それでも日本語にしたければ、 <code class="language-plaintext highlighter-rouge">LANG</code>, <code class="language-plaintext highlighter-rouge">LANGUAGE</code> 行をコメントアウトすればよい。※自己責任で<br />
+もしくは、 <code class="language-plaintext highlighter-rouge">/etc/profile</code> は編集せず、最初から <code class="language-plaintext highlighter-rouge">~/.profile</code> で <code class="language-plaintext highlighter-rouge">ja_JP.UTF-8</code> を設定してもよいだろう。</p>
 <h3 id="2-ネットワークの設定">2. ネットワークの設定</h3>
 
 <p>デフォルトでは DHCP で IP アドレスが付与されるので、固定する。<br />
@@ -802,7 +824,8 @@ export LESSOPEN='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s'
 ">Previous</a>
     
     
-      <a href="#" class="pagination--pager disabled">Next</a>
+      <a href="/2023/07/19/debian-12-ssh-installation/" class="pagination--pager" title="Debian 12 (bookworm) - SSH サーバ構築！
+">Next</a>
     
   </nav>
 
@@ -826,6 +849,30 @@ export LESSOPEN='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s'
       <div id="google-ad-4"></div>
       <h4 class="page__related-title">You May Also Enjoy</h4>
       <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2023/07/19/debian-12-ssh-installation/" rel="permalink">Debian 12 (bookworm) - SSH サーバ構築！
+</a>
+        &nbsp;<small>(2023-07-19)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 12 (bookworm) 上に SSH サーバを構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
         
           
 
@@ -887,27 +934,6 @@ export LESSOPEN='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s'
     </h3>
     
     <p class="archive__item-excerpt" itemprop="description">6月になりましたので、先月5月分の当ブログアクセス状況を公開します。（※自分用の記録）
-
-</p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h3 class="archive__item-title" itemprop="headline">
-      
-        <a href="/2023/05/01/blog-access/" rel="permalink">2023年4月 - OS・ブラウザ別アクセス状況！
-</a>
-        &nbsp;<small>(2023-05-01)</small>
-    </h3>
-    
-    <p class="archive__item-excerpt" itemprop="description">5月になりましたので、先月4月分の当ブログアクセス状況を公開します。（※自分用の記録）
 
 </p>
   </article>
