@@ -1,4 +1,124 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-07-18T21:47:44+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - SSH サーバ構築！</title><link href="https://komasaru.github.io/2023/07/19/debian-12-ssh-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - SSH サーバ構築！" /><published>2023-07-19T00:20:00+09:00</published><updated>2023-07-19T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/07/19/debian-12-ssh-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/07/19/debian-12-ssh-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) 上に SSH サーバを構築する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-07-25T10:12:22+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - セキュリティ・アップデートの自動化！</title><link href="https://komasaru.github.io/2023/07/26/debian-12-automation-security-update/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - セキュリティ・アップデートの自動化！" /><published>2023-07-26T00:20:00+09:00</published><updated>2023-07-26T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/07/26/debian-12-automation-security-update</id><content type="html" xml:base="https://komasaru.github.io/2023/07/26/debian-12-automation-security-update/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) のセキュリティ・アップデートを自動化する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 12 (bookwarm) サーバでの作業を想定。&lt;/li&gt;
+  &lt;li&gt;cron-apt でもパッケージアップデートの自動化は可能であるが、今回はセキュリティ・アップデートのみなので unattended-upgrades を使用する。&lt;br /&gt;
+（ちなみに、インストール済みの各種パッケージを自動アップデートするのは（依存パッケージの整合性等の問題があるため）危険であり、当方はセキュリティ・アップデート以外は自動でアップデートしない方針）&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-unattended-upgrades-のインストール&quot;&gt;1. unattended-upgrades のインストール&lt;/h3&gt;
+
+&lt;p&gt;unattended-upgrades はデフォルトでインストールされているはずだが、インストールされていなければインストールする。&lt;br /&gt;
+また、パッケージ変更履歴ツール apt-listchanges もインストールする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install unattended-upgrades apt-listchanges
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-50unattended-upgrades-の編集&quot;&gt;2. “50unattended-upgrades” の編集&lt;/h3&gt;
+
+&lt;p&gt;メール送信先を編集（コメント解除＆変更）する。（当然、ユーザ名のみならず外部のメールアドレスも設定可）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/apt.conf.d/50unattended-upgrades&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Unattended-Upgrade::Mail &quot;root&quot;;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-20auto-upgrades-の作成&quot;&gt;3. “20auto-upgrades” の作成&lt;/h3&gt;
+
+&lt;p&gt;以下のコマンドを実行して自動アップデートに関する質問に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;Yes&amp;gt;&lt;/code&gt; 応答すると、自動アップグレードのための設定ファイル &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;20auto-upgrades&lt;/code&gt; が作成される。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# dpkg-reconfigure -plow unattended-upgrades
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;もしくは、以下のような内容で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;20auto-upgrades&lt;/code&gt; 作成してもよい。&lt;br /&gt;
+（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/cron.daily/apt&lt;/code&gt; に記述があるとおりデフォルトでは無効になっているので、有効にするための記述）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/apt.conf.d/20auto-upgrades&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;APT::Periodic::Update-Package-Lists &quot;1&quot;;
+APT::Periodic::Unattended-Upgrade &quot;1&quot;;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-02periodic-の作成&quot;&gt;4. “02periodic” の作成&lt;/h3&gt;
+
+&lt;p&gt;cron ジョブのための設定ファイルを作成する。&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/cron.daily/apt&lt;/code&gt; に記述があるとおりデフォルトで設定されている項目もあるが、以下のように「&lt;a href=&quot;https://wiki.debian.org/UnattendedUpgrades&quot; title=&quot;UnattendedUpgrades - Debian Wiki&quot;&gt;作成例&lt;/a&gt;」をそのまま流用している。&lt;br /&gt;
+（各設定項目の説明はコメントに記述されているとおりなので、あらためて説明しない）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/apt.conf.d/02periodic&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// Control parameters &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;cron &lt;span class=&quot;nb&quot;&gt;jobs &lt;/span&gt;by /etc/cron.daily/apt //
+
+// Enable the update/upgrade script &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;disable&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+APT::Periodic::Enable &lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+// Do &lt;span class=&quot;s2&quot;&gt;&quot;apt update&quot;&lt;/span&gt; automatically every n-days &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;disable&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+APT::Periodic::Update-Package-Lists &lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+// Do &lt;span class=&quot;s2&quot;&gt;&quot;apt upgrade --download-only&quot;&lt;/span&gt; every n-days &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;disable&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+APT::Periodic::Download-Upgradeable-Packages &lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+// Run the &lt;span class=&quot;s2&quot;&gt;&quot;unattended-upgrade&quot;&lt;/span&gt; security upgrade script
+// every n-days &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;disabled&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+// Requires the package &lt;span class=&quot;s2&quot;&gt;&quot;unattended-upgrades&quot;&lt;/span&gt; and will write
+// a log &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; /var/log/unattended-upgrades
+APT::Periodic::Unattended-Upgrade &lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+// Do &lt;span class=&quot;s2&quot;&gt;&quot;apt autoclean&quot;&lt;/span&gt; every n-days &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;disable&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+APT::Periodic::AutocleanInterval &lt;span class=&quot;s2&quot;&gt;&quot;21&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+// Send report mail to root
+//     0:  no report             &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;or null string&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+//     1:  progress report       &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;actually any string&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+//     2:  + &lt;span class=&quot;nb&quot;&gt;command &lt;/span&gt;outputs     &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;remove &lt;span class=&quot;nt&quot;&gt;-qq&lt;/span&gt;, remove 2&amp;gt;/dev/null, add &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+//     3:  + trace on
+APT::Periodic::Verbose &lt;span class=&quot;s2&quot;&gt;&quot;2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-listchangesconf-の編集&quot;&gt;5. “listchanges.conf” の編集&lt;/h3&gt;
+
+&lt;p&gt;パッケージ変更履歴ツール apt-listchanges のための設定を行う。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/listchanges.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;apt]
+&lt;span class=&quot;nv&quot;&gt;frontend&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;pager
+&lt;span class=&quot;nv&quot;&gt;which&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;both          &lt;span class=&quot;c&quot;&gt;# &amp;lt;= news から変更&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;email_address&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;root
+&lt;span class=&quot;nv&quot;&gt;email_format&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;text
+&lt;span class=&quot;nv&quot;&gt;confirm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;false
+&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;headers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;false
+&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;reverse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;false
+&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;save_seen&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/var/lib/apt/listchanges.db
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-動作確認&quot;&gt;6. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/cron.daily/apt-campat&lt;/code&gt; により毎日実行されるので、後日メールやログを確認してみる。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;メールは設定したユーザ（or メールアドレス）宛に送信される。&lt;/li&gt;
+  &lt;li&gt;dpkg 関連のログは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/log/dpkg.log&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;unattended-upgrades 関連のログは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/log/unattended-upgrades/&lt;/code&gt; ディレクトリ配下。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;7-参考サイト&quot;&gt;7. 参考サイト&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://wiki.debian.org/UnattendedUpgrades&quot; title=&quot;UnattendedUpgrades - Debian Wiki&quot;&gt;UnattendedUpgrades - Debian Wiki&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html">Debian GNU/Linux 12 (bookworm) のセキュリティ・アップデートを自動化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - SSH サーバ構築！</title><link href="https://komasaru.github.io/2023/07/19/debian-12-ssh-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - SSH サーバ構築！" /><published>2023-07-19T00:20:00+09:00</published><updated>2023-07-19T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/07/19/debian-12-ssh-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/07/19/debian-12-ssh-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) 上に SSH サーバを構築する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -2962,555 +3082,4 @@ export LESSOPEN=&apos;| /usr/share/source-highlight/src-hilite-lesspipe.sh %s&ap
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">2月になりましたので、先月1月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">2022年 - ツイート集計！</title><link href="https://komasaru.github.io/2023/01/02/tweet-summary-2022/" rel="alternate" type="text/html" title="2022年 - ツイート集計！" /><published>2023-01-02T00:20:00+09:00</published><updated>2023-01-02T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/01/02/tweet-summary-2022</id><content type="html" xml:base="https://komasaru.github.io/2023/01/02/tweet-summary-2022/">&lt;p&gt;改めまして、旧年明けまして、新年おめでとうございます。&lt;/p&gt;
-
-&lt;p&gt;2022年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。&lt;/p&gt;
-
-&lt;p&gt;当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Ruby + Twitter API で本家からデータを取得して保存）&lt;/p&gt;
-
-&lt;p&gt;ほとんど SQL で集計可能でしたが、品詞・単語別の集計は形態素解析エンジン MeCab を使用しました。&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;p&gt;集計内容は以下のとおり。&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;月別ツイート数&lt;/li&gt;
-  &lt;li&gt;曜日別ツイート数&lt;/li&gt;
-  &lt;li&gt;時間別ツイート数&lt;/li&gt;
-  &lt;li&gt;投稿元別ツイート数&lt;/li&gt;
-  &lt;li&gt;文字数別ツイート数&lt;/li&gt;
-  &lt;li&gt;1日当たりツイート数別集計&lt;/li&gt;
-  &lt;li&gt;品詞別出現回数&lt;/li&gt;
-  &lt;li&gt;単語別出現回数&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;1-月別ツイート数&quot;&gt;1. 月別ツイート数&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[ 年  月 ]  [件数]  [ 比 率 ]
-2022年01月     567  (  7.21%)
-2022年02月     441  (  5.61%)
-2022年03月     664  (  8.45%)
-2022年04月     610  (  7.76%)
-2022年05月     590  (  7.51%)
-2022年06月     602  (  7.66%)
-2022年07月     800  ( 10.18%)
-2022年08月     792  ( 10.08%)
-2022年09月     889  ( 11.31%)
-2022年10月     621  (  7.90%)
-2022年11月     626  (  7.97%)
-2022年12月     657  (  8.36%)
-[ 合  計 ]   7,859  (100.00%)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;例年、月 400 〜 900 ツイートだが、2022年は9月に 900弱 と少し多めだった。&lt;br /&gt;
-台風関連のリツイートでしょう。&lt;/p&gt;
-
-&lt;h3 id=&quot;2-曜日別ツイート数&quot;&gt;2. 曜日別ツイート数&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[ 曜  日 ]  [件数]  [ 比 率 ]
-  日曜日     1,055  ( 13.42%)
-  月曜日     1,119  ( 14.24%)
-  火曜日     1,173  ( 14.93%)
-  水曜日     1,168  ( 14.86%)
-  木曜日     1,107  ( 14.09%)
-  金曜日     1,176  ( 14.96%)
-  土曜日     1,061  ( 13.50%)
-[ 合  計 ]   7,859  (100.00%)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;例年どおり、ほぼ平均的でした。&lt;/p&gt;
-
-&lt;h3 id=&quot;3-時間別ツイート数&quot;&gt;3. 時間別ツイート数&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[ 時  間 ]  [件数]  [ 比 率 ]
-  00時台     1,377  ( 17.52%)
-  01時台       122  (  1.55%)
-  02時台        90  (  1.15%)
-  03時台       111  (  1.41%)
-  04時台       122  (  1.55%)
-  05時台       173  (  2.20%)
-  06時台       116  (  1.48%)
-  07時台       157  (  2.00%)
-  08時台       227  (  2.89%)
-  09時台       340  (  4.33%)
-  10時台       326  (  4.15%)
-  11時台       273  (  3.47%)
-  12時台       601  (  7.65%)
-  13時台       237  (  3.02%)
-  14時台       280  (  3.56%)
-  15時台       405  (  5.15%)
-  16時台       358  (  4.56%)
-  17時台       448  (  5.70%)
-  18時台       819  ( 10.42%)
-  19時台       207  (  2.63%)
-  20時台       480  (  6.11%)
-  21時台       240  (  3.05%)
-  22時台       185  (  2.35%)
-  23時台       165  (  2.10%)
-[ 合  計 ]   7,859  (100.00%)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;通常のツイートは、自身の生活スタイルの関係で18時台が多い。&lt;br /&gt;
-0時台、12時台は Bot によるツイートがほとんど。&lt;/p&gt;
-
-&lt;h3 id=&quot;4-投稿元別ツイート数&quot;&gt;4. 投稿元別ツイート数&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[ 投稿元              ]  [件数]  [ 比 率 ]
-  mk-mode BOT             6,952  ( 88.46%)
-  TwitVim                   306  (  3.89%)
-  TweetDeck                 274  (  3.49%)
-  Twitter Web App           271  (  3.45%)
-  IFTTT                      37  (  0.47%)
-  Twitter for Android        19  (  0.24%)
-[ 合  計 ]                7,859  (100.00%)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Bot 以外では、生活スタイルの関係でテキストエディタの Vim や TweetDeck, ブラウザからツイートすることが多い。&lt;br /&gt;
-この私用アカウントでは、出先（携帯端末等）からツイートすることはほとんどない。&lt;/p&gt;
-
-&lt;h3 id=&quot;5-文字数別ツイート数&quot;&gt;5. 文字数別ツイート数&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[ 文字数 ]  [件数]  [ 比 率 ]
- 〜 10文字       1  (  0.01%)
- 〜 20文字       8  (  0.10%)
- 〜 30文字      24  (  0.31%)
- 〜 40文字      53  (  0.67%)
- 〜 50文字      81  (  1.03%)
- 〜 60文字     129  (  1.64%)
- 〜 70文字     275  (  3.50%)
- 〜 80文字     724  (  9.21%)
- 〜 90文字     407  (  5.18%)
- 〜100文字     649  (  8.26%)
- 〜110文字     310  (  3.94%)
- 〜120文字   2,632  ( 33.49%)
- 〜130文字     273  (  3.47%)
- 〜140文字   2,289  ( 29.13%)
- 〜150文字       3  (  0.04%)
- 〜180文字       1  (  0.01%)
-[ 合  計 ]   7,859  (100.00%)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;文字数の少なすぎるツイートはほとんどない。&lt;br /&gt;
-2017年途中から280文字までツイートできる仕様になっている（正確には、全角文字や半角ｶﾀｶﾅ等は1文字を2文字換算）が、 Twitter API でツイートを取得した時点で140文字に切り捨てられているため、多くの140文字超のツイートは全て140文字として集計している。&lt;br /&gt;
-それでも140文字を超えるツイートが存在するのは、ツイート時に BitLy 短縮の URL だったのが Twitter API で取得し直すと Twitter 標準の t.co 短縮になり文字数が増えるため、または、その他。&lt;/p&gt;
-
-&lt;h3 id=&quot;6-1日当たりツイート数別集計&quot;&gt;6. 1日当たりツイート数別集計&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[ Tweets ]  [日数]  [ 比 率 ]
-     7           1  (  0.27%)
-     9           2  (  0.55%)
-    10           8  (  2.19%)
-    11           9  (  2.47%)
-    12          12  (  3.29%)
-    13          16  (  4.38%)
-    14          18  (  4.93%)
-    15          16  (  4.38%)
-    16          19  (  5.21%)
-    17          18  (  4.93%)
-    18          28  (  7.67%)
-    19          21  (  5.75%)
-    20          20  (  5.48%)
-    21          26  (  7.12%)
-    22          24  (  6.58%)
-    23          16  (  4.38%)
-    24          19  (  5.21%)
-    25          11  (  3.01%)
-    26           6  (  1.64%)
-    27          11  (  3.01%)
-    28           9  (  2.47%)
-    29          12  (  3.29%)
-    30           5  (  1.37%)
-    31           2  (  0.55%)
-    32           7  (  1.92%)
-    33           3  (  0.82%)
-    34           4  (  1.10%)
-    35           1  (  0.27%)
-    36           2  (  0.55%)
-    37           5  (  1.37%)
-    38           1  (  0.27%)
-    39           1  (  0.27%)
-    40           3  (  0.82%)
-    44           1  (  0.27%)
-    45           1  (  0.27%)
-    48           1  (  0.27%)
-    50           2  (  0.55%)
-    52           1  (  0.27%)
-    58           1  (  0.27%)
-    71           1  (  0.27%)
-    94           1  (  0.27%)
-[ 合  計 ]     365  (100.00%)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;例年どおり、1日に10〜20回強ツイートすることが多かったようだ。また、Bot による日次ツイートがあるので1回もツイートしなかった日はなかった。（最低でも1日7回）&lt;br /&gt;
-（ちなみに、1回もツイートしなかった日は、2011年7月7日のアカウント開設以来1日もない）&lt;/p&gt;
-
-&lt;h3 id=&quot;7-品詞別出現回数&quot;&gt;7. 品詞別出現回数&lt;/h3&gt;
-
-&lt;p&gt;形態素解析エンジン MeCab を使用して品詞別に集計してみた。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[ 品詞   ]  [ 出現回数 ]
-  名詞         270,324
-  記号         210,909
-  助詞          21,150
-  動詞           6,928
-  助動詞         3,789
-  接頭詞         2,058
-  形容詞         1,803
-  副詞             696
-  接続詞           287
-  連体詞           193
-  感動詞            98
-  フィラー           1
-[ 合  計 ]     518,236 語
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;当然ながら、名詞や記号が多い。フィラーとは「えーと」、「あのー」のような、文と文の間を埋めるような単語のこと。&lt;br /&gt;
-いつもながら、全体的に「こういうものなんだ」と実感する程度。&lt;/p&gt;
-
-&lt;h3 id=&quot;8-単語別出現回数&quot;&gt;8. 単語別出現回数&lt;/h3&gt;
-
-&lt;p&gt;1年間に出現した単語を集計してみた。（100回以上出現した単語を掲載）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[ 単語               ]  [ 品詞   ]  [ 出現回数 ]
-  :                       記号          28,212
-  /                       記号          26,741
-  0                       名詞          24,660
-  1                       名詞          18,069
-  2                       名詞          17,983
-  #                       記号          14,623
-  .                       記号          12,292
-  3                       名詞          11,740
-  8                       名詞           9,293
-  t                       記号           9,228
-  o                       記号           8,822
-  https                   名詞           8,657
-  c                       記号           8,445
-  5                       名詞           8,147
-  （                      記号           7,786
-  ）                      記号           7,782
-  4                       名詞           7,441
-  ：                      記号           6,414
-  【                      記号           6,331
-  】                      記号           6,330
-  松江                    名詞           6,279
-  の                      助詞           6,162
-  6                       名詞           5,602
-  7                       名詞           5,370
-  日                      名詞           5,221
-  R                       記号           5,081
-  @                       記号           4,995
-  消防                    名詞           4,990
-  T                       記号           4,933
-  -                       記号           4,505
-  Matsue                  名詞           4,433
-  9                       名詞           4,406
-  、                      記号           4,258
-  災害                    名詞           3,537
-  ［                      記号           3,356
-  ］                      記号           3,356
-  市                      名詞           3,253
-  Japan                   名詞           2,917
-  [                       記号           2,709
-  ]                       記号           2,709
-  。                      記号           2,682
-  (                       記号           2,680
-  現在                    名詞           2,601
-  l                       記号           2,521
-  Mk                      名詞           2,511
-  本部                    名詞           2,483
-  CCv                     名詞           2,475
-  に                      助詞           2,457
-  発生                    名詞           2,307
-  ?                       記号           2,092
-  )                       記号           2,070
-  町                      名詞           1,947
-  は                      助詞           1,912
-  °                      名詞           1,809
-  が                      助詞           1,767
-  Shimane                 名詞           1,746
-  ※                      記号           1,741
-  …                      記号           1,640
-  た                      助動詞         1,543
-  xhhy                    名詞           1,461
-  yqzbmTjAJW              名詞           1,461
-  し                      動詞           1,405
-  て                      助詞           1,392
-  を                      助詞           1,333
-  県                      名詞           1,274
-  月                      名詞           1,266
-  救急                    名詞           1,263
-  支援                    名詞           1,262
-  Wn                      名詞           1,225
-  ▼                      記号           1,187
-  C                       記号           1,155
-  で                      助詞           1,137
-  中                      名詞           1,071
-  q                       記号           1,019
-  f                       記号           1,011
-  島根                    名詞           1,001
-  yqzbmTADLW              名詞             987
-  気象庁                  名詞             986
-  情報                    名詞             985
-  年                      名詞             984
-  通過                    名詞             966
-  高度                    名詞             936
-  速度                    名詞             928
-  備忘録                  名詞             898
-  ・                      記号             847
-  さ                      名詞             837
-  症                      名詞             833
-  と                      助詞             816
-  感染                    名詞             809
-  S                       記号             790
-  名                      名詞             775
-  ,                       記号             765
-  終了                    名詞             764
-  方向                    名詞             755
-  →                      記号             741
-  機体                    名詞             737
-  南中                    名詞             728
-  ft                      名詞             728
-  Fr                      名詞             726
-  便                      名詞             725
-  MODE                    名詞             725
-  N                       記号             723
-  入                      接頭詞           715
-  ;                       記号             711
-  k                       記号             702
-  m                       記号             616
-  大雨                    名詞             616
-  ぶり                    名詞             601
-  以来                    名詞             600
-  警戒                    名詞             587
-  km                      名詞             548
-  から                    助詞             548
-  気温                    名詞             519
-  丁目                    名詞             508
-  について                助詞             506
-  米                      名詞             492
-  第                      接頭詞           463
-  頃                      名詞             455
-  害                      名詞             450
-  s                       記号             449
-  コロナ                  名詞             439
-  A                       記号             437
-  新型                    名詞             434
-  警報                    名詞             433
-  P                       記号             429
-  %                       記号             426
-  ウイルス                名詞             424
-  ！                      記号             420
-  患者                    名詞             420
-  する                    動詞             416
-  Pr                      名詞             416
-  に関する                助詞             412
-  E                       記号             409
-  「                      記号             407
-  も                      助詞             406
-  」                      記号             405
-  BLOG                    名詞             403
-  対策                    名詞             399
-  いる                    動詞             395
-  旧暦                    名詞             383
-  再                      接頭詞           380
-  室                      名詞             380
-  正午                    名詞             370
-  台風                    名詞             370
-  日の出                  名詞             369
-  い                      動詞             367
-  六                      名詞             366
-  曜                      名詞             365
-  干支                    名詞             365
-  月齢                    名詞             365
-  出                      名詞             365
-  zP                      名詞             365
-  土砂                    名詞             361
-  時                      名詞             355
-  最大                    名詞             349
-  注意                    名詞             348
-  AE                      名詞             346
-  まで                    助詞             339
-  号                      名詞             337
-  ください                動詞             331
-  浸水                    名詞             322
-  です                    助動詞           319
-  気象                    名詞             316
-  Debian                  名詞             307
-  性                      名詞             305
-  可能                    名詞             304
-  bullseye                名詞             302
-  こと                    名詞             300
-  ℃                      名詞             297
-  さ                      動詞             295
-  等                      名詞             280
-  震度                    名詞             277
-  ℃)                     名詞             276
-  や                      助詞             274
-  磁気嵐                  名詞             270
-  注意報                  名詞             268
-  な                      助動詞           267
-  ない                    助動詞           265
-  まし                    助動詞           261
-  低                      形容詞           250
-  れ                      動詞             250
-  11月                    名詞             248
-  3月                     名詞             246
-  位置                    名詞             244
-  10月                    名詞             243
-  明日                    名詞             241
-  8月                     名詞             239
-  レベル                  名詞             236
-  5月                     名詞             234
-  ある                    動詞             230
-  9月                     名詞             230
-  7月                     名詞             230
-  空軍                    名詞             228
-  6月                     名詞             227
-  12月                    名詞             226
-  高める                  動詞             226
-  東部                    名詞             225
-  vDcaUdy                 名詞             225
-  今後                    名詞             225
-  心構え                  名詞             225
-  積算                    名詞             225
-  ミサイル                名詞             222
-  4月                     名詞             222
-  震源                    名詞             221
-  ので                    助詞             218
-  1月                     名詞             215
-  度                      名詞             212
-  機                      名詞             212
-  ➡                      名詞             212
-  最低                    名詞             209
-  にかけて                助詞             208
-  火災                    名詞             206
-  yFqmO                   名詞             205
-  2月                     名詞             205
-  方位                    名詞             205
-  発表                    名詞             205
-  角                      名詞             204
-  距離                    名詞             204
-  日時                    名詞             203
-  M                       記号             202
-  ISS                     名詞             202
-  きぼう                  名詞             202
-  仰角                    名詞             202
-  直線                    名詞             202
-  量                      名詞             200
-  洪水                    名詞             198
-  K                       記号             197
-  最高                    名詞             194
-  JASDF                   名詞             194
-  Boeing                  名詞             191
-  １                      名詞             190
-  救助                    名詞             188
-  時間                    名詞             188
-  なる                    動詞             186
-  海軍                    名詞             186
-  JA                      名詞             182
-  今日                    名詞             181
-  よう                    名詞             181
-  ⬇                      名詞             180
-  落下                    名詞             179
-  留意                    名詞             178
-  気圧                    名詞             178
-  風速                    名詞             176
-  地方                    名詞             176
-  速報                    名詞             170
-  B                       記号             169
-  mm                      名詞             168
-  津波                    名詞             165
-  D                       記号             164
-  ⬆                      名詞             164
-  もの                    名詞             160
-  か                      助詞             159
-  Poseidon                名詞             158
-  危険                    名詞             157
-  継続                    名詞             156
-  地磁気                  名詞             155
-  高                      形容詞           153
-  の                      名詞             153
-  yWtoO                   名詞             151
-  暴風                    名詞             150
-  発射                    名詞             149
-  深                      形容詞           148
-  だ                      助動詞           148
-  規模                    名詞             146
-  ます                    助動詞           146
-  人                      名詞             146
-  中国                    名詞             146
-  分                      名詞             145
-  hPa                     名詞             144
-  報                      名詞             143
-  的                      名詞             142
-  北朝鮮                  名詞             142
-  雷                      名詞             142
-  河川                    名詞             142
-  程度                    名詞             141
-  通知                    名詞             141
-  インストール            名詞             138
-  YGJ                     名詞             137
-  降水                    名詞             137
-  ／                      記号             136
-  観測                    名詞             136
-  宍道                    名詞             135
-  で                      助動詞           134
-  vDcbbgA                 名詞             133
-  中国地方                名詞             132
-  日本                    名詞             132
-  強い                    形容詞           131
-  瞬間                    名詞             128
-  なっ                    動詞             127
-  KC                      名詞             127
-  増水                    名詞             127
-  関連                    名詞             126
-  内                      名詞             120
-  う                      助動詞           119
-  弾道                    名詞             119
-  JMSDF                   名詞             117
-  高い                    形容詞           117
-  令                      接頭詞           116
-  和                      名詞             116
-  突風                    名詞             116
-  東出雲                  名詞             115
-  ⚠                      名詞             115
-  付近                    名詞             114
-  激しい                  形容詞           114
-  CC                      名詞             112
-  木                      名詞             112
-  鹿島                    名詞             111
-  夜                      名詞             110
-  避難                    名詞             110
-  JcgMics                 名詞             109
-  雨                      名詞             109
-  金                      名詞             108
-  確認                    名詞             108
-  所                      名詞             108
-  期間                    名詞             107
-  土                      名詞             106
-  水                      名詞             106
-  場合                    名詞             106
-  強                      形容詞           106
-  湿度                    名詞             105
-  火                      名詞             104
-  ツール                  名詞             103
-  地震                    名詞             103
-  また                    接続詞           102
-  以上                    名詞             101
-  その他                  名詞             100
-  大雪                    名詞             100
-  十分                    名詞             100
-  :                        :                :
-  :                        :                :
-  :                        :                :
-[ 合  計 ]                             518,236 語
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;例年どおり、半角記号, 半角英数字が多かった。&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;単純に数を集計するだけではなく、形態素解析を利用して集計するのも面白いものです。&lt;/p&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="SNS" /><category term="Twitter" /><category term="Ruby" /><category term="MySQL" /><category term="MariaDB" /><category term="MeCab" /><summary type="html">改めまして、旧年明けまして、新年おめでとうございます。 2022年の Twitter でのツイート（私用で主として使用しているアカウントのみ）を Ruby で集計してみました。 当方は、ツイートは全て自宅サーバ(Debian GNU/Linux)上のデータベース(MariaDB)に保存しています。（実際には Ruby + Twitter API で本家からデータを取得して保存） ほとんど SQL で集計可能でしたが、品詞・単語別の集計は形態素解析エンジン MeCab を使用しました。</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">2月になりましたので、先月1月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
