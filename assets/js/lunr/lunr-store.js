@@ -12508,4 +12508,16 @@ var store = [{
         "tags": ["Debian","Linux"],
         "url": "/2023/07/26/debian-12-automation-security-update/",
         "teaser": null
+      },{
+        "title": "2023年7月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 11,887 66.8034 Mac OS 3,889 21.8557 Linux 863 4.8499 Android 763 4.2880 Ubuntu Linux 228 1.2813 unknown 153 0.8598 FreeBSD 6 0.0337 NetBSD 2 0.0112 OpenBSD 2 0.0112 Fedora Linux 1 0.0056 合　計 17,794 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2023/08/01/blog-access/",
+        "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - rootkit 検出ツール chkrootkit インストール！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/linux 12.0.0 (bookworm; 64bit) での作業を想定。 接続元のマシンも Debian GNU/linux 12.0.0 (bookworm; 64bit) を想定。 chkrootkit が検知できるのは既知の rootkit のみであり、新規の rootkit は検知できないことを認識しておく。 chkrootkit では誤検知もあるので、検知結果は参考程度に留める。 コマンド自体が改竄されてからでは遅いので、OS インストール直後に行うのがよいらしい。 root ユーザでの作業を想定。 1. chkrootkit のインストール # apt -y install chkrootkit 2. chkrootkit の実行 以下のようにして...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux"],
+        "url": "/2023/08/02/debian-12-chrootkit-installation/",
+        "teaser": null
       }]
