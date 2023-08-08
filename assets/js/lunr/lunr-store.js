@@ -12520,4 +12520,10 @@ var store = [{
         "tags": ["Debian","Linux"],
         "url": "/2023/08/02/debian-12-chrootkit-installation/",
         "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - アンチウィルスソフト導入！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。 Apt でインストールする。（但し、Apt のパッケージはバージョンが古い。最新版が良ければ、こちらからダウンロードしてビルドするとよい） 毎日自動でウィルススキャンを実行するようにする。 root ユーザでの作業を想定。 1. ClamAV のインストール 以下のようにして、アンチウィルスソフト ClamAV, ClamAV Daemon をインストールする。 # apt -y install clamav clamav-daemon 2. ウィルス定義ファイルの最新化 freshclam コマンドでウィルス定義ファイルを最新に更新する。 しかし、デフォルトの状態では以下のようになってしまう。（以前はこのような事態にはならなかったが） # freshclam ERROR: /var/log/clamav/freshclam.log is locked by another...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","ウイルス対策"],
+        "url": "/2023/08/09/debian-12-anti-virus-installation/",
+        "teaser": null
       }]
