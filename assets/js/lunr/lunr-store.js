@@ -12526,4 +12526,10 @@ var store = [{
         "tags": ["Debian","Linux","ウイルス対策"],
         "url": "/2023/08/09/debian-12-anti-virus-installation/",
         "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - 時刻同期設定(systemd-timesyncd)！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。 ntpd や chronyd は使用しない。 root ユーザでの作業を想定。 1. ntpd, chronyd の停止 ntpd や chronyd は不要なので、サービスが起動していれば停止し、自動起動もしないように設定しておく。（以下のようなコマンドで） ちなみに、 OS インストール直後は ntpd も chronyd も起動してなく、 systemd-timesyncd が起動しているはず。（chronyd 自体、インストールされていないはず） # systemctl status chronyd # systemctl stop chronyd #...","categories": ["サーバ構築"],
+        "tags": ["Linux","Debian"],
+        "url": "/2023/08/16/debian-12-systemd-timesyncd/",
+        "teaser": null
       }]
