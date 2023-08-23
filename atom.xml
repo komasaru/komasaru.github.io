@@ -1,4 +1,93 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-08-16T16:23:17+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - 時刻同期設定(systemd-timesyncd)！</title><link href="https://komasaru.github.io/2023/08/16/debian-12-systemd-timesyncd/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - 時刻同期設定(systemd-timesyncd)！" /><published>2023-08-16T00:20:00+09:00</published><updated>2023-08-16T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/08/16/debian-12-systemd-timesyncd</id><content type="html" xml:base="https://komasaru.github.io/2023/08/16/debian-12-systemd-timesyncd/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-08-22T21:04:38+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - ファイアウォール設定！</title><link href="https://komasaru.github.io/2023/08/23/debian-12-firewall-setting/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - ファイアウォール設定！" /><published>2023-08-23T00:00:00+09:00</published><updated>2023-08-23T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/08/23/debian-12-firewall-setting</id><content type="html" xml:base="https://komasaru.github.io/2023/08/23/debian-12-firewall-setting/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) でファイアウォールを設定する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;接続元のマシンも Debian GNU/Linux 12.0.0 (bookworm; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;ufw (= &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Uncomplicated Firewall&lt;/code&gt;) という iptables のフロントエンドツールを使用する。&lt;/li&gt;
+  &lt;li&gt;ファイアウォールのルールは、取り急ぎ最低限の設定のみ。（運用する環境やインストールしたサービスに合わせて適宜行う）&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-ufw-のインストール&quot;&gt;1. ufw のインストール&lt;/h3&gt;
+
+&lt;p&gt;依存する iptables 等もインストールされる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install ufw
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-設定ファイルの編集&quot;&gt;2. 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;IPv6 を使用しない場合は以下のように編集しておく&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/ufw&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;IPV6=no
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-各種コマンドについて&quot;&gt;3. 各種コマンドについて&lt;/h3&gt;
+
+&lt;p&gt;各種コマンドの使用法について簡単に説明する。&lt;br /&gt;
+（以下のサービス名、ポート番号は一例）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw status            # &amp;lt;= 状況確認
+# ufw enable            # &amp;lt;= ファイアウォールの有効化
+# ufw disable           # &amp;lt;= ファイアウォールの無効化
+# ufw default deny      # &amp;lt;= 全アクセスの拒否
+# ufw default allow     # &amp;lt;= 全アクセスの許可
+# ufw deny smtp         # &amp;lt;= SMTP サービスのアクセスを拒否
+# ufw allow ftp         # &amp;lt;= FTP サービスのアクセスを許可
+# ufw deny 25/tcp       # &amp;lt;= TCP ポート 25 でのアクセスを拒否
+# ufw allow 80/udp      # &amp;lt;= UDP ポート 80 でのアクセスを許可
+# ufw allow 53          # &amp;lt;= TCP ポート 53, UDP ポート 53 でのアクセスを拒否
+# ufw allow in http     # &amp;lt;= HTTP サービスのアクセスを IN のみ許可
+# ufw reject out smtp   # &amp;lt;= SMTP サービスのアクセスを OUT のみ却下
+# ufw allow proto tcp from any to any port 8080:8090
+                        # &amp;lt;= TCP ポート 8080 〜 8090 での全アクセスを許可
+# ufw allow proto tcp from 192.168.11.0/24 to any port 9999
+                        # &amp;lt;= TCP ローカルネットワーク 192.168.11.0/24 からの
+                        #    TCP ポート 9999 でのアクセスを許可
+# ufw delete 3          # &amp;lt;= 3 番目のルールを削除
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;その他、詳細な説明は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;man ufw&lt;/code&gt; で確認可。&lt;/p&gt;
+
+&lt;h3 id=&quot;4-その他&quot;&gt;4. その他&lt;/h3&gt;
+
+&lt;p&gt;一般的には、一旦全てのアクセスを拒否し、許可したいポートのみ解放するという形式となる。&lt;/p&gt;
+
+&lt;p&gt;サーバインストール直後（SSH サーバ導入済み）なら、以下のようにローカルネットからのみ SSH 接続を許可するようにし、後に各種サービスを運用するたびに解放するポートを設定すればよいだろう。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw default deny
+Default incoming policy changed to &apos;deny&apos;
+(be sure to update your rules accordingly)
+
+# ufw allow proto tcp from 192.168.11.0/24 to any port 9999
+Rules updated
+
+# ufw enable
+Command may disrupt existing ssh connections. Proceed with operation (y|n)? y
+Firewall is active and enabled on system startup
+
+# ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+9999/tcp                   ALLOW       192.168.11.0/24
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;ファイアウォールを有効にする際に SSH 接続できるように設定しておかないとリモートで操作できなるのでご注意を。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="ファイアウォール" /><summary type="html">Debian GNU/Linux 12 (bookworm) でファイアウォールを設定する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - 時刻同期設定(systemd-timesyncd)！</title><link href="https://komasaru.github.io/2023/08/16/debian-12-systemd-timesyncd/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - 時刻同期設定(systemd-timesyncd)！" /><published>2023-08-16T00:00:00+09:00</published><updated>2023-08-16T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/08/16/debian-12-systemd-timesyncd</id><content type="html" xml:base="https://komasaru.github.io/2023/08/16/debian-12-systemd-timesyncd/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -1380,6 +1469,22 @@ export LESSOPEN=&apos;| /usr/share/source-highlight/src-hilite-lesspipe.sh %s&ap
 &lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# source /etc/profile
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
+&lt;h3 id=&quot;12-systemctl-のインストール&quot;&gt;12. SystemCtl のインストール&lt;/h3&gt;
+
+&lt;p&gt;SystemCtl がインストールさていなければ、インストールしておく。&lt;br /&gt;
+（最近はデフォルトでインストールされない？）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install systemctl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;13-rsyslog-のインストール&quot;&gt;13. Rsyslog のインストール&lt;/h3&gt;
+
+&lt;p&gt;最近は Rsyslog がデフォルトでインストールされていないので、インストールしておく。&lt;br /&gt;
+（後に使用するので。 Rsyslog を使用しないのであれば、インストールは不要）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install rsyslog
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
 &lt;hr /&gt;
 
 &lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html">Debian GNU/Linux 12 (bookworm) インストール後の初期設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - インストール（サーバ用途・最小構成）！</title><link href="https://komasaru.github.io/2023/07/05/debian-12-installation-for-small-server/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - インストール（サーバ用途・最小構成）！" /><published>2023-07-05T00:20:00+09:00</published><updated>2023-07-05T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/07/05/debian-12-installation-for-small-server</id><content type="html" xml:base="https://komasaru.github.io/2023/07/05/debian-12-installation-for-small-server/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) をサーバ用途・最小構成でインストールする方法についての記録です。&lt;/p&gt;
@@ -1864,387 +1969,4 @@ export LESSOPEN=&apos;| /usr/share/source-highlight/src-hilite-lesspipe.sh %s&ap
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">7月になりましたので、先月6月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">2023年5月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2023/06/01/blog-access/" rel="alternate" type="text/html" title="2023年5月 - OS・ブラウザ別アクセス状況！" /><published>2023-06-01T00:20:00+09:00</published><updated>2023-06-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/06/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2023/06/01/blog-access/">&lt;p&gt;6月になりましたので、先月5月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;1-アクセスをos別に集計&quot;&gt;1. アクセスをOS別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;13,289&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;65.2445&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,719&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;23.1687&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;994&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.8802&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;901&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.4236&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;253&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.2421&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;208&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.0212&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0098&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0049&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0049&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;20,368&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;2-アクセスをosバージョン別に集計&quot;&gt;2. アクセスをOS・バージョン別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;10&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12,001&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;58.9209&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,719&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;23.1687&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;7&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,253&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6.1518&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;994&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.8802&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;901&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.4236&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;253&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.2421&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;208&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.0212&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;30&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1473&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;XP&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0147&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0098&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0098&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0049&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0049&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;20,368&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;3-アクセスをブラウザ別に集計&quot;&gt;3. アクセスをブラウザ別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;14,668&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;72.0149&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,540&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12.4705&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,750&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8.5919&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,397&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6.8588&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0393&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Debian IceWeasel&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0098&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla SeaMonkey&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0098&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Opera&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0049&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;20,368&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;4-アクセスをブラウザバージョン別に集計上位20件&quot;&gt;4. アクセスをブラウザ・バージョン別に集計（上位20件）&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;113.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;9,464&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;46.4650&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;112.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,147&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;20.3604&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;604.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,832&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8.9945&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;5.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,397&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6.8588&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;113.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;727&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.5693&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;605.1.15&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;704&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.4564&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;112.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;505&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2.4794&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;102.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;277&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.3600&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;111.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;189&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.9279&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;110.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;130&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.6383&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;109.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;120&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.5892&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;76.0.3809.87&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;73&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.3584&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;50.0.2661.102&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;72&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.3535&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;108.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;55&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2700&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;73.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;44&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2160&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;114.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;34&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1669&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;107.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;29&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1424&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;106.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;26&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1277&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;111.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;23&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1129&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;99.0.4844.51&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;22&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1080&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;20,368&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">6月になりましたので、先月5月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">7月になりましたので、先月6月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
