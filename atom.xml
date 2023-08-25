@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-08-22T21:04:38+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - ファイアウォール設定！</title><link href="https://komasaru.github.io/2023/08/23/debian-12-firewall-setting/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - ファイアウォール設定！" /><published>2023-08-23T00:00:00+09:00</published><updated>2023-08-23T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/08/23/debian-12-firewall-setting</id><content type="html" xml:base="https://komasaru.github.io/2023/08/23/debian-12-firewall-setting/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) でファイアウォールを設定する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-08-25T17:02:37+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - ファイアウォール設定！</title><link href="https://komasaru.github.io/2023/08/23/debian-12-firewall-setting/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - ファイアウォール設定！" /><published>2023-08-23T00:00:00+09:00</published><updated>2023-08-23T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/08/23/debian-12-firewall-setting</id><content type="html" xml:base="https://komasaru.github.io/2023/08/23/debian-12-firewall-setting/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) でファイアウォールを設定する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -10,19 +10,31 @@
 &lt;ul&gt;
   &lt;li&gt;Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
   &lt;li&gt;接続元のマシンも Debian GNU/Linux 12.0.0 (bookworm; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;ufw (= &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Uncomplicated Firewall&lt;/code&gt;) という iptables のフロントエンドツールを使用する。&lt;/li&gt;
+  &lt;li&gt;ufw (= &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Uncomplicated Firewall&lt;/code&gt;) という nftables のフロントエンドツールを使用する。&lt;/li&gt;
   &lt;li&gt;ファイアウォールのルールは、取り急ぎ最低限の設定のみ。（運用する環境やインストールしたサービスに合わせて適宜行う）&lt;/li&gt;
   &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h3 id=&quot;1-ufw-のインストール&quot;&gt;1. ufw のインストール&lt;/h3&gt;
 
-&lt;p&gt;依存する iptables 等もインストールされる。&lt;/p&gt;
+&lt;p&gt;依存する nftables もインストールする。&lt;/p&gt;
 
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install ufw
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install ufw nftables
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;h3 id=&quot;2-設定ファイルの編集&quot;&gt;2. 設定ファイルの編集&lt;/h3&gt;
+&lt;h3 id=&quot;2-nftables-の起動&quot;&gt;2. nftables の起動&lt;/h3&gt;
+
+&lt;p&gt;デフォルトでは起動していないかもしれないので、起動する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl start nftables
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-nftables-の自動起動設定&quot;&gt;3. nftables の自動起動設定&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl enable nftables
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-設定ファイルの編集&quot;&gt;4. 設定ファイルの編集&lt;/h3&gt;
 
 &lt;p&gt;IPv6 を使用しない場合は以下のように編集しておく&lt;/p&gt;
 
@@ -31,7 +43,7 @@
 &lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;IPV6=no
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;h3 id=&quot;3-各種コマンドについて&quot;&gt;3. 各種コマンドについて&lt;/h3&gt;
+&lt;h3 id=&quot;5-各種コマンドについて&quot;&gt;5. 各種コマンドについて&lt;/h3&gt;
 
 &lt;p&gt;各種コマンドの使用法について簡単に説明する。&lt;br /&gt;
 （以下のサービス名、ポート番号は一例）&lt;/p&gt;
@@ -58,7 +70,7 @@
 
 &lt;p&gt;その他、詳細な説明は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;man ufw&lt;/code&gt; で確認可。&lt;/p&gt;
 
-&lt;h3 id=&quot;4-その他&quot;&gt;4. その他&lt;/h3&gt;
+&lt;h3 id=&quot;6-その他&quot;&gt;6. その他&lt;/h3&gt;
 
 &lt;p&gt;一般的には、一旦全てのアクセスを拒否し、許可したいポートのみ解放するという形式となる。&lt;/p&gt;
 

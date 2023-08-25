@@ -391,19 +391,31 @@
 <ul>
   <li>Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。</li>
   <li>接続元のマシンも Debian GNU/Linux 12.0.0 (bookworm; 64bit) を想定。</li>
-  <li>ufw (= <code class="language-plaintext highlighter-rouge">Uncomplicated Firewall</code>) という iptables のフロントエンドツールを使用する。</li>
+  <li>ufw (= <code class="language-plaintext highlighter-rouge">Uncomplicated Firewall</code>) という nftables のフロントエンドツールを使用する。</li>
   <li>ファイアウォールのルールは、取り急ぎ最低限の設定のみ。（運用する環境やインストールしたサービスに合わせて適宜行う）</li>
   <li>root ユーザでの作業を想定。</li>
 </ul>
 
 <h3 id="1-ufw-のインストール">1. ufw のインストール</h3>
 
-<p>依存する iptables 等もインストールされる。</p>
+<p>依存する nftables もインストールする。</p>
 
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install ufw
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install ufw nftables
 </code></pre></div></div>
 
-<h3 id="2-設定ファイルの編集">2. 設定ファイルの編集</h3>
+<h3 id="2-nftables-の起動">2. nftables の起動</h3>
+
+<p>デフォルトでは起動していないかもしれないので、起動する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl start nftables
+</code></pre></div></div>
+
+<h3 id="3-nftables-の自動起動設定">3. nftables の自動起動設定</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl enable nftables
+</code></pre></div></div>
+
+<h3 id="4-設定ファイルの編集">4. 設定ファイルの編集</h3>
 
 <p>IPv6 を使用しない場合は以下のように編集しておく</p>
 
@@ -412,7 +424,7 @@
 <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>IPV6=no
 </code></pre></div></div>
 
-<h3 id="3-各種コマンドについて">3. 各種コマンドについて</h3>
+<h3 id="5-各種コマンドについて">5. 各種コマンドについて</h3>
 
 <p>各種コマンドの使用法について簡単に説明する。<br />
 （以下のサービス名、ポート番号は一例）</p>
@@ -439,7 +451,7 @@
 
 <p>その他、詳細な説明は <code class="language-plaintext highlighter-rouge">man ufw</code> で確認可。</p>
 
-<h3 id="4-その他">4. その他</h3>
+<h3 id="6-その他">6. その他</h3>
 
 <p>一般的には、一旦全てのアクセスを拒否し、許可したいポートのみ解放するという形式となる。</p>
 

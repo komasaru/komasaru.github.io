@@ -12534,7 +12534,7 @@ var store = [{
         "teaser": null
       },{
         "title": "Debian 12 (bookworm) - ファイアウォール設定！",
-        "excerpt":"Debian GNU/Linux 12 (bookworm) でファイアウォールを設定する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 12.0.0 (bookworm; 64bit) を想定。 ufw (= Uncomplicated Firewall) という iptables のフロントエンドツールを使用する。 ファイアウォールのルールは、取り急ぎ最低限の設定のみ。（運用する環境やインストールしたサービスに合わせて適宜行う） root ユーザでの作業を想定。 1. ufw のインストール 依存する iptables 等もインストールされる。 # apt -y install ufw 2. 設定ファイルの編集 IPv6 を使用しない場合は以下のように編集しておく File: /etc/default/ufw IPV6=no...","categories": ["サーバ構築"],
+        "excerpt":"Debian GNU/Linux 12 (bookworm) でファイアウォールを設定する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 12.0.0 (bookworm; 64bit) を想定。 ufw (= Uncomplicated Firewall) という nftables のフロントエンドツールを使用する。 ファイアウォールのルールは、取り急ぎ最低限の設定のみ。（運用する環境やインストールしたサービスに合わせて適宜行う） root ユーザでの作業を想定。 1. ufw のインストール 依存する nftables もインストールする。 # apt -y install ufw nftables 2. nftables の起動 デフォルトでは起動していないかもしれないので、起動する。 # systemctl...","categories": ["サーバ構築"],
         "tags": ["Debian","Linux","ファイアウォール"],
         "url": "/2023/08/23/debian-12-firewall-setting/",
         "teaser": null
