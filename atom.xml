@@ -1,4 +1,142 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-08-25T17:02:37+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - ファイアウォール設定！</title><link href="https://komasaru.github.io/2023/08/23/debian-12-firewall-setting/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - ファイアウォール設定！" /><published>2023-08-23T00:00:00+09:00</published><updated>2023-08-23T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/08/23/debian-12-firewall-setting</id><content type="html" xml:base="https://komasaru.github.io/2023/08/23/debian-12-firewall-setting/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) でファイアウォールを設定する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-08-29T11:29:04+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - サービスの管理！</title><link href="https://komasaru.github.io/2023/08/30/debian-12-service-management/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - サービスの管理！" /><published>2023-08-30T00:00:00+09:00</published><updated>2023-08-30T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/08/30/debian-12-service-management</id><content type="html" xml:base="https://komasaru.github.io/2023/08/30/debian-12-service-management/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) でのサービスの管理についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;SystemD の簡単な使用法と SysVinit の導入を行う。&lt;br /&gt;
+（当方、普段は SystemD でサービスの管理を行うが、有事の際に備えて &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sysv-rc-conf&lt;/code&gt; コマンドも使用できるよう準備しておく（RedHat 系ディストリビューションのサービス管理ツール &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chkconfig&lt;/code&gt; にあたるもの））&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-systemd-の使用方法&quot;&gt;1. SystemD の使用方法&lt;/h3&gt;
+
+&lt;p&gt;以下は vsftpd サーバの例。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vsftpd.service&lt;/code&gt; が正式なサービス名だが &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.service&lt;/code&gt; は省略可能）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ systemctl start vsftpd        # &amp;lt;= vsftpd サービスの起動
+$ systemctl stop vsftpd         # &amp;lt;= vsftpd サービスの停止
+$ systemctl status vsftpd       # &amp;lt;= vsftpd サービスの状況確認
+$ systemctl enable vsftpd       # &amp;lt;= vsftpd サービスの自動起動設定
+$ systemctl disble vsftpd       # &amp;lt;= vsftpd サービスの自動起動解除
+$ systemctl is-enabled vsftpd   # &amp;lt;= vsftpd サービスが自動起動設定されているか
+$ systemctl list-unit-files -t service | grep vsftpd  # &amp;lt;= vsftpd 起動設定の確認
+$ systemctl -t service          # &amp;lt;= 起動中サービス一覧の確認
+$ systemctl -t service --all    # &amp;lt;= 全サービス一覧の確認
+$ systemctl poweroff            # &amp;lt;= システム Shutdown 後電源 OFF
+$ systemctl halt                # &amp;lt;= システム Shutdown 後 Halt
+$ systemctl reboot              # &amp;lt;= システム Shutdown 後リブート
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;SystemD 未対応のサービスの場合でも自動で従来の SysVinit にサービスの管理を移譲しますが、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;systemctl list-unit-files&lt;/code&gt; での確認はできないので注意。&lt;/p&gt;
+
+&lt;h3 id=&quot;2-sysv-rc-conf-のインストール&quot;&gt;2. sysv-rc-conf のインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install sysv-rc-conf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-sysv-rc-conf-でサービス一覧表示&quot;&gt;3. sysv-rc-conf でサービス一覧表示&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sysv-rc-conf&lt;/code&gt; でサービスの一覧を表示するには以下のようにする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# sysv-rc-conf --list
+apparmor     S:on
+bootlogs     1:on       2:on    3:on    4:on    5:on
+brightness   0:off      6:off   S:on
+clamav-daemo 0:off      1:off   2:on    3:on    4:on    5:on    6:off
+clamav-fresh 0:off      1:off   2:on    3:on    4:on    5:on    6:off
+         :
+====&amp;lt; 途中省略 &amp;gt;====
+         :
+umountfs     0:off      6:off
+umountroot   0:off      6:off
+unattended-u 0:off      2:on    3:on    4:on    5:on    6:off
+urandom      0:off      6:off   S:on
+x11-common   S:on
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-sysv-rc-conf-でのサービス自動起動設定&quot;&gt;4. sysv-rc-conf でのサービス自動起動設定&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sysv-rc-conf&lt;/code&gt; でサービスの自動起動を有効化・無効化するには以下のようにする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# sysv-rc-conf acpid off  # acpid の自動起動無効化する場合
+
+# sysv-rc-conf acpid on   # acpid の自動起動有効化する場合
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-一覧形式での自動起動設定&quot;&gt;5. 一覧形式での自動起動設定&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sysv-rc-conf&lt;/code&gt; をオプション無しで実行すると以下のような画面になる。（ある程度のサイズのコンソール画面が必要）&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-&lt;/code&gt; でサービス停止、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;=&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;+&lt;/code&gt; でサービス開始、スペースでランレベル別に ON/OFF できる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;┌ SysV Runlevel Config   -: stop service  =/+: start service  h: help  q: quit ─┐
+│                                                                                │
+│ service      1       2       3       4       5       0       6       S         │
+│ ----------------------------------------------------------------------------   │
+│ apparmor    [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [X]        │
+│ bootlogs    [X]     [X]     [X]     [X]     [X]     [ ]     [ ]     [ ]        │
+│ brightness  [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [X]        │
+│ clamav-da$  [ ]     [X]     [X]     [X]     [X]     [ ]     [ ]     [ ]        │
+│ clamav-fr$  [ ]     [X]     [X]     [X]     [X]     [ ]     [ ]     [ ]        │
+│ cron        [ ]     [X]     [X]     [X]     [X]     [ ]     [ ]     [ ]        │
+│ dbus        [ ]     [X]     [X]     [X]     [X]     [ ]     [ ]     [ ]        │
+│ exim4       [ ]     [X]     [X]     [X]     [X]     [ ]     [ ]     [ ]        │
+│ halt        [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [ ]        │
+│ killprocs   [X]     [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [ ]        │
+│ kmod        [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [X]        │
+│ mount-con$  [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [X]        │
+│ networking  [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [X]        │
+│ nftables    [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [X]        │
+│ procps      [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [X]        │
+│ rc.local    [ ]     [X]     [X]     [X]     [X]     [ ]     [ ]     [ ]        │
+│ reboot      [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [ ]     [ ]        │
+│                                                                                │
+└────────────────────────────────────────┘
+┌────────────────────────────────────────┐
+│ Use the arrow keys or mouse to move around.      ^n: next pg     ^p: prev pg   │
+│                        space: toggle service on / off                          │
+└────────────────────────────────────────┘
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-insserv-コマンドの利用&quot;&gt;6. insserv コマンドの利用&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sysv-rc-conf&lt;/code&gt; をインストールして使用しなくても、デフォルトで用意されている &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;insserv&lt;/code&gt; コマンドを使用することも可能である。&lt;/p&gt;
+
+&lt;p&gt;以下のコマンドでサービスの一覧（終了・起動時のランレベル等）を表示する。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-s&lt;/code&gt; は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--showall&lt;/code&gt; でもよい）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# insserv -s
+K:01:0 6:udev
+K:01:0 1 6:clamav-freshclam
+K:04:0 6:umountnfs.sh
+K:03:0 6:sendsigs
+K:06:0 6:umountfs
+         :
+====&amp;lt; 途中省略 &amp;gt;====
+         :
+S:05:S:checkroot.sh
+S:08:S:mount-configfs
+S:07:S:kmod
+S:14:S:x11-common
+S:10:S:procps
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;サービスの自動起動を無効化するには以下のようにする。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-r&lt;/code&gt; は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--remove&lt;/code&gt; でもよい）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# insserv -r hoge
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;サービスの自動起動を有効化するには以下のようにする。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-d&lt;/code&gt; は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--default&lt;/code&gt; でもよい）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# insserv -d hoge
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html">Debian GNU/Linux 12 (bookworm) でのサービスの管理についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - ファイアウォール設定！</title><link href="https://komasaru.github.io/2023/08/23/debian-12-firewall-setting/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - ファイアウォール設定！" /><published>2023-08-23T00:00:00+09:00</published><updated>2023-08-23T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/08/23/debian-12-firewall-setting</id><content type="html" xml:base="https://komasaru.github.io/2023/08/23/debian-12-firewall-setting/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) でファイアウォールを設定する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -1158,7 +1296,8 @@ Last login: Wed Jul 12 14:38:34 2023 from 192.168.11.12
 
 &lt;h3 id=&quot;1--環境変数-lang-の変更&quot;&gt;1.  環境変数 LANG の変更&lt;/h3&gt;
 
-&lt;p&gt;環境変数 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LANG&lt;/code&gt;, その他が &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C&lt;/code&gt; を &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ja_JP.UTF-8&lt;/code&gt; に変更する。&lt;/p&gt;
+&lt;p&gt;環境変数 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LANG&lt;/code&gt;, その他が &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C&lt;/code&gt; を &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ja_JP.UTF-8&lt;/code&gt; 等に変更する。（必要なら）&lt;br /&gt;
+（root は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;en_US.UTF-8&lt;/code&gt; の方がよいかも）&lt;/p&gt;
 
 &lt;p&gt;まず、現状を確認。&lt;/p&gt;
 
@@ -1481,15 +1620,7 @@ export LESSOPEN=&apos;| /usr/share/source-highlight/src-hilite-lesspipe.sh %s&ap
 &lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# source /etc/profile
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;h3 id=&quot;12-systemctl-のインストール&quot;&gt;12. SystemCtl のインストール&lt;/h3&gt;
-
-&lt;p&gt;SystemCtl がインストールさていなければ、インストールしておく。&lt;br /&gt;
-（最近はデフォルトでインストールされない？）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install systemctl
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;13-rsyslog-のインストール&quot;&gt;13. Rsyslog のインストール&lt;/h3&gt;
+&lt;h3 id=&quot;12-rsyslog-のインストール&quot;&gt;12. Rsyslog のインストール&lt;/h3&gt;
 
 &lt;p&gt;最近は Rsyslog がデフォルトでインストールされていないので、インストールしておく。&lt;br /&gt;
 （後に使用するので。 Rsyslog を使用しないのであれば、インストールは不要）&lt;/p&gt;
@@ -1609,376 +1740,4 @@ export LESSOPEN=&apos;| /usr/share/source-highlight/src-hilite-lesspipe.sh %s&ap
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html">Debian GNU/Linux 12 (bookworm) をサーバ用途・最小構成でインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">2023年6月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2023/07/01/blog-access/" rel="alternate" type="text/html" title="2023年6月 - OS・ブラウザ別アクセス状況！" /><published>2023-07-01T00:20:00+09:00</published><updated>2023-07-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/07/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2023/07/01/blog-access/">&lt;p&gt;7月になりましたので、先月6月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;1-アクセスをos別に集計&quot;&gt;1. アクセスをOS別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12,821&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;66.1081&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,257&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;21.9501&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;927&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.7798&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;907&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.6767&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;269&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.3870&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;206&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.0622&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0258&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0103&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;19,394&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;2-アクセスをosバージョン別に集計&quot;&gt;2. アクセスをOS・バージョン別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;10&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12,696&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;65.4635&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4,257&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;21.9501&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;927&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.7798&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;907&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.6767&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;269&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.3870&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;206&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.0622&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;7&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;99&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.5105&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;24&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1237&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0258&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0103&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0052&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;XP&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0052&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;19,394&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;3-アクセスをブラウザ別に集計&quot;&gt;3. アクセスをブラウザ別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;15,327&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;79.0296&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,146&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;11.0653&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,685&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8.6883&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;224&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.1550&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;9&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0464&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0052&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla SeaMonkey&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0052&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Debian IceWeasel&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0052&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;19,394&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;4-アクセスをブラウザバージョン別に集計上位20件&quot;&gt;4. アクセスをブラウザ・バージョン別に集計（上位20件）&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;114.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;11,453&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;59.0543&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;113.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,574&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;13.2721&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;604.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,572&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8.1056&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;114.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;773&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.9858&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;605.1.15&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;571&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2.9442&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;112.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;438&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2.2584&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;113.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;390&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2.0109&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;102.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;264&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.3612&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;5.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;224&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.1550&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;111.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;96&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.4950&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;109.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;89&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.4589&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;110.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;79&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.4073&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;76.0.3809.87&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;50&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2578&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;73.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;40&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2062&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;108.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;32&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1650&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;50.0.2661.102&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;29&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1495&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;81.0.4044.138&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;27&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1392&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;91.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;26&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1341&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;68.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;26&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1341&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;110.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;25&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1289&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;19,394&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">7月になりましたので、先月6月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html">Debian GNU/Linux 12 (bookworm) をサーバ用途・最小構成でインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
