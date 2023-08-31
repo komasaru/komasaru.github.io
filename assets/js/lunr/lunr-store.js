@@ -12544,4 +12544,10 @@ var store = [{
         "tags": ["Debian","Linux"],
         "url": "/2023/08/30/debian-12-service-management/",
         "teaser": null
+      },{
+        "title": "2023年8月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 13,388 72.9790 Mac OS 3,110 16.9528 Linux 826 4.5026 Android 650 3.5432 Ubuntu Linux 210 1.1447 unknown 156 0.8504 FreeBSD 3 0.0164 Fedora Linux 1 0.0055 OpenBSD 1 0.0055 合　計 18,345 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 13,293 72.4612 Mac...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2023/09/01/blog-access/",
+        "teaser": null
       }]
