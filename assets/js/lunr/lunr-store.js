@@ -12540,7 +12540,7 @@ var store = [{
         "teaser": null
       },{
         "title": "Debian 12 (bookworm) - サービスの管理！",
-        "excerpt":"Debian GNU/Linux 12 (bookworm) でのサービスの管理についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。 SystemD の簡単な使用法と SysVinit の導入を行う。 （当方、普段は SystemD でサービスの管理を行うが、有事の際に備えて sysv-rc-conf コマンドも使用できるよう準備しておく（RedHat 系ディストリビューションのサービス管理ツール chkconfig にあたるもの）） root ユーザでの作業を想定。 1. SystemD の使用方法 以下は vsftpd サーバの例。（vsftpd.service が正式なサービス名だが .service は省略可能） $ systemctl start vsftpd # &lt;= vsftpd サービスの起動 $ systemctl stop vsftpd...","categories": ["サーバ構築"],
+        "excerpt":"Debian GNU/Linux 12 (bookworm) でのサービスの管理についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） ※※※ 2023-09-05 追記 ※※※ 以下では sysv-rc-conf のインストールについて説明しているが、 sysv-rc-conf をインストールすると、ファイアウォール関連(ufw, iptables)が機能しなくなる。 原因は不明。 よって、 sysv-rc-conf のインストール・利用はしないこととした。 0. 前提条件 Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。 SystemD の簡単な使用法と SysVinit の導入を行う。 （当方、普段は SystemD でサービスの管理を行うが、有事の際に備えて sysv-rc-conf コマンドも使用できるよう準備しておく（RedHat 系ディストリビューションのサービス管理ツール chkconfig にあたるもの）） root ユーザでの作業を想定。 1. SystemD の使用方法 以下は vsftpd サーバの例。（vsftpd.service が正式なサービス名だが...","categories": ["サーバ構築"],
         "tags": ["Debian","Linux"],
         "url": "/2023/08/30/debian-12-service-management/",
         "teaser": null
@@ -12549,5 +12549,11 @@ var store = [{
         "excerpt":"9月になりましたので、先月8月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 13,388 72.9790 Mac OS 3,110 16.9528 Linux 826 4.5026 Android 650 3.5432 Ubuntu Linux 210 1.1447 unknown 156 0.8504 FreeBSD 3 0.0164 Fedora Linux 1 0.0055 OpenBSD 1 0.0055 合　計 18,345 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 13,293 72.4612 Mac...","categories": ["ブログ"],
         "tags": ["Jekyll"],
         "url": "/2023/09/01/blog-access/",
+        "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - DNS サーバ BIND9 構築！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) に DNS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。 サーバのローカル IP アドレスは 192.168.11.11、グローバル IP アドレスは xxx.yyy.zzz.aaa を想定。 ドメイン名は mk-mode.com、マシンのホスト名は opti、ネームサーバホスト名は ns を想定。 セカンダリ DNS は用意しない。 root ユーザでの作業を想定。 1. BIND のインストール （”dnsutils” は dig コマンド用） # apt -y install bind9 dnsutils 2. BIND...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","DNS"],
+        "url": "/2023/09/06/debian-12-bind-installation/",
         "teaser": null
       }]
