@@ -1,4 +1,226 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-09-05T23:05:01+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - DNS サーバ BIND9 構築！</title><link href="https://komasaru.github.io/2023/09/06/debian-12-bind-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - DNS サーバ BIND9 構築！" /><published>2023-09-06T00:00:00+09:00</published><updated>2023-09-06T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/09/06/debian-12-bind-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/09/06/debian-12-bind-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に DNS サーバを構築する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-09-12T22:40:02+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - FTP サーバ構築！</title><link href="https://komasaru.github.io/2023/09/13/debian-12-ftp-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - FTP サーバ構築！" /><published>2023-09-13T00:00:00+09:00</published><updated>2023-09-13T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/09/13/debian-12-ftp-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/09/13/debian-12-ftp-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に FTP サーバを構築する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;接続元のマシンも Debian GNU/Linux 12.0.0 (bookworm; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;接続テストでは FileZilla という FTP クライアントを使用する。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-vsftpd-のインストール&quot;&gt;1. vsftpd のインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install vsftpd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-vsftpd-設定ファイルの編集&quot;&gt;2. vsftpd 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/vsftpd.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# anonymous によるログインを無効化&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;anonymous_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;NO
+
+&lt;span class=&quot;c&quot;&gt;# ローカルアクセスの許可&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;local_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
+
+&lt;span class=&quot;c&quot;&gt;# 書き込み許可&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;write_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
+
+&lt;span class=&quot;c&quot;&gt;# アスキーモードでの転送を許可&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;ascii_upload_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
+&lt;span class=&quot;nv&quot;&gt;ascii_download_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
+
+&lt;span class=&quot;c&quot;&gt;# chroot 有効化&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;chroot_local_user&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
+
+&lt;span class=&quot;c&quot;&gt;# chroot リスト有効化&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;chroot_list_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
+
+&lt;span class=&quot;c&quot;&gt;# chrootリスト指定&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;chroot_list_file&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/etc/vsftpd.chroot_list
+
+&lt;span class=&quot;c&quot;&gt;# ディレクトリごと一括での転送を有効化&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;ls_recurse_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
+
+&lt;span class=&quot;c&quot;&gt;# chroot のルートディレクトリ指定&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# ( 指定しない場合はユーザーのホームディレクトリ直下 )&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# public_htmlを指定した場合で、且つ当該ディレクトリがないとログインできないので注意&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;local_root&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;public_html
+
+&lt;span class=&quot;c&quot;&gt;# seccomp filter をオフにする&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;seccomp_sandbox&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;NO
+
+&lt;span class=&quot;c&quot;&gt;# PASV モード有効化&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;pasv_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
+&lt;span class=&quot;nv&quot;&gt;pasv_min_port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;4000
+&lt;span class=&quot;nv&quot;&gt;pasv_max_port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;4005
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-ホームディレクトリより上層へのアクセス許可設定&quot;&gt;3. ホームディレクトリより上層へのアクセス許可設定&lt;/h3&gt;
+
+&lt;p&gt;ホームディレクトリより上層へのアクセスを許可するユーザのリストを作成する。（上記設定ファイル内の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/vsftpd.chroot_list&lt;/code&gt; のこと）&lt;br /&gt;
+指定は、１行に１ユーザ。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/vsftpd.chroot_list&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;masaru
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-ssl-サーバの構築&quot;&gt;4. SSL サーバの構築&lt;/h3&gt;
+
+&lt;p&gt;vsftpd を SSL/TLS で使用できるようにするには SSL サーバが必要であるので、未インストールなら OpenSSL をインストールする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install openssl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-サーバ証明書の作成&quot;&gt;5. サーバ証明書の作成&lt;/h3&gt;
+
+&lt;p&gt;vsftpd を SSL/TLS で使用できるようサーバ証明書を作成する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /etc/ssl/private
+# openssl req -x509 -nodes -newkey rsa:2048 -keyout /etc/ssl/private/vsftpd.pem -out /etc/ssl/private/vsftpd.pem
+
+      :
+===&amp;lt; 中略 &amp;gt;===
+      :
+
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter &apos;.&apos;, the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:JP                                    # &amp;lt;= 国の略名
+State or Province Name (full name) [Some-State]:Shimane                 # &amp;lt;= 都道府県名
+Locality Name (eg, city) []:Matsue                                      # &amp;lt;= 市区町村名
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:mk-mode.com  # &amp;lt;= サイト名（何でもよい）
+Organizational Unit Name (eg, section) []:                              # &amp;lt;= 部署名（空でよい）
+Common Name (e.g. server FQDN or YOUR name) []:ftp.mk-mode.com          # &amp;lt;= ホスト名
+Email Address []:root@mk-mode.com                                       # &amp;lt;= 管理者メールアドレス
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;作成したサーバ証明書のパーミッションを設定する。（所有者読み込み専用に）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# chmod 400 vsftpd.pem
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-vsftpd-設定ファイルの編集&quot;&gt;6. vsftpd 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;サーバ証明書を使用できるよう vsftpd 設定ファイルを以下のように編集する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/vsftpd.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;ssl_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES              &lt;span class=&quot;c&quot;&gt;# 編集（SSL有効化）&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;ssl_ciphers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;HIGH
+&lt;span class=&quot;nv&quot;&gt;ssl_tlsv1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
+&lt;span class=&quot;nv&quot;&gt;ssl_sslv2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;NO
+&lt;span class=&quot;nv&quot;&gt;ssl_sslv3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;NO
+&lt;span class=&quot;nv&quot;&gt;force_local_data_ssl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
+&lt;span class=&quot;nv&quot;&gt;force_local_logins_ssl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-vsftpd-の再起動&quot;&gt;7. vsftpd の再起動&lt;/h3&gt;
+
+&lt;p&gt;設定を有効化するために vsftpd を再起動する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart vsftpd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;8-ファイアウォール-ufw-の設定&quot;&gt;8. ファイアウォール (ufw) の設定&lt;/h3&gt;
+
+&lt;p&gt;外部に公開する場合は、TCP ポート 21(FTP) へのアクセスを許可する必要がある。&lt;br /&gt;
+また、 PASV モードで運用する場合は、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/vsftpd.conf&lt;/code&gt; の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pasv_min_port&lt;/code&gt; から &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pasv_max_port&lt;/code&gt; で設定したポートも開放する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 21/tcp
+Rule added
+
+# ufw allow 4000,4001,4002,4003,4004,4005/tcp
+Rule added
+
+# ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+9999/tcp                   ALLOW       192.168.11.0/24
+53                         ALLOW       Anywhere
+21/tcp                     ALLOW       Anywhere
+4000,4001,4002,4003,4004,4005/tcp ALLOW       Anywhere
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;9-動作確認&quot;&gt;9. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;クライアント側からコマンドラインや FTP クライアントでサーバに接続して、アップロード・ダウンロード等各種操作が可能かチェックする。&lt;br /&gt;
+FTP クライアント FileZilla なら以下のように設定してログイン。
+e&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;ホスト：サーバホスト名 or サーバ IP アドレス&lt;/li&gt;
+  &lt;li&gt;プロトコル：「FTP - ファイル転送プロトコル」&lt;/li&gt;
+  &lt;li&gt;暗号化：「明示的な FTP over TLS が必要」&lt;/li&gt;
+  &lt;li&gt;ログオンの種類：「通常」 or 「パスワードを尋ねる」&lt;/li&gt;
+  &lt;li&gt;ユーザ：ユーザ名&lt;/li&gt;
+  &lt;li&gt;転送モード：「アクティブ」&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;lftp を使用するなら、インストール後、設定を行なう。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install lftp
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.lftprc&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;set ftp:ssl-auth TLS
+set ftp:ssl-force true
+set ftp:ssl-protect-list yes
+set ftp:ssl-protect-data yes
+set ftp:ssl-protect-fxp yes
+set ssl:verify-certificate no
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;そして、ログイン。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ lftp -u masaru 192.168.11.101
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;10-自動起動の設定&quot;&gt;10. 自動起動の設定&lt;/h3&gt;
+
+&lt;p&gt;vsftpd インストール直後はマシン起動時に自動で vsftpd が起動するようになっている。&lt;/p&gt;
+
+&lt;p&gt;自動起動しないように設定するなら以下のようにする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl disable vsftpd
+Synchronizing state of vsftpd.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install disable vsftpd
+insserv: warning: current start runlevel(s) (empty) of script `vsftpd&apos; overrides LSB defaults (2 3 4 5).
+insserv: warning: current stop runlevel(s) (0 1 2 3 4 5 6) of script `vsftpd&apos; overrides LSB defaults (0 1 6).
+
+# systemctl is-enabled vsftpd
+disabled  # &amp;lt;= disabled であることを確認
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;逆に自動起動するように設定するなら以下のようにする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl enable vsftpd
+Synchronizing state of vsftpd.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable vsftpd
+insserv: warning: current start runlevel(s) (empty) of script `vsftpd&apos; overrides LSB defaults (2 3 4 5).
+insserv: warning: current stop runlevel(s) (0 1 2 3 4 5 6) of script `vsftpd&apos; overrides LSB defaults (0 1 6).
+
+# systemctl is-enabled vsftpd
+enabled  # &amp;lt;= enabled であることを確認
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="FTP" /><summary type="html">Debian GNU/Linux 12 (bookworm) に FTP サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - DNS サーバ BIND9 構築！</title><link href="https://komasaru.github.io/2023/09/06/debian-12-bind-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - DNS サーバ BIND9 構築！" /><published>2023-09-06T00:00:00+09:00</published><updated>2023-09-06T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/09/06/debian-12-bind-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/09/06/debian-12-bind-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に DNS サーバを構築する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -1868,190 +2090,4 @@ APT::Periodic::Verbose &lt;span class=&quot;s2&quot;&gt;&quot;2&quot;&lt;/span&g
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html">Debian GNU/Linux 12 (bookworm) のセキュリティ・アップデートを自動化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - SSH サーバ構築！</title><link href="https://komasaru.github.io/2023/07/19/debian-12-ssh-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - SSH サーバ構築！" /><published>2023-07-19T00:20:00+09:00</published><updated>2023-07-19T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/07/19/debian-12-ssh-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/07/19/debian-12-ssh-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) 上に SSH サーバを構築する方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;「&lt;a href=&quot;/2023/07/05/debian-12-installation-for-small-server&quot; title=&quot;Debian 12 (bookwarm) - インストール（サーバ用途・最小構成）！&quot;&gt;Debian 12 (bookwarm) - インストール（サーバ用途・最小構成）！&lt;/a&gt;」の方法でインストールが完了していることを想定。&lt;/li&gt;
-  &lt;li&gt;「&lt;a href=&quot;/2023/07/12/debian-12-initial-setting&quot; title=&quot;Debian 12 (bookwarm) - サーバ初期設定&quot;&gt;Debian 12 (bookwarm) - サーバ初期設定！&lt;/a&gt;」の方法で初期設定が完了していることを想定。&lt;/li&gt;
-  &lt;li&gt;サーバの IP アドレス &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.101&lt;/code&gt;、ホスト名 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vbox&lt;/code&gt;、ユーザ名 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;foo&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;DNS サーバは未だ設定していない。&lt;br /&gt;
-（設定済みなら、ローカルから IP アドレスではなくホスト名で SSH 接続可）&lt;/li&gt;
-  &lt;li&gt;クライアント側も Debian GNU/Linux 12.0.0(bookworm; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;SSH 接続は端末コンソールから行う。&lt;/li&gt;
-  &lt;li&gt;ポートは、デフォルトの &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;22&lt;/code&gt; から &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;9999&lt;/code&gt; に変更することを想定。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;9999&lt;/code&gt; は架空）&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-ssh-サーバのインストール&quot;&gt;1. SSH サーバのインストール&lt;/h3&gt;
-
-&lt;p&gt;Debian インストール時に SSH サーバをインストールしていなければ、以下のようにして SSH サーバをインストールする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install ssh
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-ssh-設定ファイルの編集&quot;&gt;2. SSH 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;root でログインできないよう、設定ファイルを編集する。&lt;br /&gt;
-ポートもデフォルトの &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;22&lt;/code&gt; から変更する。（セキュリティ上、必須）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/ssh/sshd_config&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#Port 22&lt;/span&gt;
-Port 9999                         &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 適当に変更&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# rootユーザーのログインはパスワード認証以外のみ許可する&lt;/span&gt;
-PermitRootLogin without-password
-
-&lt;span class=&quot;c&quot;&gt;# SSHプロトコル ver.2 で公開鍵認証を許可する&lt;/span&gt;
-PubkeyAuthentication &lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# パスワード認証を許可する(rootユーザー以外に適用)&lt;/span&gt;
-PasswordAuthentication &lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# キーボード対話型認証を拒否する&lt;/span&gt;
-KbdInteractiveAuthentication no
-
-&lt;span class=&quot;c&quot;&gt;# PAMを使用する&lt;/span&gt;
-UsePAM &lt;span class=&quot;nb&quot;&gt;yes
-
-&lt;/span&gt;AllowUsers root foo               &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ログイン可能なユーザを明示的に設定&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PermitRootLogin without-password&lt;/code&gt; は、root のログインは許可されるものの、ログインを行うには適切な SSH のキーが必要とされるようになるという意味。&lt;/li&gt;
-  &lt;li&gt;かつての &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ChallengeResponseAuthentication&lt;/code&gt;（チャレンジレスポンス認証）は廃止され、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;KbdInteractiveAuthentication&lt;/code&gt;（）キーボード対話型認証(?)）に置き換わっている。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AllowUsers&lt;/code&gt; に複数指定する際、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AllowUsers root&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AllowUsers foo&lt;/code&gt; と複数行に分けてもよい。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;3-ssh-サーバの再起動&quot;&gt;3. SSH サーバの再起動&lt;/h3&gt;
-
-&lt;p&gt;設定を有効化するため、SSH サーバを再起動する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart ssh
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-パスワード接続&quot;&gt;4. パスワード接続&lt;/h3&gt;
-
-&lt;p&gt;一旦ログアウト後、再度クライント側の端末コンソールからサーバに接続してみる。&lt;br /&gt;
-“Are you sure you want to continue connecting (yes/no)?” で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yes&lt;/code&gt; 応答、その後パスワードを入力すれば接続できる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ssh -p 9999 192.168.11.101
-The authenticity of host &apos;[vbox]:6835 ([192.168.11.101]:6835)&apos; can&apos;t be established.
-ED25519 key fingerprint is SHA256:ynZekY/dESumFYStmh1RlheVGYvfOU+cB2Jla2mxENw.
-This key is not known by any other names.
-Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
-Warning: Permanently added &apos;[vbox]:6835&apos; (ED25519) to the list of known hosts.
-foo@vbox&apos;s password:
-Linux vbox 6.1.0-10-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.37-1 (2023-07-03) x86_64
-
-The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.
-
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-Last login: Wed Jul 12 14:32:47 2023 from 192.168.11.12
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;クライアント側のユーザがサーバ側と異なる場合は、以下のようにユーザ名も指定する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ssh -p 9999 hoge@192.168.11.101
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;以降、サーバ操作時にクライアント側の端末コンソールから行なう。&lt;br /&gt;
-クライント側からリモート接続すれば、文字化けしていた日本語も正常に表示されるはず。&lt;/p&gt;
-
-&lt;h3 id=&quot;5-鍵ペア公開秘密の生成&quot;&gt;5. 鍵ペア（公開・秘密）の生成&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;クライアント側で&lt;/strong&gt;以下のコマンドで公開鍵・秘密鍵を生成する。&lt;br /&gt;
-作成先・ファイル名を指定しなければ、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/(ユーザ名)/.ssh/&lt;/code&gt; に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id_rsa&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id_rsa.pub&lt;/code&gt; が作成される。 途中、鍵用のパスワードも入力する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ssh-keygen
-Generating public/private rsa key pair.
-Enter file in which to save the key (/home/foo/.ssh/id_rsa): /home/foo/.ssh/id_rsa
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-Your identification has been saved in /home/foo/.ssh/id_rsa.
-Your public key has been saved in /home/foo/.ssh/id_rsa.pub.
-The key fingerprint is:
-96:af:59:18:9c:a0:c2:da:86:7e:d7:24:05:d0:31:da foo@p183
-The key&apos;s randomart image is:
-+--[ RSA 2048]-----------------------------------------+
-|   .oo.          |
-|    oo.          |
-|   . Eo          |
-| .   . + o       |
-|  o . . S        |
-| + . . o +       |
-|o o   + . o      |
-|.. . . . +       |
-| .. .   o        |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;6-サーバ側の設定&quot;&gt;6. サーバ側の設定&lt;/h3&gt;
-
-&lt;p&gt;作成した鍵ペアで SSH サーバーへ鍵方式でログインできるように、サーバ側の「ログインしようとする一般ユーザ」で設定する。&lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/authorized_keys&lt;/code&gt; には、先ほど作成した鍵ペアの公開鍵ファイル（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xxxx.pub&lt;/code&gt;）の内容をそのまま貼り付ける。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ mkdir ~/.ssh
-
-$ chmod 700 ~/.ssh
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.ssh/authorized_keys&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssh-rsa .........
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ chmod 600 ~/.ssh/authorized_keys
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-ssh-設定ファイルの編集&quot;&gt;7. SSH 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;パスワード認証をできないようにするため、 SSH 設定ファイルを編集する。&lt;br /&gt;
-今度は一般ユーザではなく、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;su -&lt;/code&gt; で root になって（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo&lt;/code&gt; コマンドを導入していれば、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo vi ...&lt;/code&gt; でもよい）。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/ssh/sshd_config&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;PasswordAuthentication no  # &amp;lt;= 変更
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;8-ssh-サーバの再起動&quot;&gt;8. SSH サーバの再起動&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart ssh
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;9-鍵認証接続のテスト&quot;&gt;9. 鍵認証接続のテスト&lt;/h3&gt;
-
-&lt;p&gt;一旦ログアウトし、再度接続する。&lt;br /&gt;
-パスワード認証ではなく、鍵認証なので以下のようなコマンドとなる。（指定する秘密キーのファイル名は、ペア作成時に指定したファイル名）&lt;br /&gt;
-鍵用のパスワード問い合わせダイアログが表示されるので応答する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ssh -i ~/.ssh/id_rsa -p 9999 192.168.11.101
-Linux vbox 6.1.0-10-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.37-1 (2023-07-03) x86_64
-
-The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.
-
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-Last login: Wed Jul 12 14:38:34 2023 from 192.168.11.12
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;2回目からは以下のコマンドでよい。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ssh -p 9999 192.168.11.101
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="SSH" /><summary type="html">Debian GNU/Linux 12 (bookworm) 上に SSH サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html">Debian GNU/Linux 12 (bookworm) のセキュリティ・アップデートを自動化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
