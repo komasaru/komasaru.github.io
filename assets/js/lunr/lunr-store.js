@@ -12562,4 +12562,10 @@ var store = [{
         "tags": ["Debian","Linux","FTP"],
         "url": "/2023/09/13/debian-12-ftp-installation/",
         "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - NFS サーバ構築！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) に NFS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12 (bookworms; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。 接続可能なマシンのネットワークは 192.168.11.0/24 を想定。 ドメイン名は mk-mode.com、サーバホスト名は opti を想定。 NFS 用ディレクトリを新たに作成する。（”/var” 配下に “/exports” ディレクトリを作成する） クライアント側でマウントに使用するディレクトリも “/var/exports” とする。 サーバ側は root で作業することを想定、クライアント側は一般ユーザで作業することを想定している。 root ユーザでの作業を想定。 1. NFS サーバのインストール # apt -y...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","NFS"],
+        "url": "/2023/09/20/debian-12-nfs-installation/",
+        "teaser": null
       }]
