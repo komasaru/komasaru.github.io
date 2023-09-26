@@ -12568,4 +12568,10 @@ var store = [{
         "tags": ["Debian","Linux","NFS"],
         "url": "/2023/09/20/debian-12-nfs-installation/",
         "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - NFS サーバのポート固定！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) に NFS サーバで使用するポートを固定化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。 NFS サーバ構築済み。 （参照：「Debian 12 (bookworm) - NFS サーバ構築！」） 以下で設定するポート番号は参考サイトによるもであり、任意に設定可能。 quota は使用していないので、参考サイトにある quota の設定はしない。 root ユーザでの作業を想定。 1. 前提知識 NFS サーバが使用するポートは以下のとおり。 portmapper =&gt; TCP: 111, UDP: 111 nfs...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","NFS"],
+        "url": "/2023/09/27/debian-12-nfs-port-fixing/",
+        "teaser": null
       }]

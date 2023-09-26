@@ -1,4 +1,138 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-09-19T16:20:14+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - NFS サーバ構築！</title><link href="https://komasaru.github.io/2023/09/20/debian-12-nfs-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - NFS サーバ構築！" /><published>2023-09-20T00:00:00+09:00</published><updated>2023-09-20T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/09/20/debian-12-nfs-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/09/20/debian-12-nfs-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に NFS サーバを構築する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-09-26T21:30:47+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - NFS サーバのポート固定！</title><link href="https://komasaru.github.io/2023/09/27/debian-12-nfs-port-fixing/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - NFS サーバのポート固定！" /><published>2023-09-27T00:00:00+09:00</published><updated>2023-09-27T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/09/27/debian-12-nfs-port-fixing</id><content type="html" xml:base="https://komasaru.github.io/2023/09/27/debian-12-nfs-port-fixing/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に NFS サーバで使用するポートを固定化する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;NFS サーバ構築済み。&lt;br /&gt;
+（参照：「&lt;a href=&quot;/2023/09/20/debian-12-nfs-installation&quot; title=&quot;Debian 12 (bookworm) - NFS サーバ構築！&quot;&gt;Debian 12 (bookworm) - NFS サーバ構築！&lt;/a&gt;」）&lt;/li&gt;
+  &lt;li&gt;以下で設定するポート番号は&lt;a href=&quot;https://wiki.debian.org/SecuringNFS&quot; title=&quot;SecuringNFS - Debian Wiki&quot;&gt;参考サイト&lt;/a&gt;によるもであり、任意に設定可能。&lt;/li&gt;
+  &lt;li&gt;quota は使用していないので、&lt;a href=&quot;https://wiki.debian.org/SecuringNFS&quot; title=&quot;SecuringNFS - Debian Wiki&quot;&gt;参考サイト&lt;/a&gt;にある quota の設定はしない。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-前提知識&quot;&gt;1. 前提知識&lt;/h3&gt;
+
+&lt;p&gt;NFS サーバが使用するポートは以下のとおり。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;portmapper =&amp;gt; TCP: 111, UDP: 111
+nfs        =&amp;gt; TCP:2049, UDP:2049
+statd      =&amp;gt; TCP:不定, UDP:不定
+mountd     =&amp;gt; TCP:不定, UDP:不定
+nlockmgrq  =&amp;gt; TCP:不定, UDP:不定
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-statd-用ポートの固定&quot;&gt;2. statd 用ポートの固定&lt;/h3&gt;
+
+&lt;p&gt;statd のポートを固定するには &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-common&lt;/code&gt; を以下のようにする。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-common&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;STATDOPTS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;--port 32765 --outgoing-port 32766&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-mountd-用ポートの固定&quot;&gt;3. mountd 用ポートの固定&lt;/h3&gt;
+
+&lt;p&gt;mountd のポートを固定するには &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-kernel-server&lt;/code&gt; を以下のようにする。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-kernel-server&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;RPCMOUNTDOPTS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;-p 32767&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-lockd-モジュールの設定&quot;&gt;4. lockd モジュールの設定&lt;/h3&gt;
+
+&lt;p&gt;オプション付き lockd モジュールを提供するために、以下のように &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/modprobe.d/local.conf&lt;/code&gt; を作成する。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/modprobe.d/local.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;options lockd &lt;span class=&quot;nv&quot;&gt;nlm_udpport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32768 &lt;span class=&quot;nv&quot;&gt;nlm_tcpport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32768
+options nfs &lt;span class=&quot;nv&quot;&gt;callback_tcpport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32764
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-マシンの再起動&quot;&gt;5. マシンの再起動&lt;/h3&gt;
+
+&lt;p&gt;設定を反映させるため、マシンを再起動する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl reboot
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-設定の確認&quot;&gt;6. 設定の確認&lt;/h3&gt;
+
+&lt;p&gt;以下のようにして、RPC 情報（ポートの設定）を確認してみる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# rpcinfo -p
+   program vers proto   port  service
+    100000    4   tcp    111  portmapper
+    100000    3   tcp    111  portmapper
+    100000    2   tcp    111  portmapper
+    100000    4   udp    111  portmapper
+    100000    3   udp    111  portmapper
+    100000    2   udp    111  portmapper
+    100005    1   udp  32767  mountd
+    100005    1   tcp  32767  mountd
+    100005    2   udp  32767  mountd
+    100005    2   tcp  32767  mountd
+    100005    3   udp  32767  mountd
+    100005    3   tcp  32767  mountd
+    100003    3   tcp   2049  nfs
+    100003    4   tcp   2049  nfs
+    100227    3   tcp   2049
+    100003    3   udp   2049  nfs
+    100003    4   udp   2049  nfs
+    100227    3   udp   2049
+    100021    1   udp  32768  nlockmgr
+    100021    3   udp  32768  nlockmgr
+    100021    4   udp  32768  nlockmgr
+    100021    1   tcp  32768  nlockmgr
+    100021    3   tcp  32768  nlockmgr
+    100021    4   tcp  32768  nlockmgr
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-ファイアウォールufwの設定&quot;&gt;7. ファイアウォール(ufw)の設定&lt;/h3&gt;
+
+&lt;p&gt;NFS サーバが使用するポートが固定されたので、ufw でファイアウォールの設定を行う。（以下はローカルネットワーク内からのみアクセス可能にする例）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow proto tcp from 192.168.11.0/24 to any port 111,2049,32765,32767,32768
+Rule added
+# ufw allow proto udp from 192.168.11.0/24 to any port 111,2049,32765,32767,32768
+Rule added
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;確認。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+6835/tcp                   ALLOW       192.168.11.0/24
+53                         ALLOW       Anywhere
+21                         ALLOW       Anywhere
+4000,4001,4002,4003,4004,4005/tcp ALLOW       Anywhere
+111,2049,32765,32767,32768/tcp ALLOW       192.168.11.0/24
+111,2049,32765,32767,32768/udp ALLOW       192.168.11.0/24
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;8-動作確認&quot;&gt;8. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;クライアントマシンでマウントして接続できることも確認しておく。&lt;/p&gt;
+
+&lt;h3 id=&quot;9-参考サイト&quot;&gt;9. 参考サイト&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://wiki.debian.org/SecuringNFS&quot; title=&quot;SecuringNFS - Debian Wiki&quot;&gt;SecuringNFS - Debian Wiki&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="NFS" /><summary type="html">Debian GNU/Linux 12 (bookworm) に NFS サーバで使用するポートを固定化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - NFS サーバ構築！</title><link href="https://komasaru.github.io/2023/09/20/debian-12-nfs-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - NFS サーバ構築！" /><published>2023-09-20T00:00:00+09:00</published><updated>2023-09-20T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/09/20/debian-12-nfs-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/09/20/debian-12-nfs-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に NFS サーバを構築する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -1737,394 +1871,4 @@ ExcludePath ^/sys/
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html">Debian GNU/Linux 12 (bookworm) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">2023年7月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2023/08/01/blog-access/" rel="alternate" type="text/html" title="2023年7月 - OS・ブラウザ別アクセス状況！" /><published>2023-08-01T00:20:00+09:00</published><updated>2023-08-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2023/08/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2023/08/01/blog-access/">&lt;p&gt;8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;1-アクセスをos別に集計&quot;&gt;1. アクセスをOS別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;11,887&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;66.8034&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3,889&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;21.8557&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;863&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.8499&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;763&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.2880&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;228&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.2813&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;153&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.8598&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0337&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0112&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;OpenBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0112&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0056&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;17,794&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;2-アクセスをosバージョン別に集計&quot;&gt;2. アクセスをOS・バージョン別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;10&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;11,818&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;66.4156&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3,889&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;21.8557&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;863&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.8499&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;763&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.2880&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;228&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.2813&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;153&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.8598&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;7&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;38&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2136&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;22&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1236&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;6&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0337&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;XP&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;5&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0281&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0169&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;NetBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0112&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;OpenBSD&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0112&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Server 2003&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0056&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0056&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;17,794&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;3-アクセスをブラウザ別に集計&quot;&gt;3. アクセスをブラウザ別に集計&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;13,979&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;78.5602&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,020&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;11.3521&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,639&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;9.2110&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;146&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.8205&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0450&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla SeaMonkey&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.0112&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;17,794&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&quot;4-アクセスをブラウザバージョン別に集計上位20件&quot;&gt;4. アクセスをブラウザ・バージョン別に集計（上位20件）&lt;/h3&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;114.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;10,659&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;59.9022&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;115.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2,059&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;11.5713&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;604.1&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1,435&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;8.0645&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;115.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;749&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;4.2093&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;605.1.15&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;582&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.2708&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;113.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;538&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;3.0235&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;114.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;399&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2.2423&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;102.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;297&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;1.6691&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;5.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;146&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.8205&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;112.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;118&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.6631&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;109.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;76&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.4271&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;111.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;44&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2473&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;110.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;43&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2417&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;114.0.5735.196&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;40&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2248&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;113.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;36&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.2023&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;76.0.3809.87&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;33&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1855&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;50.0.2661.102&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;23&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1293&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;105.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;21&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1180&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;66.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;21&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1180&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;116.0.0.0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;19&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;0.1068&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-  &lt;tfoot&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;17,794&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tfoot&gt;
-&lt;/table&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">8月になりましたので、先月7月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html">Debian GNU/Linux 12 (bookworm) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
