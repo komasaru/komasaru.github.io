@@ -12574,4 +12574,10 @@ var store = [{
         "tags": ["Debian","Linux","NFS"],
         "url": "/2023/09/27/debian-12-nfs-port-fixing/",
         "teaser": null
+      },{
+        "title": "2023年9月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"10月になりましたので、先月9月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 11,776 70.3507 Mac OS 3,044 18.1851 Linux 823 4.9167 Android 713 4.2595 unknown 193 1.1530 Ubuntu Linux 178 1.0634 FreeBSD 9 0.0538 Fedora Linux 2 0.0119 NetBSD 1 0.0060 合　計 16,739 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 11,696 69.8728 Mac...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2023/10/01/blog-access/",
+        "teaser": null
       }]
