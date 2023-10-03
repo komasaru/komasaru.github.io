@@ -1,4 +1,137 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-10-01T00:02:09+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">2023年9月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2023/10/01/blog-access/" rel="alternate" type="text/html" title="2023年9月 - OS・ブラウザ別アクセス状況！" /><published>2023-10-01T00:00:00+09:00</published><updated>2023-10-01T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/10/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2023/10/01/blog-access/">&lt;p&gt;10月になりましたので、先月9月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-10-03T22:00:38+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - Windows ファイルサーバ Samba 構築！</title><link href="https://komasaru.github.io/2023/10/04/debian-12-samba-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - Windows ファイルサーバ Samba 構築！" /><published>2023-10-04T00:00:00+09:00</published><updated>2023-10-04T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/10/04/debian-12-samba-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/10/04/debian-12-samba-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に Windows 用ファイルサーバ Samba を構築する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;接続可能なマシンのネットワークは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.0/24&lt;/code&gt; を想定。&lt;/li&gt;
+  &lt;li&gt;ドメイン名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mk-mode.com&lt;/code&gt;、サーバホスト名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vbox&lt;/code&gt; を想定。&lt;/li&gt;
+  &lt;li&gt;全ユーザ共有ディレクトリは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/share&lt;/code&gt; とする。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-samba-サーバのインストール&quot;&gt;1. Samba サーバのインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install -y samba
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-共有ディレクトリの作成&quot;&gt;2. 共有ディレクトリの作成&lt;/h3&gt;
+
+&lt;p&gt;全ユーザが共有でフルアクセス可能なディレクトリを作成する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir /home/share
+# chown nobody:nogroup /home/share
+# chmod 777 /home/share
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-設定ファイルの編集&quot;&gt;3. 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;次のように設定する。&lt;br /&gt;
+※実際には、記述のある行の後ろにコメント（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#&lt;/code&gt; で始まる文字列）を入れないこと。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/samba/smb.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[global]
+   unix charset = UTF-8            # &amp;lt;= 追加
+   dos charset  = CP932            # &amp;lt;= 追加
+
+   workgroup = WORKGROUP           # &amp;lt;= Windows のワークグループ名に合わせる
+
+   interfaces = 127.0.0.0/8 192.168.11.0/24  # &amp;lt;= 接続許可するインターフェースを指定
+   bind interfaces only = yes      # &amp;lt;= interfaces 項目に指定したホストだけに接続を限定する
+
+   map to guest = bad user         # &amp;lt;= 未登録アカウントで接続された場合にゲストとして扱う
+
+   load printers = no              # &amp;lt;= プリンタを使用していない場合
+   disable spoolss = yes           # &amp;lt;= プリンタを使用していない場合
+
+   printing = bsd                  # &amp;lt;= プリンタを使用していない場合
+
+# 最終行に追加
+[share]                            # &amp;lt;= 共有名
+   path           = /home/share    # &amp;lt;= 共有ディレクトリ
+   writable       = yes            # &amp;lt;= 書込可
+   guest ok       = yes            # &amp;lt;= ゲストユーザー可
+   guest only     = yes            # &amp;lt;= 全てゲストとして扱う
+   create mode    = 0777           # &amp;lt;= ファイル作成はフル権限で
+   directory mode = 0777           # &amp;lt;= ディレクトリ作成はフル権限で
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-samba-サーバの再起動&quot;&gt;4. Samba サーバの再起動&lt;/h3&gt;
+
+&lt;p&gt;設定を反映させるため、Samba サーバを再起動する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart smbd
+# systemctl restart nmbd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-ファイアウォール設定&quot;&gt;5. ファイアウォール設定&lt;/h3&gt;
+
+&lt;p&gt;ファイアウォールを設定している場合、Samba サーバが使用するポート（udp:137,138, tcp:139,445）を開放する必要がある。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 137,138/udp
+Rule added
+
+# ufw allow 139,445/tcp
+Rule added
+
+# ufw status
+     :
+     :
+137,138/udp                ALLOW       Anywhere
+139,445/tcp                ALLOW       Anywhere
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-動作確認&quot;&gt;6. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;クライアントマシンから Samba サーバの &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/share&lt;/code&gt; ディレクトリにアクセスし、ファイル操作が可能か確認する。&lt;/p&gt;
+
+&lt;h3 id=&quot;7-アクセス権限付き設定&quot;&gt;7. アクセス権限付き設定&lt;/h3&gt;
+
+&lt;p&gt;通常、中規模以下のネットワークでは上記のようなフルアクセスで問題ないが、大規模ネットワークやよりセキュアに構築したければ、アクセス権限を設定する。&lt;br /&gt;
+以下、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hoge&lt;/code&gt; グループに属するユーザのみが、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/hoge&lt;/code&gt; ディレクトリにアクセスできるようにする設定例。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# groupadd hoge          # &amp;lt;= グループ追加
+# mkdir /home/hoge       # &amp;lt;= 専用ディレクトリ作成
+# chgrp hoge /home/hoge  # &amp;lt;= ディレクトリに所有グループ設定
+# chmod 770 /home/hoge   # &amp;lt;= 専用ディレクトリに権限付与
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/samba/smb.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;security = user  # &amp;lt; = ユーザ認証モード
+
+# 最終行に追加
+[Hoge]
+   path = /home/hoge
+   writable = yes
+   create mode = 0770
+   directory mode = 0770
+   share modes = yes
+   guest ok = no        # &amp;lt; = ゲストユーザ不許可
+   valid users = @hoge  # &amp;lt; = hoge グループのみ許可
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# smbpasswd -a fuga       # &amp;lt; = Samba アクセスユーザ追加登録
+New SMB password:         # &amp;lt; = パスワード設定
+Retype new SMB password:  # &amp;lt; = パスワード再入力
+# usermod -G hoge fuga    # &amp;lt; = hoge グループに fuga ユーザ追加
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# /etc/init.d/samba restart  # &amp;lt; = Samba 再起動
+Stopping Samba daemons: nmbd smbd.
+Starting Samba daemons: nmbd smbd.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><summary type="html">Debian GNU/Linux 12 (bookworm) に Windows 用ファイルサーバ Samba を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">2023年9月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2023/10/01/blog-access/" rel="alternate" type="text/html" title="2023年9月 - OS・ブラウザ別アクセス状況！" /><published>2023-10-01T00:00:00+09:00</published><updated>2023-10-01T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/10/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2023/10/01/blog-access/">&lt;p&gt;10月になりましたので、先月9月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -2002,217 +2135,4 @@ System clock synchronized: yes
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><summary type="html">Debian GNU/Linux 12 (bookworm) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - アンチウィルスソフト導入！</title><link href="https://komasaru.github.io/2023/08/09/debian-12-anti-virus-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - アンチウィルスソフト導入！" /><published>2023-08-09T00:00:00+09:00</published><updated>2023-08-09T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/08/09/debian-12-anti-virus-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/08/09/debian-12-anti-virus-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;Apt でインストールする。（但し、Apt のパッケージはバージョンが古い。最新版が良ければ、&lt;a href=&quot;http://sourceforge.net/projects/clamav/files/clamav/&quot;&gt;こちら&lt;/a&gt;からダウンロードしてビルドするとよい）&lt;/li&gt;
-  &lt;li&gt;毎日自動でウィルススキャンを実行するようにする。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-clamav-のインストール&quot;&gt;1. ClamAV のインストール&lt;/h3&gt;
-
-&lt;p&gt;以下のようにして、アンチウィルスソフト ClamAV, ClamAV Daemon をインストールする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install clamav clamav-daemon
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-ウィルス定義ファイルの最新化&quot;&gt;2. ウィルス定義ファイルの最新化&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;freshclam&lt;/code&gt; コマンドでウィルス定義ファイルを最新に更新する。&lt;/p&gt;
-
-&lt;p&gt;しかし、デフォルトの状態では以下のようになってしまう。（以前はこのような事態にはならなかったが）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# freshclam
-ERROR: /var/log/clamav/freshclam.log is locked by another process
-ERROR: Problem with internal logger (UpdateLogFile = /var/log/clamav/freshclam.log).
-ERROR: initialize: libfreshclam init failed.
-ERROR: Initialization error!
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;そこで、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/log/clamav/freshclam.log&lt;/code&gt; を作り直す。&lt;br /&gt;
-（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamav:adm&lt;/code&gt; となっている所有者・グループを &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamav:clamav&lt;/code&gt; に変更するだけはうまく行かない）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# rm -f /var/log/clamav/freshclam.log
-# touch /var/log/clamav/freshclam.log
-# chown clamav:clamav /var/log/clamav/freshclam.log
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;そして、 freshclam を実行&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# freshclam
-Wed Jul 12 15:13:33 2023 -&amp;gt; ClamAV update process started at Wed Jul 12 15:13:33 2023
-Wed Jul 12 15:13:33 2023 -&amp;gt; daily.cvd database is up-to-date (version: 26966, sigs: 2038808, f-level: 90, builder: raynman)
-Wed Jul 12 15:13:33 2023 -&amp;gt; main.cvd database is up-to-date (version: 62, sigs: 6647427, f-level: 90, builder: sigmgr)
-Wed Jul 12 15:13:33 2023 -&amp;gt; bytecode.cvd database is up-to-date (version: 334, sigs: 91, f-level: 90, builder: anvilleg)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;（インストールした ClamAV のバージョンが古い場合に警告メッセージが出力されるが、特に問題はないので無視してよい）&lt;/p&gt;
-
-&lt;p&gt;但し、上記の方法は一時的なものであり、また同じ現象に陥ってしまう。&lt;br /&gt;
-ログローテートの設定を編集する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/logrotate.d/clamav-freshclam&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;/var/log/clamav/freshclam.log &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-     rotate 12
-     weekly
-     compress
-     delaycompress
-     missingok
-     &lt;span class=&quot;c&quot;&gt;#create 640  clamav adm    # &amp;lt;== 削除&lt;/span&gt;
-     create 640  clamav clamav  &lt;span class=&quot;c&quot;&gt;# &amp;lt;== 追加&lt;/span&gt;
-     postrotate
-     &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; /run/systemd/system &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
-         &lt;/span&gt;systemctl &lt;span class=&quot;nt&quot;&gt;-q&lt;/span&gt; is-active clamav-freshclam &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; systemctl &lt;span class=&quot;nb&quot;&gt;kill&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--signal&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;SIGHUP clamav-freshclam &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true
-     &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;else
-         &lt;/span&gt;invoke-rc.d clamav-freshclam reload-log &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; /dev/null &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true
-     &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;fi
-     &lt;/span&gt;endscript
-     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;ついでに、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/logrotate.d/clamav-daemon&lt;/code&gt; も同様に編集しておいたほうがよいかもしれない。&lt;/p&gt;
-
-&lt;h3 id=&quot;3-ウィルススキャンのテストウィルス無しの場合&quot;&gt;3. ウィルススキャンのテスト（ウィルス無しの場合）&lt;/h3&gt;
-
-&lt;p&gt;以下のようにして、ウィルススキャンを行ってみる。&lt;br /&gt;
-（スキャンするディレクトリを指定するなら、最後にディレクトリを指定する）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# clamscan --infected --remove --recursive
-
------------ SCAN SUMMARY -----------
-Known viruses: 8670704
-Engine version: 1.0.1
-Scanned directories: 5
-Scanned files: 4
-Infected files: 0
-Data scanned: 0.02 MB
-Data read: 0.01 MB (ratio 2.00:1)
-Time: 17.822 sec (0 m 17 s)
-Start Date: 2023:07:12 15:14:50
-End Date:   2023:07:12 15:15:08
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-ウィルススキャンのテストウィルス有りの場合&quot;&gt;4. ウィルススキャンのテスト（ウィルス有りの場合）&lt;/h3&gt;
-
-&lt;p&gt;ウィルスが有る場合に正常に機能するかをテストするために、まずテスト用ウィルスを用意する。&lt;br /&gt;
-今回は以下の４つのテストウィルスをダウンロードしてみた。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wget http://www.eicar.org/download/eicar.com \
-http://www.eicar.org/download/eicar.com.txt \
-http://www.eicar.org/download/eicar_com.zip \
-http://www.eicar.org/download/eicarcom2.zip
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;そして、ウィルススキャンを行ってみる。&lt;br /&gt;
-４つとも検知し削除されているのが分かる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# clamscan --infected --remove --recursive
-/root/eicar_com.zip: Win.Test.EICAR_HDB-1 FOUND
-/root/eicar_com.zip: Removed.
-/root/eicar.com: Win.Test.EICAR_HDB-1 FOUND
-/root/eicar.com: Removed.
-/root/eicarcom2.zip: Win.Test.EICAR_HDB-1 FOUND
-/root/eicarcom2.zip: Removed.
-/root/eicar.com.txt: Win.Test.EICAR_HDB-1 FOUND
-/root/eicar.com.txt: Removed.
-
------------ SCAN SUMMARY -----------
-Known viruses: 8670704
-Engine version: 1.0.1
-Scanned directories: 5
-Scanned files: 8
-Infected files: 4
-Data scanned: 0.02 MB
-Data read: 0.01 MB (ratio 2.00:1)
-Time: 17.437 sec (0 m 17 s)
-Start Date: 2023:07:12 15:15:27
-End Date:   2023:07:12 15:15:44
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-ウィルススキャン実行用スクリプトの作成&quot;&gt;5. ウィルススキャン実行用スクリプトの作成&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamscan&lt;/code&gt;&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
-
-&lt;span class=&quot;nv&quot;&gt;PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/bin:/bin
-
-&lt;span class=&quot;c&quot;&gt;# スキャン除外設定&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# （clamdscan でなく clamscan を使用する場合はコメント解除）&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#excludelist=/root/clamscan.exclude&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#if [ -s $excludelist ]; then&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#    for i in `cat $excludelist`&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#    do&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#        if [ $(echo &quot;$i&quot;|grep \/$) ]; then&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#            i=`echo $i|sed -e &apos;s/^\([^ ]*\)\/$/\1/p&apos; -e d`&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#            excludeopt=&quot;${excludeopt} --exclude-dir=^$i&quot;&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#        else&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#            excludeopt=&quot;${excludeopt} --exclude=^$i&quot;&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#        fi&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#    done&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#fi&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# ウィルス定義ファイル最新化&lt;/span&gt;
-freshclam &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; /dev/null
-
-&lt;span class=&quot;c&quot;&gt;# ウィルススキャン&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;CLAMSCANTMP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mktemp&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# （clamdscan では --remove オプションが使用できない）&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#clamscan --recursive --remove ${excludeopt} / &amp;gt; $CLAMSCANTMP 2&amp;gt;&amp;amp;1&lt;/span&gt;
-clamdscan &lt;span class=&quot;nt&quot;&gt;--recursive&lt;/span&gt; / &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$CLAMSCANTMP&lt;/span&gt; 2&amp;gt;&amp;amp;1
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-z&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;grep &lt;/span&gt;FOUND&lt;span class=&quot;nv&quot;&gt;$ $CLAMSCANTMP&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# レポートのメール送信&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;grep &lt;/span&gt;FOUND&lt;span class=&quot;nv&quot;&gt;$ $CLAMSCANTMP&lt;/span&gt; | mail &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Virus Found in &lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;hostname&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; root
-&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$CLAMSCANTMP&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;6-ウィルススキャン実行用スクリプトに実行権限付与&quot;&gt;6. ウィルススキャン実行用スクリプトに実行権限付与&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# chmod +x clamscan
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-スキャン対象外ファイルの編集&quot;&gt;7. スキャン対象外ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;ウィルススキャンを行わないディレクトリがあれば、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamscan.exclude&lt;/code&gt; ファイルに記述する。（但し、 clamscan を使用する場合）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamscan.exclude&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/dev/   # &amp;lt;= dev  ディレクトリをスキャン対象外にする場合
-/proc/  # &amp;lt;= proc ディレクトリをスキャン対象外にする場合
-/sys/   # &amp;lt;= sys  ディレクトリをスキャン対象外にする場合
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;ウィルススキャン実行用スクリプト内で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamscan&lt;/code&gt; でなく &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamdscan&lt;/code&gt; を使用するようにしている場合は、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clamscan.exclude&lt;/code&gt; を作成せず、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/clamav/clamd.conf&lt;/code&gt; に以下のように追記する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/clamav/clamd.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ExcludePath ^/dev/
-ExcludePath ^/proc/
-ExcludePath ^/sys/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;8-スクリプトの実行&quot;&gt;8. スクリプトの実行&lt;/h3&gt;
-
-&lt;p&gt;作成したウィルススキャン実行スクリプトが正常に実行されるか試しに動かしてみる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ./clamscan
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;9-自動実行の設定&quot;&gt;9. 自動実行の設定&lt;/h3&gt;
-
-&lt;p&gt;ウィルススキャン実行スクリプトに問題がなければ、毎日自動で実行させるために cron ディレクトリへ移動する。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;daily&lt;/code&gt; でなく &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;weekly&lt;/code&gt; や &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;monthly&lt;/code&gt; でもよい。好みの問題）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mv clamscan /etc/cron.daily/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="ウイルス対策" /><summary type="html">Debian GNU/Linux 12 (bookworm) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><summary type="html">Debian GNU/Linux 12 (bookworm) 上で systemd-timesyncd サービスを使用して時刻同期する設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>

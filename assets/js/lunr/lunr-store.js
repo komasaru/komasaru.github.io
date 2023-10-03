@@ -12580,4 +12580,10 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2023/10/01/blog-access/",
         "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - Windows ファイルサーバ Samba 構築！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) に Windows 用ファイルサーバ Samba を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。 接続可能なマシンのネットワークは 192.168.11.0/24 を想定。 ドメイン名は mk-mode.com、サーバホスト名は vbox を想定。 全ユーザ共有ディレクトリは /home/share とする。 root ユーザでの作業を想定。 1. Samba サーバのインストール # apt install -y samba 2. 共有ディレクトリの作成 全ユーザが共有でフルアクセス可能なディレクトリを作成する。 #...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Postfix"],
+        "url": "/2023/10/04/debian-12-samba-installation/",
+        "teaser": null
       }]
