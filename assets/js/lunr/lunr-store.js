@@ -12592,4 +12592,10 @@ var store = [{
         "tags": ["Debian","Linux","Postfix"],
         "url": "/2023/10/10/debian-12-postfix-installation/",
         "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - SMTP サーバ Postfix 受信拒否設定！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) 上の SMTP サーバ Postfix で受信を拒否する設定についての記録です。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。 SMTP サーバ Postfix を「Debian 12 (bookworm) - SMTP サーバ Postfix 構築！」の方法で導入済み。 メールの header や body の内容をチェックしてフィルタリングする設定。 root ユーザでの作業を想定。 1. 設定ファイル main.cf の編集 コメントアウトされていれば、アンコメントする。 行自体が存在しなければ、追加する。 File: /etc/postfix/main.cf header_checks = regexp:/etc/postfix/header_checks body_checks = regexp:/etc/postfix/body_checks...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Postfix"],
+        "url": "/2023/10/18/debian-12-postfix-reject-reception/",
+        "teaser": null
       }]
