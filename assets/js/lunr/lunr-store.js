@@ -12590,12 +12590,18 @@ var store = [{
         "title": "Debian 12 (bookworm) - SMTP サーバ Postfix 構築！",
         "excerpt":"Debian GNU/Linux 12 (bookworm) に SMTP サーバ Postfix を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。 接続可能なマシンのネットワークは 192.168.11.0/24 を想定。 ドメイン名は mk-mode.com、サーバホスト名は mail を想定。 root ユーザでの作業を想定。 1. Postfix のインストール SMTP サーバ Postfix を以下のようにしてインストールする。 途中でどの設定を選択するか確認されるが、後で設定を行うので「設定なし」(No Configuration)を選択する。 # apt -y install postfix sasl2-bin...","categories": ["サーバ構築"],
         "tags": ["Debian","Linux","Postfix"],
-        "url": "/2023/10/10/debian-12-postfix-installation/",
+        "url": "/2023/10/11/debian-12-postfix-installation/",
         "teaser": null
       },{
         "title": "Debian 12 (bookworm) - SMTP サーバ Postfix 受信拒否設定！",
         "excerpt":"Debian GNU/Linux 12 (bookworm) 上の SMTP サーバ Postfix で受信を拒否する設定についての記録です。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。 SMTP サーバ Postfix を「Debian 12 (bookworm) - SMTP サーバ Postfix 構築！」の方法で導入済み。 メールの header や body の内容をチェックしてフィルタリングする設定。 root ユーザでの作業を想定。 1. 設定ファイル main.cf の編集 コメントアウトされていれば、アンコメントする。 行自体が存在しなければ、追加する。 File: /etc/postfix/main.cf header_checks = regexp:/etc/postfix/header_checks body_checks = regexp:/etc/postfix/body_checks...","categories": ["サーバ構築"],
         "tags": ["Debian","Linux","Postfix"],
         "url": "/2023/10/18/debian-12-postfix-reject-reception/",
+        "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - POP/IMAP サーバ Dovecot 構築！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。 接続可能なマシンのネットワークは 192.168.11.0/24 を想定。 ドメイン名は mk-mode.com、サーバホスト名は vbox を想定。 root ユーザでの作業を想定。 1. Dovecot のインストール POP/IMAP サーバ Dovecot を以下のようにしてインストールする。 # apt -y install dovecot-common dovecot-pop3d dovecot-imapd 2....","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Dovecot"],
+        "url": "/2023/10/25/debian-12-dovecot-installation/",
         "teaser": null
       }]

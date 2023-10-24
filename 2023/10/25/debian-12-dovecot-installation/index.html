@@ -9,19 +9,19 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Debian 12 (bookworm) - SMTP サーバ Postfix 構築！ - mk-mode BLOG</title>
-<meta name="description" content="Debian GNU/Linux 12 (bookworm) に SMTP サーバ Postfix を構築する方法についての記録です。以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。（当然ながら、興味がなければスルーしてください）">
+<!-- begin _includes/seo.html --><title>Debian 12 (bookworm) - POP/IMAP サーバ Dovecot 構築！ - mk-mode BLOG</title>
+<meta name="description" content="Debian GNU/Linux 12 (bookworm) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。（当然ながら、興味がなければスルーしてください）">
 
 
 
 <meta property="og:type" content="article">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="mk-mode BLOG">
-<meta property="og:title" content="Debian 12 (bookworm) - SMTP サーバ Postfix 構築！">
-<meta property="og:url" content="https://komasaru.github.io/2023/10/10/debian-12-postfix-installation/">
+<meta property="og:title" content="Debian 12 (bookworm) - POP/IMAP サーバ Dovecot 構築！">
+<meta property="og:url" content="https://komasaru.github.io/2023/10/25/debian-12-dovecot-installation/">
 
 
-  <meta property="og:description" content="Debian GNU/Linux 12 (bookworm) に SMTP サーバ Postfix を構築する方法についての記録です。以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。（当然ながら、興味がなければスルーしてください）">
+  <meta property="og:description" content="Debian GNU/Linux 12 (bookworm) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。（当然ながら、興味がなければスルーしてください）">
 
 
 
@@ -30,9 +30,9 @@
 
 
   <meta name="twitter:site" content="@rsm_mzk">
-  <meta name="twitter:title" content="Debian 12 (bookworm) - SMTP サーバ Postfix 構築！">
-  <meta name="twitter:description" content="Debian GNU/Linux 12 (bookworm) に SMTP サーバ Postfix を構築する方法についての記録です。以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。（当然ながら、興味がなければスルーしてください）">
-  <meta name="twitter:url" content="https://komasaru.github.io/2023/10/10/debian-12-postfix-installation/">
+  <meta name="twitter:title" content="Debian 12 (bookworm) - POP/IMAP サーバ Dovecot 構築！">
+  <meta name="twitter:description" content="Debian GNU/Linux 12 (bookworm) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。（当然ながら、興味がなければスルーしてください）">
+  <meta name="twitter:url" content="https://komasaru.github.io/2023/10/25/debian-12-dovecot-installation/">
 
   
     <meta name="twitter:card" content="summary">
@@ -45,7 +45,7 @@
 
 
 
-  <meta property="article:published_time" content="2023-10-10T00:00:00+09:00">
+  <meta property="article:published_time" content="2023-10-25T00:00:00+09:00">
 
 
 
@@ -56,7 +56,7 @@
   
 
 
-<link rel="canonical" href="https://komasaru.github.io/2023/10/10/debian-12-postfix-installation/">
+<link rel="canonical" href="https://komasaru.github.io/2023/10/25/debian-12-dovecot-installation/">
 
 
 
@@ -356,21 +356,21 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Debian 12 (bookworm) - SMTP サーバ Postfix 構築！">
-    <meta itemprop="description" content="Debian GNU/Linux 12 (bookworm) に SMTP サーバ Postfix を構築する方法についての記録です。以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。（当然ながら、興味がなければスルーしてください）">
-    <meta itemprop="datePublished" content="October 10, 2023">
+    <meta itemprop="headline" content="Debian 12 (bookworm) - POP/IMAP サーバ Dovecot 構築！">
+    <meta itemprop="description" content="Debian GNU/Linux 12 (bookworm) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。（当然ながら、興味がなければスルーしてください）">
+    <meta itemprop="datePublished" content="October 25, 2023">
     
 
     <div class="page__inner-wrap">
       
         <header>
           <!-- div id="google-ad-1"></div -->
-          <h1 id="page-title" class="page__title" itemprop="headline">Debian 12 (bookworm) - SMTP サーバ Postfix 構築！
+          <h1 id="page-title" class="page__title" itemprop="headline">Debian 12 (bookworm) - POP/IMAP サーバ Dovecot 構築！
 </h1>
           
           
             
-            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2023-10-10T00:00:00+09:00">2023-10-10 00:00</time></small></p>
+            <p class="page__date"><small><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2023-10-25T00:00:00+09:00">2023-10-25 00:00</time></small></p>
           
         </header>
       
@@ -379,7 +379,7 @@
 
       <section class="page__content" itemprop="text">
         
-        <p>Debian GNU/Linux 12 (bookworm) に SMTP サーバ Postfix を構築する方法についての記録です。</p>
+        <p>Debian GNU/Linux 12 (bookworm) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。</p>
 
 <p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
 （当然ながら、興味がなければスルーしてください）</p>
@@ -392,172 +392,86 @@
   <li>Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。</li>
   <li>接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。</li>
   <li>接続可能なマシンのネットワークは <code class="language-plaintext highlighter-rouge">192.168.11.0/24</code> を想定。</li>
-  <li>ドメイン名は <code class="language-plaintext highlighter-rouge">mk-mode.com</code>、サーバホスト名は <code class="language-plaintext highlighter-rouge">mail</code> を想定。</li>
+  <li>ドメイン名は <code class="language-plaintext highlighter-rouge">mk-mode.com</code>、サーバホスト名は <code class="language-plaintext highlighter-rouge">vbox</code> を想定。</li>
   <li>root ユーザでの作業を想定。</li>
 </ul>
 
-<h3 id="1-postfix-のインストール">1. Postfix のインストール</h3>
+<h3 id="1-dovecot-のインストール">1. Dovecot のインストール</h3>
 
-<p>SMTP サーバ Postfix を以下のようにしてインストールする。<br />
-途中でどの設定を選択するか確認されるが、後で設定を行うので「設定なし」(No Configuration)を選択する。</p>
+<p>POP/IMAP サーバ Dovecot を以下のようにしてインストールする。</p>
 
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install postfix sasl2-bin
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install dovecot-common dovecot-pop3d dovecot-imapd
 </code></pre></div></div>
 
-<h3 id="2-設定ファイルの編集">2. 設定ファイルの編集</h3>
+<h3 id="2-設定ファイル-dovecotconf-の編集">2. 設定ファイル dovecot.conf の編集</h3>
 
-<p>設定ファイル雛形から <code class="language-plaintext highlighter-rouge">main.cf</code> を複製後、編集する。</p>
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/dovecot/dovecot.conf</code></p>
 
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cp /usr/share/postfix/main.cf.dist /etc/postfix/main.cf
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>listen <span class="o">=</span> <span class="k">*</span>  <span class="c"># &lt;= IPv6を使用しない場合</span>
 </code></pre></div></div>
 
-<p>もしくは、以下のようにしてもよい。（<code class="language-plaintext highlighter-rouge">main.cf.dist</code> と <code class="language-plaintext highlighter-rouge">main.cf.proto</code> は内容が同じようなので）</p>
+<h3 id="3-設定ファイル-10-authconf-の編集">3. 設定ファイル 10-auth.conf の編集</h3>
 
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cp /etc/postfix/main.cf{.proto,}
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/dovecot/conf.d/10-auth.conf</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>disable_plaintext_auth <span class="o">=</span> no    <span class="c"># &lt;= プレーンテキスト認証も許可</span>
+
+auth_mechanisms <span class="o">=</span> plain login  <span class="c"># &lt;= 認証時のパスフレーズ送信方式</span>
 </code></pre></div></div>
 
-<p>File: <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code></p>
+<h3 id="4-設定ファイル-10-mailconf-の編集">4. 設定ファイル 10-mail.conf の編集</h3>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mail_owner <span class="o">=</span> postfix                   <span class="c"># &lt;= メール所有者</span>
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/dovecot/conf.d/10-mail.conf</code></p>
 
-myhostname <span class="o">=</span> mail.mk-mode.com          <span class="c"># &lt;= ホスト名</span>
-
-mydomain <span class="o">=</span> mk-mode.com                 <span class="c"># &lt;= ドメイン名</span>
-
-myorigin <span class="o">=</span> <span class="nv">$mydomain</span>                   <span class="c"># &lt;= ローカルからのメール送信時の送信元メールアドレス@以降にドメイン名を付加</span>
-
-inet_interfaces <span class="o">=</span> all                  <span class="c"># &lt;= 外部からのメール受信を許可</span>
-
-mydestination <span class="o">=</span> <span class="nv">$myhostname</span>, localhost.<span class="nv">$mydomain</span>, localhost, <span class="nv">$mydomain</span>, mail.<span class="nv">$mydomain</span>, vbox.<span class="nv">$mydomain</span>  <span class="c"># &lt;= 自ドメイン宛メールを受信できるようにする</span>
-
-local_recipient_maps <span class="o">=</span> unix:passwd.byname <span class="nv">$alias_maps</span>  <span class="c"># &lt;= サーバにアカウントがあれば、その人宛に届く</span>
-
-mynetworks <span class="o">=</span> 127.0.0.0/8               <span class="c"># &lt;= 自ネットワーク</span>
-
-alias_maps <span class="o">=</span> <span class="nb">hash</span>:/etc/aliases         <span class="c"># &lt;= 受信メールの再転送先ファイル</span>
-
-alias_database <span class="o">=</span> <span class="nb">hash</span>:/etc/aliases     <span class="c"># &lt;= newaliasesコマンドの実行対象</span>
-
-home_mailbox <span class="o">=</span> Maildir/                <span class="c"># &lt;= メールボックス形式を Maildir 形式に</span>
-
-<span class="c">#smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)</span>
-smtpd_banner <span class="o">=</span> <span class="nv">$myhostname</span> ESMTP       <span class="c"># &lt;= メールサーバーソフト名の隠蔽化</span>
-
-sendmail_path <span class="o">=</span> /usr/sbin/postfix      <span class="c"># &lt;= Postfix sendmail コマンドの場所</span>
-
-newaliases_path <span class="o">=</span> /usr/bin/newaliases  <span class="c"># &lt;= Postfix newaliases コマンドの場所</span>
-
-mailq_path <span class="o">=</span> /usr/bin/mailq            <span class="c"># &lt;= Postfix mailq コマンドの場所</span>
-
-setgid_group <span class="o">=</span> postdrop                <span class="c"># &lt;= set-gid Postfix コマンドおよびグループ書き込み可能な Postfix ディレクトリを所有するグループ</span>
-
-<span class="c">#html_directory =                      # &lt;= コメント化</span>
-
-<span class="c">#manpage_directory =                   # &lt;= コメント化</span>
-
-<span class="c">#sample_directory =                    # &lt;= コメント化</span>
-
-<span class="c">#readme_directory =                    # &lt;= コメント化</span>
-
-<span class="c"># 最終行へ追加</span>
-message_size_limit <span class="o">=</span> 10485760          <span class="c"># &lt;= 送受信メールサイズを10Mに制限</span>
-mailbox_size_limit <span class="o">=</span> 1073741824        <span class="c"># &lt;= メールボックスサイズを1Gに制限</span>
-
-<span class="c"># SMTP-Auth用</span>
-smtpd_sasl_type <span class="o">=</span> dovecot
-smtpd_sasl_path <span class="o">=</span> private/auth
-smtpd_sasl_auth_enable <span class="o">=</span> <span class="nb">yes
-</span>smtpd_sasl_security_options <span class="o">=</span> noanonymous
-smtpd_sasl_local_domain <span class="o">=</span> <span class="nv">$myhostname</span>
-smtpd_client_restrictions <span class="o">=</span> permit_mynetworks,reject_unknown_client,permit
-smtpd_recipient_restrictions <span class="o">=</span> permit_mynetworks,permit_auth_destination,permit_sasl_authenticated,reject
-
-<span class="c"># 特定ドメイン／アドレス受信拒否（必要であれば）</span>
-smtpd_sender_restrictions <span class="o">=</span> reject_unknown_sender_domain, reject_non_fqdn_sender, <span class="nb">hash</span>:/etc/postfix/reject_sender
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mail_location <span class="o">=</span> maildir:~/Maildir  <span class="c"># &lt;= メールボックス形式をMaildir形式</span>
 </code></pre></div></div>
 
-<h4 id="3-1-上記で特定のドメインアドレスを受信拒否する設定にした場合">3-1. 上記で特定のドメイン／アドレスを受信拒否する設定にした場合</h4>
+<h3 id="5-設定ファイル-10-masterconf-の編集">5. 設定ファイル 10-master.conf の編集</h3>
 
-<p><code class="language-plaintext highlighter-rouge">/etc/postfix/reject_sender</code> を作成して、設定したいドメイン／アドレスを記述する。</p>
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/dovecot/conf.d/10-master.conf</code></p>
 
-<p>File: <code class="language-plaintext highlighter-rouge">/etc/postfix/reject_sender</code></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xxxxxxxxxx.xxx REJECT
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Postfix smtp-auth</span>
+unix_listener /var/spool/postfix/private/auth <span class="o">{</span>  <span class="c"># &lt;= コメント解除</span>
+    mode <span class="o">=</span> 0666                                  <span class="c"># &lt;= コメント解除</span>
+    user <span class="o">=</span> postfix                               <span class="c"># &lt;= 追加（ユーザ）</span>
+    group <span class="o">=</span> postfix                              <span class="c"># &lt;= 追加（グループ）</span>
+<span class="o">}</span>                                                <span class="c"># &lt;= コメント解除</span>
 </code></pre></div></div>
 
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">REJECT</code>: 拒否をし、その旨のメッセージを返信する</li>
-  <li><code class="language-plaintext highlighter-rouge">DISCARD</code>: 拒否をし、その旨のメッセージも返信しない</li>
-</ul>
+<h3 id="6-dovecot-の再起動">6. Dovecot の再起動</h3>
 
-<p>そして、ハッシュマップの生成。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># postmap /etc/postfix/reject_sender
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl restart dovecot
 </code></pre></div></div>
 
-<p>最後に、 Postfix を再起動（or リロード）。</p>
+<h3 id="7-ファイアウォールufwの設定">7. ファイアウォール(ufw)の設定</h3>
 
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl restart postfix
-</code></pre></div></div>
+<p>実際に運用する場合は、TCPポート 110(POP3), 143(IMAP) を開放する必要がある。</p>
 
-<h3 id="3-saslauthd-の編集">3. saslauthd の編集</h3>
-
-<p>マシン起動時に saslauthd を自動起動させるために “saslauthd” を編集する。</p>
-
-<p>File: <code class="language-plaintext highlighter-rouge">/etc/default/saslauthd</code></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">START</span><span class="o">=</span><span class="nb">yes</span>  <span class="c"># 5行目辺りに追記</span>
-</code></pre></div></div>
-
-<p>これをしないと saslauthd 起動時に以下のような警告が出力される。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>To enable saslauthd, edit /etc/default/saslauthd and set START=yes (warning).
-</code></pre></div></div>
-
-<h3 id="4-saslauthd-の再起動">4. saslauthd の再起動</h3>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl restart saslauthd
-</code></pre></div></div>
-
-<h3 id="5-postfix-の再起動">5. Postfix の再起動</h3>
-
-<p>設定を反映させるためにエイリアスの変更を反映させ、 Postfix を再起動する。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># newaliases
-# systemctl restart postfix
-</code></pre></div></div>
-
-<h3 id="6-ファイアウォールufwの設定">6. ファイアウォール(ufw)の設定</h3>
-
-<p>実際に運用する場合は、TCP ポート 25(SMTP) を開放する必要がある。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ufw allow 25/tcp
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ufw allow 110,143/tcp
 Rule added
 
 # ufw status
     :
-25/tcp                     ALLOW       Anywhere
+110,143/tcp                ALLOW       Anywhere
     :
 </code></pre></div></div>
 
-<h3 id="7-メールの転送設定">7. メールの転送設定</h3>
+<h3 id="8-メールソフトの設定">8. メールソフトの設定</h3>
 
-<p>root や postmaster 等宛に届いたメールを一般ユーザに転送するには <code class="language-plaintext highlighter-rouge">/etc/aliases</code> を編集する。<br />
-以下は一例。（最近は最初から <code class="language-plaintext highlighter-rouge">postomaster</code> を <code class="language-plaintext highlighter-rouge">root</code> に、 <code class="language-plaintext highlighter-rouge">root</code> を一般ユーザに転送するようになっているかも知れない）</p>
+<p>Postfix, Dovecot 構築が完了すれば、メールソフトでメールの送受信が可能になる。<br />
+メールソフトでは以下のように設定すればよい。</p>
 
-<p>File: <code class="language-plaintext highlighter-rouge">/etc/aliases</code></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>postmaster: root
-root:       masaru
-</code></pre></div></div>
-
-<p>この設定を有効にするために以下のようにする。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># newaliases                 # &lt;= エイリアスの即時反映
-# systemctl restart postfix  # &lt;= Postfix の再起動
-</code></pre></div></div>
-
-<p><code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> 内で説明されているとおり、 <code class="language-plaintext highlighter-rouge">newaliases</code> の代わりに <code class="language-plaintext highlighter-rouge">postalias /etc/aliases</code> でもよい。</p>
+<ul>
+  <li>メールアドレス：<code class="language-plaintext highlighter-rouge">アカウント名@メールホスト名</code></li>
+  <li>パスワード：<code class="language-plaintext highlighter-rouge">アカウントのパスワード</code></li>
+  <li>受信メールサーバ：<code class="language-plaintext highlighter-rouge">POP</code> or <code class="language-plaintext highlighter-rouge">IMAP</code></li>
+  <li>受信メールサーバアドレス：<code class="language-plaintext highlighter-rouge">メールホスト名</code>（内部なら <code class="language-plaintext highlighter-rouge">サーバローカルIPアドレス</code> でもよい）</li>
+  <li>受信メールサーバポート番号：<code class="language-plaintext highlighter-rouge">110</code>(POP) or <code class="language-plaintext highlighter-rouge">143</code>(IMAP)</li>
+  <li>ログオンユーザ：<code class="language-plaintext highlighter-rouge">アカウント名</code></li>
+  <li>送信メールサーバアドレス：<code class="language-plaintext highlighter-rouge">メールホスト名</code>（内部なら <code class="language-plaintext highlighter-rouge">サーバローカルIPアドレス</code> でもよい）</li>
+  <li>送信メールサーバポート番号：<code class="language-plaintext highlighter-rouge">25</code></li>
+  <li>送信認証：「必要」</li>
+</ul>
 
 <hr />
 
@@ -587,11 +501,11 @@ root:       masaru
     
       
       
-      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+      <a href="/tags/dovecot" class="page__taxonomy-item" rel="tag">Dovecot</a><span class="sep">, </span>
     
       
       
-      <a href="/tags/postfix" class="page__taxonomy-item" rel="tag">Postfix</a>
+      <a href="/tags/linux" class="page__taxonomy-item" rel="tag">Linux</a>
     
     </span>
   </p>
@@ -620,7 +534,7 @@ root:       masaru
 
         
           
-          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2023-10-10T00:00:00+09:00">2023-10-10 00:00</time></p>
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2023-10-25T00:00:00+09:00">2023-10-25 00:00</time></p>
         
         <br />
       </footer>
@@ -633,15 +547,15 @@ root:       masaru
       <section class="page__share">
   
 
-  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Debian+12+%28bookworm%29+-+SMTP+%E3%82%B5%E3%83%BC%E3%83%90+Postfix+%E6%A7%8B%E7%AF%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2023%2F10%2F10%2Fdebian-12-postfix-installation%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?via=rsm_mzk&text=Debian+12+%28bookworm%29+-+POP%2FIMAP+%E3%82%B5%E3%83%BC%E3%83%90+Dovecot+%E6%A7%8B%E7%AF%89%EF%BC%81%20https%3A%2F%2Fkomasaru.github.io%2F2023%2F10%2F25%2Fdebian-12-dovecot-installation%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2023%2F10%2F10%2Fdebian-12-postfix-installation%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkomasaru.github.io%2F2023%2F10%2F25%2Fdebian-12-dovecot-installation%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
   
 
   <a href="https://www.tumblr.com/share" class="btn btn--tumblr" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Tumblr"><i class="fab fa-fw fa-tumblr" aria-hidden="true"></i><span> Tumblr</span></a><script id="tumblr-js" async src="https://assets.tumblr.com/share-button.js"></script>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2023%2F10%2F10%2Fdebian-12-postfix-installation%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkomasaru.github.io%2F2023%2F10%2F25%2Fdebian-12-dovecot-installation%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -655,12 +569,11 @@ root:       masaru
       
   <nav class="pagination">
     
-      <a href="/2023/10/04/debian-12-samba-installation/" class="pagination--pager" title="Debian 12 (bookworm) - Windows ファイルサーバ Samba 構築！
+      <a href="/2023/10/18/debian-12-postfix-reject-reception/" class="pagination--pager" title="Debian 12 (bookworm) - SMTP サーバ Postfix 受信拒否設定！
 ">Previous</a>
     
     
-      <a href="/2023/10/18/debian-12-postfix-reject-reception/" class="pagination--pager" title="Debian 12 (bookworm) - SMTP サーバ Postfix 受信拒否設定！
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -717,6 +630,30 @@ root:       masaru
     
     <h3 class="archive__item-title" itemprop="headline">
       
+        <a href="/2023/10/11/debian-12-postfix-installation/" rel="permalink">Debian 12 (bookworm) - SMTP サーバ Postfix 構築！
+</a>
+        &nbsp;<small>(2023-10-11)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 12 (bookworm) に SMTP サーバ Postfix を構築する方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
         <a href="/2023/10/04/debian-12-samba-installation/" rel="permalink">Debian 12 (bookworm) - Windows ファイルサーバ Samba 構築！
 </a>
         &nbsp;<small>(2023-10-04)</small>
@@ -745,30 +682,6 @@ root:       masaru
     </h3>
     
     <p class="archive__item-excerpt" itemprop="description">10月になりましたので、先月9月分の当ブログアクセス状況を公開します。（※自分用の記録）
-
-</p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h3 class="archive__item-title" itemprop="headline">
-      
-        <a href="/2023/09/27/debian-12-nfs-port-fixing/" rel="permalink">Debian 12 (bookworm) - NFS サーバのポート固定！
-</a>
-        &nbsp;<small>(2023-09-27)</small>
-    </h3>
-    
-    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 12 (bookworm) に NFS サーバで使用するポートを固定化する方法についての記録です。
-
-以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
-（当然ながら、興味がなければスルーしてください）
 
 </p>
   </article>
@@ -905,8 +818,8 @@ root:       masaru
     
   <script>
     var disqus_config = function () {
-      this.page.url = "https://komasaru.github.io/2023/10/10/debian-12-postfix-installation/";  // Replace PAGE_URL with your page's canonical URL variable
-      this.page.identifier = "/2023/10/10/debian-12-postfix-installation"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      this.page.url = "https://komasaru.github.io/2023/10/25/debian-12-dovecot-installation/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/2023/10/25/debian-12-dovecot-installation"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() { // DON'T EDIT BELOW THIS LINE
       var d = document, s = d.createElement('script');
