@@ -12604,4 +12604,10 @@ var store = [{
         "tags": ["Debian","Linux","Dovecot"],
         "url": "/2023/10/25/debian-12-dovecot-installation/",
         "teaser": null
+      },{
+        "title": "2023年10月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"11月になりましたので、先月10月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 11,340 72.8792 Mac OS 2,516 16.1697 Linux 837 5.3792 Android 572 3.6761 unknown 158 1.0154 Ubuntu Linux 132 0.8483 FreeBSD 4 0.0257 Fedora Linux 1 0.0064 合　計 15,560 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 11,260 72.3650 Mac OS X 2,516...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2023/11/01/blog-access/",
+        "teaser": null
       }]
