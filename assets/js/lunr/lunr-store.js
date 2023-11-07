@@ -12610,4 +12610,10 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2023/11/01/blog-access/",
         "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - メールサーバ SSL 設定！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) に導入したメールサーバを SSL 設定する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。 SMTP サーバは Postfix, POP/IMAP サーバは Dovecot を想定。 Postfix を「Debian 12 (bookworm) - SMTP サーバ Postfix 構築！」の方法で導入済み。 Dovecot を「Debian 12 (bookworm) - POP/IMAP サーバ Dovecot 構築！」の方法で導入済み。 接続可能なマシンのネットワークは...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Postfix","Dovecot","SSL"],
+        "url": "/2023/11/08/debian-12-mail-ssl-setting/",
+        "teaser": null
       }]
