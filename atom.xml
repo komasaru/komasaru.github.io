@@ -1,4 +1,187 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-11-07T11:06:03+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - メールサーバ SSL 設定！</title><link href="https://komasaru.github.io/2023/11/08/debian-12-mail-ssl-setting/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - メールサーバ SSL 設定！" /><published>2023-11-08T00:00:00+09:00</published><updated>2023-11-08T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/11/08/debian-12-mail-ssl-setting</id><content type="html" xml:base="https://komasaru.github.io/2023/11/08/debian-12-mail-ssl-setting/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に導入したメールサーバを SSL 設定する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-11-14T22:43:48+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - Postfix ウィルス・スパム対策(ClamAV)！</title><link href="https://komasaru.github.io/2023/11/15/debian-12-postfix-anti-virus-with-clamav/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - Postfix ウィルス・スパム対策(ClamAV)！" /><published>2023-11-15T00:00:00+09:00</published><updated>2023-11-15T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/11/15/debian-12-postfix-anti-virus-with-clamav</id><content type="html" xml:base="https://komasaru.github.io/2023/11/15/debian-12-postfix-anti-virus-with-clamav/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) にアンチウイルスソフト ClamAV をインストールする方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;SMTP サーバ Postfix を「&lt;a href=&quot;/2023/11/08/debian-12-mail-ssl-setting&quot; title=&quot;Debian 12 (bookworm) - SMTP サーバ Postfix 構築！&quot;&gt;Debian 12 (bookworm) - SMTP サーバ Postfix 構築！&lt;/a&gt;」の方法で導入済み。&lt;/li&gt;
+  &lt;li&gt;アンチウィルスソフト ClamAV 導入済み。&lt;/li&gt;
+  &lt;li&gt;アンチウィルス ClamAV との連携には、 ClamAV daemon を使用する方法の他に、ClamSMTP を使用する方法もある。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-インストール&quot;&gt;1. インストール&lt;/h3&gt;
+
+&lt;p&gt;Postfix を ClamAV と連携させてウィルススキャンを行うのに必要な ClamAV daemon, amavisd-new を、以下のようにしてインストールする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install clamav-daemon amavisd-new
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-amavisd-new-設定ファイルの編集&quot;&gt;2. amavisd-new 設定ファイルの編集&lt;/h3&gt;
+
+&lt;p&gt;Postfix と ClamAV を連携するのに必要な amavisd-new の設定ファイルを用意し、編集する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cp /usr/share/doc/amavisd-new/examples/amavisd.conf-default /etc/amavis/amavisd.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/amavis/amavisd.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$myhostname&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;mail.mk-mode.com&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ホスト名&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;mk-mode.com&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;         &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ドメイン名&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;$daemon_user&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;amavis&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;           &lt;span class=&quot;c&quot;&gt;# &amp;lt;= amavis デーモンユーザ名&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$daemon_group&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;amavis&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;           &lt;span class=&quot;c&quot;&gt;# &amp;lt;= amavis デーモングループ名&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;$MYHOME&lt;/span&gt;        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;/var/lib/amavis&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= amavisd ホーム&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# $virus_admin = undef;             # &amp;lt;= コメント化されていることを確認（ウィルス検知を都度通知しない）&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-15-content_filter_mode-の編集&quot;&gt;3. 15-content_filter_mode の編集&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/amavis/conf.d/15-content_filter_mode&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;@bypass_virus_checks_maps &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;                                                    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
+   &lt;span class=&quot;se&quot;&gt;\%&lt;/span&gt;bypass_virus_checks, &lt;span class=&quot;se&quot;&gt;\@&lt;/span&gt;bypass_virus_checks_acl, &lt;span class=&quot;se&quot;&gt;\$&lt;/span&gt;bypass_virus_checks_re&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
+
+@bypass_spam_checks_maps &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;                                                     &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
+   &lt;span class=&quot;se&quot;&gt;\%&lt;/span&gt;bypass_spam_checks, &lt;span class=&quot;se&quot;&gt;\@&lt;/span&gt;bypass_spam_checks_acl, &lt;span class=&quot;se&quot;&gt;\$&lt;/span&gt;bypass_spam_checks_re&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;ちなみに、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amavisd.conf&lt;/code&gt; にも同じ記述がある。どちらを有効にしても良いだろう。&lt;/p&gt;
+
+&lt;h3 id=&quot;4-15-av_scanners-の編集&quot;&gt;4. 15-av_scanners の編集&lt;/h3&gt;
+
+&lt;p&gt;メールのウィルスチェックの度に clamscan が作動するとマシンが非力な場合は非常に重くなるため、 clamav-daemon が動作する今回の環境では clamdscan でウィルスチェックを行うこととする。（clamscan と clamdscan の違いについては、ここでは説明しない）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/amavis/conf.d/15-av_scanners&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;c&quot;&gt;#[&apos;ClamAV-clamscan&apos;, &apos;clamscan&apos;,  # &amp;lt;= コメント化&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;ClamAV-clamscan&apos;&lt;/span&gt;, &lt;span class=&quot;s1&quot;&gt;&apos;clamdscan&apos;&lt;/span&gt;,  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-20-debian_defaults-の編集-不要&quot;&gt;5. 20-debian_defaults の編集 （不要？）&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Considered UNSOLICITED BULK EMAIL, apparently from you&lt;/code&gt; というタイトルのメールが届くことがあるので、それを抑止するための設定を行う。&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/amavis/conf.d/20-debian_defaults&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#$final_banned_destiny     = D_DISCARD;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$final_banned_destiny&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; D_REJECT&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D_PASS&lt;/code&gt; … メールは受信者に配送される&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D_REJECT&lt;/code&gt; … メールは配送されないが、送信者に配送されなかった事を伝える&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D_BOUNCE&lt;/code&gt; … メールは配送されないが、送信者に配送されなかった事を伝える。例外で伝えない場合もある&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;D_DISCARD&lt;/code&gt; … メールは配送されず、送信者にも配送されなかった事を伝えない&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;6-postfix---maincf-の編集&quot;&gt;6. Postfix - main.cf の編集&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/main.cf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 最終行へ追加&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;content_filter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;smtp-amavis:[127.0.0.1]:10024
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-postfix---mastercf-の編集&quot;&gt;7. Postfix - master.cf の編集&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/master.cf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 最終行へ追加&lt;/span&gt;
+smtp-amavis unix -       -       n      -     2 smtp
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtp_data_done_timeout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1200
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtp_send_xforward_command&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;disable_dns_lookups&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes
+&lt;/span&gt;127.0.0.1:10025 inet n     -     n     -     - smtpd
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;content_filter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;local_recipient_maps&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;relay_recipient_maps&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_restriction_classes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_client_restrictions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_helo_restrictions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_sender_restrictions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_recipient_restrictions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;permit_mynetworks,reject
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;mynetworks&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;127.0.0.0/8
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;strict_rfc821_envelopes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_error_sleep_time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_soft_error_limit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1001
+      &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;smtpd_hard_error_limit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1000
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;8-その他の設定&quot;&gt;8. その他の設定&lt;/h3&gt;
+
+&lt;p&gt;処理に必要なファイルを作成したり、権限設定、ユーザ作成を行う。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# touch /etc/mailname
+# chmod -R 775 /var/lib/amavis/tmp
+# usermod -G amavis clamav
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;9-サービスの再起動&quot;&gt;9. サービスの再起動&lt;/h3&gt;
+
+&lt;p&gt;ClamAV daemon, Postfix, Amavisd を再起動する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart clamav-daemon
+# systemctl restart postfix
+# systemctl restart amavis
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;10-サービス自動起動の設定&quot;&gt;10. サービス自動起動の設定&lt;/h3&gt;
+
+&lt;p&gt;デフォルトで自動起動する設定になっている。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl is-enabled clamav-daemon
+enabled
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;disabled&lt;/code&gt; になっていれば、設定する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl enable clamav-daemon
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;11-動作確認&quot;&gt;11. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;メールを送信してみる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# echo test | mail -s &quot;TEST&quot; root
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;受信メールのヘッダに &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;X-Virus-Scanned: Debian amavis at&lt;/code&gt; の文字列が存在することが確認できれば成功である。（メールソフトでヘッダを表示できる。または、サーバ内に届いたメールファイルを開いてみる）&lt;/p&gt;
+
+&lt;p&gt;メール送信コマンド &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mail&lt;/code&gt; が使用できない場合は、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mailutils&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;heirloom-mailx&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bsd-mailx&lt;/code&gt; 等をインストールする。複数ある場合は、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;update-alternatives --config mailx&lt;/code&gt; でデフォルト設定をする。&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Return-Path: &amp;lt;root@vbox.mk-mode.com&amp;gt;
+X-Original-To: root@mk-mode.com
+Delivered-To: root@mk-mode.com
+Received: from localhost &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;localhost &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;127.0.0.1]&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        by mail.mk-mode.com &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Postfix&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; with ESMTP &lt;span class=&quot;nb&quot;&gt;id &lt;/span&gt;3E2698B
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &amp;lt;root@mk-mode.com&amp;gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; Mon, 16 Oct 2023 14:25:44 +0900 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;JST&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+X-Virus-Scanned: Debian amavis at vbox.mk-mode.com
+Received: from mail.mk-mode.com &lt;span class=&quot;o&quot;&gt;([&lt;/span&gt;127.0.0.1]&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+ by localhost &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;vbox.mk-mode.com &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;127.0.0.1]&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;amavis, port 10024&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; with ESMTP
+ &lt;span class=&quot;nb&quot;&gt;id &lt;/span&gt;gHktjXQxFmZn &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &amp;lt;root@mk-mode.com&amp;gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; Mon, 16 Oct 2023 14:25:43 +0900 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;JST&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Received: by mail.mk-mode.com &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Postfix, from userid 0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;id &lt;/span&gt;BD0798A&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; Mon, 16 Oct 2023 14:25:43 +0900 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;JST&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Subject: TEST
+To: root@mk-mode.com
+User-Agent: mail &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;GNU Mailutils 3.15&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Date: Mon, 16 Oct 2023 14:25:43 +0900
+Message-Id: &amp;lt;20231016052543.BD0798A@mail.mk-mode.com&amp;gt;
+From: root &amp;lt;root@vbox.mk-mode.com&amp;gt;
+
+&lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><category term="ウイルス対策" /><category term="スパム対策" /><summary type="html">Debian GNU/Linux 12 (bookworm) にアンチウイルスソフト ClamAV をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） [‘ClamAV-clamscan’, ‘clamdscan’, # &amp;lt;= 追加 ### 5. 20-debian_defaults の編集 （不要？） `Considered UNSOLICITED BULK EMAIL, apparently from you` というタイトルのメールが届くことがあるので、それを抑止するための設定を行う。 File: `/etc/amavis/conf.d/20-debian_defaults` ``` bash #$final_banned_destiny = D_DISCARD; $final_banned_destiny = D_REJECT; D_PASS … メールは受信者に配送される D_REJECT … メールは配送されないが、送信者に配送されなかった事を伝える D_BOUNCE … メールは配送されないが、送信者に配送されなかった事を伝える。例外で伝えない場合もある D_DISCARD … メールは配送されず、送信者にも配送されなかった事を伝えない 6. Postfix - main.cf の編集 File: /etc/postfix/main.cf ``` bash 最終行へ追加 content_filter=smtp-amavis:[127.0.0.1]:10024</summary></entry><entry><title type="html">Debian 12 (bookworm) - メールサーバ SSL 設定！</title><link href="https://komasaru.github.io/2023/11/08/debian-12-mail-ssl-setting/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - メールサーバ SSL 設定！" /><published>2023-11-08T00:00:00+09:00</published><updated>2023-11-08T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/11/08/debian-12-mail-ssl-setting</id><content type="html" xml:base="https://komasaru.github.io/2023/11/08/debian-12-mail-ssl-setting/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に導入したメールサーバを SSL 設定する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -1650,226 +1833,4 @@ Firewall is active and enabled on system startup
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="NFS" /><summary type="html">Debian GNU/Linux 12 (bookworm) に NFS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - FTP サーバ構築！</title><link href="https://komasaru.github.io/2023/09/13/debian-12-ftp-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - FTP サーバ構築！" /><published>2023-09-13T00:00:00+09:00</published><updated>2023-09-13T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/09/13/debian-12-ftp-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/09/13/debian-12-ftp-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に FTP サーバを構築する方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 12.0.0 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;接続元のマシンも Debian GNU/Linux 12.0.0 (bookworm; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;接続テストでは FileZilla という FTP クライアントを使用する。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-vsftpd-のインストール&quot;&gt;1. vsftpd のインストール&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install vsftpd
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-vsftpd-設定ファイルの編集&quot;&gt;2. vsftpd 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/vsftpd.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# anonymous によるログインを無効化&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;anonymous_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;NO
-
-&lt;span class=&quot;c&quot;&gt;# ローカルアクセスの許可&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;local_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
-
-&lt;span class=&quot;c&quot;&gt;# 書き込み許可&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;write_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
-
-&lt;span class=&quot;c&quot;&gt;# アスキーモードでの転送を許可&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;ascii_upload_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
-&lt;span class=&quot;nv&quot;&gt;ascii_download_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
-
-&lt;span class=&quot;c&quot;&gt;# chroot 有効化&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;chroot_local_user&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
-
-&lt;span class=&quot;c&quot;&gt;# chroot リスト有効化&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;chroot_list_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
-
-&lt;span class=&quot;c&quot;&gt;# chrootリスト指定&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;chroot_list_file&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/etc/vsftpd.chroot_list
-
-&lt;span class=&quot;c&quot;&gt;# ディレクトリごと一括での転送を有効化&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;ls_recurse_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
-
-&lt;span class=&quot;c&quot;&gt;# chroot のルートディレクトリ指定&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# ( 指定しない場合はユーザーのホームディレクトリ直下 )&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# public_htmlを指定した場合で、且つ当該ディレクトリがないとログインできないので注意&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;local_root&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;public_html
-
-&lt;span class=&quot;c&quot;&gt;# seccomp filter をオフにする&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;seccomp_sandbox&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;NO
-
-&lt;span class=&quot;c&quot;&gt;# PASV モード有効化&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;pasv_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
-&lt;span class=&quot;nv&quot;&gt;pasv_min_port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;4000
-&lt;span class=&quot;nv&quot;&gt;pasv_max_port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;4005
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;3-ホームディレクトリより上層へのアクセス許可設定&quot;&gt;3. ホームディレクトリより上層へのアクセス許可設定&lt;/h3&gt;
-
-&lt;p&gt;ホームディレクトリより上層へのアクセスを許可するユーザのリストを作成する。（上記設定ファイル内の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/vsftpd.chroot_list&lt;/code&gt; のこと）&lt;br /&gt;
-指定は、１行に１ユーザ。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/vsftpd.chroot_list&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;masaru
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-ssl-サーバの構築&quot;&gt;4. SSL サーバの構築&lt;/h3&gt;
-
-&lt;p&gt;vsftpd を SSL/TLS で使用できるようにするには SSL サーバが必要であるので、未インストールなら OpenSSL をインストールする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install openssl
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-サーバ証明書の作成&quot;&gt;5. サーバ証明書の作成&lt;/h3&gt;
-
-&lt;p&gt;vsftpd を SSL/TLS で使用できるようサーバ証明書を作成する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cd /etc/ssl/private
-# openssl req -x509 -nodes -newkey rsa:2048 -keyout /etc/ssl/private/vsftpd.pem -out /etc/ssl/private/vsftpd.pem
-
-      :
-===&amp;lt; 中略 &amp;gt;===
-      :
-
------
-You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter &apos;.&apos;, the field will be left blank.
------
-Country Name (2 letter code) [AU]:JP                                    # &amp;lt;= 国の略名
-State or Province Name (full name) [Some-State]:Shimane                 # &amp;lt;= 都道府県名
-Locality Name (eg, city) []:Matsue                                      # &amp;lt;= 市区町村名
-Organization Name (eg, company) [Internet Widgits Pty Ltd]:mk-mode.com  # &amp;lt;= サイト名（何でもよい）
-Organizational Unit Name (eg, section) []:                              # &amp;lt;= 部署名（空でよい）
-Common Name (e.g. server FQDN or YOUR name) []:ftp.mk-mode.com          # &amp;lt;= ホスト名
-Email Address []:root@mk-mode.com                                       # &amp;lt;= 管理者メールアドレス
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;作成したサーバ証明書のパーミッションを設定する。（所有者読み込み専用に）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# chmod 400 vsftpd.pem
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;6-vsftpd-設定ファイルの編集&quot;&gt;6. vsftpd 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;サーバ証明書を使用できるよう vsftpd 設定ファイルを以下のように編集する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/vsftpd.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;ssl_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES              &lt;span class=&quot;c&quot;&gt;# 編集（SSL有効化）&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;ssl_ciphers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;HIGH
-&lt;span class=&quot;nv&quot;&gt;ssl_tlsv1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
-&lt;span class=&quot;nv&quot;&gt;ssl_sslv2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;NO
-&lt;span class=&quot;nv&quot;&gt;ssl_sslv3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;NO
-&lt;span class=&quot;nv&quot;&gt;force_local_data_ssl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
-&lt;span class=&quot;nv&quot;&gt;force_local_logins_ssl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;YES
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-vsftpd-の再起動&quot;&gt;7. vsftpd の再起動&lt;/h3&gt;
-
-&lt;p&gt;設定を有効化するために vsftpd を再起動する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart vsftpd
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;8-ファイアウォール-ufw-の設定&quot;&gt;8. ファイアウォール (ufw) の設定&lt;/h3&gt;
-
-&lt;p&gt;外部に公開する場合は、TCP ポート 21(FTP) へのアクセスを許可する必要がある。&lt;br /&gt;
-また、 PASV モードで運用する場合は、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/vsftpd.conf&lt;/code&gt; の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pasv_min_port&lt;/code&gt; から &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pasv_max_port&lt;/code&gt; で設定したポートも開放する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 21/tcp
-Rule added
-
-# ufw allow 4000,4001,4002,4003,4004,4005/tcp
-Rule added
-
-# ufw status
-Status: active
-
-To                         Action      From
---                         ------      ----
-9999/tcp                   ALLOW       192.168.11.0/24
-53                         ALLOW       Anywhere
-21/tcp                     ALLOW       Anywhere
-4000,4001,4002,4003,4004,4005/tcp ALLOW       Anywhere
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;9-動作確認&quot;&gt;9. 動作確認&lt;/h3&gt;
-
-&lt;p&gt;クライアント側からコマンドラインや FTP クライアントでサーバに接続して、アップロード・ダウンロード等各種操作が可能かチェックする。&lt;br /&gt;
-FTP クライアント FileZilla なら以下のように設定してログイン。
-e&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;ホスト：サーバホスト名 or サーバ IP アドレス&lt;/li&gt;
-  &lt;li&gt;プロトコル：「FTP - ファイル転送プロトコル」&lt;/li&gt;
-  &lt;li&gt;暗号化：「明示的な FTP over TLS が必要」&lt;/li&gt;
-  &lt;li&gt;ログオンの種類：「通常」 or 「パスワードを尋ねる」&lt;/li&gt;
-  &lt;li&gt;ユーザ：ユーザ名&lt;/li&gt;
-  &lt;li&gt;転送モード：「アクティブ」&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;lftp を使用するなら、インストール後、設定を行なう。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install lftp
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.lftprc&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;set ftp:ssl-auth TLS
-set ftp:ssl-force true
-set ftp:ssl-protect-list yes
-set ftp:ssl-protect-data yes
-set ftp:ssl-protect-fxp yes
-set ssl:verify-certificate no
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;そして、ログイン。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ lftp -u masaru 192.168.11.101
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;10-自動起動の設定&quot;&gt;10. 自動起動の設定&lt;/h3&gt;
-
-&lt;p&gt;vsftpd インストール直後はマシン起動時に自動で vsftpd が起動するようになっている。&lt;/p&gt;
-
-&lt;p&gt;自動起動しないように設定するなら以下のようにする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl disable vsftpd
-Synchronizing state of vsftpd.service with SysV service script with /lib/systemd/systemd-sysv-install.
-Executing: /lib/systemd/systemd-sysv-install disable vsftpd
-insserv: warning: current start runlevel(s) (empty) of script `vsftpd&apos; overrides LSB defaults (2 3 4 5).
-insserv: warning: current stop runlevel(s) (0 1 2 3 4 5 6) of script `vsftpd&apos; overrides LSB defaults (0 1 6).
-
-# systemctl is-enabled vsftpd
-disabled  # &amp;lt;= disabled であることを確認
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;逆に自動起動するように設定するなら以下のようにする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl enable vsftpd
-Synchronizing state of vsftpd.service with SysV service script with /lib/systemd/systemd-sysv-install.
-Executing: /lib/systemd/systemd-sysv-install enable vsftpd
-insserv: warning: current start runlevel(s) (empty) of script `vsftpd&apos; overrides LSB defaults (2 3 4 5).
-insserv: warning: current stop runlevel(s) (0 1 2 3 4 5 6) of script `vsftpd&apos; overrides LSB defaults (0 1 6).
-
-# systemctl is-enabled vsftpd
-enabled  # &amp;lt;= enabled であることを確認
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="FTP" /><summary type="html">Debian GNU/Linux 12 (bookworm) に FTP サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="NFS" /><summary type="html">Debian GNU/Linux 12 (bookworm) に NFS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>

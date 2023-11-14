@@ -12616,4 +12616,10 @@ var store = [{
         "tags": ["Debian","Linux","Postfix","Dovecot","SSL"],
         "url": "/2023/11/08/debian-12-mail-ssl-setting/",
         "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - Postfix ウィルス・スパム対策(ClamAV)！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) にアンチウイルスソフト ClamAV をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。 SMTP サーバ Postfix を「Debian 12 (bookworm) - SMTP サーバ Postfix 構築！」の方法で導入済み。 アンチウィルスソフト ClamAV 導入済み。 アンチウィルス ClamAV との連携には、 ClamAV daemon を使用する方法の他に、ClamSMTP を使用する方法もある。 root ユーザでの作業を想定。 1. インストール Postfix を ClamAV と連携させてウィルススキャンを行うのに必要な ClamAV daemon, amavisd-new を、以下のようにしてインストールする。...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Postfix","ウイルス対策","スパム対策"],
+        "url": "/2023/11/15/debian-12-postfix-anti-virus-with-clamav/",
+        "teaser": null
       }]
