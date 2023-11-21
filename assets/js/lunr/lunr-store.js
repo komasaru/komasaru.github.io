@@ -12622,4 +12622,10 @@ var store = [{
         "tags": ["Debian","Linux","Postfix","ウイルス対策","スパム対策"],
         "url": "/2023/11/15/debian-12-postfix-anti-virus-with-clamav/",
         "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - Postfix ログ解析！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) に導入した SMTP サーバ Postfix のログを解析する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。 SMTP サーバ Postfix を「Debian 12 (bookworm) - SMTP サーバ Postfix 構築！」の方法で導入済み。 ログローテート（logrotate）でメールログがローテーションされていることを想定。（デフォルトでなっているはず） root ユーザでの作業を想定。 1. pflogsumm のインストール Postfix のログ解析ツールである pflogsumm を、以下のようにしてインストールする。 # apt -y...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Postfix"],
+        "url": "/2023/11/22/debian-12-postfix-log-analysis/",
+        "teaser": null
       }]
