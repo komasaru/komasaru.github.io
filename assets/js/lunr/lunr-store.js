@@ -12628,4 +12628,10 @@ var store = [{
         "tags": ["Debian","Linux","Postfix"],
         "url": "/2023/11/22/debian-12-postfix-log-analysis/",
         "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) にカラムストア機能付き全文検索エンジン Groonga を Groonga の公式リポジトリを使用して導入する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12.1.0 (bookworm; 64bit) での作業を想定。 当記事執筆時点で最新の Groonga 13.0.8 をインストールする。 トークナイザとして MeCab を使用することを想定。 トークンフィルタとして TokenFilterStem を使用することを想定。 ノーマライザとして MySQL 互換の groonga-normalizer-mysql を使用することを想定。（将来、 Mroonga を使用することを想定） ここでは、全文検索がどういうものかという説明はしない。 root ユーザでの作業を想定。 以下の説明内で出力するデータは、可読性を考慮して整形している。 1. groonga-apt-source パッケージのインストール # apt update # apt install -y...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Groonga"],
+        "url": "/2023/11/29/debian-12-groonga-installation-by-official-apt/",
+        "teaser": null
       }]

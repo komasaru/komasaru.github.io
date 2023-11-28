@@ -1,4 +1,99 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-11-21T10:20:33+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - Postfix ログ解析！</title><link href="https://komasaru.github.io/2023/11/22/debian-12-postfix-log-analysis/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - Postfix ログ解析！" /><published>2023-11-22T00:00:00+09:00</published><updated>2023-11-22T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/11/22/debian-12-postfix-log-analysis</id><content type="html" xml:base="https://komasaru.github.io/2023/11/22/debian-12-postfix-log-analysis/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に導入した SMTP サーバ Postfix のログを解析する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-11-28T22:46:42+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！</title><link href="https://komasaru.github.io/2023/11/29/debian-12-groonga-installation-by-official-apt/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - 全文検索エンジン Groonga インストール（by Groonga 公式リポジトリ）！" /><published>2023-11-29T00:00:00+09:00</published><updated>2023-11-29T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/11/29/debian-12-groonga-installation-by-official-apt</id><content type="html" xml:base="https://komasaru.github.io/2023/11/29/debian-12-groonga-installation-by-official-apt/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) にカラムストア機能付き全文検索エンジン Groonga を Groonga の公式リポジトリを使用して導入する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 12.1.0 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;当記事執筆時点で最新の Groonga 13.0.8 をインストールする。&lt;/li&gt;
+  &lt;li&gt;トークナイザとして MeCab を使用することを想定。&lt;/li&gt;
+  &lt;li&gt;トークンフィルタとして TokenFilterStem を使用することを想定。&lt;/li&gt;
+  &lt;li&gt;ノーマライザとして MySQL 互換の groonga-normalizer-mysql を使用することを想定。（将来、 Mroonga を使用することを想定）&lt;/li&gt;
+  &lt;li&gt;ここでは、全文検索がどういうものかという説明はしない。&lt;/li&gt;
+  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
+  &lt;li&gt;以下の説明内で出力するデータは、可読性を考慮して整形している。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-groonga-apt-source-パッケージのインストール&quot;&gt;1. groonga-apt-source パッケージのインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt update
+# apt install -y -V ca-certificates lsb-release wget
+# wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr &apos;A-Z&apos; &apos;a-z&apos;)/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+# apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+# apt update
+# wget https://packages.groonga.org/debian/groonga-apt-source-latest-$(lsb_release --codename --short).deb
+# apt install -y -V ./groonga-apt-source-latest-$(lsb_release --codename --short).deb
+# apt update
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2--groonga-のインストール&quot;&gt;2.  groonga のインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install -y -V groonga
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-日本語形態素解析器-mecab-のインストール&quot;&gt;3. 日本語形態素解析器 MeCab のインストール&lt;/h3&gt;
+
+&lt;p&gt;（トークナイザとして MeCab を使用しないのなら、この作業は不要）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install mecab
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-トークナイザ-mecab-のインストール&quot;&gt;4. トークナイザ MeCab のインストール&lt;/h3&gt;
+
+&lt;p&gt;（トークナイザとして MeCab を使用しないのなら、この作業は不要）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install -y -V groonga-tokenizer-mecab
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-トークンフィルタ-tokenfilterstem-のインストール&quot;&gt;5. トークンフィルタ TokenFilterStem のインストール&lt;/h3&gt;
+
+&lt;p&gt;（トークンフィルタとして TokenFilterStem を使用しないのなら、この作業は不要）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install -y -V groonga-token-filter-stem
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-munin-プラグインのインストール&quot;&gt;6. Munin プラグインのインストール&lt;/h3&gt;
+
+&lt;p&gt;（Munin プラグインを使用しないのなら、この作業は不要）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install -y -V groonga-munin-plugins
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;当記事執筆時点、エラーが発生してインストールできなかった。&lt;br /&gt;
+（この時点では munin 未設定。 munin 設定後ならインストール可能かも（未確認））&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;7-mysql-互換ノーマライザのインストール&quot;&gt;7. MySQL 互換ノーマライザのインストール&lt;/h3&gt;
+
+&lt;p&gt;（ノーマライザとして groonga-normalizer-mysql を使用しないのなら、この作業は不要）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install -y -V groonga-normalizer-mysql
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;8-インストール確認&quot;&gt;8. インストール確認&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ groonga --version
+Groonga 13.0.8 [Linux,x86_64,utf8,match-escalation-threshold=0,nfkc,mecab,message-pack,mruby,onigmo,zlib,lz4,zstandard,epoll,rapidjson,apache-arrow,xxhash,blosc]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;9-動作確認&quot;&gt;9. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;（過去記事「&lt;a href=&quot;/2015/08/09/linux-mint-groonga-installation-by-src/&quot; title=&quot;Linux Mint - Groonga インストール（by ソースビルド）！&quot;&gt;Linux Mint - Groonga インストール（by ソースビルド）！&lt;/a&gt;」を参照）&lt;/p&gt;
+
+&lt;h3 id=&quot;10-参考サイト&quot;&gt;10. 参考サイト&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://groonga.org/ja/docs/install/debian.html#bookworm&quot; title=&quot;2.3. Debian GNU/Linux — Groonga v13.0.8 documentation&quot;&gt;2.3. Debian GNU/Linux — Groonga v13.0.8 documentation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Groonga" /><summary type="html">Debian GNU/Linux 12 (bookworm) にカラムストア機能付き全文検索エンジン Groonga を Groonga の公式リポジトリを使用して導入する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - Postfix ログ解析！</title><link href="https://komasaru.github.io/2023/11/22/debian-12-postfix-log-analysis/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - Postfix ログ解析！" /><published>2023-11-22T00:00:00+09:00</published><updated>2023-11-22T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/11/22/debian-12-postfix-log-analysis</id><content type="html" xml:base="https://komasaru.github.io/2023/11/22/debian-12-postfix-log-analysis/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に導入した SMTP サーバ Postfix のログを解析する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -1617,138 +1712,4 @@ Starting Samba daemons: nmbd smbd.
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">10月になりましたので、先月9月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">Debian 12 (bookworm) - NFS サーバのポート固定！</title><link href="https://komasaru.github.io/2023/09/27/debian-12-nfs-port-fixing/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - NFS サーバのポート固定！" /><published>2023-09-27T00:00:00+09:00</published><updated>2023-09-27T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/09/27/debian-12-nfs-port-fixing</id><content type="html" xml:base="https://komasaru.github.io/2023/09/27/debian-12-nfs-port-fixing/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に NFS サーバで使用するポートを固定化する方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;NFS サーバ構築済み。&lt;br /&gt;
-（参照：「&lt;a href=&quot;/2023/09/20/debian-12-nfs-installation&quot; title=&quot;Debian 12 (bookworm) - NFS サーバ構築！&quot;&gt;Debian 12 (bookworm) - NFS サーバ構築！&lt;/a&gt;」）&lt;/li&gt;
-  &lt;li&gt;以下で設定するポート番号は&lt;a href=&quot;https://wiki.debian.org/SecuringNFS&quot; title=&quot;SecuringNFS - Debian Wiki&quot;&gt;参考サイト&lt;/a&gt;によるもであり、任意に設定可能。&lt;/li&gt;
-  &lt;li&gt;quota は使用していないので、&lt;a href=&quot;https://wiki.debian.org/SecuringNFS&quot; title=&quot;SecuringNFS - Debian Wiki&quot;&gt;参考サイト&lt;/a&gt;にある quota の設定はしない。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-前提知識&quot;&gt;1. 前提知識&lt;/h3&gt;
-
-&lt;p&gt;NFS サーバが使用するポートは以下のとおり。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;portmapper =&amp;gt; TCP: 111, UDP: 111
-nfs        =&amp;gt; TCP:2049, UDP:2049
-statd      =&amp;gt; TCP:不定, UDP:不定
-mountd     =&amp;gt; TCP:不定, UDP:不定
-nlockmgrq  =&amp;gt; TCP:不定, UDP:不定
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-statd-用ポートの固定&quot;&gt;2. statd 用ポートの固定&lt;/h3&gt;
-
-&lt;p&gt;statd のポートを固定するには &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-common&lt;/code&gt; を以下のようにする。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-common&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;STATDOPTS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;--port 32765 --outgoing-port 32766&quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;3-mountd-用ポートの固定&quot;&gt;3. mountd 用ポートの固定&lt;/h3&gt;
-
-&lt;p&gt;mountd のポートを固定するには &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-kernel-server&lt;/code&gt; を以下のようにする。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/nfs-kernel-server&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;RPCMOUNTDOPTS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;-p 32767&quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-lockd-モジュールの設定&quot;&gt;4. lockd モジュールの設定&lt;/h3&gt;
-
-&lt;p&gt;オプション付き lockd モジュールを提供するために、以下のように &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/modprobe.d/local.conf&lt;/code&gt; を作成する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/modprobe.d/local.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;options lockd &lt;span class=&quot;nv&quot;&gt;nlm_udpport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32768 &lt;span class=&quot;nv&quot;&gt;nlm_tcpport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32768
-options nfs &lt;span class=&quot;nv&quot;&gt;callback_tcpport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32764
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-マシンの再起動&quot;&gt;5. マシンの再起動&lt;/h3&gt;
-
-&lt;p&gt;設定を反映させるため、マシンを再起動する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl reboot
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;6-設定の確認&quot;&gt;6. 設定の確認&lt;/h3&gt;
-
-&lt;p&gt;以下のようにして、RPC 情報（ポートの設定）を確認してみる。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# rpcinfo -p
-   program vers proto   port  service
-    100000    4   tcp    111  portmapper
-    100000    3   tcp    111  portmapper
-    100000    2   tcp    111  portmapper
-    100000    4   udp    111  portmapper
-    100000    3   udp    111  portmapper
-    100000    2   udp    111  portmapper
-    100005    1   udp  32767  mountd
-    100005    1   tcp  32767  mountd
-    100005    2   udp  32767  mountd
-    100005    2   tcp  32767  mountd
-    100005    3   udp  32767  mountd
-    100005    3   tcp  32767  mountd
-    100003    3   tcp   2049  nfs
-    100003    4   tcp   2049  nfs
-    100227    3   tcp   2049
-    100003    3   udp   2049  nfs
-    100003    4   udp   2049  nfs
-    100227    3   udp   2049
-    100021    1   udp  32768  nlockmgr
-    100021    3   udp  32768  nlockmgr
-    100021    4   udp  32768  nlockmgr
-    100021    1   tcp  32768  nlockmgr
-    100021    3   tcp  32768  nlockmgr
-    100021    4   tcp  32768  nlockmgr
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-ファイアウォールufwの設定&quot;&gt;7. ファイアウォール(ufw)の設定&lt;/h3&gt;
-
-&lt;p&gt;NFS サーバが使用するポートが固定されたので、ufw でファイアウォールの設定を行う。（以下はローカルネットワーク内からのみアクセス可能にする例）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow proto tcp from 192.168.11.0/24 to any port 111,2049,32765,32767,32768
-Rule added
-# ufw allow proto udp from 192.168.11.0/24 to any port 111,2049,32765,32767,32768
-Rule added
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;確認。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw status
-Status: active
-
-To                         Action      From
---                         ------      ----
-6835/tcp                   ALLOW       192.168.11.0/24
-53                         ALLOW       Anywhere
-21                         ALLOW       Anywhere
-4000,4001,4002,4003,4004,4005/tcp ALLOW       Anywhere
-111,2049,32765,32767,32768/tcp ALLOW       192.168.11.0/24
-111,2049,32765,32767,32768/udp ALLOW       192.168.11.0/24
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;8-動作確認&quot;&gt;8. 動作確認&lt;/h3&gt;
-
-&lt;p&gt;クライアントマシンでマウントして接続できることも確認しておく。&lt;/p&gt;
-
-&lt;h3 id=&quot;9-参考サイト&quot;&gt;9. 参考サイト&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://wiki.debian.org/SecuringNFS&quot; title=&quot;SecuringNFS - Debian Wiki&quot;&gt;SecuringNFS - Debian Wiki&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="NFS" /><summary type="html">Debian GNU/Linux 12 (bookworm) に NFS サーバで使用するポートを固定化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">10月になりましたので、先月9月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
