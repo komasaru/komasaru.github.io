@@ -12634,4 +12634,10 @@ var store = [{
         "tags": ["Debian","Linux","Groonga"],
         "url": "/2023/11/29/debian-12-groonga-installation-by-official-apt/",
         "teaser": null
+      },{
+        "title": "2023年11月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"12月になりましたので、先月11月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 8,265 70.7499 Mac OS 2,063 17.6596 Linux 543 4.6482 Android 472 4.0404 unknown 203 1.7377 Ubuntu Linux 128 1.0957 Fedora Linux 3 0.0257 FreeBSD 3 0.0257 Linux Mint 1 0.0086 NetBSD 1 0.0086 合　計 11,682 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2023/12/01/blog-access/",
+        "teaser": null
       }]
