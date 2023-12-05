@@ -12640,4 +12640,10 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2023/12/01/blog-access/",
         "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - MariaDB 10.11 サーバ構築（ソースビルド）！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) 上に DB サーバ MariaDB（10.11系）、全文検索エンジン Mroonga を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。 インストールする MariaDB は、当記事執筆時点、 10.11 系で最新の 10.11.5 とする。 全文検索エンジン Mroonga プラグインもインストールする。 ここで紹介する MariaDB + Mroonga のインストール方法は、 Mroonga 公式サイトで案内されている Mroonga 込の MariaDB をインストールする方法や、ソールをビルドしているインストールする方法ではない） MariaDB とは言っても中身は...","categories": ["サーバ構築"],
+        "tags": ["Linux","Debian","MariaDB"],
+        "url": "/2023/12/06/debian-12-mariadb-mroonga-installation-by-apt/",
+        "teaser": null
       }]

@@ -1,4 +1,538 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-12-01T00:01:17+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">2023年11月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2023/12/01/blog-access/" rel="alternate" type="text/html" title="2023年11月 - OS・ブラウザ別アクセス状況！" /><published>2023-12-01T00:00:00+09:00</published><updated>2023-12-01T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/12/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2023/12/01/blog-access/">&lt;p&gt;12月になりましたので、先月11月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-12-05T21:28:52+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - MariaDB 10.11 サーバ構築（ソースビルド）！</title><link href="https://komasaru.github.io/2023/12/06/debian-12-mariadb-mroonga-installation-by-apt/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - MariaDB 10.11 サーバ構築（ソースビルド）！" /><published>2023-12-06T00:00:00+09:00</published><updated>2023-12-06T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/12/06/debian-12-mariadb-mroonga-installation-by-apt</id><content type="html" xml:base="https://komasaru.github.io/2023/12/06/debian-12-mariadb-mroonga-installation-by-apt/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) 上に DB サーバ MariaDB（10.11系）、全文検索エンジン Mroonga を構築する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;インストールする MariaDB は、当記事執筆時点、 10.11 系で最新の 10.11.5 とする。&lt;/li&gt;
+  &lt;li&gt;全文検索エンジン Mroonga プラグインもインストールする。&lt;/li&gt;
+  &lt;li&gt;ここで紹介する MariaDB + Mroonga のインストール方法は、 Mroonga 公式サイトで案内されている Mroonga 込の MariaDB をインストールする方法や、ソールをビルドしているインストールする方法ではない）&lt;/li&gt;
+  &lt;li&gt;MariaDB とは言っても中身は MySQL が元になっているので、各所で &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysql&lt;/code&gt; のキーワードが出現する。&lt;/li&gt;
+  &lt;li&gt;データディレクトリは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/lib/mysql&lt;/code&gt; ディレクトリ配下とする。&lt;/li&gt;
+  &lt;li&gt;（今回は）一般ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-リポジトリキーのインポート&quot;&gt;1. リポジトリキーのインポート&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo apt -y install apt-transport-https curl
+$ sudo mkdir -p /etc/apt/keyrings
+$ sudo curl -o /etc/apt/keyrings/mariadb-keyring.pgp &apos;https://mariadb.org/mariadb_release_signing_key.pgp&apos;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-リポジトリリストファイルの作成&quot;&gt;2. リポジトリリストファイルの作成&lt;/h3&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list.d/mariadb.sources&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# MariaDB 10.11 repository list - created 2023-10-27 02:05 UTC&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# https://mariadb.org/download/&lt;/span&gt;
+X-Repolib-Name: MariaDB
+Types: deb
+&lt;span class=&quot;c&quot;&gt;# deb.mariadb.org is a dynamic mirror if your preferred mirror goes offline. See https://mariadb.org/mirrorbits/ for details.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# URIs: https://deb.mariadb.org/10.11/debian&lt;/span&gt;
+URIs: https://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/10.11/debian
+Suites: bookworm
+Components: main
+Signed-By: /etc/apt/keyrings/mariadb-keyring.pgp
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-mariadb-サーバのインストール&quot;&gt;3. MariaDB サーバのインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo apt -y update
+$ sudo apt -y install mariadb-server
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-全文検索エンジン-mroonga-プラグインのインストール&quot;&gt;4. 全文検索エンジン Mroonga プラグインのインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo apt -y install mariadb-plugin-mroonga
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-mariadb-の初期設定&quot;&gt;5. MariaDB の初期設定&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo mysql_secure_installation
+
+NOTE: RUNNING ALL PARTS OF THIS SCRIPT IS RECOMMENDED FOR ALL MariaDB
+      SERVERS IN PRODUCTION USE!  PLEASE READ EACH STEP CAREFULLY!
+
+In order to log into MariaDB to secure it, we&apos;ll need the current
+password for the root user. If you&apos;ve just installed MariaDB, and
+haven&apos;t set the root password yet, you should just press enter here.
+
+Enter current password for root (enter for none):  # &amp;lt;= root ユーザの既存パスワード: 空エンター
+OK, successfully used password, moving on...
+
+Setting the root password or using the unix_socket ensures that nobody
+can log into the MariaDB root user without the proper authorisation.
+
+You already have your root account protected, so you can safely answer &apos;n&apos;.
+
+Switch to unix_socket authentication [Y/n]         # &amp;lt;= Unix ソケット認証設定: Y 応答
+Enabled successfully!
+Reloading privilege tables..
+ ... Success!
+
+
+You already have your root account protected, so you can safely answer &apos;n&apos;.
+
+Change the root password? [Y/n]                    # &amp;lt;= root パスワード変更: Y 応答
+New password:                                      # &amp;lt;= root パスワード
+Re-enter new password:                             # &amp;lt;= root パスワード確認入力
+Password updated successfully!
+Reloading privilege tables..
+ ... Success!
+
+
+By default, a MariaDB installation has an anonymous user, allowing anyone
+to log into MariaDB without having to have a user account created for
+them.  This is intended only for testing, and to make the installation
+go a bit smoother.  You should remove them before moving into a
+production environment.
+
+Remove anonymous users? [Y/n]                      # &amp;lt;= 匿名ユーザの削除: Y 応答
+ ... Success!
+
+Normally, root should only be allowed to connect from &apos;localhost&apos;.  This
+ensures that someone cannot guess at the root password from the network.
+
+Disallow root login remotely? [Y/n] n              # &amp;lt;= root のリモートログイン: リモート接続したいので n 応答（Y でもよい）
+ ... skipping.
+
+By default, MariaDB comes with a database named &apos;test&apos; that anyone can
+access.  This is also intended only for testing, and should be removed
+before moving into a production environment.
+
+Remove test database and access to it? [Y/n]       # &amp;lt;= テストデータベースの削除： Y 応答
+ - Dropping test database...
+ ... Success!
+ - Removing privileges on test database...
+ ... Success!
+
+Reloading the privilege tables will ensure that all changes made so far
+will take effect immediately.
+
+Reload privilege tables now? [Y/n]                 # &amp;lt;= 特権情報のリロード： Y 応答
+ ... Success!
+
+Cleaning up...
+
+All done!  If you&apos;ve completed all of the above steps, your MariaDB
+installation should now be secure.
+
+Thanks for using MariaDB!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-動作確認&quot;&gt;6. 動作確認&lt;/h3&gt;
+
+&lt;p&gt;インストール直後は、サーバは起動している。&lt;br /&gt;
+ログインしてみる。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ mariadb -u root -p
+Enter password:
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 40
+Server version: 10.11.5-MariaDB-1:10.11.5+maria~deb12 mariadb.org binary distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type &apos;help;&apos; or &apos;\h&apos; for help. Type &apos;\c&apos; to clear the current input statement.
+
+MariaDB [(none)]&amp;gt; show engines;
++--------------------+---------+-------------------------------------------------------------------------------------------------+--------------+------+------------+
+| Engine             | Support | Comment                                                                                         | Transactions | XA   | Savepoints |
++--------------------+---------+-------------------------------------------------------------------------------------------------+--------------+------+------------+
+| CSV                | YES     | Stores tables as CSV files                                                                      | NO           | NO   | NO         |
+| MRG_MyISAM         | YES     | Collection of identical MyISAM tables                                                           | NO           | NO   | NO         |
+| MEMORY             | YES     | Hash based, stored in memory, useful for temporary tables                                       | NO           | NO   | NO         |
+| Aria               | YES     | Crash-safe tables with MyISAM heritage. Used for internal temporary tables and privilege tables | NO           | NO   | NO         |
+| MyISAM             | YES     | Non-transactional engine with good performance and small data footprint                         | NO           | NO   | NO         |
+| SEQUENCE           | YES     | Generated tables filled with sequential values                                                  | YES          | NO   | YES        |
+| Mroonga            | YES     | CJK-ready fulltext search, column store                                                         | NO           | NO   | NO         |
+| PERFORMANCE_SCHEMA | YES     | Performance Schema                                                                              | NO           | NO   | NO         |
+| InnoDB             | DEFAULT | Supports transactions, row-level locking, foreign keys and encryption for tables                | YES          | YES  | YES        |
++--------------------+---------+-------------------------------------------------------------------------------------------------+--------------+------+------------+
+9 rows in set (0.000 sec)
+
+MariaDB [(none)]&amp;gt; exit
+Bye
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;全文検索エンジン Mroonga もインストールされている。&lt;/li&gt;
+  &lt;li&gt;上記の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mariadb -u root -p&lt;/code&gt; は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysql -u root -p&lt;/code&gt; でもよい。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;もし、全文検索エンジン Mroonga が前述の apt でのインストール方法でインストールされていなければ、 MariaDB コンソールで以下を実行してみる。&lt;br /&gt;
+（MariaDB をインストールする過程で、なかなかうまくいかず色々とイジっているうちに、 apt インストールできない状態になるかもしれない（当方の経験談））&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;INSTALL SONAME &apos;ha_mroonga&apos;;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-起動再起動ステータス確認停止のテスト&quot;&gt;7. 起動・再起動・ステータス確認・停止のテスト&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo systemctl start mariadb
+$ sudo systemctl restart mariadb
+$ sudo systemctl stop mariadb
+$ systemctl status mariadb
+$ systemctl is-enabled mariadb
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mariadb&lt;/code&gt; は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysqld&lt;/code&gt; でもよい。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;8-設定編集&quot;&gt;8. 設定編集&lt;/h3&gt;
+
+&lt;p&gt;必要に応じて、各種設定ファイルを編集する。（以下は、一例）&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/my.cnf&lt;/code&gt; が &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/conf.d&lt;/code&gt; や &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/mariadb.conf.d&lt;/code&gt; ディレクトリ配下の cnf ファイルを読み込むようになっている。（以前のように &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/my.cnf&lt;/code&gt; ファイルにまとめて記述する方法にしてもよいだろう）&lt;/p&gt;
+
+&lt;p&gt;（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;[mysqld]&lt;/code&gt; の &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;innodb_data_file_path&lt;/code&gt; や &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;innodb_log_file_size&lt;/code&gt; を変更する際は、細心の注意を）&lt;/p&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/mariadb.conf.d/50-client.cnf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# This group is read by the client library&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Use it for options that affect all clients, but not the server&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;client]
+&lt;span class=&quot;c&quot;&gt;# Default is Latin1, if you need UTF-8 set this (also in server section)&lt;/span&gt;
+port   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 3306
+socket &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /var/run/mysqld/mysqld.sock
+default-character-set &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; utf8mb4
+
+&lt;span class=&quot;c&quot;&gt;# Example of client certificate usage&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ssl-cert=/etc/mysql/client-cert.pem&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ssl-key=/etc/mysql/client-key.pem&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Allow only TLS encrypted connections&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ssl-verify-server-cert=on&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# This group is *never* read by mysql client library, though this&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# /etc/mysql/mariadb.cnf.d/client.cnf file is not read by Oracle MySQL&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# client anyway.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# If you use the same .cnf file for MySQL and MariaDB,&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# use it for MariaDB-only client options&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;client-mariadb]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/mariadb.conf.d/50-mysql-clients.cnf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# These groups are read by MariaDB command-line tools&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Use it for options that affect only one utility&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mysql]
+&lt;span class=&quot;c&quot;&gt;# Default is Latin1, if you need UTF-8 set this (also in server section)&lt;/span&gt;
+default-character-set &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; utf8mb4
+no-auto-rehash
+show-warnings
+&lt;span class=&quot;nv&quot;&gt;prompt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\u&lt;/span&gt;@&lt;span class=&quot;se&quot;&gt;\h&lt;/span&gt;:&lt;span class=&quot;se&quot;&gt;\d\_\R&lt;/span&gt;:&lt;span class=&quot;se&quot;&gt;\m&lt;/span&gt;:&lt;span class=&quot;se&quot;&gt;\\&lt;/span&gt;s&amp;gt;&lt;span class=&quot;se&quot;&gt;\_&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;pager&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;less -n -i -F -X -E&quot;&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mysql_upgrade]
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mysqladmin]
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mysqlbinlog]
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mysqlcheck]
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mysqldump]
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mysqlimport]
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mysqlshow]
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mysqlslap]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/mariadb.conf.d/50-mysqld_safe.cnf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# NOTE: This file is read only by the traditional SysV init script, not systemd.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# MARIADB SYSTEMD DOES _NOT_ UTILIZE MYSQLD_SAFE NOR READ THIS FILE.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# For similar behaviour, systemd users should create the following file:&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# /etc/systemd/system/mariadb.service.d/migrated-from-my.cnf-settings.conf&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# To achieve the same result as the default 50-mysqld_safe.cnf, please create&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# /etc/systemd/system/mariadb.service.d/migrated-from-my.cnf-settings.conf&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# with the following contents:&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [Service]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# User=mysql&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# StandardOutput=syslog&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# StandardError=syslog&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# SyslogFacility=daemon&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# SyslogLevel=err&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# SyslogIdentifier=mysqld&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# For more information, please read https://mariadb.com/kb/en/mariadb/systemd/&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mysqld_safe]
+&lt;span class=&quot;c&quot;&gt;# This will be passed to all mysql clients&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# It has been reported that passwords should be enclosed with ticks/quotes&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# especially if they contain &quot;#&quot; chars...&lt;/span&gt;
+
+socket &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /var/run/mysqld/mysqld.sock
+&lt;span class=&quot;nb&quot;&gt;nice&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+skip_log_error
+syslog
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/mysql/mariadb.conf.d/50-server.cnf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# These groups are read by MariaDB server.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Use it for options that only the server (but not clients) should see&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# this is read by the standalone daemon and embedded servers&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;server]
+
+&lt;span class=&quot;c&quot;&gt;# this is only for the mysqld standalone daemon&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mysqld]
+
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Recovery&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#innodb_force_recovery = 11  #クラッシュリカバリ時のみ有効化&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# * Basic Settings&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+user                    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; mysql
+pid-file                &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /var/run/mysqld/mysqld.pid
+socket                  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /var/run/mysqld/mysqld.sock
+port                    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 3306
+basedir                 &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /usr
+datadir                 &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /var/lib/mysql
+tmpdir                  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /tmp
+lc-messages-dir         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /usr/share/mysql
+lc_messages             &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; en_US   &lt;span class=&quot;c&quot;&gt;# Default: en_US&lt;/span&gt;
+skip-external-locking
+performance_schema      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; OFF     &lt;span class=&quot;c&quot;&gt;# Default: ON&lt;/span&gt;
+sql_mode                &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;&apos;&lt;/span&gt;
+default_storage_engine  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; InnoDB  &lt;span class=&quot;c&quot;&gt;# Default: InnoDB&lt;/span&gt;
+skip-character-set-client-handshake
+
+&lt;span class=&quot;c&quot;&gt;# Broken reverse DNS slows down connections considerably and name resolve is&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# safe to skip if there are no &quot;host by domain name&quot; access grants&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#skip-name-resolve&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Instead of skip-networking the default is now to listen only on&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# localhost which is more compatible and is not less secure.&lt;/span&gt;
+bind-address            &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0.0.0.0  &lt;span class=&quot;c&quot;&gt;# 127.0.0.1&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# * Fulltext Index&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+ft_min_word_len &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 2
+innodb_ft_min_token_size &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 2
+innodb_ft_enable_stopword &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; OFF
+
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# * Fine Tuning&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+
+key_buffer_size         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 8M    &lt;span class=&quot;c&quot;&gt;# Default: 8M (for MyISAM)&lt;/span&gt;
+myisam_sort_buffer_size &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 8M    &lt;span class=&quot;c&quot;&gt;# Default: 8M (for MyISAM)&lt;/span&gt;
+sort_buffer_size        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 8M    &lt;span class=&quot;c&quot;&gt;# Default: 2M (通常時:8M, ALTER TABLE 時:64M)&lt;/span&gt;
+read_buffer_size        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 8M    &lt;span class=&quot;c&quot;&gt;# Default: 128K&lt;/span&gt;
+read_rnd_buffer_size    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 8M    &lt;span class=&quot;c&quot;&gt;# Default: 256K&lt;/span&gt;
+join_buffer_size        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 8M    &lt;span class=&quot;c&quot;&gt;# Default: 128K&lt;/span&gt;
+max_allowed_packet      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 128M  &lt;span class=&quot;c&quot;&gt;# Default: 1M&lt;/span&gt;
+net_buffer_length       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1M    &lt;span class=&quot;c&quot;&gt;# Default: 16K&lt;/span&gt;
+thread_stack            &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 288K  &lt;span class=&quot;c&quot;&gt;# Default: 192K(32bit), 288K(64bit)&lt;/span&gt;
+thread_cache_size       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 40    &lt;span class=&quot;c&quot;&gt;# Default: 0 (max_connections の 1/3 程度?)&lt;/span&gt;
+table_open_cache        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 400   &lt;span class=&quot;c&quot;&gt;# Default: 400 (同時接続数 * テーブル数?)&lt;/span&gt;
+table_definition_cache  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 400   &lt;span class=&quot;c&quot;&gt;# Default: -1:autosized = 400 + (table_open_cache / 2&lt;/span&gt;
+tmp_table_size          &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 16M   &lt;span class=&quot;c&quot;&gt;# Default: System 依存 (for Memory, &amp;lt;= max_heap_table_size)&lt;/span&gt;
+max_heap_table_size     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 32M   &lt;span class=&quot;c&quot;&gt;# Default: 16M         (for Memory, &amp;gt;= tmp_table_size)&lt;/span&gt;
+bulk_insert_buffer_size &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 64M
+&lt;span class=&quot;c&quot;&gt;# This replaces the startup script and checks MyISAM tables if needed&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# the first time they are touched&lt;/span&gt;
+myisam_recover_options &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; BACKUP
+max_connections        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 100   &lt;span class=&quot;c&quot;&gt;# Default: 151&lt;/span&gt;
+max_connect_errors     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 100   &lt;span class=&quot;c&quot;&gt;# Default: 100&lt;/span&gt;
+max_user_connections   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0     &lt;span class=&quot;c&quot;&gt;# Default: 0&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#table_cache            = 64&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#thread_concurrency     = 10&lt;/span&gt;
+wait_timeout           &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 300   &lt;span class=&quot;c&quot;&gt;# Default: 28800 (通常時:300, データインポート時:3600程度)&lt;/span&gt;
+interactive_timeout    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 3600  &lt;span class=&quot;c&quot;&gt;# Default: 28800&lt;/span&gt;
+connect_timeout        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 30    &lt;span class=&quot;c&quot;&gt;# Default: 10&lt;/span&gt;
+net_read_timeout       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 3600  &lt;span class=&quot;c&quot;&gt;# Default: 30&lt;/span&gt;
+net_write_timeout      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 3600  &lt;span class=&quot;c&quot;&gt;# Default: 60&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# * Query Cache Configuration&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+query_cache_limit      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 8M    &lt;span class=&quot;c&quot;&gt;# Default: 1M&lt;/span&gt;
+query_cache_size       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 32M   &lt;span class=&quot;c&quot;&gt;# Default: 0 (通常時: 32M, データインポート時: 0)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# * Logging and Replication&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+log_output          &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; FILE  &lt;span class=&quot;c&quot;&gt;# Default: FILE&lt;/span&gt;
+log_warnings        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1     &lt;span class=&quot;c&quot;&gt;# Default: 1&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Both location gets rotated by the cronjob.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Be aware that this log type is a performance killer.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Recommend only changing this at runtime for short testing periods if needed&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#general_log_file    = /var/log/mysql/mysql.log  # デバッグ時に有効化&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#general_log         = 1                         # デバッグ時に有効化&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# When running under systemd, error logging goes via stdout/stderr to journald&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# and when running legacy init error logging goes to syslog due to&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# /etc/mysql/conf.d/mariadb.conf.d/50-mysqld_safe.cnf&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Enable this if you want to have error logging into a separate file&lt;/span&gt;
+log_error &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /var/log/mysql/error.log
+&lt;span class=&quot;c&quot;&gt;# Enable the slow query log to see queries with especially long duration&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#slow_query_log_file    = /var/log/mysql/mariadb-slow.log  # デバッグ時に有効&amp;gt;化&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#slow_query_log         = 1                                # デバッグ時に有効&amp;gt;化&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#long_query_time        = 30  # 10                         # デバッグ時に有効&amp;gt;化&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#log_slow_verbosity     = query_plan,explain&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#log-queries-not-using-indexes&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#min_examined_row_limit = 1000&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# The following can be used as easy to replay backup logs or for replication.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# note: if you are setting up a replication slave, see README.Debian about&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#       other settings you may need to change.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#server-id        = 101  # 1 # レプリケーション時 (1 〜 2^32 - 1)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#log_bin          = mysql-bin  # /var/log/mysql/mysql-bin.log  # レプリケーション、ポイントインタイムリカバリを利用したい場合のみ有効化&lt;/span&gt;
+expire_logs_days  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 10
+max_binlog_size   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 100M
+binlog_format     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; MIXED
+log_bin_trust_function_creators &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1  &lt;span class=&quot;c&quot;&gt;# Default: 0 (for TRIGGER)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#binlog_do_db     = include_database_name&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#binlog_ignore_db = exclude_database_name&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# * SSL/TLS&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# For documentation, please read&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# https://mariadb.com/kb/en/securing-connections-for-client-and-server/&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ssl-ca = /etc/mysql/cacert.pem&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ssl-cert = /etc/mysql/server-cert.pem&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ssl-key = /etc/mysql/server-key.pem&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#require-secure-transport = on&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# * Character sets&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# MySQL/MariaDB default is Latin1, but in Debian we rather default to the full&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# utf8 4-byte character set. See also client.cnf&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+character-set-server  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; utf8mb4
+collation-server      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; utf8mb4_general_ci
+
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# * Event Scheduler&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+event_scheduler &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1  &lt;span class=&quot;c&quot;&gt;# Default: 0&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# * InnoDB&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# InnoDB is enabled by default with a 10MB datafile in /var/lib/mysql/.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Read the manual for more InnoDB related options. There are many!&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Most important is to give InnoDB 80 % of the system RAM for buffer use:&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# https://mariadb.com/kb/en/innodb-system-variables/#innodb_buffer_pool_size&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#innodb_buffer_pool_size = 8G&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# this is only for embedded server&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;embedded]
+
+&lt;span class=&quot;c&quot;&gt;# This group is only read by MariaDB servers, not by MySQL.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# If you use the same .cnf file for MySQL and MariaDB,&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# you can put MariaDB-only options here&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mariadb]
+
+&lt;span class=&quot;c&quot;&gt;# This group is only read by MariaDB-10.5 servers.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# If you use the same .cnf file for MariaDB of different versions,&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# use this group for options that older servers don&apos;t understand&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mariadb-10.11]
+innodb_data_file_path          &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; ibdata1:1G  &lt;span class=&quot;c&quot;&gt;#:autoextend&lt;/span&gt;
+innodb_autoextend_increment    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 64          &lt;span class=&quot;c&quot;&gt;# Default: 64&lt;/span&gt;
+innodb_file_per_table          &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1
+innodb_file_format             &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; Barracuda   &lt;span class=&quot;c&quot;&gt;# Default: Antelope&lt;/span&gt;
+innodb_large_prefix            &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1           &lt;span class=&quot;c&quot;&gt;# Default: 0&lt;/span&gt;
+innodb_buffer_pool_size        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 768M        &lt;span class=&quot;c&quot;&gt;# Default: 128M (innodb_log_files_in_group * innodb_log_file_size &amp;lt; innodb_buffer_pool_size)&lt;/span&gt;
+innodb_buffer_pool_instances   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 16          &lt;span class=&quot;c&quot;&gt;# Default: autosized(32bit), 8(64bit) (innodb_buffer_pool_size &amp;gt;= 1G の場合にのみ有効)&lt;/span&gt;
+innodb_sort_buffer_size        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 8M         &lt;span class=&quot;c&quot;&gt;# Default: 1M (通常時:8M, ALTER TABLE 時:256M)&lt;/span&gt;
+innodb_thread_concurrency      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 4           &lt;span class=&quot;c&quot;&gt;# Default: 0 (Defalut 推奨? CPU数 * ディスク数 * 2 が最適?)&lt;/span&gt;
+innodb_thread_sleep_delay      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 10000       &lt;span class=&quot;c&quot;&gt;# Default: 10000 (単位:マイクロ秒)&lt;/span&gt;
+innodb_commit_concurrency      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 4           &lt;span class=&quot;c&quot;&gt;# Default: 0 (Default 推奨?)&lt;/span&gt;
+innodb_write_io_threads        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 8           &lt;span class=&quot;c&quot;&gt;# Default: 4 (1 - 64)&lt;/span&gt;
+innodb_read_io_threads         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 8           &lt;span class=&quot;c&quot;&gt;# Default: 4 (1 - 64)&lt;/span&gt;
+innodb_log_buffer_size         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 32M         &lt;span class=&quot;c&quot;&gt;# Default: 8M (通常時:32M, データインポート時:256M程度)&lt;/span&gt;
+innodb_log_group_home_dir      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /var/lib/mysql
+innodb_log_files_in_group      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 2           &lt;span class=&quot;c&quot;&gt;# Default: 2   (変更注意!)&lt;/span&gt;
+innodb_log_file_size           &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 256M        &lt;span class=&quot;c&quot;&gt;# Default: 48M (変更注意!)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# &amp;lt;= innodb_log_files_in_group  innodb_log_file_size &amp;lt; innodb_buffer_pool_size&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#    [変更方法](http://dev.mysq.com/doc/refman/5.6/ja/innodb-data-log-reconfiguration.html)&lt;/span&gt;
+innodb_max_dirty_pages_pct     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 90          &lt;span class=&quot;c&quot;&gt;# Default: 75(%)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# &amp;lt;= 小さい値：低速＆安定、大き 値：高速＆不安定(?)&lt;/span&gt;
+innodb_io_capacity             &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 256         &lt;span class=&quot;c&quot;&gt;# Default: 200 (100 - 2^64-1)&lt;/span&gt;
+innodb_io_capacity_max         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 512         &lt;span class=&quot;c&quot;&gt;# Default: 200 (100 - 2^64-1)&lt;/span&gt;
+innodb_lru_scan_depth          &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 2048     &lt;span class=&quot;c&quot;&gt;# Default: 1024 (100 - 2^32-1(32bit))&lt;/span&gt;
+innodb_flush_method            &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; O_DIRECT    &lt;span class=&quot;c&quot;&gt;# Default: Not set&lt;/span&gt;
+innodb_flush_log_at_trx_commit &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1           &lt;span class=&quot;c&quot;&gt;# Default: 1 (データインポート時: 2 or 0)&lt;/span&gt;
+innodb_doublewrite             &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1           &lt;span class=&quot;c&quot;&gt;# Default: 1 (データインポート時: 0)&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ibdata1&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ib_lofile0&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ib_logfile1&lt;/code&gt; のサイズを変更した場合は、MariaDB サーバ停止後に &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ibdata1&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ib_lofile0&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ib_logfile1&lt;/code&gt; を削除してから再度起動すること。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;9-サービスの自動起動設定&quot;&gt;9. サービスの自動起動設定&lt;/h3&gt;
+
+&lt;p&gt;インストール直後はマシン起動時に自動で MariaDB サーバが起動するようになっている。&lt;br /&gt;
+自動起動しないようにしたければ以下のようにする。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo systemctl disable mariadb
+Synchronizing state of mariadb.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install disable mariadb
+Removed &quot;/etc/systemd/system/multi-user.target.wants/mariadb.service&quot;.
+
+$ systemctl is-enabled mariadb
+disabled
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mariadb&lt;/code&gt; は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysqld&lt;/code&gt; でもよい（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysql&lt;/code&gt; はダメ）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;10-ファイアウォールufwの設定&quot;&gt;10. ファイアウォール(ufw)の設定&lt;/h3&gt;
+
+&lt;p&gt;リモートで MariaDB サーバにアクセスする場合（GUI ツールを使用する場合等）は、TCP ポート 3306 を開放する必要がある。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo ufw allow 3306/tcp
+Rule added
+
+$ sudo ufw status
+    :
+3306/tcp                   ALLOW       Anywhere
+    :
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;11-参考サイト&quot;&gt;11. 参考サイト&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mariadb.org/download/?t=repo-config&amp;amp;d=Debian+12+%22Bookworm%22&amp;amp;v=10.11&amp;amp;r_m=yamagata-university&quot; title=&quot;Download MariaDB Server - MariaDB.org&quot;&gt;Download MariaDB Server - MariaDB.org&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mariadb.com/kb/en/about-mroonga/&quot; title=&quot;About Mroonga - MariaDB Knowledge Base&quot;&gt;About Mroonga - MariaDB Knowledge Base&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Linux" /><category term="Debian" /><category term="MariaDB" /><summary type="html">Debian GNU/Linux 12 (bookworm) 上に DB サーバ MariaDB（10.11系）、全文検索エンジン Mroonga を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">2023年11月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2023/12/01/blog-access/" rel="alternate" type="text/html" title="2023年11月 - OS・ブラウザ別アクセス状況！" /><published>2023-12-01T00:00:00+09:00</published><updated>2023-12-01T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/12/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2023/12/01/blog-access/">&lt;p&gt;12月になりましたので、先月11月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -1564,137 +2098,4 @@ root:       masaru
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><summary type="html">Debian GNU/Linux 12 (bookworm) に SMTP サーバ Postfix を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - Windows ファイルサーバ Samba 構築！</title><link href="https://komasaru.github.io/2023/10/04/debian-12-samba-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - Windows ファイルサーバ Samba 構築！" /><published>2023-10-04T00:00:00+09:00</published><updated>2023-10-04T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/10/04/debian-12-samba-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/10/04/debian-12-samba-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に Windows 用ファイルサーバ Samba を構築する方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;接続可能なマシンのネットワークは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.0/24&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;ドメイン名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mk-mode.com&lt;/code&gt;、サーバホスト名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vbox&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;全ユーザ共有ディレクトリは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/share&lt;/code&gt; とする。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-samba-サーバのインストール&quot;&gt;1. Samba サーバのインストール&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt install -y samba
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-共有ディレクトリの作成&quot;&gt;2. 共有ディレクトリの作成&lt;/h3&gt;
-
-&lt;p&gt;全ユーザが共有でフルアクセス可能なディレクトリを作成する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# mkdir /home/share
-# chown nobody:nogroup /home/share
-# chmod 777 /home/share
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;3-設定ファイルの編集&quot;&gt;3. 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;次のように設定する。&lt;br /&gt;
-※実際には、記述のある行の後ろにコメント（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#&lt;/code&gt; で始まる文字列）を入れないこと。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/samba/smb.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[global]
-   unix charset = UTF-8            # &amp;lt;= 追加
-   dos charset  = CP932            # &amp;lt;= 追加
-
-   workgroup = WORKGROUP           # &amp;lt;= Windows のワークグループ名に合わせる
-
-   interfaces = 127.0.0.0/8 192.168.11.0/24  # &amp;lt;= 接続許可するインターフェースを指定
-   bind interfaces only = yes      # &amp;lt;= interfaces 項目に指定したホストだけに接続を限定する
-
-   map to guest = bad user         # &amp;lt;= 未登録アカウントで接続された場合にゲストとして扱う
-
-   load printers = no              # &amp;lt;= プリンタを使用していない場合
-   disable spoolss = yes           # &amp;lt;= プリンタを使用していない場合
-
-   printing = bsd                  # &amp;lt;= プリンタを使用していない場合
-
-# 最終行に追加
-[share]                            # &amp;lt;= 共有名
-   path           = /home/share    # &amp;lt;= 共有ディレクトリ
-   writable       = yes            # &amp;lt;= 書込可
-   guest ok       = yes            # &amp;lt;= ゲストユーザー可
-   guest only     = yes            # &amp;lt;= 全てゲストとして扱う
-   create mode    = 0777           # &amp;lt;= ファイル作成はフル権限で
-   directory mode = 0777           # &amp;lt;= ディレクトリ作成はフル権限で
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-samba-サーバの再起動&quot;&gt;4. Samba サーバの再起動&lt;/h3&gt;
-
-&lt;p&gt;設定を反映させるため、Samba サーバを再起動する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart smbd
-# systemctl restart nmbd
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-ファイアウォール設定&quot;&gt;5. ファイアウォール設定&lt;/h3&gt;
-
-&lt;p&gt;ファイアウォールを設定している場合、Samba サーバが使用するポート（udp:137,138, tcp:139,445）を開放する必要がある。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 137,138/udp
-Rule added
-
-# ufw allow 139,445/tcp
-Rule added
-
-# ufw status
-     :
-     :
-137,138/udp                ALLOW       Anywhere
-139,445/tcp                ALLOW       Anywhere
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;6-動作確認&quot;&gt;6. 動作確認&lt;/h3&gt;
-
-&lt;p&gt;クライアントマシンから Samba サーバの &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/share&lt;/code&gt; ディレクトリにアクセスし、ファイル操作が可能か確認する。&lt;/p&gt;
-
-&lt;h3 id=&quot;7-アクセス権限付き設定&quot;&gt;7. アクセス権限付き設定&lt;/h3&gt;
-
-&lt;p&gt;通常、中規模以下のネットワークでは上記のようなフルアクセスで問題ないが、大規模ネットワークやよりセキュアに構築したければ、アクセス権限を設定する。&lt;br /&gt;
-以下、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hoge&lt;/code&gt; グループに属するユーザのみが、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/hoge&lt;/code&gt; ディレクトリにアクセスできるようにする設定例。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# groupadd hoge          # &amp;lt;= グループ追加
-# mkdir /home/hoge       # &amp;lt;= 専用ディレクトリ作成
-# chgrp hoge /home/hoge  # &amp;lt;= ディレクトリに所有グループ設定
-# chmod 770 /home/hoge   # &amp;lt;= 専用ディレクトリに権限付与
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/samba/smb.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;security = user  # &amp;lt; = ユーザ認証モード
-
-# 最終行に追加
-[Hoge]
-   path = /home/hoge
-   writable = yes
-   create mode = 0770
-   directory mode = 0770
-   share modes = yes
-   guest ok = no        # &amp;lt; = ゲストユーザ不許可
-   valid users = @hoge  # &amp;lt; = hoge グループのみ許可
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# smbpasswd -a fuga       # &amp;lt; = Samba アクセスユーザ追加登録
-New SMB password:         # &amp;lt; = パスワード設定
-Retype new SMB password:  # &amp;lt; = パスワード再入力
-# usermod -G hoge fuga    # &amp;lt; = hoge グループに fuga ユーザ追加
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# /etc/init.d/samba restart  # &amp;lt; = Samba 再起動
-Stopping Samba daemons: nmbd smbd.
-Starting Samba daemons: nmbd smbd.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><summary type="html">Debian GNU/Linux 12 (bookworm) に Windows 用ファイルサーバ Samba を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><summary type="html">Debian GNU/Linux 12 (bookworm) に SMTP サーバ Postfix を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
