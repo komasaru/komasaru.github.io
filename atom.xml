@@ -1,4 +1,134 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-12-05T21:28:52+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - MariaDB 10.11 サーバ構築（ソースビルド）！</title><link href="https://komasaru.github.io/2023/12/06/debian-12-mariadb-mroonga-installation-by-apt/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - MariaDB 10.11 サーバ構築（ソースビルド）！" /><published>2023-12-06T00:00:00+09:00</published><updated>2023-12-06T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/12/06/debian-12-mariadb-mroonga-installation-by-apt</id><content type="html" xml:base="https://komasaru.github.io/2023/12/06/debian-12-mariadb-mroonga-installation-by-apt/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) 上に DB サーバ MariaDB（10.11系）、全文検索エンジン Mroonga を構築する方法についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-12-12T21:38:21+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！</title><link href="https://komasaru.github.io/2023/12/13/debian-12-nginx-installation-by-official-apt/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！" /><published>2023-12-13T00:00:00+09:00</published><updated>2023-12-13T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/12/13/debian-12-nginx-installation-by-official-apt</id><content type="html" xml:base="https://komasaru.github.io/2023/12/13/debian-12-nginx-installation-by-official-apt/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に Web サーバ Nginx を Nginx 公式リポジトリを使用して導入する方法についての記録です。&lt;/p&gt;
+
+&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
+（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;0-前提条件&quot;&gt;0 前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
+  &lt;li&gt;接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。&lt;/li&gt;
+  &lt;li&gt;Debian 公式リポジトリの Nginx はバージョンが古いため、Nginx リポジトリを使用して 1.24.0（当記事執筆時点最新安定版）をインストールする。&lt;/li&gt;
+  &lt;li&gt;実際に運用する際は、ドキュメントルートを変更する等、設定を編集すること。&lt;/li&gt;
+  &lt;li&gt;一般ユーザでの作業を想定。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1-必要パッケージのインストール&quot;&gt;1. 必要パッケージのインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo apt -y install curl gnupg2 ca-certificates lsb-release debian-archive-keyring
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-公式-nginx-署名キーのインポート&quot;&gt;2. 公式 Nginx 署名キーのインポート&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
+    | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg &amp;gt;/dev/null
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3-署名キーの検証&quot;&gt;3. 署名キーの検証&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ gpg --dry-run --quiet --no-keyring --import --import-options import-show /usr/share/keyrings/nginx-archive-keyring.gpg 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;出力されるフィンガープリンが以下と一致することを確認する。&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pub   rsa2048 2011-08-19 [SC] [expires: 2024-06-14]
+      573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
+uid                      nginx signing key &amp;lt;signing-key@nginx.com&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;4-apt-リポジトリの設定&quot;&gt;4. apt リポジトリの設定&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ echo &quot;deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
+    http://nginx.org/packages/debian `lsb_release -cs` nginx&quot; \
+    | sudo tee /etc/apt/sources.list.d/nginx.list
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;5-apt-リポジトリの優先度設定&quot;&gt;5. apt リポジトリの優先度設定&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ echo -e &quot;Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n&quot; \
+    | sudo tee /etc/apt/preferences.d/99nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;6-nginx-のインストール&quot;&gt;6. Nginx のインストール&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo apt -y update
+$ sudo apt -y install nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7-インストールの確認&quot;&gt;7. インストールの確認&lt;/h3&gt;
+
+&lt;p&gt;Nginx がインストールできたか確認してみる。(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-v&lt;/code&gt; の代わりに &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-V&lt;/code&gt; オプションを使用すると詳細に表示される）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo nginx -v
+nginx version: nginx/1.24.0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;8-設定&quot;&gt;8. 設定&lt;/h3&gt;
+
+&lt;p&gt;今回のインストール環境の場合、基本的（グローバル）な設定のファイルは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/nginx.conf&lt;/code&gt; で、このファイルから &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/conf.d&lt;/code&gt; ディレクトリ配下の設定ファイルを読み込む形式となっている。&lt;br /&gt;
+取り急ぎ、デフォルトのままとした。&lt;br /&gt;
+詳細な設定は、「&lt;a href=&quot;https://www.mk-mode.com/blog/tags/nginx/&quot; title=&quot;Tag: Nginx - mk-mode BLOG&quot;&gt;当ブログ Nginx 関連の過去記事&lt;/a&gt;」を参照。&lt;/p&gt;
+
+&lt;h3 id=&quot;9-ファイアウォールufwの設定&quot;&gt;9. ファイアウォール(ufw)の設定&lt;/h3&gt;
+
+&lt;p&gt;TCP ポート 80 を開放する必要がある。（HTTPS の場合は TCP: 443）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo ufw allow 80/tcp
+Rule added
+
+$ sudo ufw status
+    :
+80/tcp                     ALLOW       Anywhere
+    :
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;10-サーバの起動&quot;&gt;10. サーバの起動&lt;/h3&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo systemctl start nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;11-起動確認&quot;&gt;11. 起動確認&lt;/h3&gt;
+
+&lt;p&gt;ブラウザで &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://＜サーバアドレス or ホスト名＞/&lt;/code&gt; にアクセスしてみる。
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Welcome to nginx!&lt;/code&gt; と以下5行くらい表示されば成功。&lt;/p&gt;
+
+&lt;h3 id=&quot;12-自動起動の設定&quot;&gt;12. 自動起動の設定&lt;/h3&gt;
+
+&lt;p&gt;マシン起動時に自動で Nginx を起動させるには以下のようにする。（インストール直後は自動起動するようになっているはずなので、そうなっていない場合）&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo systemctl enable nginx
+Synchronizing state of nginx.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable nginx
+Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /lib/systemd/system/nginx.service.
+
+$ sudo systemctl is-enabled nginx
+enabled
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nginx&lt;/code&gt; はネイティブなサービスでないため、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;systemd-sysv-install&lt;/code&gt; にリダイレクトされる）&lt;/p&gt;
+
+&lt;p&gt;自動起動しないようにするには、&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl disable nginx
+Synchronizing state of nginx.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install disable nginx
+Removed &quot;/etc/systemd/system/multi-user.target.wants/nginx.service&quot;.
+
+# systemctl is-enabled nginx
+disabled
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;13-参考サイト&quot;&gt;13. 参考サイト&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://nginx.org/en/linux_packages.html&quot; title=&quot;nginx: Linux packages&quot;&gt;nginx: Linux packages&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Nginx" /><summary type="html">Debian GNU/Linux 12 (bookworm) に Web サーバ Nginx を Nginx 公式リポジトリを使用して導入する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - MariaDB 10.11 サーバ構築（ソースビルド）！</title><link href="https://komasaru.github.io/2023/12/06/debian-12-mariadb-mroonga-installation-by-apt/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - MariaDB 10.11 サーバ構築（ソースビルド）！" /><published>2023-12-06T00:00:00+09:00</published><updated>2023-12-06T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/12/06/debian-12-mariadb-mroonga-installation-by-apt</id><content type="html" xml:base="https://komasaru.github.io/2023/12/06/debian-12-mariadb-mroonga-installation-by-apt/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) 上に DB サーバ MariaDB（10.11系）、全文検索エンジン Mroonga を構築する方法についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -1916,186 +2046,4 @@ body_checks   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; regexp:/etc/postfix
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><summary type="html">Debian GNU/Linux 12 (bookworm) 上の SMTP サーバ Postfix で受信を拒否する設定についての記録です。 （当然ながら、興味がなければスルーしてください）</summary></entry><entry><title type="html">Debian 12 (bookworm) - SMTP サーバ Postfix 構築！</title><link href="https://komasaru.github.io/2023/10/11/debian-12-postfix-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - SMTP サーバ Postfix 構築！" /><published>2023-10-11T00:00:00+09:00</published><updated>2023-10-11T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/10/11/debian-12-postfix-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/10/11/debian-12-postfix-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に SMTP サーバ Postfix を構築する方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;接続可能なマシンのネットワークは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.0/24&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;ドメイン名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mk-mode.com&lt;/code&gt;、サーバホスト名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mail&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-postfix-のインストール&quot;&gt;1. Postfix のインストール&lt;/h3&gt;
-
-&lt;p&gt;SMTP サーバ Postfix を以下のようにしてインストールする。&lt;br /&gt;
-途中でどの設定を選択するか確認されるが、後で設定を行うので「設定なし」(No Configuration)を選択する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install postfix sasl2-bin
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-設定ファイルの編集&quot;&gt;2. 設定ファイルの編集&lt;/h3&gt;
-
-&lt;p&gt;設定ファイル雛形から &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cf&lt;/code&gt; を複製後、編集する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cp /usr/share/postfix/main.cf.dist /etc/postfix/main.cf
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;もしくは、以下のようにしてもよい。（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cf.dist&lt;/code&gt; と &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.cf.proto&lt;/code&gt; は内容が同じようなので）&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cp /etc/postfix/main.cf{.proto,}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/main.cf&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mail_owner &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; postfix                   &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メール所有者&lt;/span&gt;
-
-myhostname &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; mail.mk-mode.com          &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ホスト名&lt;/span&gt;
-
-mydomain &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; mk-mode.com                 &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ドメイン名&lt;/span&gt;
-
-myorigin &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;                   &lt;span class=&quot;c&quot;&gt;# &amp;lt;= ローカルからのメール送信時の送信元メールアドレス@以降にドメイン名を付加&lt;/span&gt;
-
-inet_interfaces &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; all                  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 外部からのメール受信を許可&lt;/span&gt;
-
-mydestination &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$myhostname&lt;/span&gt;, localhost.&lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;, localhost, &lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;, mail.&lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;, vbox.&lt;span class=&quot;nv&quot;&gt;$mydomain&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 自ドメイン宛メールを受信できるようにする&lt;/span&gt;
-
-local_recipient_maps &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; unix:passwd.byname &lt;span class=&quot;nv&quot;&gt;$alias_maps&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= サーバにアカウントがあれば、その人宛に届く&lt;/span&gt;
-
-mynetworks &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 127.0.0.0/8               &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 自ネットワーク&lt;/span&gt;
-
-alias_maps &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;hash&lt;/span&gt;:/etc/aliases         &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 受信メールの再転送先ファイル&lt;/span&gt;
-
-alias_database &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;hash&lt;/span&gt;:/etc/aliases     &lt;span class=&quot;c&quot;&gt;# &amp;lt;= newaliasesコマンドの実行対象&lt;/span&gt;
-
-home_mailbox &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; Maildir/                &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メールボックス形式を Maildir 形式に&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)&lt;/span&gt;
-smtpd_banner &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$myhostname&lt;/span&gt; ESMTP       &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メールサーバーソフト名の隠蔽化&lt;/span&gt;
-
-sendmail_path &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /usr/sbin/postfix      &lt;span class=&quot;c&quot;&gt;# &amp;lt;= Postfix sendmail コマンドの場所&lt;/span&gt;
-
-newaliases_path &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /usr/bin/newaliases  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= Postfix newaliases コマンドの場所&lt;/span&gt;
-
-mailq_path &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /usr/bin/mailq            &lt;span class=&quot;c&quot;&gt;# &amp;lt;= Postfix mailq コマンドの場所&lt;/span&gt;
-
-setgid_group &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; postdrop                &lt;span class=&quot;c&quot;&gt;# &amp;lt;= set-gid Postfix コマンドおよびグループ書き込み可能な Postfix ディレクトリを所有するグループ&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#html_directory =                      # &amp;lt;= コメント化&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#manpage_directory =                   # &amp;lt;= コメント化&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#sample_directory =                    # &amp;lt;= コメント化&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;#readme_directory =                    # &amp;lt;= コメント化&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# 最終行へ追加&lt;/span&gt;
-message_size_limit &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 10485760          &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 送受信メールサイズを10Mに制限&lt;/span&gt;
-mailbox_size_limit &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1073741824        &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メールボックスサイズを1Gに制限&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# SMTP-Auth用&lt;/span&gt;
-smtpd_sasl_type &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; dovecot
-smtpd_sasl_path &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; private/auth
-smtpd_sasl_auth_enable &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;yes
-&lt;/span&gt;smtpd_sasl_security_options &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; noanonymous
-smtpd_sasl_local_domain &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$myhostname&lt;/span&gt;
-smtpd_client_restrictions &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; permit_mynetworks,reject_unknown_client,permit
-smtpd_recipient_restrictions &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; permit_mynetworks,permit_auth_destination,permit_sasl_authenticated,reject
-
-&lt;span class=&quot;c&quot;&gt;# 特定ドメイン／アドレス受信拒否（必要であれば）&lt;/span&gt;
-smtpd_sender_restrictions &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; reject_unknown_sender_domain, reject_non_fqdn_sender, &lt;span class=&quot;nb&quot;&gt;hash&lt;/span&gt;:/etc/postfix/reject_sender
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h4 id=&quot;3-1-上記で特定のドメインアドレスを受信拒否する設定にした場合&quot;&gt;3-1. 上記で特定のドメイン／アドレスを受信拒否する設定にした場合&lt;/h4&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/reject_sender&lt;/code&gt; を作成して、設定したいドメイン／アドレスを記述する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/reject_sender&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;xxxxxxxxxx.xxx REJECT
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;REJECT&lt;/code&gt;: 拒否をし、その旨のメッセージを返信する&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DISCARD&lt;/code&gt;: 拒否をし、その旨のメッセージも返信しない&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;そして、ハッシュマップの生成。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# postmap /etc/postfix/reject_sender
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;最後に、 Postfix を再起動（or リロード）。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart postfix
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;3-saslauthd-の編集&quot;&gt;3. saslauthd の編集&lt;/h3&gt;
-
-&lt;p&gt;マシン起動時に saslauthd を自動起動させるために “saslauthd” を編集する。&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/saslauthd&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;START&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# 5行目辺りに追記&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;これをしないと saslauthd 起動時に以下のような警告が出力される。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;To enable saslauthd, edit /etc/default/saslauthd and set START=yes (warning).
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-saslauthd-の再起動&quot;&gt;4. saslauthd の再起動&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart saslauthd
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-postfix-の再起動&quot;&gt;5. Postfix の再起動&lt;/h3&gt;
-
-&lt;p&gt;設定を反映させるためにエイリアスの変更を反映させ、 Postfix を再起動する。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# newaliases
-# systemctl restart postfix
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;6-ファイアウォールufwの設定&quot;&gt;6. ファイアウォール(ufw)の設定&lt;/h3&gt;
-
-&lt;p&gt;実際に運用する場合は、TCP ポート 25(SMTP) を開放する必要がある。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 25/tcp
-Rule added
-
-# ufw status
-    :
-25/tcp                     ALLOW       Anywhere
-    :
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-メールの転送設定&quot;&gt;7. メールの転送設定&lt;/h3&gt;
-
-&lt;p&gt;root や postmaster 等宛に届いたメールを一般ユーザに転送するには &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/aliases&lt;/code&gt; を編集する。&lt;br /&gt;
-以下は一例。（最近は最初から &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;postomaster&lt;/code&gt; を &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;root&lt;/code&gt; に、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;root&lt;/code&gt; を一般ユーザに転送するようになっているかも知れない）&lt;/p&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/aliases&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;postmaster: root
-root:       masaru
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;この設定を有効にするために以下のようにする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# newaliases                 # &amp;lt;= エイリアスの即時反映
-# systemctl restart postfix  # &amp;lt;= Postfix の再起動
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/postfix/main.cf&lt;/code&gt; 内で説明されているとおり、 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;newaliases&lt;/code&gt; の代わりに &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;postalias /etc/aliases&lt;/code&gt; でもよい。&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><summary type="html">Debian GNU/Linux 12 (bookworm) に SMTP サーバ Postfix を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><summary type="html">Debian GNU/Linux 12 (bookworm) 上の SMTP サーバ Postfix で受信を拒否する設定についての記録です。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
