@@ -12658,4 +12658,10 @@ var store = [{
         "tags": ["Debian","Linux","Nginx","SSL"],
         "url": "/2023/12/21/debian-12-nginx-ssl-connection-setting/",
         "teaser": null
+      },{
+        "title": "2023年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）",
+        "excerpt":"旧年明けまして、新年おめでとうございます。 旧年中はお世話になりました。 本年もどうぞよろしくお願いします。 話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 10,122 77.8496 Mac OS 1,862 14.3209 Linux 430 3.3072 Android 310 2.3842 unknown 162 1.2460 Ubuntu Linux 113 0.8691 OpenBSD 1 0.0077 FreeBSD 1 0.0077 Fedora Linux 1 0.0077 合　計 13,002 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2024/01/01/blog-access/",
+        "teaser": null
       }]

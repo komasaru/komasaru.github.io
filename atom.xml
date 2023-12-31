@@ -1,4 +1,381 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2023-12-20T22:44:37+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 12 (bookworm) - Web サーバ Nginx で SSL 接続！</title><link href="https://komasaru.github.io/2023/12/21/debian-12-nginx-ssl-connection-setting/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - Web サーバ Nginx で SSL 接続！" /><published>2023-12-21T20:00:00+09:00</published><updated>2023-12-21T20:00:00+09:00</updated><id>https://komasaru.github.io/2023/12/21/debian-12-nginx-ssl-connection-setting</id><content type="html" xml:base="https://komasaru.github.io/2023/12/21/debian-12-nginx-ssl-connection-setting/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2024-01-01T00:03:43+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">2023年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）</title><link href="https://komasaru.github.io/2024/01/01/blog-access/" rel="alternate" type="text/html" title="2023年12月 - OS・ブラウザ別アクセス状況！（＆新年のご挨拶）" /><published>2024-01-01T00:00:00+09:00</published><updated>2024-01-01T00:00:00+09:00</updated><id>https://komasaru.github.io/2024/01/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2024/01/01/blog-access/">&lt;p&gt;旧年明けまして、新年おめでとうございます。&lt;/p&gt;
+
+&lt;p&gt;旧年中はお世話になりました。 本年もどうぞよろしくお願いします。&lt;/p&gt;
+
+&lt;p&gt;話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録）&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;1-アクセスをos別に集計&quot;&gt;1. アクセスをOS別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;10,122&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;77.8496&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,862&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;14.3209&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;430&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.3072&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;310&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.3842&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;162&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.2460&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;113&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.8691&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;OpenBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0077&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0077&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0077&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;13,002&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;2-アクセスをosバージョン別に集計&quot;&gt;2. アクセスをOS・バージョン別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;OS&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;10&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;10,079&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;77.5188&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mac OS&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;X&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,862&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;14.3209&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;430&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.3072&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Android&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;310&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.3842&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;162&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.2460&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Ubuntu Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;113&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.8691&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;25&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.1923&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;8.1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;10&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0769&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;XP&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0538&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;OpenBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0077&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;FreeBSD&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0077&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Fedora Linux&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0077&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Windows&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Vista&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0077&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;13,002&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;3-アクセスをブラウザ別に集計&quot;&gt;3. アクセスをブラウザ別に集計&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;10,983&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;84.4716&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;989&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7.6065&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;865&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6.6528&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;163&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.2537&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Internet Explorer&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0077&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;unknown&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0077&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;13,002&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;4-アクセスをブラウザバージョン別に集計上位20件&quot;&gt;4. アクセスをブラウザ・バージョン別に集計（上位20件）&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;ブラウザ&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Version&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;PageViews&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;比率(%)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;118.0.0.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4,086&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;31.4259&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;120.0.0.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3,995&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;30.7260&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;119.0.0.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,474&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;19.0278&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;604.1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;609&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4.6839&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;120.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;404&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.1072&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;605.1.15&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;273&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.0997&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Netscape Navigator&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;5.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;163&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.2537&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;115.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;154&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.1844&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;121.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;137&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.0537&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;538.1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;85&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.6537&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;117.0.0.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;64&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.4922&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;116.0.0.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;59&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.4538&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;119.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;49&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3769&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;109.0.0.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;46&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3538&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;114.0.0.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;33&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.2538&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;102.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;24&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.1846&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;112.0.0.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;24&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.1846&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Safari&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;9537.53&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;21&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.1615&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Chrome&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;115.0.0.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;20&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.1538&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Mozilla Firefox&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;116.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;16&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.1231&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;：&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;合　計&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;13,002&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;100.0000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">旧年明けまして、新年おめでとうございます。 旧年中はお世話になりました。 本年もどうぞよろしくお願いします。 話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">Debian 12 (bookworm) - Web サーバ Nginx で SSL 接続！</title><link href="https://komasaru.github.io/2023/12/21/debian-12-nginx-ssl-connection-setting/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - Web サーバ Nginx で SSL 接続！" /><published>2023-12-21T20:00:00+09:00</published><updated>2023-12-21T20:00:00+09:00</updated><id>https://komasaru.github.io/2023/12/21/debian-12-nginx-ssl-connection-setting</id><content type="html" xml:base="https://komasaru.github.io/2023/12/21/debian-12-nginx-ssl-connection-setting/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。&lt;/p&gt;
 
 &lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
 （当然ながら、興味がなければスルーしてください）&lt;/p&gt;
@@ -2022,100 +2399,4 @@ Rule added
 
 &lt;hr /&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">11月になりましたので、先月10月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry><entry><title type="html">Debian 12 (bookworm) - POP/IMAP サーバ Dovecot 構築！</title><link href="https://komasaru.github.io/2023/10/25/debian-12-dovecot-installation/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - POP/IMAP サーバ Dovecot 構築！" /><published>2023-10-25T00:00:00+09:00</published><updated>2023-10-25T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/10/25/debian-12-dovecot-installation</id><content type="html" xml:base="https://komasaru.github.io/2023/10/25/debian-12-dovecot-installation/">&lt;p&gt;Debian GNU/Linux 12 (bookworm) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。&lt;/p&gt;
-
-&lt;p&gt;以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。&lt;br /&gt;
-（当然ながら、興味がなければスルーしてください）&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;0-前提条件&quot;&gt;0. 前提条件&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。&lt;/li&gt;
-  &lt;li&gt;接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。&lt;/li&gt;
-  &lt;li&gt;接続可能なマシンのネットワークは &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;192.168.11.0/24&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;ドメイン名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mk-mode.com&lt;/code&gt;、サーバホスト名は &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vbox&lt;/code&gt; を想定。&lt;/li&gt;
-  &lt;li&gt;root ユーザでの作業を想定。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;1-dovecot-のインストール&quot;&gt;1. Dovecot のインストール&lt;/h3&gt;
-
-&lt;p&gt;POP/IMAP サーバ Dovecot を以下のようにしてインストールする。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# apt -y install dovecot-common dovecot-pop3d dovecot-imapd
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-設定ファイル-dovecotconf-の編集&quot;&gt;2. 設定ファイル dovecot.conf の編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/dovecot/dovecot.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;listen &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= IPv6を使用しない場合&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;3-設定ファイル-10-authconf-の編集&quot;&gt;3. 設定ファイル 10-auth.conf の編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/dovecot/conf.d/10-auth.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;disable_plaintext_auth &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; no    &lt;span class=&quot;c&quot;&gt;# &amp;lt;= プレーンテキスト認証も許可&lt;/span&gt;
-
-auth_mechanisms &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; plain login  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 認証時のパスフレーズ送信方式&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;4-設定ファイル-10-mailconf-の編集&quot;&gt;4. 設定ファイル 10-mail.conf の編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/dovecot/conf.d/10-mail.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mail_location &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; maildir:~/Maildir  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= メールボックス形式をMaildir形式&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;5-設定ファイル-10-masterconf-の編集&quot;&gt;5. 設定ファイル 10-master.conf の編集&lt;/h3&gt;
-
-&lt;p&gt;File: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/dovecot/conf.d/10-master.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Postfix smtp-auth&lt;/span&gt;
-unix_listener /var/spool/postfix/private/auth &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
-    mode &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0666                                  &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
-    user &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; postfix                               &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（ユーザ）&lt;/span&gt;
-    group &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; postfix                              &lt;span class=&quot;c&quot;&gt;# &amp;lt;= 追加（グループ）&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;                                                &lt;span class=&quot;c&quot;&gt;# &amp;lt;= コメント解除&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;6-dovecot-の再起動&quot;&gt;6. Dovecot の再起動&lt;/h3&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# systemctl restart dovecot
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;7-ファイアウォールufwの設定&quot;&gt;7. ファイアウォール(ufw)の設定&lt;/h3&gt;
-
-&lt;p&gt;実際に運用する場合は、TCPポート 110(POP3), 143(IMAP) を開放する必要がある。&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# ufw allow 110,143/tcp
-Rule added
-
-# ufw status
-    :
-110,143/tcp                ALLOW       Anywhere
-    :
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;8-メールソフトの設定&quot;&gt;8. メールソフトの設定&lt;/h3&gt;
-
-&lt;p&gt;Postfix, Dovecot 構築が完了すれば、メールソフトでメールの送受信が可能になる。&lt;br /&gt;
-メールソフトでは以下のように設定すればよい。&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;メールアドレス：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;アカウント名@メールホスト名&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;パスワード：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;アカウントのパスワード&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;受信メールサーバ：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;POP&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IMAP&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;受信メールサーバアドレス：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;メールホスト名&lt;/code&gt;（内部なら &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;サーバローカルIPアドレス&lt;/code&gt; でもよい）&lt;/li&gt;
-  &lt;li&gt;受信メールサーバポート番号：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;110&lt;/code&gt;(POP) or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;143&lt;/code&gt;(IMAP)&lt;/li&gt;
-  &lt;li&gt;ログオンユーザ：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;アカウント名&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;送信メールサーバアドレス：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;メールホスト名&lt;/code&gt;（内部なら &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;サーバローカルIPアドレス&lt;/code&gt; でもよい）&lt;/li&gt;
-  &lt;li&gt;送信メールサーバポート番号：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;25&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;送信認証：「必要」&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Dovecot" /><summary type="html">Debian GNU/Linux 12 (bookworm) に POP/IMAP サーバ Dovecot を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）</summary></entry></feed>
+&lt;p&gt;以上。&lt;/p&gt;</content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html">11月になりましたので、先月10月分の当ブログアクセス状況を公開します。（※自分用の記録）</summary></entry></feed>
