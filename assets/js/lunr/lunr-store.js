@@ -12670,4 +12670,22 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2024/02/01/blog-access/",
         "teaser": null
+      },{
+        "title": "2024年2月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"3月になりましたので、先月2月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 9,370 78.8322 Mac OS 1,476 12.4180 Android 441 3.7102 Linux 400 3.3653 Ubuntu Linux 100 0.8413 unknown 97 0.8161 FreeBSD 2 0.0168 合　計 11,886 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 9,338 78.5630 Mac OS X 1,476 12.4180 Android unknown 441...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2024/03/01/blog-access/",
+        "teaser": null
+      },{
+        "title": "2024年3月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"4月になりましたので、先月3月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 5,388 72.9389 Mac OS 1,246 16.8675 Linux 329 4.4538 Android 244 3.3031 unknown 117 1.5839 Ubuntu Linux 61 0.8258 FreeBSD 2 0.0271 合　計 7,387 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 5,343 72.3298 Mac OS X 1,246 16.8675 Linux unknown 329...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2024/04/30/blog-access/",
+        "teaser": null
+      },{
+        "title": "2024年4月 - OS・ブラウザ別アクセス状況！",
+        "excerpt":"5月になりましたので、先月4月分の当ブログアクセス状況を公開します。（※自分用の記録） 1. アクセスをOS別に集計 OS PageViews 比率(%) Windows 4,327 72.5641 Mac OS 1,009 16.9210 Linux 281 4.7124 Android 207 3.4714 unknown 77 1.2913 Ubuntu Linux 60 1.0062 FreeBSD 1 0.0168 Fedora Linux 1 0.0168 合　計 5,963 100.0000 2. アクセスをOS・バージョン別に集計 OS Version PageViews 比率(%) Windows 10 4,314 72.3461 Mac OS X 1,009...","categories": ["ブログ"],
+        "tags": ["Jekyll"],
+        "url": "/2024/05/01/blog-access/",
+        "teaser": null
       }]
