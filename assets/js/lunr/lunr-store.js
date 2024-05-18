@@ -12688,4 +12688,10 @@ var store = [{
         "tags": ["Jekyll"],
         "url": "/2024/05/01/blog-access/",
         "teaser": null
+      },{
+        "title": "Debian 12 (bookworm) - Ruby 3.3 インストール（ソースビルド）！",
+        "excerpt":"Debian GNU/Linux 12 (bookworm) に Ruby 3.3 をソースをビルドしてインストール方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。 接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。 インストールするは当記事執筆時点で最新の Ruby は 3.3.1. root ユーザでの作業を想定。 1. 必要パッケージのインストール Ruby のインストールに必要なパッケージを予めインストールする。（他に必要なものがあればインストールする） # apt -y install gcc autoconf bison build-essential \\ libffi-dev zlib1g-dev libssl-dev libreadline-dev libgdbm-dev \\...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","Ruby"],
+        "url": "/2024/05/18/debian-12-ruby-3-3-installation-by-src/",
+        "teaser": null
       }]
