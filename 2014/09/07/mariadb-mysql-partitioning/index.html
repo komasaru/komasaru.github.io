@@ -428,11 +428,11 @@
 
 <p>（<code class="language-plaintext highlighter-rouge">MAXVALUE</code> を使用しなかった場合、条件に一致しないレコードが出現した場合にエラーとなる）</p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">RANGE</span> <span class="n">COLUMNS</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="p">(</span>
-    <span class="n">PARTITION</span> <span class="n">p00000</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="mi">10000</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p10000</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="mi">20000</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p20000</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="mi">30000</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p99999</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="k">MAXVALUE</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="k">PARTITION</span> <span class="k">BY</span> <span class="k">RANGE</span> <span class="n">COLUMNS</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="p">(</span>
+    <span class="k">PARTITION</span> <span class="n">p00000</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="mi">10000</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p10000</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="mi">20000</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p20000</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="mi">30000</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p99999</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="k">MAXVALUE</span>
 <span class="p">);</span>
 </code></pre></div></div>
 
@@ -441,11 +441,11 @@
 <p>datetime 型だが int 型にキャストして利用する例。<br />
 （<code class="language-plaintext highlighter-rouge">MAXVALUE</code> を使用しなかった場合、条件に一致しないレコードが出現した場合にエラーとなる）</p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">RANGE</span> <span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">recv_at</span><span class="p">))</span> <span class="p">(</span>
-    <span class="n">PARTITION</span> <span class="n">p2012</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="mi">2013</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p2013</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="mi">2014</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p2014</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="mi">2015</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p9999</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="k">MAXVALUE</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="k">PARTITION</span> <span class="k">BY</span> <span class="k">RANGE</span> <span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">recv_at</span><span class="p">))</span> <span class="p">(</span>
+    <span class="k">PARTITION</span> <span class="n">p2012</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="mi">2013</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p2013</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="mi">2014</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p2014</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="mi">2015</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p9999</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="k">MAXVALUE</span>
 <span class="p">);</span>
 </code></pre></div></div>
 
@@ -454,48 +454,48 @@
 <p>datetime 型をそのまま利用する例。<br />
 （<code class="language-plaintext highlighter-rouge">MAXVALUE</code> を使用しなかった場合、条件に一致しないレコードが出現した場合にエラーとなる）</p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">RANGE</span> <span class="n">COLUMNS</span><span class="p">(</span><span class="n">recv_at</span><span class="p">)</span> <span class="p">(</span>
-    <span class="n">PARTITION</span> <span class="n">p1401</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-02-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1402</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-03-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1403</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-04-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1404</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-05-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1405</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-06-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1406</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-07-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1407</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-08-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1408</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-09-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1409</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-10-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1410</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-11-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1411</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-12-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1412</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2015-01-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p9999</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="k">MAXVALUE</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="k">PARTITION</span> <span class="k">BY</span> <span class="k">RANGE</span> <span class="n">COLUMNS</span><span class="p">(</span><span class="n">recv_at</span><span class="p">)</span> <span class="p">(</span>
+    <span class="k">PARTITION</span> <span class="n">p1401</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-02-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1402</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-03-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1403</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-04-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1404</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-05-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1405</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-06-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1406</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-07-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1407</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-08-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1408</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-09-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1409</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-10-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1410</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-11-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1411</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2014-12-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1412</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2015-01-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p9999</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="k">MAXVALUE</span>
 <span class="p">);</span>
 </code></pre></div></div>
 
 <p>MariaDB(MySQL) 5.5 未満の場合は datetime 型は使用できないので、以下のようにする必要がある。</p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">RANGE</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="n">recv_at</span><span class="p">))</span> <span class="p">(</span>
-    <span class="n">PARTITION</span> <span class="n">p1401</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-02-01 00:00:00'</span><span class="p">)),</span>
-    <span class="n">PARTITION</span> <span class="n">p1402</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-03-01 00:00:00'</span><span class="p">)),</span>
-    <span class="n">PARTITION</span> <span class="n">p1403</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-04-01 00:00:00'</span><span class="p">)),</span>
-    <span class="n">PARTITION</span> <span class="n">p1404</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-05-01 00:00:00'</span><span class="p">)),</span>
-    <span class="n">PARTITION</span> <span class="n">p1405</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-06-01 00:00:00'</span><span class="p">)),</span>
-    <span class="n">PARTITION</span> <span class="n">p1406</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-07-01 00:00:00'</span><span class="p">)),</span>
-    <span class="n">PARTITION</span> <span class="n">p1407</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-08-01 00:00:00'</span><span class="p">)),</span>
-    <span class="n">PARTITION</span> <span class="n">p1408</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-09-01 00:00:00'</span><span class="p">)),</span>
-    <span class="n">PARTITION</span> <span class="n">p1409</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-10-01 00:00:00'</span><span class="p">)),</span>
-    <span class="n">PARTITION</span> <span class="n">p1410</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-11-01 00:00:00'</span><span class="p">)),</span>
-    <span class="n">PARTITION</span> <span class="n">p1411</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-12-01 00:00:00'</span><span class="p">)),</span>
-    <span class="n">PARTITION</span> <span class="n">p1412</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2015-01-01 00:00:00'</span><span class="p">)),</span>
-    <span class="n">PARTITION</span> <span class="n">p9999</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="k">MAXVALUE</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="k">PARTITION</span> <span class="k">BY</span> <span class="k">RANGE</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="n">recv_at</span><span class="p">))</span> <span class="p">(</span>
+    <span class="k">PARTITION</span> <span class="n">p1401</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-02-01 00:00:00'</span><span class="p">)),</span>
+    <span class="k">PARTITION</span> <span class="n">p1402</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-03-01 00:00:00'</span><span class="p">)),</span>
+    <span class="k">PARTITION</span> <span class="n">p1403</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-04-01 00:00:00'</span><span class="p">)),</span>
+    <span class="k">PARTITION</span> <span class="n">p1404</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-05-01 00:00:00'</span><span class="p">)),</span>
+    <span class="k">PARTITION</span> <span class="n">p1405</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-06-01 00:00:00'</span><span class="p">)),</span>
+    <span class="k">PARTITION</span> <span class="n">p1406</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-07-01 00:00:00'</span><span class="p">)),</span>
+    <span class="k">PARTITION</span> <span class="n">p1407</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-08-01 00:00:00'</span><span class="p">)),</span>
+    <span class="k">PARTITION</span> <span class="n">p1408</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-09-01 00:00:00'</span><span class="p">)),</span>
+    <span class="k">PARTITION</span> <span class="n">p1409</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-10-01 00:00:00'</span><span class="p">)),</span>
+    <span class="k">PARTITION</span> <span class="n">p1410</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-11-01 00:00:00'</span><span class="p">)),</span>
+    <span class="k">PARTITION</span> <span class="n">p1411</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2014-12-01 00:00:00'</span><span class="p">)),</span>
+    <span class="k">PARTITION</span> <span class="n">p1412</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2015-01-01 00:00:00'</span><span class="p">)),</span>
+    <span class="k">PARTITION</span> <span class="n">p9999</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="k">MAXVALUE</span>
 <span class="p">);</span>
 </code></pre></div></div>
 
 <h3 id="5-int-型の値別に分割list-を使用する例">5. int 型の値別に分割（LIST を使用する例）</h3>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">LIST</span><span class="p">(</span><span class="n">kubun</span><span class="p">)</span> <span class="p">(</span>
-    <span class="n">PARTITION</span> <span class="n">p0</span> <span class="k">VALUES</span> <span class="k">IN</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1</span> <span class="k">VALUES</span> <span class="k">IN</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p8</span> <span class="k">VALUES</span> <span class="k">IN</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="k">PARTITION</span> <span class="k">BY</span> <span class="n">LIST</span><span class="p">(</span><span class="n">kubun</span><span class="p">)</span> <span class="p">(</span>
+    <span class="k">PARTITION</span> <span class="n">p0</span> <span class="k">VALUES</span> <span class="k">IN</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1</span> <span class="k">VALUES</span> <span class="k">IN</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p8</span> <span class="k">VALUES</span> <span class="k">IN</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
 <span class="p">);</span>
 </code></pre></div></div>
 
@@ -504,7 +504,7 @@
 <p>ただし、最後の１つのパーティションは削除できない。（パーティショニング機能自体を削除する（後述））<br />
 <strong>パーティションを削除するとそのパーティション内のレコードも削除されるので注意。（パーティショニングの醍醐味の１つであるが、使い方を間違えると命取りとなる）</strong></p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="k">DROP</span> <span class="n">PARTITION</span> <span class="n">partition_name</span><span class="p">;</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="k">DROP</span> <span class="k">PARTITION</span> <span class="n">partition_name</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h3 id="7-新たなパーティションの追加range-を使用する例">7. 新たなパーティションの追加（RANGE を使用する例）</h3>
@@ -513,8 +513,8 @@
 既に <code class="language-plaintext highlighter-rouge">MAXVALUE</code> による分割を行っている場合は追加できない。その場合はパーティションを再構成すればよい（パーティションを削除して作成し直すのではなく、再構成（次項参照））。<br />
 （LIST の場合も同様）</p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="k">ADD</span> <span class="n">PARTITION</span> <span class="p">(</span>
-    <span class="n">PARTITION</span> <span class="n">p1501</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2015-02-01 00:00:00'</span><span class="p">)</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="k">ADD</span> <span class="k">PARTITION</span> <span class="p">(</span>
+    <span class="k">PARTITION</span> <span class="n">p1501</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2015-02-01 00:00:00'</span><span class="p">)</span>
 <span class="p">);</span>
 </code></pre></div></div>
 
@@ -528,10 +528,10 @@
 例えば、’2013-02-01 00:00:00’ より古いデータを先頭のパーティション “p1301” としていたが、更に分割する必要が出てきた場合など。<br />
 （LIST の場合も同様）</p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="n">REORGANIZE</span> <span class="n">PARTITION</span> <span class="n">p1301</span> <span class="k">INTO</span> <span class="p">(</span>
-    <span class="n">PARTITION</span> <span class="n">p1211</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2012-12-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1212</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2013-01-01 00:00:00'</span><span class="p">),</span>
-    <span class="n">PARTITION</span> <span class="n">p1301</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2013-02-01 00:00:00'</span><span class="p">)</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="n">REORGANIZE</span> <span class="k">PARTITION</span> <span class="n">p1301</span> <span class="k">INTO</span> <span class="p">(</span>
+    <span class="k">PARTITION</span> <span class="n">p1211</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2012-12-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1212</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2013-01-01 00:00:00'</span><span class="p">),</span>
+    <span class="k">PARTITION</span> <span class="n">p1301</span> <span class="k">VALUES</span> <span class="k">LESS</span> <span class="k">THAN</span> <span class="p">(</span><span class="s1">'2013-02-01 00:00:00'</span><span class="p">)</span>
 <span class="p">);</span>
 </code></pre></div></div>
 
@@ -543,7 +543,7 @@
 
 <p>HASH は、前もって決められた数のパーティションの中でデータを均等に割り振るために使用される。（分割方法を MariaDB(MySQL) に任せる）</p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">HASH</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="k">PARTITION</span> <span class="k">BY</span> <span class="n">HASH</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
 <span class="n">PARTITIONS</span> <span class="mi">4</span><span class="p">;</span>
 </code></pre></div></div>
 
@@ -553,7 +553,7 @@
 
 <p>HASH と同様だが、分割に使う値はプライマリキー(またはユニークキー）に対しサーバ側で決めたアルゴリズム（MySQLクラスタ:MD5 / 他のストレージエンジン / PASSWORD())。</p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="n">PARTITION</span> <span class="k">BY</span> <span class="k">KEY</span><span class="p">()</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">table_name</span> <span class="k">PARTITION</span> <span class="k">BY</span> <span class="k">KEY</span><span class="p">()</span>
 <span class="n">PARTITIONS</span> <span class="mi">2</span><span class="p">;</span>
 </code></pre></div></div>
 
@@ -713,6 +713,30 @@
     
     <h3 class="archive__item-title" itemprop="headline">
       
+        <a href="/2025/10/30/debian-13-installation-for-small-server/" rel="permalink">Debian 13 (trixie) - インストール（サーバ用途・最小構成）！
+</a>
+        &nbsp;<small>(2025-10-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 13 (trixie) をサーバ用途・最小構成でインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
         <a href="/2024/05/18/debian-12-ruby-3-3-installation-by-src/" rel="permalink">Debian 12 (bookworm) - Ruby 3.3 インストール（ソースビルド）！
 </a>
         &nbsp;<small>(2024-05-18)</small>
@@ -764,27 +788,6 @@
     </h3>
     
     <p class="archive__item-excerpt" itemprop="description">4月になりましたので、先月3月分の当ブログアクセス状況を公開します。（※自分用の記録）
-
-</p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h3 class="archive__item-title" itemprop="headline">
-      
-        <a href="/2024/03/01/blog-access/" rel="permalink">2024年2月 - OS・ブラウザ別アクセス状況！
-</a>
-        &nbsp;<small>(2024-03-01)</small>
-    </h3>
-    
-    <p class="archive__item-excerpt" itemprop="description">3月になりましたので、先月2月分の当ブログアクセス状況を公開します。（※自分用の記録）
 
 </p>
   </article>
@@ -862,7 +865,7 @@
   </ul>
 </div>
 
-<div class="page__footer-copyright">&copy; 2024 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+<div class="page__footer-copyright">&copy; 2025 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
 
       </footer>
     </div>

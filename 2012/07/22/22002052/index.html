@@ -417,14 +417,14 @@ HTMLソースの取得には CURL ライブラリを利用し、取得したHTML
 その他、細かな事はソースを追ってみて下さい。
 【 ファイル名： TestCurl.cpp 】</p>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
-#include &lt;list&gt;
-#include &lt;locale.h&gt;
-#include &lt;stdexcept&gt;
-#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;string.h&gt;
-#include &lt;curl/curl.h&gt;
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;list&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;locale.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stdexcept&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;curl/curl.h&gt;</span><span class="cp">
 </span>
 <span class="cp">#define URL_BASE "http://stocks.finance.yahoo.co.jp/stocks/qi/?ids="
 #define MATCH_1 "&lt;td class=\"center yjM\"&gt;"
@@ -461,7 +461,7 @@ HTMLソースの取得には CURL ライブラリを利用し、取得したHTML
 <span class="cm">/*
  * CURL コールバック関数
  */</span>
-<span class="kt">size_t</span> <span class="nf">callBackFunc</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">ptr</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">nmemb</span><span class="p">,</span> <span class="n">string</span><span class="o">*</span> <span class="n">stream</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">size_t</span> <span class="n">callBackFunc</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">ptr</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">nmemb</span><span class="p">,</span> <span class="n">string</span><span class="o">*</span> <span class="n">stream</span><span class="p">)</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">realsize</span> <span class="o">=</span> <span class="n">size</span> <span class="o">*</span> <span class="n">nmemb</span><span class="p">;</span>
     <span class="n">stream</span><span class="o">-&gt;</span><span class="n">append</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span> <span class="n">realsize</span><span class="p">);</span>
     <span class="k">return</span> <span class="n">realsize</span><span class="p">;</span>
@@ -674,7 +674,7 @@ HTMLソースの取得には CURL ライブラリを利用し、取得したHTML
 <span class="cm">/*
  * メイン処理
  */</span>
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="kt">int</span> <span class="n">main</span><span class="p">()</span>
 <span class="p">{</span>
 
     <span class="k">try</span> <span class="p">{</span>
@@ -879,6 +879,30 @@ HTMLソースの取得には CURL ライブラリを利用し、取得したHTML
     
     <h3 class="archive__item-title" itemprop="headline">
       
+        <a href="/2025/10/30/debian-13-installation-for-small-server/" rel="permalink">Debian 13 (trixie) - インストール（サーバ用途・最小構成）！
+</a>
+        &nbsp;<small>(2025-10-30)</small>
+    </h3>
+    
+    <p class="archive__item-excerpt" itemprop="description">Debian GNU/Linux 13 (trixie) をサーバ用途・最小構成でインストールする方法についての記録です。
+
+以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。
+（当然ながら、興味がなければスルーしてください）
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h3 class="archive__item-title" itemprop="headline">
+      
         <a href="/2024/05/18/debian-12-ruby-3-3-installation-by-src/" rel="permalink">Debian 12 (bookworm) - Ruby 3.3 インストール（ソースビルド）！
 </a>
         &nbsp;<small>(2024-05-18)</small>
@@ -930,27 +954,6 @@ HTMLソースの取得には CURL ライブラリを利用し、取得したHTML
     </h3>
     
     <p class="archive__item-excerpt" itemprop="description">4月になりましたので、先月3月分の当ブログアクセス状況を公開します。（※自分用の記録）
-
-</p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h3 class="archive__item-title" itemprop="headline">
-      
-        <a href="/2024/03/01/blog-access/" rel="permalink">2024年2月 - OS・ブラウザ別アクセス状況！
-</a>
-        &nbsp;<small>(2024-03-01)</small>
-    </h3>
-    
-    <p class="archive__item-excerpt" itemprop="description">3月になりましたので、先月2月分の当ブログアクセス状況を公開します。（※自分用の記録）
 
 </p>
   </article>
@@ -1028,7 +1031,7 @@ HTMLソースの取得には CURL ライブラリを利用し、取得したHTML
   </ul>
 </div>
 
-<div class="page__footer-copyright">&copy; 2024 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+<div class="page__footer-copyright">&copy; 2025 mk-mode.com. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
 
       </footer>
     </div>
