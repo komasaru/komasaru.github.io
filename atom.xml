@@ -1,4 +1,191 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-10-30T23:06:07+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - サーバ初期設定！</title><link href="https://komasaru.github.io/2025/10/31/debian-13-initial-setting/" rel="alternate" type="text/html" title="Debian 13 (trixie) - サーバ初期設定！" /><published>2025-10-31T00:20:00+09:00</published><updated>2025-10-31T00:20:00+09:00</updated><id>https://komasaru.github.io/2025/10/31/debian-13-initial-setting</id><content type="html" xml:base="https://komasaru.github.io/2025/10/31/debian-13-initial-setting/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) インストール後の初期設定についての記録です。</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-10-31T23:26:39+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - SSH サーバ構築！</title><link href="https://komasaru.github.io/2025/11/01/debian-13-ssh-installation/" rel="alternate" type="text/html" title="Debian 13 (trixie) - SSH サーバ構築！" /><published>2025-11-01T00:20:00+09:00</published><updated>2025-11-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2025/11/01/debian-13-ssh-installation</id><content type="html" xml:base="https://komasaru.github.io/2025/11/01/debian-13-ssh-installation/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) 上に SSH サーバを構築する方法についての記録です。</p>
+
+<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
+（当然ながら、興味がなければスルーしてください）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>「<a href="/2025/10/30/debian-13-installation-for-small-server" title="Debian 13 (trixie) - インストール（サーバ用途・最小構成）！">Debian 13 (trixie) - インストール（サーバ用途・最小構成）！</a>」の方法でインストールが完了していることを想定。</li>
+  <li>「<a href="/2025/10/31/debian-13-initial-setting" title="Debian 13 (trixie) - サーバ初期設定">Debian 13 (trixie) - サーバ初期設定！</a>」の方法で初期設定が完了していることを想定。</li>
+  <li>サーバの IP アドレス <code class="language-plaintext highlighter-rouge">192.168.11.101</code>、ホスト名 <code class="language-plaintext highlighter-rouge">vbox</code>、ユーザ名 <code class="language-plaintext highlighter-rouge">foo</code> を想定。</li>
+  <li>DNS サーバは未だ設定していない。<br />
+（設定済みなら、ローカルから IP アドレスではなくホスト名で SSH 接続可）</li>
+  <li>クライアント側も Debian GNU/Linux 13.0.0(trixie; 64bit) を想定。</li>
+  <li>SSH 接続は端末コンソールから行う。</li>
+  <li>ポートは、デフォルトの <code class="language-plaintext highlighter-rouge">22</code> から <code class="language-plaintext highlighter-rouge">9999</code> に変更することを想定。（<code class="language-plaintext highlighter-rouge">9999</code> は架空）</li>
+  <li>root ユーザでの作業を想定。</li>
+</ul>
+
+<h3 id="1-ssh-サーバのインストール">1. SSH サーバのインストール</h3>
+
+<p>Debian インストール時に SSH サーバをインストールしていなければ、以下のようにして SSH サーバをインストールする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install ssh
+</code></pre></div></div>
+
+<h3 id="2-ssh-設定ファイルの編集">2. SSH 設定ファイルの編集</h3>
+
+<p>root でログインできないよう、設定ファイルを編集する。<br />
+ポートもデフォルトの <code class="language-plaintext highlighter-rouge">22</code> から変更する。（セキュリティ上、必須）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/ssh/sshd_config</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Port 22</span>
+Port 9999                         <span class="c"># &lt;= 適当に変更</span>
+
+<span class="c"># rootユーザーのログインはパスワード認証以外のみ許可する</span>
+PermitRootLogin without-password
+
+<span class="c"># SSHプロトコル ver.2 で公開鍵認証を許可する</span>
+PubkeyAuthentication <span class="nb">yes</span>
+
+<span class="c"># パスワード認証を許可する(rootユーザー以外に適用)</span>
+PasswordAuthentication <span class="nb">yes</span>
+
+<span class="c"># キーボード対話型認証を拒否する</span>
+KbdInteractiveAuthentication no
+
+<span class="c"># PAMを使用する</span>
+UsePAM <span class="nb">yes
+
+</span>AllowUsers root foo               <span class="c"># &lt;= ログイン可能なユーザを明示的に設定</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">PermitRootLogin without-password</code> は、root のログインは許可されるものの、ログインを行うには適切な SSH のキーが必要とされるようになるという意味。</li>
+  <li>かつての <code class="language-plaintext highlighter-rouge">ChallengeResponseAuthentication</code>（チャレンジレスポンス認証）は廃止され、 <code class="language-plaintext highlighter-rouge">KbdInteractiveAuthentication</code>（キーボード対話型認証(?)）に置き換わっている。</li>
+  <li><code class="language-plaintext highlighter-rouge">AllowUsers</code> に複数指定する際、 <code class="language-plaintext highlighter-rouge">AllowUsers root</code>, <code class="language-plaintext highlighter-rouge">AllowUsers foo</code> と複数行に分けてもよい。</li>
+</ul>
+
+<h3 id="3-ssh-サーバの再起動">3. SSH サーバの再起動</h3>
+
+<p>設定を有効化するため、SSH サーバを再起動する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl restart ssh
+</code></pre></div></div>
+
+<h3 id="4-パスワード接続">4. パスワード接続</h3>
+
+<p>一旦ログアウト後、再度クライント側の端末コンソールからサーバに接続してみる。<br />
+“Are you sure you want to continue connecting (yes/no)?” で <code class="language-plaintext highlighter-rouge">yes</code> 応答、その後パスワードを入力すれば接続できる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ssh -p 9999 192.168.11.101
+The authenticity of host '[192.168.11.101]:9999 ([192.168.11.101]:9999)' can't be established.
+ED25519 key fingerprint is SHA256:NHXNRFMUmbP5rYM8akR7x53oBWgDrspgj8Tvzz9bUlg.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '[192.168.11.101]:9999' (ED25519) to the list of known hosts.
+foo@192.168.11.101's password:
+Linux vbox 6.12.48+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.48-1 (2025-09-20) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Wed Oct  1 14:16:01 2025 from 192.168.11.12
+foo@vbox:~$
+</code></pre></div></div>
+
+<p>クライアント側のユーザがサーバ側と異なる場合は、以下のようにユーザ名も指定する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ssh -p 9999 hoge@192.168.11.101
+</code></pre></div></div>
+
+<p>以降、サーバ操作時にクライアント側の端末コンソールから行なう。<br />
+クライント側からリモート接続すれば、文字化けしていた日本語も正常に表示されるはず。</p>
+
+<h3 id="5-鍵ペア公開秘密の生成">5. 鍵ペア（公開・秘密）の生成</h3>
+
+<p><strong>クライアント側で</strong>以下のコマンドで公開鍵・秘密鍵を生成する。<br />
+作成先・ファイル名を指定しなければ、 <code class="language-plaintext highlighter-rouge">/home/(ユーザ名)/.ssh/</code> に <code class="language-plaintext highlighter-rouge">id_rsa</code>, <code class="language-plaintext highlighter-rouge">id_rsa.pub</code> が作成される。 途中、鍵用のパスワードも入力する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/foo/.ssh/id_rsa): /home/foo/.ssh/id_rsa
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/foo/.ssh/id_rsa.
+Your public key has been saved in /home/foo/.ssh/id_rsa.pub.
+The key fingerprint is:
+96:af:59:18:9c:a0:c2:da:86:7e:d7:24:05:d0:31:da foo@vbox
+The key's randomart image is:
++--[ RSA 2048]-----------------------------------------+
+|   .oo.          |
+|    oo.          |
+|   . Eo          |
+| .   . + o       |
+|  o . . S        |
+| + . . o +       |
+|o o   + . o      |
+|.. . . . +       |
+| .. .   o        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+</code></pre></div></div>
+
+<h3 id="6-サーバ側の設定">6. サーバ側の設定</h3>
+
+<p>作成した鍵ペアで SSH サーバーへ鍵方式でログインできるように、サーバ側の「ログインしようとする一般ユーザ」で設定する。<br />
+<code class="language-plaintext highlighter-rouge">~/authorized_keys</code> には、先ほど作成した鍵ペアの公開鍵ファイル（<code class="language-plaintext highlighter-rouge">xxxx.pub</code>）の内容をそのまま貼り付ける。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ mkdir ~/.ssh
+
+$ chmod 700 ~/.ssh
+</code></pre></div></div>
+
+<p>File: <code class="language-plaintext highlighter-rouge">~/.ssh/authorized_keys</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh-rsa .........
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ chmod 600 ~/.ssh/authorized_keys
+</code></pre></div></div>
+
+<h3 id="7-ssh-設定ファイルの編集">7. SSH 設定ファイルの編集</h3>
+
+<p>パスワード認証をできないようにするため、 SSH 設定ファイルを編集する。<br />
+今度は一般ユーザではなく、 <code class="language-plaintext highlighter-rouge">su -</code> で root になって（<code class="language-plaintext highlighter-rouge">sudo</code> コマンドを導入していれば、<code class="language-plaintext highlighter-rouge">sudo vi ...</code> でもよい）。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/ssh/sshd_config</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>PasswordAuthentication no  <span class="c"># &lt;= 変更</span>
+</code></pre></div></div>
+
+<h3 id="8-ssh-サーバの再起動">8. SSH サーバの再起動</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl restart ssh
+</code></pre></div></div>
+
+<h3 id="9-鍵認証接続のテスト">9. 鍵認証接続のテスト</h3>
+
+<p>一旦ログアウトし、再度接続する。<br />
+パスワード認証ではなく、鍵認証なので以下のようなコマンドとなる。（指定する秘密キーのファイル名は、ペア作成時に指定したファイル名）<br />
+鍵用のパスワード問い合わせダイアログが表示されるので応答する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ssh -i ~/.ssh/id_rsa -p 9999 192.168.11.101
+Linux vbox 6.12.48+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.48-1 (2025-09-20) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Wed Oct  1 14:34:10 2025 from 192.168.11.12
+</code></pre></div></div>
+
+<p>2回目からは以下のコマンドでよい。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ssh -p 9999 192.168.11.101
+</code></pre></div></div>
+
+<hr />
+
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="SSH" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) 上に SSH サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">Debian 13 (trixie) - サーバ初期設定！</title><link href="https://komasaru.github.io/2025/10/31/debian-13-initial-setting/" rel="alternate" type="text/html" title="Debian 13 (trixie) - サーバ初期設定！" /><published>2025-10-31T00:20:00+09:00</published><updated>2025-10-31T00:20:00+09:00</updated><id>https://komasaru.github.io/2025/10/31/debian-13-initial-setting</id><content type="html" xml:base="https://komasaru.github.io/2025/10/31/debian-13-initial-setting/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) インストール後の初期設定についての記録です。</p>
 
 <p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
 （当然ながら、興味がなければスルーしてください）</p>
@@ -18,7 +205,7 @@
   <li>IPv6 は使用しない。</li>
   <li>ドメインは “mk-mode” を想定。</li>
   <li>ネットワークの MTU 最適値は 1454 を想定。<br />
-（デフォルトは 1500 だが、環境により最適値は異なるので、算出して設定するとよい。参照： <a href="https://www.mk-mode.com/blog/2015/11/26/linux-mtu-best-effort/" title="Linux - MTU 最適値の導出！">Linux - MTU 最適値の導出！</a>）</li>
+（デフォルトは 1500 だが、環境により最適値は異なるので、算出して設定するとよい。参照： <a href="/2015/11/26/linux-mtu-best-effort/" title="Linux - MTU 最適値の導出！">Linux - MTU 最適値の導出！</a>）</li>
   <li>各種設定ファイルの編集方法までは説明しない。（<code class="language-plaintext highlighter-rouge">vi</code> コマンドについての初歩的な知識があることが前提）</li>
 </ul>
 
@@ -2538,134 +2725,4 @@ Rule added
 
 <hr />
 
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Nginx" /><category term="SSL" /><summary type="html"><![CDATA[Debian GNU/Linux 12 (bookworm) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">Debian 12 (bookworm) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！</title><link href="https://komasaru.github.io/2023/12/13/debian-12-nginx-installation-by-official-apt/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！" /><published>2023-12-13T00:00:00+09:00</published><updated>2023-12-13T00:00:00+09:00</updated><id>https://komasaru.github.io/2023/12/13/debian-12-nginx-installation-by-official-apt</id><content type="html" xml:base="https://komasaru.github.io/2023/12/13/debian-12-nginx-installation-by-official-apt/"><![CDATA[<p>Debian GNU/Linux 12 (bookworm) に Web サーバ Nginx を Nginx 公式リポジトリを使用して導入する方法についての記録です。</p>
-
-<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
-（当然ながら、興味がなければスルーしてください）</p>
-
-<!--more-->
-
-<h3 id="0-前提条件">0 前提条件</h3>
-
-<ul>
-  <li>Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。</li>
-  <li>接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。</li>
-  <li>Debian 公式リポジトリの Nginx はバージョンが古いため、Nginx リポジトリを使用して 1.24.0（当記事執筆時点最新安定版）をインストールする。</li>
-  <li>実際に運用する際は、ドキュメントルートを変更する等、設定を編集すること。</li>
-  <li>一般ユーザでの作業を想定。</li>
-</ul>
-
-<h3 id="1-必要パッケージのインストール">1. 必要パッケージのインストール</h3>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo apt -y install curl gnupg2 ca-certificates lsb-release debian-archive-keyring
-</code></pre></div></div>
-
-<h3 id="2-公式-nginx-署名キーのインポート">2. 公式 Nginx 署名キーのインポート</h3>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
-    | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg &gt;/dev/null
-</code></pre></div></div>
-
-<h3 id="3-署名キーの検証">3. 署名キーの検証</h3>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ gpg --dry-run --quiet --no-keyring --import --import-options import-show /usr/share/keyrings/nginx-archive-keyring.gpg 
-</code></pre></div></div>
-
-<p>出力されるフィンガープリンが以下と一致することを確認する。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pub   rsa2048 2011-08-19 [SC] [expires: 2024-06-14]
-      573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
-uid                      nginx signing key &lt;signing-key@nginx.com&gt;
-</code></pre></div></div>
-
-<h3 id="4-apt-リポジトリの設定">4. apt リポジトリの設定</h3>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
-    http://nginx.org/packages/debian `lsb_release -cs` nginx" \
-    | sudo tee /etc/apt/sources.list.d/nginx.list
-</code></pre></div></div>
-
-<h3 id="5-apt-リポジトリの優先度設定">5. apt リポジトリの優先度設定</h3>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" \
-    | sudo tee /etc/apt/preferences.d/99nginx
-</code></pre></div></div>
-
-<h3 id="6-nginx-のインストール">6. Nginx のインストール</h3>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo apt -y update
-$ sudo apt -y install nginx
-</code></pre></div></div>
-
-<h3 id="7-インストールの確認">7. インストールの確認</h3>
-
-<p>Nginx がインストールできたか確認してみる。(<code class="language-plaintext highlighter-rouge">-v</code> の代わりに <code class="language-plaintext highlighter-rouge">-V</code> オプションを使用すると詳細に表示される）</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo nginx -v
-nginx version: nginx/1.24.0
-</code></pre></div></div>
-
-<h3 id="8-設定">8. 設定</h3>
-
-<p>今回のインストール環境の場合、基本的（グローバル）な設定のファイルは <code class="language-plaintext highlighter-rouge">/etc/nginx/nginx.conf</code> で、このファイルから <code class="language-plaintext highlighter-rouge">/etc/nginx/conf.d</code> ディレクトリ配下の設定ファイルを読み込む形式となっている。<br />
-取り急ぎ、デフォルトのままとした。<br />
-詳細な設定は、「<a href="https://www.mk-mode.com/blog/tags/nginx/" title="Tag: Nginx - mk-mode BLOG">当ブログ Nginx 関連の過去記事</a>」を参照。</p>
-
-<h3 id="9-ファイアウォールufwの設定">9. ファイアウォール(ufw)の設定</h3>
-
-<p>TCP ポート 80 を開放する必要がある。（HTTPS の場合は TCP: 443）</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo ufw allow 80/tcp
-Rule added
-
-$ sudo ufw status
-    :
-80/tcp                     ALLOW       Anywhere
-    :
-</code></pre></div></div>
-
-<h3 id="10-サーバの起動">10. サーバの起動</h3>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo systemctl start nginx
-</code></pre></div></div>
-
-<h3 id="11-起動確認">11. 起動確認</h3>
-
-<p>ブラウザで <code class="language-plaintext highlighter-rouge">http://＜サーバアドレス or ホスト名＞/</code> にアクセスしてみる。
-<code class="language-plaintext highlighter-rouge">Welcome to nginx!</code> と以下5行くらい表示されば成功。</p>
-
-<h3 id="12-自動起動の設定">12. 自動起動の設定</h3>
-
-<p>マシン起動時に自動で Nginx を起動させるには以下のようにする。（インストール直後は自動起動するようになっているはずなので、そうなっていない場合）</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo systemctl enable nginx
-Synchronizing state of nginx.service with SysV service script with /lib/systemd/systemd-sysv-install.
-Executing: /lib/systemd/systemd-sysv-install enable nginx
-Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /lib/systemd/system/nginx.service.
-
-$ sudo systemctl is-enabled nginx
-enabled
-</code></pre></div></div>
-
-<p>（<code class="language-plaintext highlighter-rouge">nginx</code> はネイティブなサービスでないため、 <code class="language-plaintext highlighter-rouge">systemd-sysv-install</code> にリダイレクトされる）</p>
-
-<p>自動起動しないようにするには、</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl disable nginx
-Synchronizing state of nginx.service with SysV service script with /lib/systemd/systemd-sysv-install.
-Executing: /lib/systemd/systemd-sysv-install disable nginx
-Removed "/etc/systemd/system/multi-user.target.wants/nginx.service".
-
-# systemctl is-enabled nginx
-disabled
-</code></pre></div></div>
-
-<h3 id="13-参考サイト">13. 参考サイト</h3>
-
-<ul>
-  <li><a href="https://nginx.org/en/linux_packages.html" title="nginx: Linux packages">nginx: Linux packages</a></li>
-</ul>
-
-<hr />
-
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Nginx" /><summary type="html"><![CDATA[Debian GNU/Linux 12 (bookworm) に Web サーバ Nginx を Nginx 公式リポジトリを使用して導入する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry></feed>
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Nginx" /><category term="SSL" /><summary type="html"><![CDATA[Debian GNU/Linux 12 (bookworm) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry></feed>
