@@ -1,4 +1,124 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-10-31T23:26:39+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - SSH サーバ構築！</title><link href="https://komasaru.github.io/2025/11/01/debian-13-ssh-installation/" rel="alternate" type="text/html" title="Debian 13 (trixie) - SSH サーバ構築！" /><published>2025-11-01T00:20:00+09:00</published><updated>2025-11-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2025/11/01/debian-13-ssh-installation</id><content type="html" xml:base="https://komasaru.github.io/2025/11/01/debian-13-ssh-installation/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) 上に SSH サーバを構築する方法についての記録です。</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-11-01T22:55:52+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - セキュリティ・アップデートの自動化！</title><link href="https://komasaru.github.io/2025/11/02/debian-13-automation-security-update/" rel="alternate" type="text/html" title="Debian 13 (trixie) - セキュリティ・アップデートの自動化！" /><published>2025-11-02T00:20:00+09:00</published><updated>2025-11-02T00:20:00+09:00</updated><id>https://komasaru.github.io/2025/11/02/debian-13-automation-security-update</id><content type="html" xml:base="https://komasaru.github.io/2025/11/02/debian-13-automation-security-update/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) のセキュリティ・アップデートを自動化する方法についての記録です。</p>
+
+<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
+（当然ながら、興味がなければスルーしてください）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Debian GNU/Linux 13 (trixie) サーバでの作業を想定。</li>
+  <li>cron-apt でもパッケージアップデートの自動化は可能であるが、今回はセキュリティ・アップデートのみなので unattended-upgrades を使用する。<br />
+（ちなみに、インストール済みの各種パッケージを自動アップデートするのは（依存パッケージの整合性等の問題があるため）危険であり、当方はセキュリティ・アップデート以外は自動でアップデートしない方針）</li>
+  <li>root ユーザでの作業を想定。</li>
+</ul>
+
+<h3 id="1-unattended-upgrades-のインストール">1. unattended-upgrades のインストール</h3>
+
+<p>unattended-upgrades はデフォルトでインストールされているはずだが、インストールされていなければインストールする。<br />
+また、パッケージ変更履歴ツール apt-listchanges もインストールする。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install unattended-upgrades apt-listchanges
+</code></pre></div></div>
+
+<h3 id="2-50unattended-upgrades-の編集">2. “50unattended-upgrades” の編集</h3>
+
+<p>メール送信先を編集（コメント解除＆変更）する。（当然、ユーザ名のみならず外部のメールアドレスも設定可）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/apt/apt.conf.d/50unattended-upgrades</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Unattended-Upgrade::Mail <span class="s2">"root"</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="3-20auto-upgrades-の作成">3. “20auto-upgrades” の作成</h3>
+
+<p>以下のコマンドを実行して自動アップデートに関する質問に <code class="language-plaintext highlighter-rouge">&lt;Yes&gt;</code> 応答すると、自動アップグレードのための設定ファイル <code class="language-plaintext highlighter-rouge">20auto-upgrades</code> が作成される。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dpkg-reconfigure -plow unattended-upgrades
+</code></pre></div></div>
+
+<p>もしくは、以下のような内容で <code class="language-plaintext highlighter-rouge">20auto-upgrades</code> 作成してもよい。<br />
+（<code class="language-plaintext highlighter-rouge">/etc/cron.daily/apt</code> に記述があるとおりデフォルトでは無効になっているので、有効にするための記述）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/apt/apt.conf.d/20auto-upgrades</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>APT::Periodic::Update-Package-Lists <span class="s2">"1"</span><span class="p">;</span>
+APT::Periodic::Unattended-Upgrade <span class="s2">"1"</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="4-02periodic-の作成">4. “02periodic” の作成</h3>
+
+<p>cron ジョブのための設定ファイルを作成する。<br />
+<code class="language-plaintext highlighter-rouge">/etc/cron.daily/apt</code> に記述があるとおりデフォルトで設定されている項目もあるが、以下のように「<a href="https://wiki.debian.org/UnattendedUpgrades" title="UnattendedUpgrades - Debian Wiki">作成例</a>」をそのまま流用している。<br />
+（各設定項目の説明はコメントに記述されているとおりなので、あらためて説明しない）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/apt/apt.conf.d/02periodic</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// Control parameters <span class="k">for </span>cron <span class="nb">jobs </span>by /etc/cron.daily/apt //
+
+// Enable the update/upgrade script <span class="o">(</span><span class="nv">0</span><span class="o">=</span>disable<span class="o">)</span>
+APT::Periodic::Enable <span class="s2">"1"</span><span class="p">;</span>
+
+// Do <span class="s2">"apt update"</span> automatically every n-days <span class="o">(</span><span class="nv">0</span><span class="o">=</span>disable<span class="o">)</span>
+APT::Periodic::Update-Package-Lists <span class="s2">"1"</span><span class="p">;</span>
+
+// Do <span class="s2">"apt upgrade --download-only"</span> every n-days <span class="o">(</span><span class="nv">0</span><span class="o">=</span>disable<span class="o">)</span>
+APT::Periodic::Download-Upgradeable-Packages <span class="s2">"1"</span><span class="p">;</span>
+
+// Run the <span class="s2">"unattended-upgrade"</span> security upgrade script
+// every n-days <span class="o">(</span><span class="nv">0</span><span class="o">=</span>disabled<span class="o">)</span>
+// Requires the package <span class="s2">"unattended-upgrades"</span> and will write
+// a log <span class="k">in</span> /var/log/unattended-upgrades
+APT::Periodic::Unattended-Upgrade <span class="s2">"1"</span><span class="p">;</span>
+
+// Do <span class="s2">"apt autoclean"</span> every n-days <span class="o">(</span><span class="nv">0</span><span class="o">=</span>disable<span class="o">)</span>
+APT::Periodic::AutocleanInterval <span class="s2">"21"</span><span class="p">;</span>
+
+// Send report mail to root
+//     0:  no report             <span class="o">(</span>or null string<span class="o">)</span>
+//     1:  progress report       <span class="o">(</span>actually any string<span class="o">)</span>
+//     2:  + <span class="nb">command </span>outputs     <span class="o">(</span>remove <span class="nt">-qq</span>, remove 2&gt;/dev/null, add <span class="nt">-d</span><span class="o">)</span>
+//     3:  + trace on
+APT::Periodic::Verbose <span class="s2">"2"</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="5-listchangesconf-の編集">5. “listchanges.conf” の編集</h3>
+
+<p>パッケージ変更履歴ツール apt-listchanges のための設定を行う。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/apt/listchanges.conf</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>apt]
+<span class="nv">frontend</span><span class="o">=</span>pager
+<span class="nv">which</span><span class="o">=</span>both          <span class="c"># &lt;= news から変更</span>
+<span class="nv">email_address</span><span class="o">=</span>root
+<span class="nv">email_format</span><span class="o">=</span>text
+<span class="nv">confirm</span><span class="o">=</span><span class="nb">false
+</span><span class="nv">headers</span><span class="o">=</span><span class="nb">false
+</span><span class="nv">reverse</span><span class="o">=</span><span class="nb">false
+</span><span class="nv">save_seen</span><span class="o">=</span>/var/lib/apt/listchanges.db
+</code></pre></div></div>
+
+<h3 id="6-動作確認">6. 動作確認</h3>
+
+<p><code class="language-plaintext highlighter-rouge">/etc/cron.daily/apt-campat</code> により毎日実行されるので、後日メールやログを確認してみる。</p>
+
+<ul>
+  <li>メールは設定したユーザ（or メールアドレス）宛に送信される。</li>
+  <li>dpkg 関連のログは <code class="language-plaintext highlighter-rouge">/var/log/dpkg.log</code></li>
+  <li>unattended-upgrades 関連のログは <code class="language-plaintext highlighter-rouge">/var/log/unattended-upgrades/</code> ディレクトリ配下。</li>
+</ul>
+
+<h3 id="7-参考サイト">7. 参考サイト</h3>
+
+<ul>
+  <li><a href="https://wiki.debian.org/PeriodicUpdates" title="PeriodicUpdates - Debian Wiki">PeriodicUpdates - Debian Wiki</a></li>
+</ul>
+
+<hr />
+
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) のセキュリティ・アップデートを自動化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">Debian 13 (trixie) - SSH サーバ構築！</title><link href="https://komasaru.github.io/2025/11/01/debian-13-ssh-installation/" rel="alternate" type="text/html" title="Debian 13 (trixie) - SSH サーバ構築！" /><published>2025-11-01T00:20:00+09:00</published><updated>2025-11-01T00:20:00+09:00</updated><id>https://komasaru.github.io/2025/11/01/debian-13-ssh-installation</id><content type="html" xml:base="https://komasaru.github.io/2025/11/01/debian-13-ssh-installation/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) 上に SSH サーバを構築する方法についての記録です。</p>
 
 <p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
 （当然ながら、興味がなければスルーしてください）</p>
@@ -2586,143 +2706,4 @@ Hello Ruby!
 
 <hr />
 
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html"><![CDATA[旧年明けまして、新年おめでとうございます。 旧年中はお世話になりました。 本年もどうぞよろしくお願いします。 話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録）]]></summary></entry><entry><title type="html">Debian 12 (bookworm) - Web サーバ Nginx で SSL 接続！</title><link href="https://komasaru.github.io/2023/12/21/debian-12-nginx-ssl-connection-setting/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - Web サーバ Nginx で SSL 接続！" /><published>2023-12-21T20:00:00+09:00</published><updated>2023-12-21T20:00:00+09:00</updated><id>https://komasaru.github.io/2023/12/21/debian-12-nginx-ssl-connection-setting</id><content type="html" xml:base="https://komasaru.github.io/2023/12/21/debian-12-nginx-ssl-connection-setting/"><![CDATA[<p>Debian GNU/Linux 12 (bookworm) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。</p>
-
-<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
-（当然ながら、興味がなければスルーしてください）</p>
-
-<!--more-->
-
-<h3 id="0-前提条件">0. 前提条件</h3>
-
-<ul>
-  <li>Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。</li>
-  <li>クライアント側も Debian GNU/Linux 12 (64bit) を想定。</li>
-  <li>サーバ用途なので、作業は基本的に全て一般ユーザから root になって行う。</li>
-  <li>Web(HTTP)サーバ Nginx が「<a href="/2023/12/06/debian-12-mariadb-mroonga-installation-by-apt" title="Debian 12 (bookworm) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！">Debian 12 (bookworm) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！</a>」の方法で導入済みであることを想定。</li>
-  <li>今回は SSL サーバ証明書は自分で作成するが、後日、 Let’s Encrypt で無料で証明書を取得するようにする。</li>
-  <li>当方はメールサーバ構築時に SSL 証明書作成済みであったので、以下の “2” から作業を行なった。</li>
-  <li>root ユーザでの作業を想定。</li>
-</ul>
-
-<h3 id="1-ssl-証明書の作成">1. SSL 証明書の作成</h3>
-
-<p>openssl 未インストールならインストール。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install openssl
-</code></pre></div></div>
-
-<p>秘密鍵生成。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd /etc/ssl/private
-# openssl genrsa -des3 -out server.key 2048
-Enter PEM pass phrase:                         # &lt;= パスフレーズ設定
-Verifying - Enter PEM pass phrase:             # &lt;= 確認再入力
-</code></pre></div></div>
-
-<p>秘密鍵からパスフレーズを削除。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># openssl rsa -in server.key -out server.key
-Enter pass phrase for server.key:              # &lt;= パスフレーズ
-writing RSA key
-
-# openssl req -new -days 3650 -key server.key -out server.csr
-Ignoring -days without -x509; not generating a certificate
-You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter '.', the field will be left blank.
------
-Country Name (2 letter code) [AU]:JP                                    # &lt;= 国の略名
-State or Province Name (full name) [Some-State]:Shimane                 # &lt;= 都道府県名
-Locality Name (eg, city) []:Matsue                                      # &lt;= 市区町村名
-Organization Name (eg, company) [Internet Widgits Pty Ltd]:var.com      # &lt;= サイト名（何でもよい）
-Organizational Unit Name (eg, section) []:                              # &lt;= 部署名（空でよい）
-Common Name (e.g. server FQDN or YOUR name) []:www.var.com              # &lt;= ホスト名
-Email Address []: webmaster@var.com                                     # &lt;= 管理者メールアドレス
-
-Please enter the following 'extra' attributes
-to be sent with your certificate request
-A challenge password []:                                                # &lt;= 追加属性・空エンターでよい
-An optional company name []:                                            # &lt;= 追加属性・空エンターでよい
-
-# openssl x509 -in server.csr -out server.crt -req -signkey server.key -days 3650
-Certificate request self-signature ok
-subject=C = JP, ST = Shimane, L = Matsue, O = mk-mode.com, CN = www.mk-mode.com, emailAddress = webmaster@mk-mode.com
-</code></pre></div></div>
-
-<p>権限選定。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># chmod 400 server.*
-</code></pre></div></div>
-
-<h3 id="2-nginx-設定ファイルの編集">2. Nginx 設定ファイルの編集</h3>
-
-<p>以下のように、Nginx 設定ファイルを作成する。<br />
-（Nginx のインストール方法やバージョンによっては設定ファイルの構成が異なるので注意。以下は「<a href="/2023/12/06/debian-12-mariadb-mroonga-installation-by-apt" title="Debian 12 (bookworm) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！">Debian 12 (bookworm) - Web サーバ Nginx 構築（Nginx 公式リポジトリ使用）！</a>」の方法でインストールした場合）</p>
-
-<p>File: <code class="language-plaintext highlighter-rouge">/etc/nginx/conf.d/ssl.conf</code></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># HTTPS server</span>
-<span class="c">#</span>
-server <span class="o">{</span>
-    listen       443 ssl<span class="p">;</span>
-    server_name  localhost<span class="p">;</span>
-
-    <span class="c">#ssl_certificate      cert.pem;</span>
-    ssl_certificate      /etc/ssl/private/server.crt<span class="p">;</span>
-    <span class="c">#ssl_certificate_key  cert.key;</span>
-    ssl_certificate_key  /etc/ssl/private/server.key<span class="p">;</span>
-
-    ssl_session_cache    shared:SSL:1m<span class="p">;</span>
-    ssl_session_timeout  5m<span class="p">;</span>
-
-    ssl_ciphers                HIGH:!aNULL:!MD5<span class="p">;</span>
-    ssl_prefer_server_ciphers  on<span class="p">;</span>
-
-    location / <span class="o">{</span>
-        root   html<span class="p">;</span>
-        index  index.html index.htm<span class="p">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<ul>
-  <li>設定ファイルの文法をチェックするには <code class="language-plaintext highlighter-rouge">nginx -t</code> を実行する</li>
-</ul>
-
-<h3 id="3-nginx-の再起動">3. Nginx の再起動</h3>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl restart nginx
-</code></pre></div></div>
-
-<h3 id="4-ファイアウォールufwの設定">4. ファイアウォール(ufw)の設定</h3>
-
-<p>ポート TCP:443 を開放する。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ufw allow 443/tcp
-Rule added
-
-# ufw status
-    :
-443/tcp                    ALLOW       Anywhere
-    :
-</code></pre></div></div>
-
-<h3 id="5-動作確認">5. 動作確認</h3>
-
-<p>ブラウザから <code class="language-plaintext highlighter-rouge">https://＜サーバ名orIPアドレス＞/</code> にアクセスし、セキュリティに関するページが表示されたら適宜インストールする。<br />
-ブラウザにより異なるが、Firefox なら「危険を理解した上で接続するには」をクリック後「例外追加」ボタンをクリックする。そして開いたウィンドウ内で「セキュリティ例外を追加」ボタンをクリックする。<br />
-認証に成功すると以下のように表示される。</p>
-
-<h3 id="6-参考サイト">6. 参考サイト</h3>
-
-<ul>
-  <li><a href="https://nginx.org/en/docs/http/configuring_https_servers.html" title="Configuring HTTPS servers">Configuring HTTPS servers</a></li>
-</ul>
-
-<hr />
-
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Nginx" /><category term="SSL" /><summary type="html"><![CDATA[Debian GNU/Linux 12 (bookworm) に構築した Web サーバ Nginx で SSL 接続するための設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry></feed>
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html"><![CDATA[旧年明けまして、新年おめでとうございます。 旧年中はお世話になりました。 本年もどうぞよろしくお願いします。 話は変わりまして、先月12月分の当ブログアクセス状況を公開します。（※自分用の記録）]]></summary></entry></feed>

@@ -12712,4 +12712,10 @@ var store = [{
         "tags": ["Debian","Linux","SSH"],
         "url": "/2025/11/01/debian-13-ssh-installation/",
         "teaser": null
+      },{
+        "title": "Debian 13 (trixie) - セキュリティ・アップデートの自動化！",
+        "excerpt":"Debian GNU/Linux 13 (trixie) のセキュリティ・アップデートを自動化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 13 (trixie) サーバでの作業を想定。 cron-apt でもパッケージアップデートの自動化は可能であるが、今回はセキュリティ・アップデートのみなので unattended-upgrades を使用する。 （ちなみに、インストール済みの各種パッケージを自動アップデートするのは（依存パッケージの整合性等の問題があるため）危険であり、当方はセキュリティ・アップデート以外は自動でアップデートしない方針） root ユーザでの作業を想定。 1. unattended-upgrades のインストール unattended-upgrades はデフォルトでインストールされているはずだが、インストールされていなければインストールする。 また、パッケージ変更履歴ツール apt-listchanges もインストールする。 # apt -y install unattended-upgrades apt-listchanges 2. “50unattended-upgrades” の編集 メール送信先を編集（コメント解除＆変更）する。（当然、ユーザ名のみならず外部のメールアドレスも設定可） File: /etc/apt/apt.conf.d/50unattended-upgrades Unattended-Upgrade::Mail \"root\"; 3. “20auto-upgrades” の作成 以下のコマンドを実行して自動アップデートに関する質問に &lt;Yes&gt; 応答すると、自動アップグレードのための設定ファイル 20auto-upgrades...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux"],
+        "url": "/2025/11/02/debian-13-automation-security-update/",
+        "teaser": null
       }]
