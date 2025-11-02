@@ -12718,4 +12718,10 @@ var store = [{
         "tags": ["Debian","Linux"],
         "url": "/2025/11/02/debian-13-automation-security-update/",
         "teaser": null
+      },{
+        "title": "Debian 13 (trixie) - rootkit 検出ツール chkrootkit インストール！",
+        "excerpt":"Debian GNU/Linux 13 (trixie) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/linux 13.0.0 (trixie; 64bit) での作業を想定。 接続元のマシンは LMDE 6 (64bit) を想定。 chkrootkit が検知できるのは既知の rootkit のみであり、新規の rootkit は検知できないことを認識しておく。 chkrootkit では誤検知もあるので、検知結果は参考程度に留める。 コマンド自体が改竄されてからでは遅いので、OS インストール直後に行うのがよいらしい。 root ユーザでの作業を想定。 1. chkrootkit のインストール # apt -y install chkrootkit 2. chkrootkit の実行 以下のようにして chkrootkit を実行してみる。...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux"],
+        "url": "/2025/11/03/debian-13-chrootkit-installation/",
+        "teaser": null
       }]
