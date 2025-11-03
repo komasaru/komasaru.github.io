@@ -12724,4 +12724,10 @@ var store = [{
         "tags": ["Debian","Linux"],
         "url": "/2025/11/03/debian-13-chrootkit-installation/",
         "teaser": null
+      },{
+        "title": "Debian 13 (trixie) - アンチウィルスソフト導入！",
+        "excerpt":"Debian GNU/Linux 13 (trixie) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/linux 13.0.0 (trixie; 64bit) での作業を想定。 root ユーザでの作業を想定。 1. ClamAV のインストール # apt -y update # apt -y install clamav ClamAV インストール後は、ウイルスデータベース更新のサービス clamav-freshclam が自動で起動しているはず。 また、しばらくすると、 /var/lib/clamav/ ディレクトリ配下にウイルスデータベースがダウンロードされる。 ダウンロードの状況は、ログファイル /var/log/clamav/freshclam.log で確認できる。 2. ウイルススキャンのテスト（clamscan, ウイルス無しの場合） 以下のようにして、ウイルススキャンを行ってみる。 （スキャンするディレクトリを指定するなら、最後にディレクトリを指定する） # clamscan --infected --remove...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","ウイルス対策"],
+        "url": "/2025/11/04/debian-13-anti-virus-installation/",
+        "teaser": null
       }]

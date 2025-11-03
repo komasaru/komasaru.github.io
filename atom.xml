@@ -1,4 +1,367 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-11-02T22:47:53+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - rootkit 検出ツール chkrootkit インストール！</title><link href="https://komasaru.github.io/2025/11/03/debian-13-chrootkit-installation/" rel="alternate" type="text/html" title="Debian 13 (trixie) - rootkit 検出ツール chkrootkit インストール！" /><published>2025-11-03T00:00:00+09:00</published><updated>2025-11-03T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/03/debian-13-chrootkit-installation</id><content type="html" xml:base="https://komasaru.github.io/2025/11/03/debian-13-chrootkit-installation/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-11-03T22:53:27+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - アンチウィルスソフト導入！</title><link href="https://komasaru.github.io/2025/11/04/debian-13-anti-virus-installation/" rel="alternate" type="text/html" title="Debian 13 (trixie) - アンチウィルスソフト導入！" /><published>2025-11-04T00:00:00+09:00</published><updated>2025-11-04T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/04/debian-13-anti-virus-installation</id><content type="html" xml:base="https://komasaru.github.io/2025/11/04/debian-13-anti-virus-installation/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。</p>
+
+<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
+（当然ながら、興味がなければスルーしてください）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Debian GNU/linux 13.0.0 (trixie; 64bit) での作業を想定。</li>
+  <li>root ユーザでの作業を想定。</li>
+</ul>
+
+<h3 id="1-clamav-のインストール">1. ClamAV のインストール</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y update
+# apt -y install clamav
+</code></pre></div></div>
+
+<p>ClamAV インストール後は、ウイルスデータベース更新のサービス <code class="language-plaintext highlighter-rouge">clamav-freshclam</code> が自動で起動しているはず。<br />
+また、しばらくすると、 <code class="language-plaintext highlighter-rouge">/var/lib/clamav/</code> ディレクトリ配下にウイルスデータベースがダウンロードされる。<br />
+ダウンロードの状況は、ログファイル <code class="language-plaintext highlighter-rouge">/var/log/clamav/freshclam.log</code> で確認できる。</p>
+
+<h3 id="2-ウイルススキャンのテストclamscan-ウイルス無しの場合">2. ウイルススキャンのテスト（<code class="language-plaintext highlighter-rouge">clamscan</code>, ウイルス無しの場合）</h3>
+
+<p>以下のようにして、ウイルススキャンを行ってみる。<br />
+（スキャンするディレクトリを指定するなら、最後にディレクトリを指定する）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># clamscan --infected --remove --recursive
+
+----------- SCAN SUMMARY -----------
+Known viruses: 8708636
+Engine version: 1.4.3
+Scanned directories: 5
+Scanned files: 5
+Infected files: 0
+Data scanned: 0.02 MB
+Data read: 0.01 MB (ratio 2.00:1)
+Time: 27.205 sec (0 m 27 s)
+Start Date: 2025:10:01 15:06:10
+End Date:   2025:10:01 15:06:37
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">--infected</code> : 感染ファイルのみ結果出力</li>
+  <li><code class="language-plaintext highlighter-rouge">--remove</code> : 感染ファイルを削除（注意）<br />
+（<code class="language-plaintext highlighter-rouge">--move</code> で感染ファイルを別ディレクトリへ移動してもよいだろう）</li>
+  <li><code class="language-plaintext highlighter-rouge">--recursive</code> : サブディレクトリも再帰的にスキャン</li>
+</ul>
+
+<p>その他のオプションについては <code class="language-plaintext highlighter-rouge">clamscan --help</code> 等で確認</p>
+
+<h3 id="3-テスト用ウイルスファイルの準備">3. テスト用ウイルスファイルの準備</h3>
+
+<p>ウイルスが有る場合に正常に機能するかをテストするために、まずテスト用ウイルスを用意する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">eicar.com</code></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*
+</code></pre></div></div>
+
+<ul>
+  <li><a href="https://www.eicar.org/download-anti-malware-testfile/" title="Download Anti Malware Testfile - EICAR">ここ</a> からダウンロードすることも可能。</li>
+  <li><a href="https://files.trendmicro.com/products/eicar-file/eicar.com">これ</a> をダウンロードしてもよい。</li>
+</ul>
+
+<h3 id="4-ウイルススキャンのテストclamscan-ウイルス有りの場合">4. ウイルススキャンのテスト（<code class="language-plaintext highlighter-rouge">clamscan</code>, ウイルス有りの場合）</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># clamscan --infected --remove --recursive
+/root/eicar.com: Eicar-Signature FOUND
+/root/eicar.com: Removed.
+
+----------- SCAN SUMMARY -----------
+Known viruses: 8708636
+Engine version: 1.4.3
+Scanned directories: 5
+Scanned files: 6
+Infected files: 1
+Data scanned: 0.02 MB
+Data read: 0.01 MB (ratio 2.00:1)
+Time: 27.144 sec (0 m 27 s)
+Start Date: 2025:10:01 15:07:08
+End Date:   2025:10:01 15:07:36
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">--infected</code> : 感染ファイルのみ結果出力</li>
+  <li><code class="language-plaintext highlighter-rouge">--remove</code> : 感染ファイルを削除（注意）<br />
+（<code class="language-plaintext highlighter-rouge">--move</code> で感染ファイルを別ディレクトリへ移動してもよいだろう）</li>
+  <li><code class="language-plaintext highlighter-rouge">--recursive</code> : サブディレクトリも再帰的にスキャン</li>
+</ul>
+
+<p>その他のオプションについては <code class="language-plaintext highlighter-rouge">clamscan --help</code> 等で確認</p>
+
+<h3 id="5-clamav-デーモン-のインストール">5. ClamAV <strong>デーモン</strong> のインストール</h3>
+
+<p><code class="language-plaintext highlighter-rouge">clamscan</code> によるウイルススキャンは重いため、リアルタイムスキャンには <code class="language-plaintext highlighter-rouge">clamdscan</code> を使用する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install clamav-daemon
+</code></pre></div></div>
+
+<p>ClamAV デーモンインストール後は、<code class="language-plaintext highlighter-rouge">clamav-daemon</code> が自動で起動しているはず。</p>
+
+<h3 id="6-ウイルススキャンのテストclamdscan-ウイルス無しの場合">6. ウイルススキャンのテスト（<code class="language-plaintext highlighter-rouge">clamdscan</code>, ウイルス無しの場合）</h3>
+
+<p>以下のようにして、<code class="language-plaintext highlighter-rouge">clamdscan</code> でウイルススキャンを行ってみる。<br />
+（スキャンするディレクトリを指定するなら、最後にディレクトリを指定する）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># clamdscan --fdpass --infected --remove
+
+----------- SCAN SUMMARY -----------
+Infected files: 0
+Time: 16.896 sec (0 m 16 s)
+Start Date: 2025:10:01 15:08:06
+End Date:   2025:10:01 15:08:23
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">--fdpass</code> : clamav と異なるユーザでスキャンする場合<br />
+（今回、 root ユーザなので）</li>
+  <li><code class="language-plaintext highlighter-rouge">--infected</code> : 感染ファイルのみ結果出力</li>
+  <li><code class="language-plaintext highlighter-rouge">--remove</code> : 感染ファイルを削除（注意）<br />
+（<code class="language-plaintext highlighter-rouge">--move</code> で感染ファイルを別ディレクトリへ移動してもよいだろう）</li>
+  <li><code class="language-plaintext highlighter-rouge">clamdscan</code> では <code class="language-plaintext highlighter-rouge">--recursive</code> オプションは使用不可</li>
+</ul>
+
+<h3 id="7-テスト用ウイルスファイルのダウンロード">7. テスト用ウイルスファイルのダウンロード</h3>
+
+<p>（3. と同じ）</p>
+
+<h3 id="8-ウイルススキャンのテストclamdscan-ウイルス有りの場合">8. ウイルススキャンのテスト（<code class="language-plaintext highlighter-rouge">clamdscan</code>, ウイルス有りの場合）</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># clamdscan --fdpass --infected --remove
+/root/eicar.com: Eicar-Signature FOUND
+/root/eicar.com: Removed.
+
+----------- SCAN SUMMARY -----------
+Infected files: 1
+Time: 0.027 sec (0 m 0 s)
+Start Date: 2025:10:01 15:08:49
+End Date:   2025:10:01 15:08:49
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">--fdpass</code> : clamav と異なるユーザでスキャンする場合<br />
+（今回、 root ユーザなので）</li>
+  <li><code class="language-plaintext highlighter-rouge">--infected</code> : 感染ファイルのみ結果出力</li>
+  <li><code class="language-plaintext highlighter-rouge">--remove</code> : 感染ファイルを削除（注意）<br />
+（<code class="language-plaintext highlighter-rouge">--move</code> で感染ファイルを別ディレクトリへ移動してもよいだろう）</li>
+  <li><code class="language-plaintext highlighter-rouge">clamdscan</code> では <code class="language-plaintext highlighter-rouge">--recursive</code> オプションは使用不可</li>
+</ul>
+
+<h3 id="9-freshclam-の設定">9. freshclam の設定</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dpkg-reconfigure clamav-freshclam
+</code></pre></div></div>
+
+<p>インタラクティブに次の項目を設定できる。</p>
+
+<ul>
+  <li>ウイルスデータベースの更新方法<br />
+<code class="language-plaintext highlighter-rouge">daemon</code> / <code class="language-plaintext highlighter-rouge">ifup.d</code> / <code class="language-plaintext highlighter-rouge">cron</code> / <code class="language-plaintext highlighter-rouge">manual</code> ?<br />
+（当方、 <code class="language-plaintext highlighter-rouge">daemon</code> とした）</li>
+  <li>データベースを取得するためのミラーサイトの選択<br />
+（以下の1番目を選択。2,3番目はデフォルト）
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">DatabaseMirror db.jp.clamav.net</code></li>
+      <li><code class="language-plaintext highlighter-rouge">DatabaseMirror db.local.clamav.net</code></li>
+      <li><code class="language-plaintext highlighter-rouge">DatabaseMirror database.clamav.net</code></li>
+    </ul>
+  </li>
+  <li>プロキシの設定<br />
+（当方はプロキシは使用しない。何も入力せずに次へ）</li>
+  <li>一日当たりの更新回数<br />
+（当方、デフォルトの「1日24回」とした）</li>
+  <li>データベース更新後に clamd に通知するか？<br />
+（当方、「通知 <code class="language-plaintext highlighter-rouge">Yes</code>」とした）</li>
+  <li>バイトコードデータベースをダウンロードするか？<br />
+（当方、「ダウンロード <code class="language-plaintext highlighter-rouge">Yes</code>」とした（ある意味、ダウンロードは必須なので））</li>
+  <li>プライベートミラーを私用するか？<br />
+（当方、使用しない（ローカル環境で複数の ClamAV を使用しない）ので、何も入力せずに次へ）</li>
+  <li>ログローテーションするか？<br />
+（当方、「する <code class="language-plaintext highlighter-rouge">Yes</code>」とした）</li>
+</ul>
+
+<p>設定ファイルは以下のようになった。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/clamav/freshclam.conf</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Automatically created by the clamav-freshclam postinst</span>
+<span class="c"># Comments will get lost when you reconfigure the clamav-freshclam package</span>
+
+DatabaseOwner clamav
+UpdateLogFile /var/log/clamav/freshclam.log
+LogVerbose <span class="nb">false
+</span>LogSyslog <span class="nb">false
+</span>LogFacility LOG_LOCAL6
+LogFileMaxSize 0
+LogRotate <span class="nb">true
+</span>LogTime <span class="nb">true
+</span>Foreground <span class="nb">false
+</span>Debug <span class="nb">false
+</span>MaxAttempts 5
+DatabaseDirectory /var/lib/clamav
+DNSDatabaseInfo current.cvd.clamav.net
+ConnectTimeout 30
+ReceiveTimeout 0
+TestDatabases <span class="nb">yes
+</span>ScriptedUpdates <span class="nb">yes
+</span>CompressLocalDatabase no
+Bytecode <span class="nb">true
+</span>NotifyClamd /etc/clamav/clamd.conf
+<span class="c"># Check for new database 24 times a day</span>
+Checks 24
+DatabaseMirror db.jp.clamav.net
+DatabaseMirror db.local.clamav.net
+DatabaseMirror database.clamav.net</code></pre></figure>
+
+<h3 id="10-clamav-デーモンの設定">10. ClamAV デーモンの設定</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dpkg-reconfigure clamav-daemon
+</code></pre></div></div>
+
+<p>設定項目が多数あるが、全てデフォルトでよい。</p>
+
+<p>設定ファイルは以下のようになった。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/clamav/clamd.conf</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#Automatically Generated by clamav-daemon postinst</span>
+<span class="c">#To reconfigure clamd run #dpkg-reconfigure clamav-daemon</span>
+<span class="c">#Please read /usr/share/doc/clamav-daemon/README.Debian.gz for details</span>
+LocalSocket /var/run/clamav/clamd.ctl
+FixStaleSocket <span class="nb">true
+</span>LocalSocketGroup clamav
+LocalSocketMode 666
+<span class="c"># TemporaryDirectory is not set to its default /tmp here to make overriding</span>
+<span class="c"># the default with environment variables TMPDIR/TMP/TEMP possible</span>
+User clamav
+ScanMail <span class="nb">true
+</span>ScanArchive <span class="nb">true
+</span>ArchiveBlockEncrypted <span class="nb">false
+</span>MaxDirectoryRecursion 15
+FollowDirectorySymlinks <span class="nb">false
+</span>FollowFileSymlinks <span class="nb">false
+</span>ReadTimeout 180
+MaxThreads 12
+MaxConnectionQueueLength 15
+LogSyslog <span class="nb">false
+</span>LogRotate <span class="nb">true
+</span>LogFacility LOG_LOCAL6
+LogClean <span class="nb">false
+</span>LogVerbose <span class="nb">false
+</span>PreludeEnable no
+PreludeAnalyzerName ClamAV
+DatabaseDirectory /var/lib/clamav
+OfficialDatabaseOnly <span class="nb">false
+</span>SelfCheck 3600
+Foreground <span class="nb">false
+</span>Debug <span class="nb">false
+</span>ScanPE <span class="nb">true
+</span>MaxEmbeddedPE 10M
+ScanOLE2 <span class="nb">true
+</span>ScanPDF <span class="nb">true
+</span>ScanHTML <span class="nb">true
+</span>MaxHTMLNormalize 10M
+MaxHTMLNoTags 2M
+MaxScriptNormalize 5M
+MaxZipTypeRcg 1M
+ScanSWF <span class="nb">true
+</span>ExitOnOOM <span class="nb">false
+</span>LeaveTemporaryFiles <span class="nb">false
+</span>AlgorithmicDetection <span class="nb">true
+</span>ScanELF <span class="nb">true
+</span>IdleTimeout 30
+CrossFilesystems <span class="nb">true
+</span>PhishingSignatures <span class="nb">true
+</span>PhishingScanURLs <span class="nb">true
+</span>PhishingAlwaysBlockSSLMismatch <span class="nb">false
+</span>PhishingAlwaysBlockCloak <span class="nb">false
+</span>PartitionIntersection <span class="nb">false
+</span>DetectPUA <span class="nb">false
+</span>ScanPartialMessages <span class="nb">false
+</span>HeuristicScanPrecedence <span class="nb">false
+</span>StructuredDataDetection <span class="nb">false
+</span>CommandReadTimeout 30
+SendBufTimeout 200
+MaxQueue 100
+ExtendedDetectionInfo <span class="nb">true
+</span>OLE2BlockMacros <span class="nb">false
+</span>AllowAllMatchScan <span class="nb">true
+</span>ForceToDisk <span class="nb">false
+</span>DisableCertCheck <span class="nb">false
+</span>DisableCache <span class="nb">false
+</span>MaxScanTime 120000
+MaxScanSize 100M
+MaxFileSize 25M
+MaxRecursion 16
+MaxFiles 10000
+MaxPartitions 50
+MaxIconsPE 100
+PCREMatchLimit 10000
+PCRERecMatchLimit 5000
+PCREMaxFileSize 25M
+ScanXMLDOCS <span class="nb">true
+</span>ScanHWP3 <span class="nb">true
+</span>MaxRecHWP3 16
+StreamMaxLength 25M
+LogFile /var/log/clamav/clamav.log
+LogTime <span class="nb">true
+</span>LogFileUnlock <span class="nb">false
+</span>LogFileMaxSize 0
+Bytecode <span class="nb">true
+</span>BytecodeSecurity TrustSigned
+BytecodeTimeout 60000
+OnAccessMaxFileSize 5M</code></pre></figure>
+
+<h3 id="11-ウイルススキャンの定期実行設定">11. ウイルススキャンの定期実行設定</h3>
+
+<p>clamdscan による実行用スクリプトの作成。（一例。簡易版）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/root/clamdscan.sh</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+
+<span class="nv">PATH</span><span class="o">=</span>/usr/bin:/bin
+
+<span class="c"># ウイルススキャン</span>
+<span class="nv">CLAMSCANLOG</span><span class="o">=</span><span class="sb">`</span><span class="nb">mktemp</span><span class="sb">`</span>
+<span class="nv">TARGET</span><span class="o">=</span><span class="s2">"</span><span class="si">$(</span>mount | egrep <span class="nt">-v</span> <span class="s1">' type +(sysfs|proc|configfs) '</span> | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">' '</span> <span class="nt">-f</span> 3<span class="si">)</span><span class="s2">"</span>
+clamdscan <span class="nt">--fdpass</span> <span class="nt">--infected</span> <span class="nt">--remove</span> <span class="nv">$TARGET</span> <span class="o">&gt;</span> <span class="nv">$CLAMSCANLOG</span> 2&gt;&amp;1
+
+<span class="c"># レポートのメール送信（ウイルス検知時のみ）</span>
+<span class="c"># ※ログ内の行の最後に "FOUND" の文字列があるものをチェック</span>
+<span class="k">if</span> <span class="o">[</span> <span class="nt">-n</span> <span class="s2">"</span><span class="si">$(</span><span class="nb">grep </span>FOUND<span class="nv">$ $CLAMSCANLOG</span><span class="si">)</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+  </span><span class="nb">grep</span> <span class="nt">-A</span> 1 FOUND<span class="nv">$ $CLAMSCANLOG</span> | mail <span class="nt">-s</span> <span class="s2">"Virus Found in </span><span class="sb">`</span><span class="nb">hostname</span><span class="sb">`</span><span class="s2">"</span> root
+<span class="k">fi</span>
+
+<span class="c"># スキャンログをシスログに出力</span>
+<span class="nb">cat</span> <span class="nv">$CLAMSCANLOG</span> | logger <span class="nt">-t</span> <span class="si">$(</span><span class="nb">basename</span> <span class="k">${</span><span class="nv">0</span><span class="k">}</span><span class="si">)</span>
+<span class="nb">rm</span> <span class="nt">-f</span> <span class="nv">$CLAMSCANLOG</span></code></pre></figure>
+
+<ul>
+  <li>上記スクリプト内 <code class="language-plaintext highlighter-rouge">$TARGET</code> について、<br />
+仮想ファイルシステムをスキャンする際に <code class="language-plaintext highlighter-rouge">LibClamAV Warning: fmap_readpage: pread fail: ...</code> という警告が出力されるので、それを抑止するため、スキャン対象を仮想ファイルシステム以外としている。</li>
+  <li>それでもエラーになる（スキャンできない）ファイルが多数存在する。（<strong>要調査</strong>）</li>
+</ul>
+
+<p>実行権限付与。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># chmod +x /root/clamdscan.sh
+</code></pre></div></div>
+
+<p>cron 登録。（毎日深夜2:50に実行する例）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/cron.d/clamdscan</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>50 2 <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> root /root/clamdscan.sh <span class="o">&gt;</span> /dev/null
+</code></pre></div></div>
+
+<hr />
+
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="ウイルス対策" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">Debian 13 (trixie) - rootkit 検出ツール chkrootkit インストール！</title><link href="https://komasaru.github.io/2025/11/03/debian-13-chrootkit-installation/" rel="alternate" type="text/html" title="Debian 13 (trixie) - rootkit 検出ツール chkrootkit インストール！" /><published>2025-11-03T00:00:00+09:00</published><updated>2025-11-03T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/03/debian-13-chrootkit-installation</id><content type="html" xml:base="https://komasaru.github.io/2025/11/03/debian-13-chrootkit-installation/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。</p>
 
 <p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
 （当然ながら、興味がなければスルーしてください）</p>
@@ -1984,388 +2347,4 @@ Hello Ruby!
 
 <hr />
 
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html"><![CDATA[3月になりましたので、先月2月分の当ブログアクセス状況を公開します。（※自分用の記録）]]></summary></entry><entry><title type="html">2024年1月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2024/02/01/blog-access/" rel="alternate" type="text/html" title="2024年1月 - OS・ブラウザ別アクセス状況！" /><published>2024-02-01T00:00:00+09:00</published><updated>2024-02-01T00:00:00+09:00</updated><id>https://komasaru.github.io/2024/02/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2024/02/01/blog-access/"><![CDATA[<p>2月になりましたので、先月1月分の当ブログアクセス状況を公開します。（※自分用の記録）
-（投稿に失敗していたようなので、再度投稿しました(2024-02-23)）</p>
-
-<!--more-->
-
-<h3 id="1-アクセスをos別に集計">1. アクセスをOS別に集計</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">OS</th>
-      <th style="text-align: right">PageViews</th>
-      <th style="text-align: right">比率(%)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">Windows</td>
-      <td style="text-align: right">7,165</td>
-      <td style="text-align: right">73.2243</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mac OS</td>
-      <td style="text-align: right">1,598</td>
-      <td style="text-align: right">16.3311</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Linux</td>
-      <td style="text-align: right">427</td>
-      <td style="text-align: right">4.3638</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Android</td>
-      <td style="text-align: right">379</td>
-      <td style="text-align: right">3.8733</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Ubuntu Linux</td>
-      <td style="text-align: right">116</td>
-      <td style="text-align: right">1.1855</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">92</td>
-      <td style="text-align: right">0.9402</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">FreeBSD</td>
-      <td style="text-align: right">4</td>
-      <td style="text-align: right">0.0409</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Fedora Linux</td>
-      <td style="text-align: right">3</td>
-      <td style="text-align: right">0.0307</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">NetBSD</td>
-      <td style="text-align: right">1</td>
-      <td style="text-align: right">0.0102</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td style="text-align: left">合　計</td>
-      <td style="text-align: right">9,785</td>
-      <td style="text-align: right">100.0000</td>
-    </tr>
-  </tfoot>
-</table>
-
-<h3 id="2-アクセスをosバージョン別に集計">2. アクセスをOS・バージョン別に集計</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">OS</th>
-      <th style="text-align: left">Version</th>
-      <th style="text-align: right">PageViews</th>
-      <th style="text-align: right">比率(%)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">Windows</td>
-      <td style="text-align: left">10</td>
-      <td style="text-align: right">7,100</td>
-      <td style="text-align: right">72.5600</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mac OS</td>
-      <td style="text-align: left">X</td>
-      <td style="text-align: right">1,598</td>
-      <td style="text-align: right">16.3311</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Linux</td>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">427</td>
-      <td style="text-align: right">4.3638</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Android</td>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">379</td>
-      <td style="text-align: right">3.8733</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Ubuntu Linux</td>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">116</td>
-      <td style="text-align: right">1.1855</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">92</td>
-      <td style="text-align: right">0.9402</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Windows</td>
-      <td style="text-align: left">7</td>
-      <td style="text-align: right">39</td>
-      <td style="text-align: right">0.3986</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Windows</td>
-      <td style="text-align: left">8.1</td>
-      <td style="text-align: right">21</td>
-      <td style="text-align: right">0.2146</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">FreeBSD</td>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">4</td>
-      <td style="text-align: right">0.0409</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Windows</td>
-      <td style="text-align: left">8</td>
-      <td style="text-align: right">4</td>
-      <td style="text-align: right">0.0409</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Fedora Linux</td>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">3</td>
-      <td style="text-align: right">0.0307</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">NetBSD</td>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">1</td>
-      <td style="text-align: right">0.0102</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Windows</td>
-      <td style="text-align: left">XP</td>
-      <td style="text-align: right">1</td>
-      <td style="text-align: right">0.0102</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td style="text-align: left">合　計</td>
-      <td style="text-align: left"> </td>
-      <td style="text-align: right">9,785</td>
-      <td style="text-align: right">100.0000</td>
-    </tr>
-  </tfoot>
-</table>
-
-<h3 id="3-アクセスをブラウザ別に集計">3. アクセスをブラウザ別に集計</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">ブラウザ</th>
-      <th style="text-align: right">PageViews</th>
-      <th style="text-align: right">比率(%)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: right">8,111</td>
-      <td style="text-align: right">82.8922</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: right">794</td>
-      <td style="text-align: right">8.1145</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Safari</td>
-      <td style="text-align: right">792</td>
-      <td style="text-align: right">8.0940</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Netscape Navigator</td>
-      <td style="text-align: right">82</td>
-      <td style="text-align: right">0.8380</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Internet Explorer</td>
-      <td style="text-align: right">3</td>
-      <td style="text-align: right">0.0307</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla SeaMonkey</td>
-      <td style="text-align: right">1</td>
-      <td style="text-align: right">0.0102</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">1</td>
-      <td style="text-align: right">0.0102</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla</td>
-      <td style="text-align: right">1</td>
-      <td style="text-align: right">0.0102</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td style="text-align: left">合　計</td>
-      <td style="text-align: right">9,785</td>
-      <td style="text-align: right">100.0000</td>
-    </tr>
-  </tfoot>
-</table>
-
-<h3 id="4-アクセスをブラウザバージョン別に集計上位20件">4. アクセスをブラウザ・バージョン別に集計（上位20件）</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">ブラウザ</th>
-      <th style="text-align: left">Version</th>
-      <th style="text-align: right">PageViews</th>
-      <th style="text-align: right">比率(%)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">120.0.0.0</td>
-      <td style="text-align: right">6,057</td>
-      <td style="text-align: right">61.9009</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">118.0.0.0</td>
-      <td style="text-align: right">1,060</td>
-      <td style="text-align: right">10.8329</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Safari</td>
-      <td style="text-align: left">604.1</td>
-      <td style="text-align: right">567</td>
-      <td style="text-align: right">5.7946</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">121.0.0.0</td>
-      <td style="text-align: right">530</td>
-      <td style="text-align: right">5.4165</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">121.0</td>
-      <td style="text-align: right">423</td>
-      <td style="text-align: right">4.3229</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Safari</td>
-      <td style="text-align: left">605.1.15</td>
-      <td style="text-align: right">217</td>
-      <td style="text-align: right">2.2177</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">115.0</td>
-      <td style="text-align: right">145</td>
-      <td style="text-align: right">1.4819</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">119.0.0.0</td>
-      <td style="text-align: right">144</td>
-      <td style="text-align: right">1.4716</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Netscape Navigator</td>
-      <td style="text-align: left">5.0</td>
-      <td style="text-align: right">82</td>
-      <td style="text-align: right">0.8380</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">122.0</td>
-      <td style="text-align: right">80</td>
-      <td style="text-align: right">0.8176</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">109.0.0.0</td>
-      <td style="text-align: right">44</td>
-      <td style="text-align: right">0.4497</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">102.0</td>
-      <td style="text-align: right">27</td>
-      <td style="text-align: right">0.2759</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">117.0.0.0</td>
-      <td style="text-align: right">25</td>
-      <td style="text-align: right">0.2555</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">120.0</td>
-      <td style="text-align: right">23</td>
-      <td style="text-align: right">0.2351</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">116.0.0.0</td>
-      <td style="text-align: right">23</td>
-      <td style="text-align: right">0.2351</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">119.0</td>
-      <td style="text-align: right">22</td>
-      <td style="text-align: right">0.2248</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">115.0.0.0</td>
-      <td style="text-align: right">19</td>
-      <td style="text-align: right">0.1942</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">99.0.4844.51</td>
-      <td style="text-align: right">15</td>
-      <td style="text-align: right">0.1533</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">116.0</td>
-      <td style="text-align: right">15</td>
-      <td style="text-align: right">0.1533</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">112.0.0.0</td>
-      <td style="text-align: right">14</td>
-      <td style="text-align: right">0.1431</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">：</td>
-      <td style="text-align: left">：</td>
-      <td style="text-align: right">：</td>
-      <td style="text-align: right">：</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td style="text-align: left">合　計</td>
-      <td style="text-align: left"> </td>
-      <td style="text-align: right">9,785</td>
-      <td style="text-align: right">100.0000</td>
-    </tr>
-  </tfoot>
-</table>
-
-<hr />
-
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html"><![CDATA[2月になりましたので、先月1月分の当ブログアクセス状況を公開します。（※自分用の記録） （投稿に失敗していたようなので、再度投稿しました(2024-02-23)）]]></summary></entry></feed>
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html"><![CDATA[3月になりましたので、先月2月分の当ブログアクセス状況を公開します。（※自分用の記録）]]></summary></entry></feed>
