@@ -1,4 +1,42 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-11-05T22:47:35+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - ファイアウォール設定！</title><link href="https://komasaru.github.io/2025/11/06/debian-13-firewall-setting/" rel="alternate" type="text/html" title="Debian 13 (trixie) - ファイアウォール設定！" /><published>2025-11-06T00:00:00+09:00</published><updated>2025-11-06T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/06/debian-13-firewall-setting</id><content type="html" xml:base="https://komasaru.github.io/2025/11/06/debian-13-firewall-setting/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) でファイアウォールを設定する方法についての記録です。</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-11-06T23:27:51+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - サービスの管理！</title><link href="https://komasaru.github.io/2025/11/07/debian-13-service-management/" rel="alternate" type="text/html" title="Debian 13 (trixie) - サービスの管理！" /><published>2025-11-07T00:00:00+09:00</published><updated>2025-11-07T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/07/debian-13-service-management</id><content type="html" xml:base="https://komasaru.github.io/2025/11/07/debian-13-service-management/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) でのサービスの管理についての記録です。</p>
+
+<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
+（当然ながら、興味がなければスルーしてください）</p>
+
+<!--more-->
+
+<p><strong>※※※ Debian 13 では sysv-rc-conf をインストールできない(251001) ※※※</strong></p>
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Debian GNU/Linux 13.0.0 (trixie; 64bit) での作業を想定。</li>
+  <li>root ユーザでの作業を想定。</li>
+</ul>
+
+<h3 id="1-systemd-の使用方法">1. SystemD の使用方法</h3>
+
+<p>以下は vsftpd サーバの例。（<code class="language-plaintext highlighter-rouge">vsftpd.service</code> が正式なサービス名だが <code class="language-plaintext highlighter-rouge">.service</code> は省略可能）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ systemctl start vsftpd        # &lt;= vsftpd サービスの起動
+$ systemctl stop vsftpd         # &lt;= vsftpd サービスの停止
+$ systemctl status vsftpd       # &lt;= vsftpd サービスの状況確認
+$ systemctl enable vsftpd       # &lt;= vsftpd サービスの自動起動設定
+$ systemctl disble vsftpd       # &lt;= vsftpd サービスの自動起動解除
+$ systemctl is-enabled vsftpd   # &lt;= vsftpd サービスが自動起動設定されているか
+$ systemctl list-unit-files -t service | grep vsftpd  # &lt;= vsftpd 起動設定の確認
+$ systemctl -t service          # &lt;= 起動中サービス一覧の確認
+$ systemctl -t service --all    # &lt;= 全サービス一覧の確認
+$ systemctl poweroff            # &lt;= システム Shutdown 後電源 OFF
+$ systemctl halt                # &lt;= システム Shutdown 後 Halt
+$ systemctl reboot              # &lt;= システム Shutdown 後リブート
+</code></pre></div></div>
+
+<p>SystemD 未対応のサービスの場合でも自動で従来の SysVinit にサービスの管理を移譲しますが、 <code class="language-plaintext highlighter-rouge">systemctl list-unit-files</code> での確認はできないので注意。</p>
+
+<hr />
+
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) でのサービスの管理についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">Debian 13 (trixie) - ファイアウォール設定！</title><link href="https://komasaru.github.io/2025/11/06/debian-13-firewall-setting/" rel="alternate" type="text/html" title="Debian 13 (trixie) - ファイアウォール設定！" /><published>2025-11-06T00:00:00+09:00</published><updated>2025-11-06T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/06/debian-13-firewall-setting</id><content type="html" xml:base="https://komasaru.github.io/2025/11/06/debian-13-firewall-setting/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) でファイアウォールを設定する方法についての記録です。</p>
 
 <p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
 （当然ながら、興味がなければスルーしてください）</p>
@@ -1460,349 +1498,4 @@ Hello Ruby!
 
 <hr />
 
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Ruby" /><summary type="html"><![CDATA[Debian GNU/Linux 12 (bookworm) に Ruby 3.3 をソースをビルドしてインストール方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">2024年4月 - OS・ブラウザ別アクセス状況！</title><link href="https://komasaru.github.io/2024/05/01/blog-access/" rel="alternate" type="text/html" title="2024年4月 - OS・ブラウザ別アクセス状況！" /><published>2024-05-01T00:00:00+09:00</published><updated>2024-05-01T00:00:00+09:00</updated><id>https://komasaru.github.io/2024/05/01/blog-access</id><content type="html" xml:base="https://komasaru.github.io/2024/05/01/blog-access/"><![CDATA[<p>5月になりましたので、先月4月分の当ブログアクセス状況を公開します。（※自分用の記録）</p>
-
-<!--more-->
-
-<h3 id="1-アクセスをos別に集計">1. アクセスをOS別に集計</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">OS</th>
-      <th style="text-align: right">PageViews</th>
-      <th style="text-align: right">比率(%)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">Windows</td>
-      <td style="text-align: right">4,327</td>
-      <td style="text-align: right">72.5641</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mac OS</td>
-      <td style="text-align: right">1,009</td>
-      <td style="text-align: right">16.9210</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Linux</td>
-      <td style="text-align: right">281</td>
-      <td style="text-align: right">4.7124</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Android</td>
-      <td style="text-align: right">207</td>
-      <td style="text-align: right">3.4714</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">77</td>
-      <td style="text-align: right">1.2913</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Ubuntu Linux</td>
-      <td style="text-align: right">60</td>
-      <td style="text-align: right">1.0062</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">FreeBSD</td>
-      <td style="text-align: right">1</td>
-      <td style="text-align: right">0.0168</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Fedora Linux</td>
-      <td style="text-align: right">1</td>
-      <td style="text-align: right">0.0168</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td style="text-align: left">合　計</td>
-      <td style="text-align: right">5,963</td>
-      <td style="text-align: right">100.0000</td>
-    </tr>
-  </tfoot>
-</table>
-
-<h3 id="2-アクセスをosバージョン別に集計">2. アクセスをOS・バージョン別に集計</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">OS</th>
-      <th style="text-align: left">Version</th>
-      <th style="text-align: right">PageViews</th>
-      <th style="text-align: right">比率(%)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">Windows</td>
-      <td style="text-align: left">10</td>
-      <td style="text-align: right">4,314</td>
-      <td style="text-align: right">72.3461</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mac OS</td>
-      <td style="text-align: left">X</td>
-      <td style="text-align: right">1,009</td>
-      <td style="text-align: right">16.9210</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Linux</td>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">281</td>
-      <td style="text-align: right">4.7124</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Android</td>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">207</td>
-      <td style="text-align: right">3.4714</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">77</td>
-      <td style="text-align: right">1.2913</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Ubuntu Linux</td>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">60</td>
-      <td style="text-align: right">1.0062</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Windows</td>
-      <td style="text-align: left">7</td>
-      <td style="text-align: right">10</td>
-      <td style="text-align: right">0.1677</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Windows</td>
-      <td style="text-align: left">8.1</td>
-      <td style="text-align: right">3</td>
-      <td style="text-align: right">0.0503</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">FreeBSD</td>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">1</td>
-      <td style="text-align: right">0.0168</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Fedora Linux</td>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">1</td>
-      <td style="text-align: right">0.0168</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td style="text-align: left">合　計</td>
-      <td style="text-align: left"> </td>
-      <td style="text-align: right">5,963</td>
-      <td style="text-align: right">100.0000</td>
-    </tr>
-  </tfoot>
-</table>
-
-<h3 id="3-アクセスをブラウザ別に集計">3. アクセスをブラウザ別に集計</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">ブラウザ</th>
-      <th style="text-align: right">PageViews</th>
-      <th style="text-align: right">比率(%)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: right">4,854</td>
-      <td style="text-align: right">81.4020</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: right">540</td>
-      <td style="text-align: right">9.0558</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Safari</td>
-      <td style="text-align: right">499</td>
-      <td style="text-align: right">8.3683</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Netscape Navigator</td>
-      <td style="text-align: right">68</td>
-      <td style="text-align: right">1.1404</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">unknown</td>
-      <td style="text-align: right">2</td>
-      <td style="text-align: right">0.0335</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td style="text-align: left">合　計</td>
-      <td style="text-align: right">5,963</td>
-      <td style="text-align: right">100.0000</td>
-    </tr>
-  </tfoot>
-</table>
-
-<h3 id="4-アクセスをブラウザバージョン別に集計上位20件">4. アクセスをブラウザ・バージョン別に集計（上位20件）</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">ブラウザ</th>
-      <th style="text-align: left">Version</th>
-      <th style="text-align: right">PageViews</th>
-      <th style="text-align: right">比率(%)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">123.0.0.0</td>
-      <td style="text-align: right">3,090</td>
-      <td style="text-align: right">51.8196</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">124.0.0.0</td>
-      <td style="text-align: right">1,053</td>
-      <td style="text-align: right">17.6589</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">122.0.0.0</td>
-      <td style="text-align: right">383</td>
-      <td style="text-align: right">6.4229</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Safari</td>
-      <td style="text-align: left">604.1</td>
-      <td style="text-align: right">330</td>
-      <td style="text-align: right">5.5341</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">124.0</td>
-      <td style="text-align: right">272</td>
-      <td style="text-align: right">4.5615</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Safari</td>
-      <td style="text-align: left">605.1.15</td>
-      <td style="text-align: right">161</td>
-      <td style="text-align: right">2.7000</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">125.0</td>
-      <td style="text-align: right">105</td>
-      <td style="text-align: right">1.7609</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">120.0.0.0</td>
-      <td style="text-align: right">97</td>
-      <td style="text-align: right">1.6267</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">115.0</td>
-      <td style="text-align: right">92</td>
-      <td style="text-align: right">1.5428</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Netscape Navigator</td>
-      <td style="text-align: left">5.0</td>
-      <td style="text-align: right">68</td>
-      <td style="text-align: right">1.1404</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">121.0.0.0</td>
-      <td style="text-align: right">58</td>
-      <td style="text-align: right">0.9727</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">109.0.0.0</td>
-      <td style="text-align: right">34</td>
-      <td style="text-align: right">0.5702</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">116.0.0.0</td>
-      <td style="text-align: right">21</td>
-      <td style="text-align: right">0.3522</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">123.0</td>
-      <td style="text-align: right">15</td>
-      <td style="text-align: right">0.2516</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">119.0.0.0</td>
-      <td style="text-align: right">11</td>
-      <td style="text-align: right">0.1845</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">102.0</td>
-      <td style="text-align: right">9</td>
-      <td style="text-align: right">0.1509</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">123.0.6312.105</td>
-      <td style="text-align: right">8</td>
-      <td style="text-align: right">0.1342</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">122.0</td>
-      <td style="text-align: right">8</td>
-      <td style="text-align: right">0.1342</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Chrome</td>
-      <td style="text-align: left">104.0.0.0</td>
-      <td style="text-align: right">7</td>
-      <td style="text-align: right">0.1174</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Mozilla Firefox</td>
-      <td style="text-align: left">121.0</td>
-      <td style="text-align: right">7</td>
-      <td style="text-align: right">0.1174</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">：</td>
-      <td style="text-align: left">：</td>
-      <td style="text-align: right">：</td>
-      <td style="text-align: right">：</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td style="text-align: left">合　計</td>
-      <td style="text-align: left"> </td>
-      <td style="text-align: right">5,963</td>
-      <td style="text-align: right">100.0000</td>
-    </tr>
-  </tfoot>
-</table>
-
-<hr />
-
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="ブログ" /><category term="Jekyll" /><summary type="html"><![CDATA[5月になりましたので、先月4月分の当ブログアクセス状況を公開します。（※自分用の記録）]]></summary></entry></feed>
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Ruby" /><summary type="html"><![CDATA[Debian GNU/Linux 12 (bookworm) に Ruby 3.3 をソースをビルドしてインストール方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry></feed>
