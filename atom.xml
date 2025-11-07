@@ -1,4 +1,402 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-11-06T23:27:51+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - サービスの管理！</title><link href="https://komasaru.github.io/2025/11/07/debian-13-service-management/" rel="alternate" type="text/html" title="Debian 13 (trixie) - サービスの管理！" /><published>2025-11-07T00:00:00+09:00</published><updated>2025-11-07T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/07/debian-13-service-management</id><content type="html" xml:base="https://komasaru.github.io/2025/11/07/debian-13-service-management/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) でのサービスの管理についての記録です。</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-11-07T23:50:49+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - DNS サーバ BIND9 構築！</title><link href="https://komasaru.github.io/2025/11/08/debian-13-bind-installation/" rel="alternate" type="text/html" title="Debian 13 (trixie) - DNS サーバ BIND9 構築！" /><published>2025-11-08T00:00:00+09:00</published><updated>2025-11-08T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/08/debian-13-bind-installation</id><content type="html" xml:base="https://komasaru.github.io/2025/11/08/debian-13-bind-installation/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) に DNS サーバを構築する方法についての記録です。</p>
+
+<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
+（当然ながら、興味がなければスルーしてください）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Debian GNU/Linux 13.0.0 (trixie; 64bit) での作業を想定。</li>
+  <li>サーバのローカル IP アドレスは <code class="language-plaintext highlighter-rouge">192.168.11.3</code>、グローバル IP アドレスは <code class="language-plaintext highlighter-rouge">xxx.yyy.zzz.aaa</code> を想定。</li>
+  <li>ドメイン名は <code class="language-plaintext highlighter-rouge">mk-mode.com</code>、マシンのホスト名は <code class="language-plaintext highlighter-rouge">foo</code>、ネームサーバホスト名は <code class="language-plaintext highlighter-rouge">ns</code> を想定。</li>
+  <li>セカンダリ DNS は用意しない。</li>
+  <li>root ユーザでの作業を想定。</li>
+</ul>
+
+<h3 id="1-bind-のインストール">1. BIND のインストール</h3>
+
+<p>（<code class="language-plaintext highlighter-rouge">bind9-utils</code> は <code class="language-plaintext highlighter-rouge">dig</code> コマンド用）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install bind9 bind9-utils
+</code></pre></div></div>
+
+<h3 id="2-bind-設定ファイルの編集">2. BIND 設定ファイルの編集</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>include <span class="s2">"/etc/bind/named.conf.options"</span><span class="p">;</span>
+include <span class="s2">"/etc/bind/named.conf.local"</span><span class="p">;</span>
+//include <span class="s2">"/etc/bind/named.conf.root-hints"</span><span class="p">;</span>    <span class="c"># &lt;= 削除（view "internal" 内で設定するので）</span>
+include <span class="s2">"/etc/bind/named.conf.internal-zones"</span><span class="p">;</span>  <span class="c"># &lt;= 追加</span>
+include <span class="s2">"/etc/bind/named.conf.external-zones"</span><span class="p">;</span>  <span class="c"># &lt;= 追加</span>
+</code></pre></div></div>
+
+<h3 id="3-内部向けゾーンファイルの作成">3. 内部向けゾーンファイルの作成</h3>
+
+<p>BIND 設定ファイルで指定している内部向けゾーンファイルを以下のように作成する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.internal-zones</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>view <span class="s2">"internal"</span> <span class="o">{</span>
+    <span class="c"># 内部向け設定の対象範囲定義</span>
+    match-clients <span class="o">{</span>
+        localhost<span class="p">;</span>
+        internal-network<span class="p">;</span>
+    <span class="o">}</span><span class="p">;</span>
+
+    <span class="c"># 内部向け正引きゾーン定義</span>
+    zone <span class="s2">"mk-mode.com"</span> IN <span class="o">{</span>
+        <span class="nb">type </span>primary<span class="p">;</span>
+        file <span class="s2">"/etc/bind/mk-mode.com.lan"</span><span class="p">;</span>
+        allow-update <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+    <span class="o">}</span><span class="p">;</span>
+
+    <span class="c"># 内部向け逆引きゾーン定義</span>
+    zone <span class="s2">"11.168.192.in-addr.arpa"</span> IN <span class="o">{</span>
+        <span class="nb">type </span>primary<span class="p">;</span>
+        file <span class="s2">"/etc/bind/11.168.192.db"</span><span class="p">;</span>
+        allow-update <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+    <span class="o">}</span><span class="p">;</span>
+    include <span class="s2">"/etc/bind/named.conf.root-hints"</span><span class="p">;</span>
+
+    empty-zones-enable no<span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>最後の <code class="language-plaintext highlighter-rouge">empty-zones-enable no;</code> は、ログに以下のようなメッセージが出力されないための対処。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Warning: view internal: 'empty-zones-enable/disable-empty-zone' not set: disabling RFC 1918 empty zones
+</code></pre></div></div>
+
+<h3 id="4-外部向けゾーンファイルの作成">4. 外部向けゾーンファイルの作成</h3>
+
+<p>BIND 設定ファイルで指定している外部向けゾーンファイルを以下のように作成する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.external-zones</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>view <span class="s2">"external"</span> <span class="o">{</span>
+    match-clients <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>  <span class="c"># 全て対象（内部向け範囲以外のホスト）</span>
+    allow-query <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>    <span class="c"># 問合せは全て許可</span>
+    recursion no<span class="p">;</span>            <span class="c"># 再帰検索禁止</span>
+
+    <span class="c"># 外部向け正引きゾーン定義</span>
+    zone <span class="s2">"mk-mode.com"</span> IN <span class="o">{</span>
+        <span class="nb">type </span>primary<span class="p">;</span>
+        file <span class="s2">"/etc/bind/mk-mode.com.wan"</span><span class="p">;</span>
+        allow-update <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+    <span class="o">}</span><span class="p">;</span>
+
+    <span class="c"># 外部向け正引き情報を定義 *注</span>
+    zone <span class="s2">"zzz.yyy.xxx.in-addr.arpa"</span> IN <span class="o">{</span>
+        <span class="nb">type </span>primary<span class="p">;</span>
+        file <span class="s2">"/etc/bind/zzz.yyy.xxx.db"</span><span class="p">;</span>
+        allow-update <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+    <span class="o">}</span><span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="5-オプション設定ファイルの編集">5. オプション設定ファイルの編集</h3>
+
+<p>その他の設定用ファイルを以下のように編集する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.options</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// ローカルネットワークの定義
+acl internal-network <span class="o">{</span>                                     <span class="c"># &lt;= 追加</span>
+        192.168.11.0/24<span class="p">;</span>                                   <span class="c"># &lt;= 追加</span>
+<span class="o">}</span><span class="p">;</span>                                                         <span class="c"># &lt;= 追加</span>
+
+options <span class="o">{</span>
+        // bindのバージョン情報の非表示化
+        version         <span class="s2">"unknown"</span><span class="p">;</span>                         <span class="c"># &lt;= 追加</span>
+
+        directory <span class="s2">"/var/cache/bind"</span><span class="p">;</span>
+
+        // 名前解決の問い合わせを受け付ける範囲
+        allow-query <span class="o">{</span> localhost<span class="p">;</span> internal-network<span class="p">;</span> <span class="o">}</span><span class="p">;</span>      <span class="c"># &lt;= 追加</span>
+
+        // ゾーン情報の転送要求を許可する範囲
+        allow-transfer <span class="o">{</span> localhost<span class="p">;</span> <span class="o">}</span><span class="p">;</span>                     <span class="c"># &lt;= 追加</span>
+
+        // 再帰的な問合せを許可する範囲
+        allow-recursion <span class="o">{</span> localhost<span class="p">;</span> internal-network<span class="p">;</span> <span class="o">}</span><span class="p">;</span>  <span class="c"># &lt;= 追加</span>
+        dnssec-validation auto<span class="p">;</span>                            <span class="c"># &lt;= 追加</span>
+        listen-on port 53 <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>                        <span class="c"># &lt;= 追加</span>
+
+        auth-nxdomain no<span class="p">;</span>     <span class="c"># conform to RFC1035</span>
+
+        // IPv6 は使用する場合は <span class="s2">"none"</span> を <span class="s2">"any"</span> に
+        listen-on-v6 <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+
+<span class="c"># EDNS0 の無効化</span>
+<span class="c"># "error (unexpected RCODE REFUSED) ..." の出力抑止</span>
+server 0.0.0.0 <span class="o">{</span>
+        edns no<span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+
+logging <span class="o">{</span>
+        // エラーログ <span class="s2">"DNS format error ... invalid response"</span> の出力抑止
+        category resolver <span class="o">{</span> null<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+        // エラーログ <span class="s2">"error (connection refused) resolving"</span> の出力抑止
+        category lame-servers <span class="o">{</span> null<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="6-内部向け正引きゾーン定義ファイルの作成">6. 内部向け正引きゾーン定義ファイルの作成</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/mk-mode.com.lan</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span> 86400
+@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. <span class="o">(</span>
+        2025100201  <span class="p">;</span>Serial
+        3600        <span class="p">;</span>Refresh
+        1800        <span class="p">;</span>Retry
+        604800      <span class="p">;</span>Expire
+        86400       <span class="p">;</span>Minimum TTL
+<span class="o">)</span>
+
+        IN  NS      ns.mk-mode.com.
+        IN  A       192.168.11.101
+        IN  MX 10   ns.mk-mode.com.
+ns      IN  A       192.168.11.3
+foo     IN  A       192.168.11.3
+var     IN  A       192.168.11.2
+baz     IN  A       192.168.11.101
+www     IN  CNAME   ns.mk-mode.com.
+ftp     IN  CNAME   ns.mk-mode.com.
+mail    IN  CNAME   ns.mk-mode.com.
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">hoge</code>, <code class="language-plaintext highlighter-rouge">fuga</code> はローカルネットワーク内の別のマシン。<br />
+<code class="language-plaintext highlighter-rouge">www</code>, <code class="language-plaintext highlighter-rouge">ftp</code>, <code class="language-plaintext highlighter-rouge">mail</code> は別名定義。</p>
+
+<h3 id="7-外部向け正引きゾーン定義ファイルの作成">7. 外部向け正引きゾーン定義ファイルの作成</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/mk-mode.com.wan</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span> 86400
+@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. <span class="o">(</span>
+        2025100201  <span class="p">;</span>Serial
+        3600        <span class="p">;</span>Refresh
+        1800        <span class="p">;</span>Retry
+        604800      <span class="p">;</span>Expire
+        86400       <span class="p">;</span>Minimum TTL
+<span class="o">)</span>
+
+        IN  NS      ns.mk-mode.com.
+        IN  A       xxx.yyy.zzz.aaa
+        IN  MX 10   ns.mk-mode.com.
+ns      IN  A       xxx.yyy.zzz.aaa
+</code></pre></div></div>
+
+<h3 id="8-内部向け逆引きゾーン定義ファイルの作成">8. 内部向け逆引きゾーン定義ファイルの作成</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/11.168.192.db</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span> 86400
+@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. <span class="o">(</span>
+        2025100201  <span class="p">;</span>Serial
+        3600        <span class="p">;</span>Refresh
+        1800        <span class="p">;</span>Retry
+        604800      <span class="p">;</span>Expire
+        86400       <span class="p">;</span>Minimum TTL
+<span class="o">)</span>
+
+        IN  NS      ns.mk-mode.com.
+        IN  PTR     mk-mode.com.
+        IN  A       255.255.255.0
+3       IN  PTR     ns.mk-mode.com.
+3       IN  PTR     foo.mk-mode.com.
+2       IN  PTR     var.mk-mode.com.
+101     IN  PTR     baz.mk-mode.com.
+</code></pre></div></div>
+
+<h3 id="9-外部向け逆引きゾーン定義ファイルの作成">9. 外部向け逆引きゾーン定義ファイルの作成</h3>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/bind/zzz.yyy.xxx.db</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span> 86400
+@   IN  SOA     ns.mk-mode.com. root.mk-mode.com. <span class="o">(</span>
+        2025100201  <span class="p">;</span>Serial
+        3600        <span class="p">;</span>Refresh
+        1800        <span class="p">;</span>Retry
+        604800      <span class="p">;</span>Expire
+        86400       <span class="p">;</span>Minimum TTL
+<span class="o">)</span>
+
+        IN  NS      ns.mk-mode.com.
+        IN  PTR     mk-mode.com.
+        IN  A       255.255.255.254
+aaa     IN  PTR     ns.mk-mode.com.
+</code></pre></div></div>
+
+<p>（<code class="language-plaintext highlighter-rouge">255.255.255.254</code> はグローバル IP が１個のみの場合の設定値）</p>
+
+<h3 id="10-問合せ先-dns-サーバの追加">10. 問合せ先 DNS サーバの追加</h3>
+
+<p>DNS サーバー自身も問合せ先に追加する。<br />
+最初から記載のあるルータの IP アドレス（インストール・初期設定時のもの）をセカンダリ、今回構築のサーバ自身をプライマリに設定するので、ルータより先に記述する。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>domain localdomain
+search localdomain       <span class="c"># &lt;= 追加</span>
+nameserver 192.168.11.3  <span class="c"># &lt;= 追加（今設定中のサーバマシンの IP アドレス）</span>
+nameserver 192.168.11.1  <span class="c"># ルータの IP アドレス</span>
+</code></pre></div></div>
+
+<h3 id="11-ipv6-の無効化設定">11. IPv6 の無効化設定</h3>
+
+<p>システムとして IPv6 を無効にしている場合は、以下のように <code class="language-plaintext highlighter-rouge">/etc/default/named</code> を編集する。
+（<code class="language-plaintext highlighter-rouge">/var/log/syslog</code> に <code class="language-plaintext highlighter-rouge">... named[9999]: error (network unreachable) resolving ...</code> のようなエラーが出力されないようにするため）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/default/named</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">OPTIONS</span><span class="o">=</span><span class="s2">"-u bind -4"</span>
+</code></pre></div></div>
+
+<h3 id="12-bind-の再起動">12. BIND の再起動</h3>
+
+<p>設定を有効化するために BIND を再起動する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl restart bind9
+</code></pre></div></div>
+
+<p>もし、この際に次のようなエラーとなる場合、</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>System has not been booted with systemd as init system (PID 1). Can't operate.
+Failed to connect to bus: ホストが落ちています
+</code></pre></div></div>
+
+<p>これは、 SystemD が正常に起動していない（SystemCtl がインストールされていない）ためなので、 SystemCtl をインストールする。</p>
+
+<h3 id="13-動作確認">13. 動作確認</h3>
+
+<p>DNS サーバが正常に機能する（正引きで IP アドレス、逆引きでホスト名が返ってくる）か、確認してみる。
+・内部向け正引きテスト</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dig ns.mk-mode.com.
+
+; &lt;&lt;&gt;&gt; DiG 9.20.11-4-Debian &lt;&lt;&gt;&gt; ns.mk-mode.com.
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 20348
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 5bb4de70b01c8ee30100000068dddea4377d61e260c26d68 (good)
+;; QUESTION SECTION:
+;ns.mk-mode.com.                        IN      A
+
+;; ANSWER SECTION:
+ns.mk-mode.com.         86400   IN      A       192.168.11.3
+
+;; Query time: 0 msec
+;; SERVER: 192.168.11.3#53(192.168.11.3) (UDP)
+;; WHEN: Thu Oct 02 11:08:36 JST 2025
+;; MSG SIZE  rcvd: 87
+</code></pre></div></div>
+
+<p>・内部向け逆引きテスト</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dig -x 192.168.11.3
+
+; &lt;&lt;&gt;&gt; DiG 9.20.11-4-Debian &lt;&lt;&gt;&gt; -x 192.168.11.3
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 6826
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: a4f16205a483276c0100000068dddec471ff09e6e2099c01 (good)
+;; QUESTION SECTION:
+;3.11.168.192.in-addr.arpa.     IN      PTR
+
+;; ANSWER SECTION:
+3.11.168.192.in-addr.arpa. 86400 IN     PTR     p183.mk-mode.com.
+3.11.168.192.in-addr.arpa. 86400 IN     PTR     ns.mk-mode.com.
+
+;; Query time: 0 msec
+;; SERVER: 192.168.11.3#53(192.168.11.3) (UDP)
+;; WHEN: Thu Oct 02 11:09:08 JST 2025
+;; MSG SIZE  rcvd: 129
+</code></pre></div></div>
+
+<p>・外部向け正引きテスト</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dig www.isc.org
+
+; &lt;&lt;&gt;&gt; DiG 9.20.11-4-Debian &lt;&lt;&gt;&gt; www.isc.org
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 44769
+;; flags: qr rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 168a1f252af84ee90100000068dddedc0d138d056d655a3f (good)
+;; QUESTION SECTION:
+;www.isc.org.                   IN      A
+
+;; ANSWER SECTION:
+www.isc.org.            300     IN      CNAME   isc.map.fastlydns.net.
+isc.map.fastlydns.net.  60      IN      A       151.101.90.217
+
+;; Query time: 780 msec
+;; SERVER: 192.168.11.3#53(192.168.11.3) (UDP)
+;; WHEN: Thu Oct 02 11:09:32 JST 2025
+;; MSG SIZE  rcvd: 119
+</code></pre></div></div>
+
+<p>・外部向け逆引きテスト</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dig -x 151.101.90.217
+
+; &lt;&lt;&gt;&gt; DiG 9.20.11-4-Debian &lt;&lt;&gt;&gt; -x 151.101.90.217
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NXDOMAIN, id: 43324
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 80fbf217b53192350100000068dddef63efa7ab5a357e24e (good)
+;; QUESTION SECTION:
+;217.90.101.151.in-addr.arpa.   IN      PTR
+
+;; AUTHORITY SECTION:
+151.in-addr.arpa.       3600    IN      SOA     pri.authdns.ripe.net. dns.ripe.net. 1758790516 3600 600 864000 3600
+
+;; Query time: 2452 msec
+;; SERVER: 192.168.11.3#53(192.168.11.3) (UDP)
+;; WHEN: Thu Oct 02 11:09:58 JST 2025
+;; MSG SIZE  rcvd: 144
+</code></pre></div></div>
+
+<h3 id="14-ファイアウォール-ufw-の設定">14. ファイアウォール (ufw) の設定</h3>
+
+<p>実際に運用する場合は、外部からのTCP/UDP53番ポート(DNS)へのアクセスを許可する必要がある。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ufw allow 53
+Rule added
+
+# ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+9999/tcp                   ALLOW       192.168.11.0/24
+53                         ALLOW       Anywhere
+</code></pre></div></div>
+
+<hr />
+
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="DNS" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) に DNS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">Debian 13 (trixie) - サービスの管理！</title><link href="https://komasaru.github.io/2025/11/07/debian-13-service-management/" rel="alternate" type="text/html" title="Debian 13 (trixie) - サービスの管理！" /><published>2025-11-07T00:00:00+09:00</published><updated>2025-11-07T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/07/debian-13-service-management</id><content type="html" xml:base="https://komasaru.github.io/2025/11/07/debian-13-service-management/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) でのサービスの管理についての記録です。</p>
 
 <p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
 （当然ながら、興味がなければスルーしてください）</p>
@@ -1406,96 +1804,4 @@ foo   <span class="nv">ALL</span><span class="o">=(</span>ALL<span class="o">)</
 
 <hr />
 
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) をサーバ用途・最小構成でインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">Debian 12 (bookworm) - Ruby 3.3 インストール（ソースビルド）！</title><link href="https://komasaru.github.io/2024/05/18/debian-12-ruby-3-3-installation-by-src/" rel="alternate" type="text/html" title="Debian 12 (bookworm) - Ruby 3.3 インストール（ソースビルド）！" /><published>2024-05-18T00:20:00+09:00</published><updated>2024-05-18T00:20:00+09:00</updated><id>https://komasaru.github.io/2024/05/18/debian-12-ruby-3-3-installation-by-src</id><content type="html" xml:base="https://komasaru.github.io/2024/05/18/debian-12-ruby-3-3-installation-by-src/"><![CDATA[<p>Debian GNU/Linux 12 (bookworm) に Ruby 3.3 をソースをビルドしてインストール方法についての記録です。</p>
-
-<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
-（当然ながら、興味がなければスルーしてください）</p>
-
-<!--more-->
-
-<h3 id="0-前提条件">0. 前提条件</h3>
-
-<ul>
-  <li>Debian GNU/Linux 12 (bookworm; 64bit) での作業を想定。</li>
-  <li>接続元のマシンも Debian GNU/Linux 12 (bookworm; 64bit) を想定。</li>
-  <li>インストールするは当記事執筆時点で最新の Ruby は 3.3.1.</li>
-  <li>root ユーザでの作業を想定。</li>
-</ul>
-
-<h3 id="1-必要パッケージのインストール">1. 必要パッケージのインストール</h3>
-
-<p>Ruby のインストールに必要なパッケージを予めインストールする。（他に必要なものがあればインストールする）</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install gcc autoconf bison build-essential \
-libffi-dev zlib1g-dev libssl-dev libreadline-dev libgdbm-dev \
-libbison-dev libmariadb-dev libncurses-dev libyaml-dev libffi-dev
-</code></pre></div></div>
-
-<h3 id="2-アーカイブファイルのダウンロード展開">2. アーカイブファイルのダウンロード＆展開</h3>
-
-<p>アーカイブファイルをダンロードし、展開する。（ダンロード先は <code class="language-plaintext highlighter-rouge">/usr/local/src</code> としている）</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd /usr/local/src
-# wget https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.1.tar.gz
-# tar xvf ruby-3.3.1.tar.gz
-</code></pre></div></div>
-
-<h3 id="3-ビルドインストール">3. ビルド＆インストール</h3>
-
-<p>ビルドインストールは以下のように行う。（よくある <code class="language-plaintext highlighter-rouge">.configure</code>, <code class="language-plaintext highlighter-rouge">make</code>, <code class="language-plaintext highlighter-rouge">make install</code>）</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cd ruby-3.3.1
-# ./configure
-# make -j$(grep '^processor' /proc/cpuinfo | wc -l)
-# make install
-</code></pre></div></div>
-
-<h3 id="4-インストールの確認">4. インストールの確認</h3>
-
-<p>バージョンを表示させてみて、インストールできているか確認する。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ruby -v
-ruby 3.3.1 (2024-04-23 revision c56cd86388) [x86_64-linux]
-</code></pre></div></div>
-
-<h3 id="5-ドキュメントの非インストール設定">5. ドキュメントの非インストール設定</h3>
-
-<p>サーバ環境には RubyGems ライブラリのドキュメントは不要なので、 RubyGems ライブラリインストール時にドキュメントをインストールしないように設定する。</p>
-
-<p>File: <code class="language-plaintext highlighter-rouge">~/.gemrc</code></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gem: <span class="nt">--no-document</span>
-</code></pre></div></div>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">--no-document</code> は <code class="language-plaintext highlighter-rouge">-N</code> でもよい。</li>
-  <li>今ではもはや <code class="language-plaintext highlighter-rouge">--no-ri</code>, <code class="language-plaintext highlighter-rouge">--no-rdoc</code> というオプションは Deprecated（非推奨）。（<code class="language-plaintext highlighter-rouge">gem help install</code> で確認）</li>
-</ul>
-
-<h3 id="6-gem-の最新化">6. gem の最新化</h3>
-
-<p>今後のために、gem を最新に更新しておく。（今回は既に最新だった）</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># gem -v
-3.5.9
-
-# gem update --system
-Latest version already installed. Done.
-</code></pre></div></div>
-
-<h3 id="7-動作確認">7. 動作確認</h3>
-
-<p>適当にコーディングして、正常に動作するか確認する。<br />
-Ruby スクリプトファイルを作成して実行してもよいし、<code class="language-plaintext highlighter-rouge">irb</code> や <code class="language-plaintext highlighter-rouge">pry</code> でコーディングしてもよい。以下はコマンドラインから実行した例。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ruby -e '5.times {puts "Hello Ruby!"}'
-Hello Ruby!
-Hello Ruby!
-Hello Ruby!
-Hello Ruby!
-Hello Ruby!
-</code></pre></div></div>
-
-<hr />
-
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Ruby" /><summary type="html"><![CDATA[Debian GNU/Linux 12 (bookworm) に Ruby 3.3 をソースをビルドしてインストール方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry></feed>
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) をサーバ用途・最小構成でインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry></feed>

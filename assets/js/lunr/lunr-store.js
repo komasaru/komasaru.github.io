@@ -12748,4 +12748,10 @@ var store = [{
         "tags": ["Debian","Linux"],
         "url": "/2025/11/07/debian-13-service-management/",
         "teaser": null
+      },{
+        "title": "Debian 13 (trixie) - DNS サーバ BIND9 構築！",
+        "excerpt":"Debian GNU/Linux 13 (trixie) に DNS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 13.0.0 (trixie; 64bit) での作業を想定。 サーバのローカル IP アドレスは 192.168.11.3、グローバル IP アドレスは xxx.yyy.zzz.aaa を想定。 ドメイン名は mk-mode.com、マシンのホスト名は foo、ネームサーバホスト名は ns を想定。 セカンダリ DNS は用意しない。 root ユーザでの作業を想定。 1. BIND のインストール （bind9-utils は dig コマンド用） # apt -y install bind9 bind9-utils 2. BIND...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","DNS"],
+        "url": "/2025/11/08/debian-13-bind-installation/",
+        "teaser": null
       }]
