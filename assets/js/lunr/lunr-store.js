@@ -12754,4 +12754,10 @@ var store = [{
         "tags": ["Debian","Linux","DNS"],
         "url": "/2025/11/08/debian-13-bind-installation/",
         "teaser": null
+      },{
+        "title": "Debian 13 (trixie) - DNS サーバ BIND9 の chroot 化！",
+        "excerpt":"Debian GNU/Linux 13 (trixie) に構築した DNS サーバを chroot 化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 13.0.0 (trixie; 64bit) での作業を想定。 DNS サーバ BIND9 が構築済みであることを想定。 chroot ディレクトリは /var/bind9/chroot/ とする。 root ユーザでの作業を想定。 1. SystemD ユニットファイルの編集 bind9.service ファイルは以下のようになっているだろう。 File: /etc/systemd/system/bind9.service [Unit] Description=BIND Domain Name Server Documentation=man:named(8) After=network.target Wants=nss-lookup.target Before=nss-lookup.target [Service] Type=notify EnvironmentFile=-/etc/default/named ExecStart=/usr/sbin/named -f...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","DNS"],
+        "url": "/2025/11/09/debian-13-bind-chroot/",
+        "teaser": null
       }]

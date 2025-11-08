@@ -1,4 +1,144 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-11-07T23:50:49+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - DNS サーバ BIND9 構築！</title><link href="https://komasaru.github.io/2025/11/08/debian-13-bind-installation/" rel="alternate" type="text/html" title="Debian 13 (trixie) - DNS サーバ BIND9 構築！" /><published>2025-11-08T00:00:00+09:00</published><updated>2025-11-08T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/08/debian-13-bind-installation</id><content type="html" xml:base="https://komasaru.github.io/2025/11/08/debian-13-bind-installation/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) に DNS サーバを構築する方法についての記録です。</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-11-08T22:50:55+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - DNS サーバ BIND9 の chroot 化！</title><link href="https://komasaru.github.io/2025/11/09/debian-13-bind-chroot/" rel="alternate" type="text/html" title="Debian 13 (trixie) - DNS サーバ BIND9 の chroot 化！" /><published>2025-11-09T00:20:00+09:00</published><updated>2025-11-09T00:20:00+09:00</updated><id>https://komasaru.github.io/2025/11/09/debian-13-bind-chroot</id><content type="html" xml:base="https://komasaru.github.io/2025/11/09/debian-13-bind-chroot/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) に構築した DNS サーバを chroot 化する方法についての記録です。</p>
+
+<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
+（当然ながら、興味がなければスルーしてください）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Debian GNU/Linux 13.0.0 (trixie; 64bit) での作業を想定。</li>
+  <li>DNS サーバ BIND9 が構築済みであることを想定。</li>
+  <li>chroot ディレクトリは <code class="language-plaintext highlighter-rouge">/var/bind9/chroot/</code> とする。</li>
+  <li>root ユーザでの作業を想定。</li>
+</ul>
+
+<h3 id="1-systemd-ユニットファイルの編集">1. SystemD ユニットファイルの編集</h3>
+
+<p><code class="language-plaintext highlighter-rouge">bind9.service</code> ファイルは以下のようになっているだろう。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/systemd/system/bind9.service</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
+<span class="nv">Description</span><span class="o">=</span>BIND Domain Name Server
+<span class="nv">Documentation</span><span class="o">=</span>man:named<span class="o">(</span>8<span class="o">)</span>
+<span class="nv">After</span><span class="o">=</span>network.target
+<span class="nv">Wants</span><span class="o">=</span>nss-lookup.target
+<span class="nv">Before</span><span class="o">=</span>nss-lookup.target
+
+<span class="o">[</span>Service]
+<span class="nv">Type</span><span class="o">=</span>notify
+<span class="nv">EnvironmentFile</span><span class="o">=</span>-/etc/default/named
+<span class="nv">ExecStart</span><span class="o">=</span>/usr/sbin/named <span class="nt">-f</span> <span class="nv">$OPTIONS</span>
+<span class="nv">ExecReload</span><span class="o">=</span>/usr/sbin/rndc reload
+<span class="nv">ExecStop</span><span class="o">=</span>/usr/sbin/rndc stop
+<span class="nv">Restart</span><span class="o">=</span>on-failure
+
+<span class="o">[</span>Install]
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+<span class="nv">Alias</span><span class="o">=</span>bind9.service
+</code></pre></div></div>
+
+<p>次に <code class="language-plaintext highlighter-rouge">/etc/default/named</code> の <code class="language-plaintext highlighter-rouge">OPTIONS</code> を次のように編集する。（IPv6 を使用しない例）</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/default/named</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">OPTIONS</span><span class="o">=</span><span class="s2">"-u bind -4 -t /var/bind9/chroot"</span>
+</code></pre></div></div>
+
+<h3 id="2-chroot-ディレクトリの作成">2. chroot ディレクトリの作成</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mkdir -p /var/bind9/chroot/{etc,dev,run/named,var/cache/bind,usr/share}
+</code></pre></div></div>
+
+<h3 id="3-スペシャルファイルの作成">3. スペシャルファイルの作成</h3>
+
+<p>chroot 化に必要なスペシャルファイルを作成し、パーミッションを変更する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mknod /var/bind9/chroot/dev/null c 1 3
+# mknod /var/bind9/chroot/dev/random c 1 8
+# mknod /var/bind9/chroot/dev/urandom c 1 9
+# chmod 666 /var/bind9/chroot/dev/{null,random,urandom}
+</code></pre></div></div>
+
+<h3 id="4-ディレクトリの移動">4. ディレクトリの移動</h3>
+
+<p>元々の BIND ディレクトリを chroot 用ディレクトリへ移動する。<br />
+root hints ファイルも移動する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mv /etc/bind /var/bind9/chroot/etc
+# mv /usr/share/dns /var/bind9/chroot/usr/share/
+</code></pre></div></div>
+
+<h3 id="5-シンボリックリンクの作成">5. シンボリックリンクの作成</h3>
+
+<p>BIND を chroot 用ディレクトリにリンクするようシンボリックリンクを設定する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ln -s /var/bind9/chroot/etc/bind /etc/bind
+</code></pre></div></div>
+
+<h3 id="6-localtime-コピー">6. localtime コピー</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cp /etc/localtime /var/bind9/chroot/etc/
+</code></pre></div></div>
+
+<h3 id="7-所有者グループパーミッションの変更">7. 所有者・グループ・パーミッションの変更</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># chown bind:bind /var/bind9/chroot/etc/bind/rndc.key
+# chown bind:bind /var/bind9/chroot/run/named
+# chmod 775 /var/bind9/chroot/{var/cache/bind,run/named}
+# chgrp bind /var/bind9/chroot/{var/cache/bind,run/named}
+</code></pre></div></div>
+
+<h3 id="8-apparmor-の設定">8. AppArmor の設定</h3>
+
+<p>以下の内容のファイルを新規作成。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/apparmor.d/local/usr.sbin.named</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/var/bind9/chroot/etc/bind/<span class="k">**</span> r,
+/var/bind9/chroot/var/<span class="k">**</span> rw,
+/var/bind9/chroot/dev/<span class="k">**</span> rw,
+/var/bind9/chroot/run/<span class="k">**</span> rw,
+/var/bind9/chroot/usr/<span class="k">**</span> r,
+</code></pre></div></div>
+
+<p>そして、変更を適用。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl reload apparmor
+</code></pre></div></div>
+
+<h3 id="9-システムログの設定">9. システムログの設定</h3>
+
+<p>rsyslog にログを出力するよう、以下の内容のファイルを新規作成。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/rsyslog.d/bind-chroot.conf</code></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$AddUnixListenSocket /var/bind9/chroot/dev/log
+</code></pre></div></div>
+
+<h3 id="10-syslogd-の再起動">10. syslogd の再起動</h3>
+
+<p>システムログ設定を編集したので、syslogd を再起動。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl restart rsyslog
+</code></pre></div></div>
+
+<h3 id="11-bind-の再起動">11. BIND の再起動</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl restart named
+</code></pre></div></div>
+
+<h3 id="12-参考サイト">12. 参考サイト</h3>
+
+<ul>
+  <li><a href="https://wiki.debian.org/Bind9#Debian_Jessie_and_later" title="Bind9 - Debian Wiki">Bind9 - Debian Wiki</a></li>
+</ul>
+
+<hr />
+
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="DNS" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) に構築した DNS サーバを chroot 化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">Debian 13 (trixie) - DNS サーバ BIND9 構築！</title><link href="https://komasaru.github.io/2025/11/08/debian-13-bind-installation/" rel="alternate" type="text/html" title="Debian 13 (trixie) - DNS サーバ BIND9 構築！" /><published>2025-11-08T00:00:00+09:00</published><updated>2025-11-08T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/08/debian-13-bind-installation</id><content type="html" xml:base="https://komasaru.github.io/2025/11/08/debian-13-bind-installation/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) に DNS サーバを構築する方法についての記録です。</p>
 
 <p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
 （当然ながら、興味がなければスルーしてください）</p>
@@ -1695,113 +1835,4 @@ foo   <span class="nv">ALL</span><span class="o">=(</span>ALL<span class="o">)</
 
 <hr />
 
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) インストール後の初期設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">Debian 13 (trixie) - インストール（サーバ用途・最小構成）！</title><link href="https://komasaru.github.io/2025/10/30/debian-13-installation-for-small-server/" rel="alternate" type="text/html" title="Debian 13 (trixie) - インストール（サーバ用途・最小構成）！" /><published>2025-10-30T00:20:00+09:00</published><updated>2025-10-30T00:20:00+09:00</updated><id>https://komasaru.github.io/2025/10/30/debian-13-installation-for-small-server</id><content type="html" xml:base="https://komasaru.github.io/2025/10/30/debian-13-installation-for-small-server/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) をサーバ用途・最小構成でインストールする方法についての記録です。</p>
-
-<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
-（当然ながら、興味がなければスルーしてください）</p>
-
-<!--more-->
-
-<h3 id="0-前提条件">0. 前提条件</h3>
-
-<ul>
-  <li>当記事執筆時点で最新の Debian GNU/Linux 13.0.0 をインストールする。</li>
-  <li>インストールするマシンのメモリ容量は 4GB, ディスク容量は 320GB を想定する。</li>
-  <li>DHCP を使用しない。（ネットワークは手動で設定する）</li>
-  <li>パーティションは手動設定する。</li>
-  <li>プロキシは使用しない。</li>
-  <li>ソフトウェアのインストールは行わない。（必要になった際にインストールするので）</li>
-</ul>
-
-<h3 id="1-インストールイメージのダウンロード">1. インストールイメージのダウンロード</h3>
-
-<p>以下のサイト、もしくは<a href="https://www.debian.org/CD/http-ftp/#mirrors" title="Downloading Debian CD/DVD images via HTTP/FTP">ミラーサイト</a>等から ISO イメージをダウンロードする。<br />
-※今回、当方は DVD 版をダウンロードした。（CD（netinstall）版でもよい）</p>
-
-<p>当然、ダウンロード後は CD(DVD) に焼き付ける。（ブート可能オプション必須）<br />
-（仮想マシンにインストールするならディスクに焼き付ける必要もないが）</p>
-
-<h3 id="2-インストール">2. インストール</h3>
-
-<p>以下のような手順でインストールする。<br />
-（スクリーンショットは、画像が多くなるため非掲載。以下の文章だけで理解できるはず）</p>
-
-<ol>
-  <li><strong>Boot Menu</strong><br />
-“Install” を選択する。（綺麗な画面がよければ “Graphical install” を選択する）</li>
-  <li><strong>Select a language</strong><br />
-インストール中に使用する言語を選択する。<br />
-  当方は「Japanese - 日本語」を選択。（”English - English” でもよい）</li>
-  <li><strong>場所の選択</strong><br />
-「日本」を選択する。</li>
-  <li><strong>キーボードの設定</strong><br />
-  「日本語」を選択する。</li>
-  <li><strong>ネットワークの設定</strong>
-    <ul>
-      <li>「ホスト名」にマシンに設定するホスト名を入力し、次へ進む。（今回の例では <code class="language-plaintext highlighter-rouge">vbox</code>）</li>
-      <li>「ドメイン名」にドメイン名を入力し、次へ進む。（今回の例では <code class="language-plaintext highlighter-rouge">var.com</code>）</li>
-    </ul>
-  </li>
-  <li><strong>ユーザとパスワードのセットアップ</strong>
-    <ul>
-      <li>「root のパスワード」に root のパスワードを入力し、次へ進む。（必要であれば、「パスワードを表示」にチェック入れて確認できる）</li>
-      <li>確認のために root のパスワードを再入力し、次へ進む。（必要であれば、「パスワードを表示」にチェック入れて確認できる）</li>
-      <li>「新しいユーザの本名（フルネーム）」に一般ユーザのフルネームを入力し、次へ進む。</li>
-      <li>「あなたのアカウントのユーザ名」に一般ユーザ名を入力し、次へ進む。（デフォルトでファーストネームが小文字で表示される）</li>
-      <li>「新しいユーザのパスワードを選んでください」に一般ユーザのパスワードを入力し、次へ進む。</li>
-      <li>確認のためにユーザのパスワードを再入力し、次へ進む。</li>
-    </ul>
-  </li>
-  <li><strong>ディスクのパーティショニング</strong>
-    <ul>
-      <li>「ガイドによるパーティショニング」を選択する。</li>
-      <li>「ガイド - ディスク全体を使い LVM をセットアップする」を選択する。（当然、他でもよい。当方、実運用では手動でパーティショニングしている）</li>
-      <li>「パーティショニングするディスクの選択」では対象のディスクを選択する。</li>
-      <li>「パーティショニング機構」では「/home, /var, /tmp パーティションを分割」を選択する。（当然、他でもよい）<br />
- ちなみに、当方、実運用では、「ディスクのパーティショニング」で「手動」にした上で、詳細に設定している。</li>
-      <li>「ディスクへの変更を書き込み、LVM を設定しますか？」では「はい」を選択する。</li>
-      <li>「ディスクのパーティショニング」では、最大サイズを使用するので、そのまま「続ける」を選択する。（当然、変更してもよい）</li>
-      <li>「パーティショニングの終了とディスクへの変更の書き込み」を選択する。</li>
-      <li>「ディスクに変更を書き込みますか？」では「はい」を選択する。</li>
-      <li>インストールが開始される。</li>
-    </ul>
-  </li>
-  <li><strong>パッケージマネージャの設定</strong>
-    <ul>
-      <li>「別のインストールメディアを検査しますか？」と問われるが、「いいえ」で次へ進む。</li>
-      <li>「Debian アーカイブミラーの国」では「日本」を選択する。</li>
-      <li>「Debian アーカイブミラー」では接続したいアーカイブミラーサイトを選択する。（通常は “deb.debian.org” か “ftp.jp.debian.org” か、他の国内のサイト）<br />
- （当記事執筆時点、 “ftp.jp.debian.org” は利用不可？）</li>
-      <li>「HTTP プロキシの情報」ではプロキシの設定を行うが、使用しない場合は空のまま次へ進む。</li>
-    </ul>
-  </li>
-  <li><strong>popularity-contest を設定しています</strong><br />
-  パッケージの利用調査に参加するか問われるので、「いいえ」を選択する。（参加は任意なので「はい」でもよい）</li>
-  <li><strong>ソフトウェアの選択</strong><br />
-  「SSH サーバ」と「標準システムユーティリティ」にのみチェックを入れて次へ進む。（その他は必要なときにインストールするので）</li>
-  <li><strong>ハードディスクへの GRUB ブートローダのインストール</strong>
-    <ul>
-      <li>「起動ドライブへ GRUB ブートローダをインストールしますか？」では「はい」を選択する。<br />
-（デュアルブートや、別途ブートローダを使用する場合は「いいえ」を選択する。ブートローダについて理解していないとインストール完了後に起動しなくなるので注意）</li>
-      <li>「ブートローダをインストールするデバイス」ではブートローダをインストールするディスクを選択する。</li>
-    </ul>
-  </li>
-  <li><strong>インストールの完了</strong><br />
-  ディスクを取り出し（仮想マシンなら切断（アンマウント）していることを確認し）、「続ける」でシステムを再起動する。</li>
-  <li><strong>再起動後</strong>
-    <ul>
-      <li>ログインコンソール画面が表示されればインストールは成功。</li>
-      <li>登録したユーザや root でログインできるかも確認する。</li>
-    </ul>
-  </li>
-</ol>
-
-<h3 id="3-参考">3. 参考</h3>
-
-<ul>
-  <li><a href="https://www.debian.org/releases/stable/amd64/" title="Debian GNU/Linux インストールガイド">Debian GNU/Linux インストールガイド</a></li>
-</ul>
-
-<hr />
-
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) をサーバ用途・最小構成でインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry></feed>
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) インストール後の初期設定についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry></feed>
