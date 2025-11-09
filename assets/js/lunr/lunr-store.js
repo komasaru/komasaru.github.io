@@ -12760,4 +12760,10 @@ var store = [{
         "tags": ["Debian","Linux","DNS"],
         "url": "/2025/11/09/debian-13-bind-chroot/",
         "teaser": null
+      },{
+        "title": "Debian 13 trixiebookworm) - FTP サーバ構築！",
+        "excerpt":"Debian GNU/Linux 13 (trixie) に FTP サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 13.0.0 (trixie; 64bit) での作業を想定。 接続元のマシンは LMDE 6 (64bit) を想定。 接続テストでは FileZilla という FTP クライアントを使用する。 root ユーザでの作業を想定。 1. vsftpd のインストール # apt -y install vsftpd 2. vsftpd 設定ファイルの編集 File: /etc/vsftpd.conf # anonymous によるログインを無効化 anonymous_enable=NO # ローカルアクセスの許可 local_enable=YES #...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","FTP"],
+        "url": "/2025/11/10/debian-13-ftp-installation/",
+        "teaser": null
       }]
