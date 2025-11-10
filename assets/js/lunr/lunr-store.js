@@ -12766,4 +12766,10 @@ var store = [{
         "tags": ["Debian","Linux","FTP"],
         "url": "/2025/11/10/debian-13-ftp-installation/",
         "teaser": null
+      },{
+        "title": "Debian 13 (trixie) - NFS サーバ構築！",
+        "excerpt":"Debian GNU/Linux 13 (trixie) に NFS サーバを構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 13.0.0 (trixie; 64bit) での作業を想定。 接続元のマシンは LMDE 6 (64bit) を想定。 接続可能なマシンのネットワークは 192.168.11.0/24 を想定。 ドメイン名は mk-mode.com、サーバホスト名は p183 を想定。 NFS 用ディレクトリを新たに作成する。（/var 配下に /exports ディレクトリを作成する） クライアント側でマウントに使用するディレクトリも /var/exports とする。 サーバ側は root で作業することを想定、クライアント側は一般ユーザで作業することを想定している。 root ユーザでの作業を想定。 1. NFS サーバのインストール # apt -y install nfs-kernel-server...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","NFS"],
+        "url": "/2025/11/11/debian-13-nfs-installation/",
+        "teaser": null
       }]
