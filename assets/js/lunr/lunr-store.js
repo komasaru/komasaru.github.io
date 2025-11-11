@@ -12772,4 +12772,10 @@ var store = [{
         "tags": ["Debian","Linux","NFS"],
         "url": "/2025/11/11/debian-13-nfs-installation/",
         "teaser": null
+      },{
+        "title": "Debian 13 (trixie) - NFS サーバのポート固定！",
+        "excerpt":"Debian GNU/Linux 13 (trixie) に NFS サーバで使用するポートを固定化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください） 0. 前提条件 Debian GNU/Linux 13 (trixie; 64bit) での作業を想定。 接続元のマシンは LMDE 6 (64bit) を想定。 NFS サーバ構築済み。 （参照：「Debian 13 (trixie) - NFS サーバ構築！」） ファイアウォール iptables が構築済み。 （参照：「Debian 13 (trixie) - ファイアウォール設定！」） 以下で設定するポート番号は参考サイトによるもであり、任意に設定可能。 quota は使用していないので、参考サイトにある quota の設定はしない。 root ユーザでの作業を想定。 1. 前提知識 NFS サーバが使用するポートは以下のとおり。 portmapper...","categories": ["サーバ構築"],
+        "tags": ["Debian","Linux","NFS"],
+        "url": "/2025/11/12/debian-13-nfs-port-fixing/",
+        "teaser": null
       }]

@@ -1,4 +1,138 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-11-10T22:50:48+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - NFS サーバ構築！</title><link href="https://komasaru.github.io/2025/11/11/debian-13-nfs-installation/" rel="alternate" type="text/html" title="Debian 13 (trixie) - NFS サーバ構築！" /><published>2025-11-11T00:00:00+09:00</published><updated>2025-11-11T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/11/debian-13-nfs-installation</id><content type="html" xml:base="https://komasaru.github.io/2025/11/11/debian-13-nfs-installation/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) に NFS サーバを構築する方法についての記録です。</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-11-11T23:05:01+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - NFS サーバのポート固定！</title><link href="https://komasaru.github.io/2025/11/12/debian-13-nfs-port-fixing/" rel="alternate" type="text/html" title="Debian 13 (trixie) - NFS サーバのポート固定！" /><published>2025-11-12T00:00:00+09:00</published><updated>2025-11-12T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/12/debian-13-nfs-port-fixing</id><content type="html" xml:base="https://komasaru.github.io/2025/11/12/debian-13-nfs-port-fixing/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) に NFS サーバで使用するポートを固定化する方法についての記録です。</p>
+
+<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
+（当然ながら、興味がなければスルーしてください）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Debian GNU/Linux 13 (trixie; 64bit) での作業を想定。</li>
+  <li>接続元のマシンは LMDE 6 (64bit) を想定。</li>
+  <li>NFS サーバ構築済み。<br />
+（参照：「<a href="/2025/11/11/debian-13-nfs-installation" title="Debian 13 (trixie) - NFS サーバ構築！">Debian 13 (trixie) - NFS サーバ構築！</a>」）</li>
+  <li>ファイアウォール iptables が構築済み。<br />
+（参照：「<a href="/2025/11/06/debian-13-firewall-setting" title="Debian 13 (trixie) - ファイアウォール設定！">Debian 13 (trixie) - ファイアウォール設定！</a>」）</li>
+  <li>以下で設定するポート番号は<a href="https://wiki.debian.org/SecuringNFS" title="SecuringNFS - Debian Wiki">参考サイト</a>によるもであり、任意に設定可能。</li>
+  <li>quota は使用していないので、<a href="https://wiki.debian.org/SecuringNFS" title="SecuringNFS - Debian Wiki">参考サイト</a>にある quota の設定はしない。</li>
+  <li>root ユーザでの作業を想定。</li>
+</ul>
+
+<h3 id="1-前提知識">1. 前提知識</h3>
+
+<p>NFS サーバが使用するポートは以下のとおり。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>portmapper =&gt; TCP: 111, UDP: 111
+nfs        =&gt; TCP:2049, UDP:2049
+statd      =&gt; TCP:不定, UDP:不定
+mountd     =&gt; TCP:不定, UDP:不定
+nlockmgrq  =&gt; TCP:不定, UDP:不定
+</code></pre></div></div>
+
+<h3 id="2-statd-用ポートの固定">2. statd 用ポートの固定</h3>
+
+<p>statd のポートを固定するには <code class="language-plaintext highlighter-rouge">/etc/default/nfs-common</code> を以下のようにする。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/default/nfs-common</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">STATDOPTS</span><span class="o">=</span><span class="s2">"--port 32765 --outgoing-port 32766"</span>
+</code></pre></div></div>
+
+<h3 id="3-mountd-用ポートの固定">3. mountd 用ポートの固定</h3>
+
+<p>mountd のポートを固定するには <code class="language-plaintext highlighter-rouge">/etc/default/nfs-kernel-server</code> を以下のようにする。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/default/nfs-kernel-server</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">RPCMOUNTDOPTS</span><span class="o">=</span><span class="s2">"-p 32767"</span>
+</code></pre></div></div>
+
+<h3 id="4-lockd-モジュールの設定">4. lockd モジュールの設定</h3>
+
+<p>オプション付き lockd モジュールを提供するために、以下のように <code class="language-plaintext highlighter-rouge">/etc/modprobe.d/local.conf</code> を作成する。</p>
+
+<p>FIle: <code class="language-plaintext highlighter-rouge">/etc/modprobe.d/local.conf</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>options lockd <span class="nv">nlm_udpport</span><span class="o">=</span>32768 <span class="nv">nlm_tcpport</span><span class="o">=</span>32768
+options nfs <span class="nv">callback_tcpport</span><span class="o">=</span>32764
+</code></pre></div></div>
+
+<h3 id="5-マシンの再起動">5. マシンの再起動</h3>
+
+<p>設定を反映させるため、マシンを再起動する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># reboot
+</code></pre></div></div>
+
+<h3 id="6-設定の確認">6. 設定の確認</h3>
+
+<p>以下のようにして、RPC 情報（ポートの設定）を確認してみる。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># rpcinfo -p
+   program vers proto   port  service
+    100000    4   tcp    111  portmapper
+    100000    3   tcp    111  portmapper
+    100000    2   tcp    111  portmapper
+    100000    4   udp    111  portmapper
+    100000    3   udp    111  portmapper
+    100000    2   udp    111  portmapper
+    100005    1   udp  42606  mountd
+    100005    1   tcp  40969  mountd
+    100005    2   udp  41603  mountd
+    100005    2   tcp  39321  mountd
+    100005    3   udp  51836  mountd
+    100005    3   tcp  34891  mountd
+    100024    1   udp  40708  status
+    100024    1   tcp  53155  status
+    100003    3   tcp   2049  nfs
+    100003    4   tcp   2049  nfs
+    100227    3   tcp   2049  nfs_acl
+    100021    1   udp  32768  nlockmgr
+    100021    3   udp  32768  nlockmgr
+    100021    4   udp  32768  nlockmgr
+    100021    1   tcp  32768  nlockmgr
+    100021    3   tcp  32768  nlockmgr
+    100021    4   tcp  32768  nlockmgr
+</code></pre></div></div>
+
+<h3 id="7-ファイアウォールufwの設定">7. ファイアウォール(ufw)の設定</h3>
+
+<p>NFS サーバが使用するポートが固定されたので、ufw でファイアウォールの設定を行う。（以下はローカルネットワーク内からのみアクセス可能にする例）</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ufw allow proto tcp from 192.168.11.0/24 to any port 111,2049,32765,32767,32768
+Rule added
+# ufw allow proto udp from 192.168.11.0/24 to any port 111,2049,32765,32767,32768
+Rule added
+</code></pre></div></div>
+
+<p>確認。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+      :
+===&lt; 中略 &gt;===
+      :
+111,2049,32765,32767,32768/tcp ALLOW       192.168.11.0/24
+111,2049,32765,32767,32768/udp ALLOW       192.168.11.0/24
+</code></pre></div></div>
+
+<h3 id="8-動作確認">8. 動作確認</h3>
+
+<p>クライアントマシンでマウントして接続できることも確認しておく。</p>
+
+<h3 id="9-参考サイト">9. 参考サイト</h3>
+
+<ul>
+  <li><a href="https://wiki.debian.org/SecuringNFS" title="SecuringNFS - Debian Wiki">SecuringNFS - Debian Wiki</a></li>
+</ul>
+
+<hr />
+
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="NFS" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) に NFS サーバで使用するポートを固定化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">Debian 13 (trixie) - NFS サーバ構築！</title><link href="https://komasaru.github.io/2025/11/11/debian-13-nfs-installation/" rel="alternate" type="text/html" title="Debian 13 (trixie) - NFS サーバ構築！" /><published>2025-11-11T00:00:00+09:00</published><updated>2025-11-11T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/11/debian-13-nfs-installation</id><content type="html" xml:base="https://komasaru.github.io/2025/11/11/debian-13-nfs-installation/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) に NFS サーバを構築する方法についての記録です。</p>
 
 <p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
 （当然ながら、興味がなければスルーしてください）</p>
@@ -1534,124 +1668,4 @@ clamdscan <span class="nt">--fdpass</span> <span class="nt">--infected</span> <s
 
 <hr />
 
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">Debian 13 (trixie) - セキュリティ・アップデートの自動化！</title><link href="https://komasaru.github.io/2025/11/02/debian-13-automation-security-update/" rel="alternate" type="text/html" title="Debian 13 (trixie) - セキュリティ・アップデートの自動化！" /><published>2025-11-02T00:20:00+09:00</published><updated>2025-11-02T00:20:00+09:00</updated><id>https://komasaru.github.io/2025/11/02/debian-13-automation-security-update</id><content type="html" xml:base="https://komasaru.github.io/2025/11/02/debian-13-automation-security-update/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) のセキュリティ・アップデートを自動化する方法についての記録です。</p>
-
-<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
-（当然ながら、興味がなければスルーしてください）</p>
-
-<!--more-->
-
-<h3 id="0-前提条件">0. 前提条件</h3>
-
-<ul>
-  <li>Debian GNU/Linux 13 (trixie) サーバでの作業を想定。</li>
-  <li>cron-apt でもパッケージアップデートの自動化は可能であるが、今回はセキュリティ・アップデートのみなので unattended-upgrades を使用する。<br />
-（ちなみに、インストール済みの各種パッケージを自動アップデートするのは（依存パッケージの整合性等の問題があるため）危険であり、当方はセキュリティ・アップデート以外は自動でアップデートしない方針）</li>
-  <li>root ユーザでの作業を想定。</li>
-</ul>
-
-<h3 id="1-unattended-upgrades-のインストール">1. unattended-upgrades のインストール</h3>
-
-<p>unattended-upgrades はデフォルトでインストールされているはずだが、インストールされていなければインストールする。<br />
-また、パッケージ変更履歴ツール apt-listchanges もインストールする。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install unattended-upgrades apt-listchanges
-</code></pre></div></div>
-
-<h3 id="2-50unattended-upgrades-の編集">2. “50unattended-upgrades” の編集</h3>
-
-<p>メール送信先を編集（コメント解除＆変更）する。（当然、ユーザ名のみならず外部のメールアドレスも設定可）</p>
-
-<p>File: <code class="language-plaintext highlighter-rouge">/etc/apt/apt.conf.d/50unattended-upgrades</code></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Unattended-Upgrade::Mail <span class="s2">"root"</span><span class="p">;</span>
-</code></pre></div></div>
-
-<h3 id="3-20auto-upgrades-の作成">3. “20auto-upgrades” の作成</h3>
-
-<p>以下のコマンドを実行して自動アップデートに関する質問に <code class="language-plaintext highlighter-rouge">&lt;Yes&gt;</code> 応答すると、自動アップグレードのための設定ファイル <code class="language-plaintext highlighter-rouge">20auto-upgrades</code> が作成される。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># dpkg-reconfigure -plow unattended-upgrades
-</code></pre></div></div>
-
-<p>もしくは、以下のような内容で <code class="language-plaintext highlighter-rouge">20auto-upgrades</code> 作成してもよい。<br />
-（<code class="language-plaintext highlighter-rouge">/etc/cron.daily/apt</code> に記述があるとおりデフォルトでは無効になっているので、有効にするための記述）</p>
-
-<p>File: <code class="language-plaintext highlighter-rouge">/etc/apt/apt.conf.d/20auto-upgrades</code></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>APT::Periodic::Update-Package-Lists <span class="s2">"1"</span><span class="p">;</span>
-APT::Periodic::Unattended-Upgrade <span class="s2">"1"</span><span class="p">;</span>
-</code></pre></div></div>
-
-<h3 id="4-02periodic-の作成">4. “02periodic” の作成</h3>
-
-<p>cron ジョブのための設定ファイルを作成する。<br />
-<code class="language-plaintext highlighter-rouge">/etc/cron.daily/apt</code> に記述があるとおりデフォルトで設定されている項目もあるが、以下のように「<a href="https://wiki.debian.org/UnattendedUpgrades" title="UnattendedUpgrades - Debian Wiki">作成例</a>」をそのまま流用している。<br />
-（各設定項目の説明はコメントに記述されているとおりなので、あらためて説明しない）</p>
-
-<p>File: <code class="language-plaintext highlighter-rouge">/etc/apt/apt.conf.d/02periodic</code></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// Control parameters <span class="k">for </span>cron <span class="nb">jobs </span>by /etc/cron.daily/apt //
-
-// Enable the update/upgrade script <span class="o">(</span><span class="nv">0</span><span class="o">=</span>disable<span class="o">)</span>
-APT::Periodic::Enable <span class="s2">"1"</span><span class="p">;</span>
-
-// Do <span class="s2">"apt update"</span> automatically every n-days <span class="o">(</span><span class="nv">0</span><span class="o">=</span>disable<span class="o">)</span>
-APT::Periodic::Update-Package-Lists <span class="s2">"1"</span><span class="p">;</span>
-
-// Do <span class="s2">"apt upgrade --download-only"</span> every n-days <span class="o">(</span><span class="nv">0</span><span class="o">=</span>disable<span class="o">)</span>
-APT::Periodic::Download-Upgradeable-Packages <span class="s2">"1"</span><span class="p">;</span>
-
-// Run the <span class="s2">"unattended-upgrade"</span> security upgrade script
-// every n-days <span class="o">(</span><span class="nv">0</span><span class="o">=</span>disabled<span class="o">)</span>
-// Requires the package <span class="s2">"unattended-upgrades"</span> and will write
-// a log <span class="k">in</span> /var/log/unattended-upgrades
-APT::Periodic::Unattended-Upgrade <span class="s2">"1"</span><span class="p">;</span>
-
-// Do <span class="s2">"apt autoclean"</span> every n-days <span class="o">(</span><span class="nv">0</span><span class="o">=</span>disable<span class="o">)</span>
-APT::Periodic::AutocleanInterval <span class="s2">"21"</span><span class="p">;</span>
-
-// Send report mail to root
-//     0:  no report             <span class="o">(</span>or null string<span class="o">)</span>
-//     1:  progress report       <span class="o">(</span>actually any string<span class="o">)</span>
-//     2:  + <span class="nb">command </span>outputs     <span class="o">(</span>remove <span class="nt">-qq</span>, remove 2&gt;/dev/null, add <span class="nt">-d</span><span class="o">)</span>
-//     3:  + trace on
-APT::Periodic::Verbose <span class="s2">"2"</span><span class="p">;</span>
-</code></pre></div></div>
-
-<h3 id="5-listchangesconf-の編集">5. “listchanges.conf” の編集</h3>
-
-<p>パッケージ変更履歴ツール apt-listchanges のための設定を行う。</p>
-
-<p>File: <code class="language-plaintext highlighter-rouge">/etc/apt/listchanges.conf</code></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>apt]
-<span class="nv">frontend</span><span class="o">=</span>pager
-<span class="nv">which</span><span class="o">=</span>both          <span class="c"># &lt;= news から変更</span>
-<span class="nv">email_address</span><span class="o">=</span>root
-<span class="nv">email_format</span><span class="o">=</span>text
-<span class="nv">confirm</span><span class="o">=</span><span class="nb">false
-</span><span class="nv">headers</span><span class="o">=</span><span class="nb">false
-</span><span class="nv">reverse</span><span class="o">=</span><span class="nb">false
-</span><span class="nv">save_seen</span><span class="o">=</span>/var/lib/apt/listchanges.db
-</code></pre></div></div>
-
-<h3 id="6-動作確認">6. 動作確認</h3>
-
-<p><code class="language-plaintext highlighter-rouge">/etc/cron.daily/apt-campat</code> により毎日実行されるので、後日メールやログを確認してみる。</p>
-
-<ul>
-  <li>メールは設定したユーザ（or メールアドレス）宛に送信される。</li>
-  <li>dpkg 関連のログは <code class="language-plaintext highlighter-rouge">/var/log/dpkg.log</code></li>
-  <li>unattended-upgrades 関連のログは <code class="language-plaintext highlighter-rouge">/var/log/unattended-upgrades/</code> ディレクトリ配下。</li>
-</ul>
-
-<h3 id="7-参考サイト">7. 参考サイト</h3>
-
-<ul>
-  <li><a href="https://wiki.debian.org/PeriodicUpdates" title="PeriodicUpdates - Debian Wiki">PeriodicUpdates - Debian Wiki</a></li>
-</ul>
-
-<hr />
-
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) のセキュリティ・アップデートを自動化する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry></feed>
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry></feed>
