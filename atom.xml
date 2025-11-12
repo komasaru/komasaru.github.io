@@ -1,4 +1,136 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-11-11T23:05:01+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - NFS サーバのポート固定！</title><link href="https://komasaru.github.io/2025/11/12/debian-13-nfs-port-fixing/" rel="alternate" type="text/html" title="Debian 13 (trixie) - NFS サーバのポート固定！" /><published>2025-11-12T00:00:00+09:00</published><updated>2025-11-12T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/12/debian-13-nfs-port-fixing</id><content type="html" xml:base="https://komasaru.github.io/2025/11/12/debian-13-nfs-port-fixing/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) に NFS サーバで使用するポートを固定化する方法についての記録です。</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://komasaru.github.io/atom.xml" rel="self" type="application/atom+xml" /><link href="https://komasaru.github.io/" rel="alternate" type="text/html" /><updated>2025-11-12T22:31:14+09:00</updated><id>https://komasaru.github.io/atom.xml</id><title type="html">mk-mode BLOG</title><subtitle>このブログは自宅サーバ(Debian GNU/Linux)で運用してしている&lt;a href=&quot;https://www.mk-mode.com/blog/&quot;&gt;ブログ&lt;/a&gt;のクローンです。&lt;br /&gt;PC・サーバ構築等の話題を中心に公開しております。</subtitle><author><name>mk-mode.com</name></author><entry><title type="html">Debian 13 (trixie) - Windows ファイルサーバ Samba 構築！</title><link href="https://komasaru.github.io/2025/11/13/debian-13-samba-installation/" rel="alternate" type="text/html" title="Debian 13 (trixie) - Windows ファイルサーバ Samba 構築！" /><published>2025-11-13T00:00:00+09:00</published><updated>2025-11-13T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/13/debian-13-samba-installation</id><content type="html" xml:base="https://komasaru.github.io/2025/11/13/debian-13-samba-installation/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) に Windows 用ファイルサーバ Samba を構築する方法についての記録です。</p>
+
+<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
+（当然ながら、興味がなければスルーしてください）</p>
+
+<!--more-->
+
+<h3 id="0-前提条件">0. 前提条件</h3>
+
+<ul>
+  <li>Debian GNU/Linux 13 (trixie; 64bit) での作業を想定。</li>
+  <li>接続元のマシンは LMDE 6 (64bit) を想定。</li>
+  <li>接続可能なマシンのネットワークは <code class="language-plaintext highlighter-rouge">192.168.11.0/24</code> を想定。</li>
+  <li>ドメイン名は <code class="language-plaintext highlighter-rouge">mk-mode.com</code>、サーバホスト名は <code class="language-plaintext highlighter-rouge">p183</code> を想定。</li>
+  <li>全ユーザ共有ディレクトリは <code class="language-plaintext highlighter-rouge">/home/share</code> とする。</li>
+  <li>root ユーザでの作業を想定。</li>
+</ul>
+
+<h3 id="1-samba-サーバのインストール">1. Samba サーバのインストール</h3>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install samba
+</code></pre></div></div>
+
+<h3 id="2-共有ディレクトリの作成">2. 共有ディレクトリの作成</h3>
+
+<p>全ユーザが共有でフルアクセス可能なディレクトリを作成する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># mkdir /home/share
+# chown nobody:nogroup /home/share
+# chmod 777 /home/share
+</code></pre></div></div>
+
+<h3 id="3-設定ファイルの編集">3. 設定ファイルの編集</h3>
+
+<p>次のように設定する。<br />
+※記述のある行の後ろにコメント（<code class="language-plaintext highlighter-rouge">#</code> で始まる文字列）を入れないこと。</p>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/samba/smb.conf</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>global]
+   unix charset <span class="o">=</span> UTF-8            <span class="c"># &lt;= 追加</span>
+   dos charset  <span class="o">=</span> CP932            <span class="c"># &lt;= 追加</span>
+
+   workgroup <span class="o">=</span> WORKGROUP           <span class="c"># &lt;= Windows のワークグループ名に合わせる</span>
+
+   interfaces <span class="o">=</span> 127.0.0.0/8 192.168.11.0/24  <span class="c"># &lt;= 接続許可するインターフェースを指定</span>
+   <span class="nb">bind </span>interfaces only <span class="o">=</span> <span class="nb">yes</span>      <span class="c"># &lt;= interfaces 項目に指定したホストだけに接続を限定する</span>
+
+   map to guest <span class="o">=</span> bad user         <span class="c"># &lt;= 未登録アカウントで接続された場合にゲストとして扱う</span>
+
+   load printers <span class="o">=</span> no              <span class="c"># &lt;= プリンタを使用していない場合</span>
+   disable spoolss <span class="o">=</span> <span class="nb">yes</span>           <span class="c"># &lt;= プリンタを使用していない場合</span>
+
+   printing <span class="o">=</span> bsd                  <span class="c"># &lt;= プリンタを使用していない場合</span>
+
+<span class="c"># 最終行に追加</span>
+<span class="o">[</span>share]                            <span class="c"># &lt;= 共有名</span>
+   path           <span class="o">=</span> /home/share    <span class="c"># &lt;= 共有ディレクトリ</span>
+   writable       <span class="o">=</span> <span class="nb">yes</span>            <span class="c"># &lt;= 書込可</span>
+   guest ok       <span class="o">=</span> <span class="nb">yes</span>            <span class="c"># &lt;= ゲストユーザー可</span>
+   guest only     <span class="o">=</span> <span class="nb">yes</span>            <span class="c"># &lt;= 全てゲストとして扱う</span>
+   create mode    <span class="o">=</span> 0777           <span class="c"># &lt;= ファイル作成はフル権限で</span>
+   directory mode <span class="o">=</span> 0777           <span class="c"># &lt;= ディレクトリ作成はフル権限で</span>
+</code></pre></div></div>
+
+<h3 id="4-samba-サーバの再起動">4. Samba サーバの再起動</h3>
+
+<p>設定を反映させるため、Samba サーバを再起動する。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># systemctl restart smbd nmbd
+</code></pre></div></div>
+
+<h3 id="5-ファイアウォール設定">5. ファイアウォール設定</h3>
+
+<p>ファイアウォールを設定している場合、Samba サーバが使用するポート（udp:137,138, tcp:139,445）を開放する必要がある。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ufw allow 137,138/udp
+Rule added
+
+# ufw allow 139,445/tcp
+Rule added
+
+# ufw status
+     :
+     :
+137,138/udp                ALLOW       Anywhere
+139,445/tcp                ALLOW       Anywhere
+</code></pre></div></div>
+
+<h3 id="6-動作確認">6. 動作確認</h3>
+
+<p>クライアントマシンから Samba サーバの <code class="language-plaintext highlighter-rouge">/home/share</code> ディレクトリにアクセスし、ファイル操作が可能か確認する。</p>
+
+<h3 id="7-アクセス権限付き設定">7. アクセス権限付き設定</h3>
+
+<p>通常、中規模以下のネットワークでは上記のようなフルアクセスで問題ないが、大規模ネットワークやよりセキュアに構築したければ、アクセス権限を設定する。<br />
+以下、 <code class="language-plaintext highlighter-rouge">hoge</code> グループに属するユーザのみが、 <code class="language-plaintext highlighter-rouge">/home/hoge</code> ディレクトリにアクセスできるようにする設定例。</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># groupadd hoge          # &lt;= グループ追加
+# mkdir /home/hoge       # &lt;= 専用ディレクトリ作成
+# chgrp hoge /home/hoge  # &lt;= ディレクトリに所有グループ設定
+# chmod 770 /home/hoge   # &lt;= 専用ディレクトリに権限付与
+</code></pre></div></div>
+
+<p>File: <code class="language-plaintext highlighter-rouge">/etc/samba/smb.conf</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>security <span class="o">=</span> user  <span class="c"># &lt; = ユーザ認証モード</span>
+
+<span class="c"># 最終行に追加</span>
+<span class="o">[</span>Hoge]
+   path <span class="o">=</span> /home/hoge
+   writable <span class="o">=</span> <span class="nb">yes
+   </span>create mode <span class="o">=</span> 0770
+   directory mode <span class="o">=</span> 0770
+   share modes <span class="o">=</span> <span class="nb">yes
+   </span>guest ok <span class="o">=</span> no        <span class="c"># &lt; = ゲストユーザ不許可</span>
+   valid <span class="nb">users</span> <span class="o">=</span> @hoge  <span class="c"># &lt; = hoge グループのみ許可</span>
+</code></pre></div></div>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># smbpasswd -a fuga       # &lt; = Samba アクセスユーザ追加登録
+New SMB password:         # &lt; = パスワード設定
+Retype new SMB password:  # &lt; = パスワード再入力
+# usermod -G hoge fuga    # &lt; = hoge グループに fuga ユーザ追加
+</code></pre></div></div>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># /etc/init.d/samba restart  # &lt; = Samba 再起動
+Stopping Samba daemons: nmbd smbd.
+Starting Samba daemons: nmbd smbd.
+</code></pre></div></div>
+
+<hr />
+
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="Postfix" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) に Windows 用ファイルサーバ Samba を構築する方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">Debian 13 (trixie) - NFS サーバのポート固定！</title><link href="https://komasaru.github.io/2025/11/12/debian-13-nfs-port-fixing/" rel="alternate" type="text/html" title="Debian 13 (trixie) - NFS サーバのポート固定！" /><published>2025-11-12T00:00:00+09:00</published><updated>2025-11-12T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/12/debian-13-nfs-port-fixing</id><content type="html" xml:base="https://komasaru.github.io/2025/11/12/debian-13-nfs-port-fixing/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) に NFS サーバで使用するポートを固定化する方法についての記録です。</p>
 
 <p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
 （当然ながら、興味がなければスルーしてください）</p>
@@ -1629,43 +1761,4 @@ clamdscan <span class="nt">--fdpass</span> <span class="nt">--infected</span> <s
 
 <hr />
 
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="ウイルス対策" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry><entry><title type="html">Debian 13 (trixie) - rootkit 検出ツール chkrootkit インストール！</title><link href="https://komasaru.github.io/2025/11/03/debian-13-chrootkit-installation/" rel="alternate" type="text/html" title="Debian 13 (trixie) - rootkit 検出ツール chkrootkit インストール！" /><published>2025-11-03T00:00:00+09:00</published><updated>2025-11-03T00:00:00+09:00</updated><id>https://komasaru.github.io/2025/11/03/debian-13-chrootkit-installation</id><content type="html" xml:base="https://komasaru.github.io/2025/11/03/debian-13-chrootkit-installation/"><![CDATA[<p>Debian GNU/Linux 13 (trixie) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。</p>
-
-<p>以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。<br />
-（当然ながら、興味がなければスルーしてください）</p>
-
-<!--more-->
-
-<h3 id="0-前提条件">0. 前提条件</h3>
-
-<ul>
-  <li>Debian GNU/linux 13.0.0 (trixie; 64bit) での作業を想定。</li>
-  <li>接続元のマシンは LMDE 6 (64bit) を想定。</li>
-  <li>chkrootkit が検知できるのは既知の rootkit のみであり、新規の rootkit は検知できないことを認識しておく。</li>
-  <li>chkrootkit では誤検知もあるので、検知結果は参考程度に留める。</li>
-  <li>コマンド自体が改竄されてからでは遅いので、OS インストール直後に行うのがよいらしい。</li>
-  <li>root ユーザでの作業を想定。</li>
-</ul>
-
-<h3 id="1-chkrootkit-のインストール">1. chkrootkit のインストール</h3>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># apt -y install chkrootkit
-</code></pre></div></div>
-
-<h3 id="2-chkrootkit-の実行">2. chkrootkit の実行</h3>
-
-<p>以下のようにして chkrootkit を実行してみる。<br />
-問題のある（<code class="language-plaintext highlighter-rouge">INFECTED</code> の）場合のみ出力する。</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># chkrootkit | grep INFECTED
-</code></pre></div></div>
-
-<h3 id="3-自動実行用スクリプト作成">3. 自動実行用スクリプト作成</h3>
-
-<p><strong><em>今は自動で <code class="language-plaintext highlighter-rouge">/etc/cron.daily/chkrtootkit</code> が作成され、毎日自動で実行されるので、この作業は不要。</em></strong></p>
-
-<p>rootkit が仕掛けられていた場合に root 宛にメールが届くようになる。</p>
-
-<hr />
-
-<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) に rootkit 検出ツール chkrootkit をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry></feed>
+<p>以上。</p>]]></content><author><name>mk-mode.com</name></author><category term="サーバ構築" /><category term="Debian" /><category term="Linux" /><category term="ウイルス対策" /><summary type="html"><![CDATA[Debian GNU/Linux 13 (trixie) にウイルス対策ソフト ClamAV をインストールする方法についての記録です。 以前古いバージョンでの作業時に残していた記録を参考に作業を行い、今回更新した作業記録を貼付する形式の内容となっています。 （当然ながら、興味がなければスルーしてください）]]></summary></entry></feed>
